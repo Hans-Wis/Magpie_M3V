@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cpu-graph": {
+      "command": "/home/edauser/project/tools/cpu-graph/mcp-server/bin/launch.sh",
+      "args": []
+    }
+  }
+}
