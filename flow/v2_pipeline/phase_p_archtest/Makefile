@@ -1,4 +1,6 @@
 VERILATOR ?= /home/edauser/miniforge3/envs/magpie_claude/bin/verilator
+RV32A ?= 1
+PMP_ENTRIES ?= 0
 
 RTL_DIR  = ../../../IP/cpu_m1/rtl
 RTL_SRCS = $(RTL_DIR)/rfu.v $(RTL_DIR)/alu.v $(RTL_DIR)/idu.v \
@@ -14,6 +16,7 @@ RTL_SRCS = $(RTL_DIR)/rfu.v $(RTL_DIR)/alu.v $(RTL_DIR)/idu.v \
 VFLAGS = --binary -j 4 \
          --top-module tb_archtest \
          --timescale 1ns/1ns \
+         -GRV32A=$(RV32A) -GPMP_ENTRIES=$(PMP_ENTRIES) \
          -I$(RTL_DIR) \
          -Wall -Wno-PROCASSINIT -Wno-DECLFILENAME -Wno-TIMESCALEMOD \
          -Wno-UNUSEDSIGNAL -Wno-SYNCASYNCNET -Wno-WIDTH

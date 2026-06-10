@@ -8,7 +8,9 @@
 `default_nettype none
 
 module cpu_m1_soc_jtag_top #(
-    parameter [31:0] RESET_PC = 32'h2000_0000
+    parameter [31:0] RESET_PC = 32'h2000_0000,
+    parameter RV32A = 0,
+    parameter PMP_ENTRIES = 0
 )(
     input  wire        clk,
     input  wire        resetn,
@@ -102,7 +104,11 @@ module cpu_m1_soc_jtag_top #(
                             sel_ram   ? dbus_rdata  :
                                         32'h0000_0000;
 
-    cpu_m1_top #(.RESET_PC(RESET_PC)) u_cpu (
+    cpu_m1_top #(
+        .RESET_PC(RESET_PC),
+        .RV32A(RV32A),
+        .PMP_ENTRIES(PMP_ENTRIES)
+    ) u_cpu (
         .clk(clk),
         .resetn(resetn),
         .trap(trap),

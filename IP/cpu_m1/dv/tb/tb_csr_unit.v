@@ -21,6 +21,8 @@ module tb_csr_unit;
     wire [31:0] mtvec_o;
     wire [31:0] mepc_o;
     wire        irq_pending;
+    wire [32*8-1:0] pmp_addr_o;
+    wire [ 8*8-1:0] pmp_cfg_o;
 
     integer vectors;
     integer errors;
@@ -77,7 +79,9 @@ module tb_csr_unit;
         .mtvec_o(mtvec_o),
         .mepc_o(mepc_o),
         .irq_pending(irq_pending),
-        .irq_cause()
+        .irq_cause(),
+        .pmp_addr_o(pmp_addr_o),
+        .pmp_cfg_o(pmp_cfg_o)
     );
 
     initial begin

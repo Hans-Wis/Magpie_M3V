@@ -11,7 +11,9 @@
 `default_nettype none
 
 module cpu_m1_axil_top #(
-    parameter [31:0] RESET_PC = 32'h0000_0000
+    parameter [31:0] RESET_PC = 32'h0000_0000,
+    parameter RV32A = 0,
+    parameter PMP_ENTRIES = 0
 )(
     input  wire        clk,
     input  wire        resetn,
@@ -66,7 +68,11 @@ module cpu_m1_axil_top #(
     wire [31:0] dbg_dummy_acc_rdata;
     wire        dbg_dummy_acc_err;
 
-    cpu_m1_top #(.RESET_PC(RESET_PC)) u_cpu (
+    cpu_m1_top #(
+        .RESET_PC(RESET_PC),
+        .RV32A(RV32A),
+        .PMP_ENTRIES(PMP_ENTRIES)
+    ) u_cpu (
         .clk(clk), .resetn(resetn), .trap(trap),
         .ibus_req(ibus_req), .ibus_addr(ibus_addr),
         .ibus_ready(ibus_ready), .ibus_rdata(ibus_rdata),

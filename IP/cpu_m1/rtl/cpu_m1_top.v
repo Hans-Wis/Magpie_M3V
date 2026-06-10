@@ -30,7 +30,9 @@ module cpu_m1_top #(
     // Reset vector. Default 0 = native boot behavior (backward compatible).
     // Integrators with a nonzero boot ROM override this AND place the reset
     // handler at RESET_PC (see integration guide). ADR-0012.
-    parameter [31:0] RESET_PC = 32'h0000_0000
+    parameter [31:0] RESET_PC = 32'h0000_0000,
+    parameter RV32A = 0,
+    parameter PMP_ENTRIES = 0
 )(
     input             clk,
     input             resetn,
@@ -158,7 +160,11 @@ module cpu_m1_top #(
     end
 
     // ---- core ----
-    core #(.RESET_PC(RESET_PC)) u_core(
+    core #(
+        .RESET_PC(RESET_PC),
+        .RV32A(RV32A),
+        .PMP_ENTRIES(PMP_ENTRIES)
+    ) u_core(
         .clk                (clk),
         .resetn             (resetn),
         .trap               (trap),

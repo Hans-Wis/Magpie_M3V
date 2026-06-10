@@ -10,7 +10,9 @@ module cpu_m1_asic_top #(
     parameter [31:0] RAM_BASE  = 32'h2000_0000,
     parameter        RAM_ADDR_W = 11,            // 2 KiB SRAM macro
     parameter        INIT_HEX   = "",
-    parameter        BOOT_DEBUG = 1'b0
+    parameter        BOOT_DEBUG = 1'b0,
+    parameter        RV32A = 1,
+    parameter        PMP_ENTRIES = 0
 )(
     input  wire        clk,
     input  wire        resetn,
@@ -27,7 +29,11 @@ module cpu_m1_asic_top #(
     wire        d_awvalid, d_awready, d_wvalid, d_wready, d_bvalid, d_bready;
     wire [31:0] d_awaddr, d_wdata;  wire [2:0] d_awprot;  wire [3:0] d_wstrb;  wire [1:0] d_bresp;
 
-    cpu_m1_axil_top #(.RESET_PC(32'h0000_0000)) u_cpu (
+    cpu_m1_axil_top #(
+        .RESET_PC(32'h0000_0000),
+        .RV32A(RV32A),
+        .PMP_ENTRIES(PMP_ENTRIES)
+    ) u_cpu (
         .clk(clk), .resetn(resetn), .trap(trap), .irq_external_pulse(irq_external_pulse),
         .m_axi_i_arvalid(i_arvalid), .m_axi_i_arready(i_arready), .m_axi_i_araddr(i_araddr),
         .m_axi_i_arprot(i_arprot), .m_axi_i_rvalid(i_rvalid), .m_axi_i_rready(i_rready),

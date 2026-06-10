@@ -23,6 +23,8 @@ module tb_csr_idu_residual_coverage;
     wire [31:0] mtvec_o;
     wire [31:0] mepc_o;
     wire        irq_pending;
+    wire [32*8-1:0] pmp_addr_o;
+    wire [ 8*8-1:0] pmp_cfg_o;
 
     reg  [31:0] instr;
     wire [ 4:0] rd_idx;
@@ -75,7 +77,9 @@ module tb_csr_idu_residual_coverage;
         .mtvec_o            (mtvec_o),
         .mepc_o             (mepc_o),
         .irq_pending        (irq_pending),
-        .irq_cause          ()
+        .irq_cause          (),
+        .pmp_addr_o         (pmp_addr_o),
+        .pmp_cfg_o          (pmp_cfg_o)
     );
 
     idu u_idu (

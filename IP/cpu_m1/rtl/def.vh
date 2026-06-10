@@ -128,6 +128,16 @@
 `define CSR_MCAUSE   12'h342
 `define CSR_MIP      12'h344
 `define CSR_MISA     12'h301
+`define CSR_PMPCFG0  12'h3A0
+`define CSR_PMPCFG1  12'h3A1
+`define CSR_PMPADDR0 12'h3B0
+`define CSR_PMPADDR1 12'h3B1
+`define CSR_PMPADDR2 12'h3B2
+`define CSR_PMPADDR3 12'h3B3
+`define CSR_PMPADDR4 12'h3B4
+`define CSR_PMPADDR5 12'h3B5
+`define CSR_PMPADDR6 12'h3B6
+`define CSR_PMPADDR7 12'h3B7
 
 `define CSR_CYCLE    12'hC00
 `define CSR_CYCLEH   12'hC80

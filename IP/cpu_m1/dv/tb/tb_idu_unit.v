@@ -12,6 +12,7 @@ module tb_idu_unit;
     localparam [6:0] OPC_OP     = 7'b0110011;
     localparam [6:0] OPC_SYSTEM = 7'b1110011;
     localparam [6:0] OPC_FENCE  = 7'b0001111;
+    localparam [6:0] OPC_AMO    = 7'b0101111;
 
     localparam [3:0] ALU_ADD    = 4'd0;
     localparam [3:0] ALU_SUB    = 4'd1;
@@ -50,12 +51,17 @@ module tb_idu_unit;
     wire        is_load;
     wire        is_store;
     wire [ 2:0] ls_funct3;
+    wire        is_amo;
+    wire        amo_is_lr;
+    wire        amo_is_sc;
+    wire [ 3:0] amo_op;
     wire        is_csr;
     wire [ 1:0] csr_op;
     wire        csr_uses_imm;
     wire [11:0] csr_addr;
     wire [31:0] csr_zimm;
     wire        is_mret;
+    wire        is_dret;
     wire        is_muldiv;
     wire [ 2:0] md_op;
     wire        md_is_div;
@@ -81,12 +87,17 @@ module tb_idu_unit;
     reg        exp_is_load;
     reg        exp_is_store;
     reg [2:0]  exp_ls_funct3;
+    reg        exp_is_amo;
+    reg        exp_amo_is_lr;
+    reg        exp_amo_is_sc;
+    reg [3:0]  exp_amo_op;
     reg        exp_is_csr;
     reg [1:0]  exp_csr_op;
     reg        exp_csr_uses_imm;
     reg [11:0] exp_csr_addr;
     reg [31:0] exp_csr_zimm;
     reg        exp_is_mret;
+    reg        exp_is_dret;
     reg        exp_is_muldiv;
     reg [2:0]  exp_md_op;
     reg        exp_md_is_div;
@@ -110,12 +121,17 @@ module tb_idu_unit;
         .is_load(is_load),
         .is_store(is_store),
         .ls_funct3(ls_funct3),
+        .is_amo(is_amo),
+        .amo_is_lr(amo_is_lr),
+        .amo_is_sc(amo_is_sc),
+        .amo_op(amo_op),
         .is_csr(is_csr),
         .csr_op(csr_op),
         .csr_uses_imm(csr_uses_imm),
         .csr_addr(csr_addr),
         .csr_zimm(csr_zimm),
         .is_mret(is_mret),
+        .is_dret(is_dret),
         .is_muldiv(is_muldiv),
         .md_op(md_op),
         .md_is_div(md_is_div),
@@ -131,6 +147,18 @@ module tb_idu_unit;
         input [6:0] opc;
         begin
             r_type = {f7, rs2, rs1, f3, rd, opc};
+        end
+    endfunction
+
+    function [31:0] amo_type;
+        input [4:0] f5;
+        input       aq;
+        input       rl;
+        input [4:0] rs2;
+        input [4:0] rs1;
+        input [4:0] rd;
+        begin
+            amo_type = {f5, aq, rl, rs2, rs1, 3'b010, rd, OPC_AMO};
         end
     endfunction
 
@@ -225,12 +253,17 @@ module tb_idu_unit;
             exp_is_load       = 1'b0;
             exp_is_store      = 1'b0;
             exp_ls_funct3     = t_instr[14:12];
+            exp_is_amo        = 1'b0;
+            exp_amo_is_lr     = 1'b0;
+            exp_amo_is_sc     = 1'b0;
+            exp_amo_op        = 4'd0;
             exp_is_csr        = 1'b0;
             exp_csr_op        = t_instr[13:12];
             exp_csr_uses_imm  = t_instr[14];
             exp_csr_addr      = t_instr[31:20];
             exp_csr_zimm      = {27'b0, t_instr[19:15]};
             exp_is_mret       = (t_instr == 32'h3020_0073);
+            exp_is_dret       = (t_instr == 32'h7b20_0073);
             exp_is_muldiv     = 1'b0;
             exp_md_op         = t_instr[14:12];
             exp_md_is_div     = t_instr[14];
@@ -243,15 +276,22 @@ module tb_idu_unit;
         reg [6:0] opc;
         reg [2:0] f3;
         reg [6:0] f7;
+        reg [4:0] f5;
         reg       branch_f3_valid;
+        reg       amo_f5_valid;
         begin
             expect_base(t_instr);
             opc = t_instr[6:0];
             f3  = t_instr[14:12];
             f7  = t_instr[31:25];
+            f5  = t_instr[31:27];
             branch_f3_valid = (f3 == 3'b000) || (f3 == 3'b001) ||
                               (f3 == 3'b100) || (f3 == 3'b101) ||
                               (f3 == 3'b110) || (f3 == 3'b111);
+            amo_f5_valid = (f5 == 5'h00) || (f5 == 5'h01) || (f5 == 5'h02) ||
+                           (f5 == 5'h03) || (f5 == 5'h04) || (f5 == 5'h08) ||
+                           (f5 == 5'h0c) || (f5 == 5'h10) || (f5 == 5'h14) ||
+                           (f5 == 5'h18) || (f5 == 5'h1c);
 
             case (opc)
                 OPC_LUI: begin
@@ -350,10 +390,30 @@ module tb_idu_unit;
                     exp_is_csr = (f3 != 3'b000);
                     exp_rd_we = exp_is_csr;
                     exp_wb_sel = exp_is_csr ? WB_CSR : WB_ALU;
-                    exp_illegal = !(exp_is_csr || exp_is_mret);
+                    exp_illegal = !(exp_is_csr || exp_is_mret || exp_is_dret);
                 end
                 OPC_FENCE: begin
                     exp_illegal = 1'b0;
+                end
+                OPC_AMO: begin
+                    exp_is_amo = (f3 == 3'b010) && amo_f5_valid &&
+                                 ((f5 != 5'h02) || (t_instr[24:20] == 5'd0));
+                    exp_amo_is_lr = exp_is_amo && (f5 == 5'h02);
+                    exp_amo_is_sc = exp_is_amo && (f5 == 5'h03);
+                    exp_amo_op = (f5 == 5'h01) ? 4'd1 :
+                                 (f5 == 5'h04) ? 4'd2 :
+                                 (f5 == 5'h08) ? 4'd3 :
+                                 (f5 == 5'h0c) ? 4'd4 :
+                                 (f5 == 5'h10) ? 4'd5 :
+                                 (f5 == 5'h14) ? 4'd6 :
+                                 (f5 == 5'h18) ? 4'd7 :
+                                 (f5 == 5'h1c) ? 4'd8 : 4'd0;
+                    exp_imm = 32'h0;
+                    exp_alu_b_use_imm = exp_is_amo;
+                    exp_rd_we = exp_is_amo;
+                    exp_wb_sel = exp_is_amo ? WB_LSU : WB_ALU;
+                    exp_ls_funct3 = exp_is_amo ? 3'b010 : f3;
+                    exp_illegal = !exp_is_amo;
                 end
                 default: begin
                     exp_illegal = 1'b1;
@@ -386,24 +446,29 @@ module tb_idu_unit;
                 is_load !== exp_is_load ||
                 is_store !== exp_is_store ||
                 ls_funct3 !== exp_ls_funct3 ||
+                is_amo !== exp_is_amo ||
+                amo_is_lr !== exp_amo_is_lr ||
+                amo_is_sc !== exp_amo_is_sc ||
+                (exp_is_amo && (amo_op !== exp_amo_op)) ||
                 is_csr !== exp_is_csr ||
                 csr_op !== exp_csr_op ||
                 csr_uses_imm !== exp_csr_uses_imm ||
                 csr_addr !== exp_csr_addr ||
                 csr_zimm !== exp_csr_zimm ||
                 is_mret !== exp_is_mret ||
+                is_dret !== exp_is_dret ||
                 is_muldiv !== exp_is_muldiv ||
                 md_op !== exp_md_op ||
                 md_is_div !== exp_md_is_div ||
                 illegal !== exp_illegal) begin
                 errors = errors + 1;
-                $error("FAIL[%0d] %0s instr=%h rd/rs=%h/%h/%h exp=%h/%h/%h imm=%h exp=%h alu=%h exp=%h flags jal/jalr/br/ld/st/csr/mret/md/ill=%b%b%b%b%b%b%b%b%b exp=%b%b%b%b%b%b%b%b%b",
+                $error("FAIL[%0d] %0s instr=%h rd/rs=%h/%h/%h exp=%h/%h/%h imm=%h exp=%h alu=%h exp=%h flags jal/jalr/br/ld/st/amo/csr/mret/dret/md/ill=%b%b%b%b%b%b%b%b%b%b%b exp=%b%b%b%b%b%b%b%b%b%b%b",
                        vectors, tag, t_instr,
                        rd_idx, rs1_idx, rs2_idx, exp_rd_idx, exp_rs1_idx, exp_rs2_idx,
                        imm, exp_imm, alu_op, exp_alu_op,
-                       is_jal, is_jalr, is_branch, is_load, is_store, is_csr, is_mret, is_muldiv, illegal,
+                       is_jal, is_jalr, is_branch, is_load, is_store, is_amo, is_csr, is_mret, is_dret, is_muldiv, illegal,
                        exp_is_jal, exp_is_jalr, exp_is_branch, exp_is_load, exp_is_store,
-                       exp_is_csr, exp_is_mret, exp_is_muldiv, exp_illegal);
+                       exp_is_amo, exp_is_csr, exp_is_mret, exp_is_dret, exp_is_muldiv, exp_illegal);
             end
         end
     endtask
@@ -445,6 +510,21 @@ module tb_idu_unit;
         check_vector(s_type(12'h800, 5'd12, 5'd6, 3'b000, OPC_STORE), "SB");
         check_vector(s_type(12'h07c, 5'd13, 5'd7, 3'b001, OPC_STORE), "SH");
         check_vector(s_type(12'h3a4, 5'd14, 5'd8, 3'b010, OPC_STORE), "SW");
+
+        check_vector(amo_type(5'h02, 1'b0, 1'b0, 5'd0, 5'd8, 5'd9), "LR_W");
+        check_vector(amo_type(5'h03, 1'b1, 1'b1, 5'd10, 5'd8, 5'd9), "SC_W_AQRL");
+        check_vector(amo_type(5'h00, 1'b0, 1'b0, 5'd10, 5'd8, 5'd9), "AMOADD_W");
+        check_vector(amo_type(5'h01, 1'b0, 1'b0, 5'd10, 5'd8, 5'd9), "AMOSWAP_W");
+        check_vector(amo_type(5'h04, 1'b0, 1'b0, 5'd10, 5'd8, 5'd9), "AMOXOR_W");
+        check_vector(amo_type(5'h08, 1'b0, 1'b0, 5'd10, 5'd8, 5'd9), "AMOOR_W");
+        check_vector(amo_type(5'h0c, 1'b0, 1'b0, 5'd10, 5'd8, 5'd9), "AMOAND_W");
+        check_vector(amo_type(5'h10, 1'b0, 1'b0, 5'd10, 5'd8, 5'd9), "AMOMIN_W");
+        check_vector(amo_type(5'h14, 1'b0, 1'b0, 5'd10, 5'd8, 5'd9), "AMOMAX_W");
+        check_vector(amo_type(5'h18, 1'b0, 1'b0, 5'd10, 5'd8, 5'd9), "AMOMINU_W");
+        check_vector(amo_type(5'h1c, 1'b0, 1'b0, 5'd10, 5'd8, 5'd9), "AMOMAXU_W");
+        check_vector(amo_type(5'h02, 1'b0, 1'b0, 5'd1, 5'd8, 5'd9), "LR_BAD_RS2");
+        check_vector({5'h00, 2'b00, 5'd10, 5'd8, 3'b001, 5'd9, OPC_AMO}, "AMO_BAD_F3");
+        check_vector(amo_type(5'h1f, 1'b0, 1'b0, 5'd10, 5'd8, 5'd9), "AMO_BAD_F5");
 
         check_vector(b_type(13'h0004, 5'd1, 5'd2, 3'b000, OPC_BRANCH), "BEQ");
         check_vector(b_type(13'h1ffc, 5'd3, 5'd4, 3'b001, OPC_BRANCH), "BNE");
@@ -489,6 +569,7 @@ module tb_idu_unit;
         check_vector(i_type(12'h344, 5'd16, 3'b110, 5'd11, OPC_SYSTEM), "CSRRSI_Z16");
         check_vector(i_type(12'hc00, 5'd31, 3'b111, 5'd12, OPC_SYSTEM), "CSRRCI_Z31");
         check_vector(32'h3020_0073, "MRET");
+        check_vector(32'h7b20_0073, "DRET");
         check_vector(32'h0000_0073, "ECALL_ILLEGAL");
         check_vector(32'h0010_0073, "EBREAK_ILLEGAL");
 

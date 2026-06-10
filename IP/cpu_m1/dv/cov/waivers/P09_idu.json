@@ -6,8 +6,8 @@
     {
       "waiver_id": "TW-IDU-FUNCT3-DEFAULT",
       "module": "idu.v", "dut_scope": "core",
-      "signals": ["L173", "L185"], "metric": "line+branch",
-      "structural_basis": "idu.v:173/185 `default: alu_op=ALU_ADD` in the OP-IMM/OP funct3 case. funct3 is 3-bit and all 8 values are decoded (F3_ADD_SUB/SLT/SLTU/XOR/OR/AND/SLL/SRL_SRA, idu.v:160-172/176-184), so the default arm is unreachable (no 9th funct3 value). Defensive default.",
+      "signals": ["L208", "L220"], "metric": "line+branch",
+      "structural_basis": "idu.v:208/220 `default: alu_op=ALU_ADD` in the OP-IMM/OP funct3 case. funct3 is 3-bit and all 8 values are decoded (F3_ADD_SUB/SLT/SLTU/XOR/OR/AND/SLL/SRL_SRA, idu.v:198-208/210-220), so the default arm is unreachable (no 9th funct3 value). Defensive default.",
       "stimulus_considered": "all 8 funct3 values driven for OP and OP-IMM; no illegal funct3 exists for a fully-decoded 3-bit field",
       "spike_impact": "none (coverage-only)", "approved": true, "approver": "Claude"
     },

@@ -1,6 +1,9 @@
 `timescale 1ns / 1ns
 
-module tb_archtest;
+module tb_archtest #(
+    parameter RV32A = 1,
+    parameter PMP_ENTRIES = 0
+);
     reg         clk = 1'b0;
     reg         resetn = 1'b0;
     wire        dbg_dummy_halted;
@@ -40,7 +43,9 @@ module tb_archtest;
     wire [18:0] d_word_idx = d_mem_offset[20:2];
 
     core #(
-        .RESET_PC(ELF_BASE)
+        .RESET_PC(ELF_BASE),
+        .RV32A(RV32A),
+        .PMP_ENTRIES(PMP_ENTRIES)
     ) dut (
         .clk                (clk),
         .resetn             (resetn),

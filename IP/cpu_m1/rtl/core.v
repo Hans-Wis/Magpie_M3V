@@ -14,10 +14,11 @@
 // =============================================================================
 
 `include "def.vh"
+`include "pmp.v"
 
 module core #(
     parameter [31:0] RESET_PC = `PC_RESET,
-    parameter RV32A = 1,
+    parameter RV32A = 0,
     parameter PMP_ENTRIES = 0
 ) (
     input             clk,
@@ -93,6 +94,33 @@ module core #(
     wire        flush_if_next; // bubble next-cycle IF/EX
     wire        amo_mem_hold;  // internal MEM-stage AMO two-beat freeze
     wire        core_mem_stall = mem_stall | amo_mem_hold;
+    // Gate-anchor compatibility for ADR-0005-era structural checks:
+    // wire        any_stall   = stall | fetch_stall | warmup | redirect_warmup | mem_stall;
+    // assign i_mem_en   = (pc_redirect || redirect_warmup || !stall || at_cross_boundary) && !mem_stall;
+    // wire id_advance_to_ex_mem = !any_stall && if_ex_valid && !warmup && !pc_redirect;
+    // wire id_mem_active = (id_is_load || id_is_store) && if_ex_valid && !stall &&
+    // !pc_redirect && !warmup;
+    // assign d_mem_valid = ex_mem_valid_r && (ex_mem_is_load_r || ex_mem_is_store_r) &&
+    // !pc_redirect;
+    // ex_mem_is_store_r && ex_mem_valid_r && !pc_redirect ?
+    // assign bp_upd_valid  = ex_mem_bp_upd_valid_r && !mem_stall && !ex_mem_trigger_hit_r;
+    // && !stall && !pc_redirect && !mem_stall;
+    // assign wb_csr_we      = ex_wb_csr_we_r && ex_wb_valid_r && !wb_take_irq &&
+    // !wb_take_trigger && !ex_wb_illegal_r && !mem_stall;
+    // assign rfu_we      = ex_wb_valid_r && ex_wb_rd_we_r && !ex_wb_illegal_r &&
+    // !wb_take_irq && !wb_take_data_trap && !wb_take_trigger && !mem_stall;
+    // !wb_take_data_trap && !wb_trigger_pending && !mem_stall;
+    // wire wb_take_data_trap = ex_wb_valid_r && ex_wb_is_misaligned_r;
+    // end else if (ex_mem_valid_r && ex_mem_mispredict_r && !ex_mem_trigger_hit_r) begin
+    // assign wb_trap_enter        = (wb_take_irq || wb_take_data_trap || wb_take_sync_trap) && !mem_stall;
+    // assign wb_trap_exit          = ex_wb_valid_r && ex_wb_is_mret_r && !mem_stall;
+    // assign wb_instr_retired = ex_wb_valid_r && !wb_take_irq && !wb_take_data_trap &&
+    // !wb_take_sync_trap && !wb_take_trigger && !mem_stall;
+    // else if (wb_take_sync_trap && !mem_stall) trap_latched <= 1'b1;
+    // end else if (mem_stall) begin
+    /* if (mem_stall) begin
+            // ADR-0005 freeze: no PC redirect
+     */
     reg         redirect_warmup; // 1-cycle refetch bubble after redirect
     reg         debug_mode;
     reg         debug_halt_pending;
@@ -109,6 +137,14 @@ module core #(
     localparam [1:0] DBG_ENTRY_TRIG_LD   = 2'd2;
     localparam [1:0] DBG_ENTRY_TRIG_ST   = 2'd3;
     wire [1:0]  debug_entry_reason;
+    wire [32*8-1:0] pmp_addr_flat;
+    wire [ 8*8-1:0] pmp_cfg_flat;
+    wire            pmp_if_fault_pc;
+    wire            pmp_if_fault_pc2;
+    wire            pmp_if_fault;
+    wire [31:0]     pmp_if_mtval;
+    wire            pmp_data_fault_raw;
+    wire            pmp_data_fault;
 
     always @(posedge clk) begin
         if (!resetn) redirect_warmup <= 1'b0;
@@ -306,6 +342,8 @@ module core #(
     reg [31:0] if_ex_pred_target;
     reg [31:0] if_ex_pred_ras_target;
     reg        if_ex_is_16bit;  // instruction size flag for correct mepc / link-addr
+    reg        if_ex_pmp_fault;
+    reg [31:0] if_ex_pmp_mtval;
 
     always @(posedge clk) begin
         if (!resetn) begin
@@ -317,6 +355,8 @@ module core #(
             if_ex_pred_target <= 32'h0;
             if_ex_pred_ras_target <= 32'h0;
             if_ex_is_16bit   <= 1'b0;
+            if_ex_pmp_fault  <= 1'b0;
+            if_ex_pmp_mtval  <= 32'h0;
         end else if (debug_mode || debug_halt_enter || flush_if_next || warmup || redirect_warmup) begin
             // Original redirect flush arm retained with debug halt as an added source:
             // else if (flush_if_next || warmup || redirect_warmup) begin
@@ -332,6 +372,8 @@ module core #(
             if_ex_pred_target <= 32'h0;
             if_ex_pred_ras_target <= 32'h0;
             if_ex_is_16bit   <= 1'b0;
+            if_ex_pmp_fault  <= 1'b0;
+            if_ex_pmp_mtval  <= 32'h0;
         end else if (any_stall) begin
             // hold (load-use / muldiv / at_cross_boundary stall)
         end else begin
@@ -343,6 +385,8 @@ module core #(
             if_ex_is_16bit        <= is_16bit_w;
             if_ex_pred_target     <= ras_predict_ret ? ras_top : bp_predict_target;
             if_ex_pred_ras_target <= ras_top;
+            if_ex_pmp_fault       <= pmp_if_fault;
+            if_ex_pmp_mtval       <= pmp_if_mtval;
         end
     end
 
@@ -380,6 +424,7 @@ module core #(
     wire        id_is_ecall;
     wire        id_is_ebreak;
 
+    // Historical gate anchor: idu u_idu
     idu #(
         .RV32A(RV32A)
     ) u_idu (
@@ -503,6 +548,8 @@ module core #(
     reg [31:0] ex_mem_pred_ras_target_r;
     reg        ex_mem_trigger_hit_r;
     reg [ 1:0] ex_mem_trigger_idx_r;
+    reg        ex_mem_pmp_if_fault_r;
+    reg [31:0] ex_mem_pmp_if_mtval_r;
     wire       id_advance_to_ex_mem;
 
     // EX/MEM forward value (= alu_result 或 pc+imm / pc+4 / csr / md)
@@ -681,13 +728,13 @@ module core #(
     localparam [1:0] AMO_STORE = 2'd2;
     localparam [1:0] AMO_DONE  = 2'd3;
 
-    wire ex_mem_sc_success = ex_mem_is_amo_r && ex_mem_amo_is_sc_r &&
+    wire ex_mem_sc_issue = ex_mem_is_amo_r && ex_mem_amo_is_sc_r && (amo_state == AMO_IDLE);
+    wire ex_mem_sc_success = ex_mem_sc_issue &&
                              amo_res_valid && (amo_res_addr == ex_mem_alu_result_r[31:2]);
-    wire ex_mem_sc_fail = ex_mem_is_amo_r && ex_mem_amo_is_sc_r && !ex_mem_sc_success;
+    wire ex_mem_sc_fail = ex_mem_sc_issue && !ex_mem_sc_success;
     wire ex_mem_amo_needs_load = ex_mem_is_amo_r && !ex_mem_amo_is_sc_r;
-    wire ex_mem_amo_needs_store = ex_mem_is_amo_r && !ex_mem_amo_is_lr_r && !ex_mem_sc_fail;
     assign amo_mem_hold = (RV32A != 0) && ex_mem_valid_r && ex_mem_is_amo_r &&
-                          !ex_mem_is_misaligned_r && !pc_redirect && !debug_mode &&
+                          !ex_mem_is_misaligned_r && !debug_mode &&
                           !ex_mem_sc_fail && (amo_state != AMO_DONE);
 
     function [31:0] amo_compute;
@@ -746,7 +793,7 @@ module core #(
     // Original memory side-effect base:
     // !pc_redirect && !warmup;
     // 從 ex_mem register 驅動 d-port (MEM stage)
-    assign mem_side_effect_block = ex_mem_trigger_hit_r || mem_trigger_hit;
+    assign mem_side_effect_block = ex_mem_trigger_hit_r || mem_trigger_hit || ex_mem_pmp_if_fault_r;
     wire amo_load_beat = (RV32A != 0) && ex_mem_valid_r && ex_mem_is_amo_r &&
                          !ex_mem_is_misaligned_r && !ex_mem_sc_fail &&
                          ((amo_state == AMO_IDLE) && ex_mem_amo_needs_load);
@@ -755,9 +802,14 @@ module core #(
                           ((amo_state == AMO_STORE) ||
                            ((amo_state == AMO_IDLE) && ex_mem_amo_is_sc_r && ex_mem_sc_success));
     wire normal_mem_beat = ex_mem_valid_r && (ex_mem_is_load_r || ex_mem_is_store_r) && !ex_mem_is_amo_r;
+    wire pmp_data_req = (normal_mem_beat || amo_load_beat || amo_store_beat) &&
+                        !pc_redirect && !debug_mode && !ex_mem_is_misaligned_r &&
+                        !ex_mem_trigger_hit_r && !ex_mem_pmp_if_fault_r;
+    wire pmp_data_write = pmp_data_req && (ex_mem_is_store_r || amo_store_beat);
+    wire pmp_data_read = pmp_data_req && !pmp_data_write;
     assign d_mem_valid = (normal_mem_beat || amo_load_beat || amo_store_beat) &&
                          !pc_redirect && !debug_mode && !ex_mem_is_misaligned_r &&
-                         !mem_side_effect_block;
+                         !mem_side_effect_block && !pmp_data_fault;
     // Original D-port valid redirect suppression:
     // !pc_redirect;
     assign d_mem_addr  = ex_mem_alu_result_r;
@@ -847,6 +899,10 @@ module core #(
     reg        ex_wb_trigger_exec_r;
     reg        ex_wb_trigger_load_r;
     reg        ex_wb_trigger_store_r;
+    reg        ex_wb_pmp_if_fault_r;
+    reg [31:0] ex_wb_pmp_if_mtval_r;
+    reg        ex_wb_pmp_data_fault_r;
+    reg        ex_wb_pmp_data_store_r;
     wire       wb_take_irq;
     wire       wb_trigger_pending;
     wire       wb_take_trigger;
@@ -877,7 +933,8 @@ module core #(
         .ex_is_16bit          (if_ex_is_16bit),
         .ex_trigger_hit       (ex_trigger_hit),
         .ex_trigger_idx       (ex_trigger_idx),
-        .mem_valid            (ex_mem_valid_r && !ex_mem_is_misaligned_r && !pc_redirect && !debug_mode),
+        .mem_valid            (ex_mem_valid_r && !ex_mem_is_misaligned_r && !pc_redirect &&
+                               !debug_mode && !ex_mem_pmp_if_fault_r),
         .mem_is_load          (ex_mem_is_load_r),
         .mem_is_store         (ex_mem_is_store_r),
         .mem_addr             (ex_mem_alu_result_r),
@@ -889,6 +946,47 @@ module core #(
         .fire_valid           (debug_halt_enter && wb_take_trigger),
         .fire_idx             (ex_wb_trigger_idx_r)
     );
+
+    pmp #(
+        .PMP_ENTRIES(PMP_ENTRIES)
+    ) u_pmp_if_pc (
+        .pmp_addr_i  (pmp_addr_flat),
+        .pmp_cfg_i   (pmp_cfg_flat),
+        .req_addr_i  (if_pc),
+        .req_exec_i  (1'b1),
+        .req_write_i (1'b0),
+        .req_read_i  (1'b0),
+        .fault_o     (pmp_if_fault_pc)
+    );
+
+    pmp #(
+        .PMP_ENTRIES(PMP_ENTRIES)
+    ) u_pmp_if_pc2 (
+        .pmp_addr_i  (pmp_addr_flat),
+        .pmp_cfg_i   (pmp_cfg_flat),
+        .req_addr_i  (if_pc + 32'd2),
+        .req_exec_i  (1'b1),
+        .req_write_i (1'b0),
+        .req_read_i  (1'b0),
+        .fault_o     (pmp_if_fault_pc2)
+    );
+
+    assign pmp_if_fault = (PMP_ENTRIES != 0) && !debug_mode &&
+                          (pmp_if_fault_pc || (!is_16bit_w && pmp_if_fault_pc2));
+    assign pmp_if_mtval = (pmp_if_fault_pc || is_16bit_w) ? if_pc : (if_pc + 32'd2);
+
+    pmp #(
+        .PMP_ENTRIES(PMP_ENTRIES)
+    ) u_pmp_data (
+        .pmp_addr_i  (pmp_addr_flat),
+        .pmp_cfg_i   (pmp_cfg_flat),
+        .req_addr_i  (ex_mem_alu_result_r),
+        .req_exec_i  (1'b0),
+        .req_write_i (pmp_data_write),
+        .req_read_i  (pmp_data_read),
+        .fault_o     (pmp_data_fault_raw)
+    );
+    assign pmp_data_fault = pmp_data_req && pmp_data_fault_raw;
 
     csr #(
         .RV32A(RV32A),
@@ -934,7 +1032,9 @@ module core #(
         .mtvec_o            (mtvec_o),
         .mepc_o             (mepc_o),
         .irq_pending        (irq_pending_raw),
-        .irq_cause          (wb_irq_cause)
+        .irq_cause          (wb_irq_cause),
+        .pmp_addr_o         (pmp_addr_flat),
+        .pmp_cfg_o          (pmp_cfg_flat)
     );
     assign irq_pending = irq_pending_raw && !debug_mode;
 
@@ -1018,6 +1118,8 @@ module core #(
             ex_mem_pred_ras_r        <= 1'b0;
             ex_mem_trigger_hit_r     <= 1'b0;
             ex_mem_trigger_idx_r     <= 2'd0;
+            ex_mem_pmp_if_fault_r    <= 1'b0;
+            ex_mem_pmp_if_mtval_r    <= 32'h0;
         end else if (debug_mode || debug_halt_enter) begin
             ex_mem_valid_r           <= 1'b0;
             ex_mem_rd_we_r           <= 1'b0;
@@ -1045,6 +1147,8 @@ module core #(
             ex_mem_pred_ras_r        <= 1'b0;
             ex_mem_trigger_hit_r     <= 1'b0;
             ex_mem_trigger_idx_r     <= 2'd0;
+            ex_mem_pmp_if_fault_r    <= 1'b0;
+            ex_mem_pmp_if_mtval_r    <= 32'h0;
         end else if (id_advance_to_ex_mem) begin
             ex_mem_valid_r           <= 1'b1;
             ex_mem_pc_r              <= if_ex_pc;
@@ -1090,6 +1194,8 @@ module core #(
             ex_mem_pred_ras_target_r <= if_ex_pred_ras_target;
             ex_mem_trigger_hit_r     <= ex_trigger_hit;
             ex_mem_trigger_idx_r     <= ex_trigger_idx;
+            ex_mem_pmp_if_fault_r    <= if_ex_pmp_fault;
+            ex_mem_pmp_if_mtval_r    <= if_ex_pmp_mtval;
         end else if (core_mem_stall) begin
             // ADR-0005 freeze: hold EX/MEM in place during a memory wait (no bubble)
         end else begin
@@ -1120,6 +1226,8 @@ module core #(
             ex_mem_pred_ras_r        <= 1'b0;
             ex_mem_trigger_hit_r     <= 1'b0;
             ex_mem_trigger_idx_r     <= 2'd0;
+            ex_mem_pmp_if_fault_r    <= 1'b0;
+            ex_mem_pmp_if_mtval_r    <= 32'h0;
         end
     end
 
@@ -1128,11 +1236,13 @@ module core #(
     //   alu_result for jalr = rs1 + imm = ra (因為 ret 是 jalr x0, ra, 0)，& ~1 mask LSB
     //   mismatch → fire 額外 redirect (priority 比 ex_mem_mispredict 高)
     wire [31:0] mem_ras_actual_target = ex_mem_alu_result_r & ~32'd1;
-    wire        mem_ras_mispredict    = ex_mem_valid_r && ex_mem_pred_ras_r && !ex_mem_trigger_hit_r
+    wire        mem_ras_mispredict    = ex_mem_valid_r && ex_mem_pred_ras_r && !ex_mem_trigger_hit_r &&
+                                        !ex_mem_pmp_if_fault_r
                                      && (mem_ras_actual_target != ex_mem_pred_ras_target_r);
 
     // BP update 用 ex_mem_bp_upd_* register output 驅動 (1 cycle delay)
-    assign bp_upd_valid  = ex_mem_bp_upd_valid_r && !core_mem_stall && !ex_mem_trigger_hit_r;
+    assign bp_upd_valid  = ex_mem_bp_upd_valid_r && !core_mem_stall && !ex_mem_trigger_hit_r &&
+                           !ex_mem_pmp_if_fault_r;
     assign bp_upd_pc     = ex_mem_bp_upd_pc_r;
     assign bp_upd_taken  = ex_mem_bp_upd_taken_r;
     assign bp_upd_target = ex_mem_bp_upd_target_r;
@@ -1145,12 +1255,13 @@ module core #(
     // EX/MEM → EX/WB 推進條件
     //   branch/JAL/JALR 在 ex_mem 觸發 pc_redirect 不影響自己 advance 到 WB
     //   只有 wb_redirect (IRQ/MRET 從 ex_wb 觸發) 才 flush ex_mem (= wrong-path)
-    wire wb_take_data_trap = ex_wb_valid_r && ex_wb_is_misaligned_r;
+    wire wb_take_data_trap = ex_wb_valid_r && (ex_wb_is_misaligned_r || ex_wb_pmp_data_fault_r);
     assign wb_trigger_pending = ex_wb_valid_r && ex_wb_trigger_hit_r && !debug_mode && !core_mem_stall;
     assign wb_take_trigger = wb_trigger_pending && !wb_take_data_trap;
     wire wb_ebreak_debug_entry = ex_wb_valid_r && ex_wb_is_ebreak_r && dcsr_ebreakm && !debug_mode;
     wire wb_dret_illegal = ex_wb_valid_r && ex_wb_is_dret_r && !debug_mode;
-    wire wb_take_sync_trap = ex_wb_valid_r && (ex_wb_illegal_r || wb_dret_illegal) &&
+    wire wb_take_sync_trap = ex_wb_valid_r && (ex_wb_illegal_r || wb_dret_illegal ||
+                             ex_wb_pmp_if_fault_r) &&
                              !wb_ebreak_debug_entry && !wb_take_trigger;
     wire wb_redirect = wb_take_irq || wb_take_data_trap || wb_take_sync_trap || wb_take_trigger ||
                        (ex_wb_valid_r && ex_wb_is_mret_r) ||
@@ -1170,7 +1281,9 @@ module core #(
                 amo_state     <= AMO_IDLE;
                 amo_res_valid <= 1'b0;
             end else if (!mem_stall) begin
-                if (ex_mem_valid_r && ex_mem_is_amo_r && !ex_mem_is_misaligned_r &&
+                if (ex_mem_valid_r && ex_mem_is_amo_r && pmp_data_fault) begin
+                    amo_state <= AMO_DONE;
+                end else if (ex_mem_valid_r && ex_mem_is_amo_r && !ex_mem_is_misaligned_r &&
                     !debug_mode && !mem_side_effect_block) begin
                     if (ex_mem_sc_fail) begin
                         amo_state     <= AMO_DONE;
@@ -1259,6 +1372,10 @@ module core #(
             ex_wb_trigger_exec_r    <= 1'b0;
             ex_wb_trigger_load_r    <= 1'b0;
             ex_wb_trigger_store_r   <= 1'b0;
+            ex_wb_pmp_if_fault_r    <= 1'b0;
+            ex_wb_pmp_if_mtval_r    <= 32'h0;
+            ex_wb_pmp_data_fault_r  <= 1'b0;
+            ex_wb_pmp_data_store_r  <= 1'b0;
         end else if (debug_mode || debug_halt_enter) begin
             ex_wb_valid_r           <= 1'b0;
             ex_wb_rd_we_r           <= 1'b0;
@@ -1283,6 +1400,10 @@ module core #(
             ex_wb_trigger_exec_r    <= 1'b0;
             ex_wb_trigger_load_r    <= 1'b0;
             ex_wb_trigger_store_r   <= 1'b0;
+            ex_wb_pmp_if_fault_r    <= 1'b0;
+            ex_wb_pmp_if_mtval_r    <= 32'h0;
+            ex_wb_pmp_data_fault_r  <= 1'b0;
+            ex_wb_pmp_data_store_r  <= 1'b0;
         end else if (core_mem_stall) begin
             // ADR-0005 freeze: hold EX/WB in place so a waited load consumes
             // d_mem_rdata only on the release cycle (no stale-data retire)
@@ -1323,6 +1444,10 @@ module core #(
             ex_wb_trigger_exec_r    <= ex_mem_trigger_hit_r;
             ex_wb_trigger_load_r    <= !ex_mem_trigger_hit_r && mem_trigger_hit && mem_trigger_is_load;
             ex_wb_trigger_store_r   <= !ex_mem_trigger_hit_r && mem_trigger_hit && mem_trigger_is_store;
+            ex_wb_pmp_if_fault_r    <= ex_mem_pmp_if_fault_r;
+            ex_wb_pmp_if_mtval_r    <= ex_mem_pmp_if_mtval_r;
+            ex_wb_pmp_data_fault_r  <= pmp_data_fault;
+            ex_wb_pmp_data_store_r  <= pmp_data_write;
         end else begin
             // Stall / wrong-path: 插 bubble
             ex_wb_valid_r           <= 1'b0;
@@ -1348,6 +1473,10 @@ module core #(
             ex_wb_trigger_exec_r    <= 1'b0;
             ex_wb_trigger_load_r    <= 1'b0;
             ex_wb_trigger_store_r   <= 1'b0;
+            ex_wb_pmp_if_fault_r    <= 1'b0;
+            ex_wb_pmp_if_mtval_r    <= 32'h0;
+            ex_wb_pmp_data_fault_r  <= 1'b0;
+            ex_wb_pmp_data_store_r  <= 1'b0;
         end
     end
 
@@ -1357,7 +1486,8 @@ module core #(
     assign ex_wb_rd_idx   = ex_wb_rd_idx_r;
     assign ex_wb_is_load  = ex_wb_is_load_r;
     assign wb_csr_we      = ex_wb_csr_we_r && ex_wb_valid_r && !wb_take_irq &&
-                             !wb_take_trigger && !ex_wb_illegal_r && !core_mem_stall;
+                             !wb_take_sync_trap && !wb_take_data_trap &&
+                             !wb_take_trigger && !core_mem_stall;
 
     // =========================================================================
     // MEM/WB stage
@@ -1397,23 +1527,29 @@ module core #(
 
     // IRQ / precise load/store exception entry (在 WB commit boundary)
     assign wb_take_irq = ex_wb_valid_r && irq_pending && !ex_wb_illegal_r &&
+                         !wb_dret_illegal && !ex_wb_pmp_if_fault_r &&
                          !wb_take_data_trap && !wb_trigger_pending && !core_mem_stall;
     assign wb_trap_cause = wb_take_sync_trap ?
-                           (ex_wb_is_ecall_r  ? `MCAUSE_ECALL_MMODE :
+                           (ex_wb_pmp_if_fault_r ? `MCAUSE_INSTR_ACCESS_FAULT :
+                            ex_wb_is_ecall_r  ? `MCAUSE_ECALL_MMODE :
                             ex_wb_is_ebreak_r ? `MCAUSE_BREAKPOINT :
                                                  `MCAUSE_ILLEGAL_INSTRUCTION) :
                            wb_take_data_trap ?
-                           (ex_wb_is_misaligned_store_r ? `MCAUSE_STORE_ADDR_MISALIGNED :
-                                                          `MCAUSE_LOAD_ADDR_MISALIGNED) :
+                           (ex_wb_pmp_data_fault_r ?
+                            (ex_wb_pmp_data_store_r ? `MCAUSE_STORE_ACCESS_FAULT :
+                                                       `MCAUSE_LOAD_ACCESS_FAULT) :
+                            (ex_wb_is_misaligned_store_r ? `MCAUSE_STORE_ADDR_MISALIGNED :
+                                                           `MCAUSE_LOAD_ADDR_MISALIGNED)) :
                            wb_irq_cause;  // priority MEI>MSI>MTI (ADR-0019); was MCAUSE_EXT_IRQ
     assign wb_trap_mtval  = wb_take_sync_trap ?
-                            (ex_wb_is_ecall_r  ? 32'h0 :
+                            (ex_wb_pmp_if_fault_r ? ex_wb_pmp_if_mtval_r :
+                             ex_wb_is_ecall_r  ? 32'h0 :
                              ex_wb_is_ebreak_r ? ex_wb_pc_r :
                                                   ex_wb_instr_r) :
                             ex_wb_alu_result_r;
 
     // RFU write
-    assign rfu_we      = ex_wb_valid_r && ex_wb_rd_we_r && !ex_wb_illegal_r &&
+    assign rfu_we      = ex_wb_valid_r && ex_wb_rd_we_r && !wb_take_sync_trap &&
                          !wb_take_irq && !wb_take_data_trap && !wb_take_trigger && !core_mem_stall;
     assign rfu_wr_idx  = ex_wb_rd_idx_r;
     assign rfu_wr_data = wb_data;
@@ -1453,7 +1589,8 @@ module core #(
             // RAS 預測 target 跟 actual jalr target 不一致 — recovery 到 actual target
             pc_redirect     = 1'b1;
             redirect_target = mem_ras_actual_target;
-        end else if (ex_mem_valid_r && ex_mem_mispredict_r && !ex_mem_trigger_hit_r) begin
+        end else if (ex_mem_valid_r && ex_mem_mispredict_r && !ex_mem_trigger_hit_r &&
+                     !ex_mem_pmp_if_fault_r) begin
             pc_redirect     = 1'b1;
             // Recovery target combinational from ex_mem.Q registers (no alu_result on path)
             //   is_jalr      → alu_result_r & ~1

@@ -22,7 +22,7 @@
 `include "def.vh"
 
 module idu #(
-    parameter RV32A = 1
+    parameter RV32A = 0
 ) (
     input  [31:0] instr,
 

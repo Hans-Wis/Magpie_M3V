@@ -29,7 +29,7 @@
 `include "def.vh"
 
 module csr #(
-    parameter RV32A = 1,
+    parameter RV32A = 0,
     parameter PMP_ENTRIES = 0
 ) (
     input             clk,
@@ -95,7 +95,11 @@ module csr #(
     output [31:0]     mtvec_o,
     output [31:0]     mepc_o,
     output            irq_pending,
-    output [31:0]     irq_cause         // priority-encoded interrupt mcause (MEI>MSI>MTI)
+    output [31:0]     irq_cause,        // priority-encoded interrupt mcause (MEI>MSI>MTI)
+
+    // PMP CSRs (ADR-0024). Flattened as 8 entries so PMP_ENTRIES=0/4/8 can share ports.
+    output [32*8-1:0] pmp_addr_o,
+    output [ 8*8-1:0] pmp_cfg_o
 );
 
     // -------------------------------------------------------------------------
@@ -118,12 +122,15 @@ module csr #(
     reg        dcsr_step_reg;
     reg        dcsr_ebreakm_reg;
     reg [ 2:0] dcsr_cause_reg;
+    reg [ 7:0] pmpcfg_r [0:7];
+    reg [31:0] pmpaddr_r [0:7];
 
     // Counters
     reg [63:0] cycle_cnt;
     reg [63:0] instret_cnt;
 
     reg [31:0] new_val;
+    integer pmp_i;
 
     function is_trigger_csr;
         input [11:0] addr;
@@ -132,6 +139,41 @@ module csr #(
                              (addr == `CSR_TDATA1)  ||
                              (addr == `CSR_TDATA2)  ||
                              (addr == `CSR_TINFO);
+        end
+    endfunction
+
+    function is_pmpcfg_csr;
+        input [11:0] addr;
+        begin
+            is_pmpcfg_csr = (PMP_ENTRIES != 0) &&
+                            ((addr == `CSR_PMPCFG0) ||
+                             ((PMP_ENTRIES > 4) && (addr == `CSR_PMPCFG1)));
+        end
+    endfunction
+
+    function is_pmpaddr_csr;
+        input [11:0] addr;
+        begin
+            is_pmpaddr_csr = (PMP_ENTRIES != 0) &&
+                             (addr >= `CSR_PMPADDR0) &&
+                             (addr < (`CSR_PMPADDR0 + PMP_ENTRIES));
+        end
+    endfunction
+
+    function [2:0] pmp_index;
+        input [11:0] addr;
+        begin
+            pmp_index = addr[2:0];
+        end
+    endfunction
+
+    function [31:0] pmpcfg_read;
+        input [11:0] addr;
+        integer base;
+        begin
+            base = (addr == `CSR_PMPCFG1) ? 4 : 0;
+            pmpcfg_read = {pmpcfg_r[base + 3], pmpcfg_r[base + 2],
+                           pmpcfg_r[base + 1], pmpcfg_r[base + 0]};
         end
     endfunction
 
@@ -171,6 +213,17 @@ module csr #(
                 `CSR_DCSR    : csr_debug_read = dcsr_val;
                 `CSR_DPC     : csr_debug_read = dpc_reg;
                 `CSR_DSCRATCH0: csr_debug_read = dscratch0_reg;
+                `CSR_PMPCFG0,
+                `CSR_PMPCFG1 : csr_debug_read = is_pmpcfg_csr(addr) ? pmpcfg_read(addr) : 32'h0;
+                `CSR_PMPADDR0,
+                `CSR_PMPADDR1,
+                `CSR_PMPADDR2,
+                `CSR_PMPADDR3,
+                `CSR_PMPADDR4,
+                `CSR_PMPADDR5,
+                `CSR_PMPADDR6,
+                `CSR_PMPADDR7: csr_debug_read = is_pmpaddr_csr(addr) ?
+                                                pmpaddr_r[pmp_index(addr)] : 32'h0;
                 `CSR_TSELECT,
                 `CSR_TDATA1,
                 `CSR_TDATA2,
@@ -198,6 +251,17 @@ module csr #(
             `CSR_DCSR    : csr_rdata = dcsr_val;
             `CSR_DPC     : csr_rdata = dpc_reg;
             `CSR_DSCRATCH0: csr_rdata = dscratch0_reg;
+            `CSR_PMPCFG0,
+            `CSR_PMPCFG1 : csr_rdata = is_pmpcfg_csr(csr_raddr) ? pmpcfg_read(csr_raddr) : 32'h0;
+            `CSR_PMPADDR0,
+            `CSR_PMPADDR1,
+            `CSR_PMPADDR2,
+            `CSR_PMPADDR3,
+            `CSR_PMPADDR4,
+            `CSR_PMPADDR5,
+            `CSR_PMPADDR6,
+            `CSR_PMPADDR7: csr_rdata = is_pmpaddr_csr(csr_raddr) ?
+                                       pmpaddr_r[pmp_index(csr_raddr)] : 32'h0;
             `CSR_TSELECT,
             `CSR_TDATA1,
             `CSR_TDATA2,
@@ -215,10 +279,29 @@ module csr #(
                 `CSR_MTVAL,
                 `CSR_DPC,
                 `CSR_DSCRATCH0,
+                `CSR_PMPCFG0,
+                `CSR_PMPCFG1,
+                `CSR_PMPADDR0,
+                `CSR_PMPADDR1,
+                `CSR_PMPADDR2,
+                `CSR_PMPADDR3,
+                `CSR_PMPADDR4,
+                `CSR_PMPADDR5,
+                `CSR_PMPADDR6,
+                `CSR_PMPADDR7,
                 `CSR_TSELECT,
                 `CSR_TDATA1,
                 `CSR_TDATA2,
-                `CSR_TINFO: csr_rdata = is_trigger_csr(csr_waddr) ? trigger_csr_rdata : new_val;
+                `CSR_TINFO: begin
+                    if (is_trigger_csr(csr_waddr))
+                        csr_rdata = trigger_csr_rdata;
+                    else if (is_pmpcfg_csr(csr_waddr))
+                        csr_rdata = new_val;
+                    else if (is_pmpaddr_csr(csr_waddr))
+                        csr_rdata = new_val;
+                    else
+                        csr_rdata = new_val;
+                end
                 `CSR_DCSR: csr_rdata = {4'h4, 12'h0, new_val[15], 3'h0, 1'b0, 2'b0,
                                         new_val[8:6], 3'h0, new_val[2], 2'b11};
                 default: ;
@@ -269,6 +352,10 @@ module csr #(
             dcsr_cause_reg <= 3'b0;
             cycle_cnt    <= 64'b0;
             instret_cnt  <= 64'b0;
+            for (pmp_i = 0; pmp_i < 8; pmp_i = pmp_i + 1) begin
+                pmpcfg_r[pmp_i]  <= 8'h00;
+                pmpaddr_r[pmp_i] <= 32'h0;
+            end
         end else begin
             // 4.1 cycle 永遠 +1 (CSR write 不影響)
             cycle_cnt <= cycle_cnt + 1'b1;
@@ -298,6 +385,27 @@ module csr #(
                     `CSR_MTVAL   : mtval_reg   <= new_val;
                     `CSR_DPC     : dpc_reg     <= {new_val[31:1], 1'b0};
                     `CSR_DSCRATCH0: dscratch0_reg <= new_val;
+                    `CSR_PMPCFG0: if (PMP_ENTRIES != 0) begin
+                        for (pmp_i = 0; pmp_i < 4; pmp_i = pmp_i + 1)
+                            if (!pmpcfg_r[pmp_i][7])
+                                pmpcfg_r[pmp_i] <= new_val[pmp_i*8 +: 8];
+                    end
+                    `CSR_PMPCFG1: if (PMP_ENTRIES > 4) begin
+                        for (pmp_i = 0; pmp_i < 4; pmp_i = pmp_i + 1)
+                            if (!pmpcfg_r[pmp_i + 4][7])
+                                pmpcfg_r[pmp_i + 4] <= new_val[pmp_i*8 +: 8];
+                    end
+                    `CSR_PMPADDR0,
+                    `CSR_PMPADDR1,
+                    `CSR_PMPADDR2,
+                    `CSR_PMPADDR3,
+                    `CSR_PMPADDR4,
+                    `CSR_PMPADDR5,
+                    `CSR_PMPADDR6,
+                    `CSR_PMPADDR7: if (is_pmpaddr_csr(csr_waddr) &&
+                                       !pmpcfg_r[pmp_index(csr_waddr)][7]) begin
+                        pmpaddr_r[pmp_index(csr_waddr)] <= new_val;
+                    end
                     `CSR_DCSR    : begin
                         dcsr_ebreakm_reg <= new_val[15];
                         dcsr_cause_reg   <= new_val[8:6];
@@ -326,6 +434,27 @@ module csr #(
                     `CSR_MTVAL   : mtval_reg   <= debug_csr_wdata;
                     `CSR_DPC     : dpc_reg     <= {debug_csr_wdata[31:1], 1'b0};
                     `CSR_DSCRATCH0: dscratch0_reg <= debug_csr_wdata;
+                    `CSR_PMPCFG0: if (PMP_ENTRIES != 0) begin
+                        for (pmp_i = 0; pmp_i < 4; pmp_i = pmp_i + 1)
+                            if (!pmpcfg_r[pmp_i][7])
+                                pmpcfg_r[pmp_i] <= debug_csr_wdata[pmp_i*8 +: 8];
+                    end
+                    `CSR_PMPCFG1: if (PMP_ENTRIES > 4) begin
+                        for (pmp_i = 0; pmp_i < 4; pmp_i = pmp_i + 1)
+                            if (!pmpcfg_r[pmp_i + 4][7])
+                                pmpcfg_r[pmp_i + 4] <= debug_csr_wdata[pmp_i*8 +: 8];
+                    end
+                    `CSR_PMPADDR0,
+                    `CSR_PMPADDR1,
+                    `CSR_PMPADDR2,
+                    `CSR_PMPADDR3,
+                    `CSR_PMPADDR4,
+                    `CSR_PMPADDR5,
+                    `CSR_PMPADDR6,
+                    `CSR_PMPADDR7: if (is_pmpaddr_csr(debug_csr_waddr) &&
+                                       !pmpcfg_r[pmp_index(debug_csr_waddr)][7]) begin
+                        pmpaddr_r[pmp_index(debug_csr_waddr)] <= debug_csr_wdata;
+                    end
                     `CSR_DCSR    : begin
                         dcsr_ebreakm_reg <= debug_csr_wdata[15];
                         dcsr_cause_reg   <= debug_csr_wdata[8:6];
@@ -376,6 +505,15 @@ module csr #(
     assign dcsr_step_o = dcsr_step_reg;
     assign dcsr_ebreakm_o = dcsr_ebreakm_reg;
     assign debug_csr_rdata = csr_debug_read(debug_csr_waddr);
+    genvar pmp_g;
+    generate
+        for (pmp_g = 0; pmp_g < 8; pmp_g = pmp_g + 1) begin : g_pmp_flatten
+            assign pmp_cfg_o[pmp_g*8 +: 8] = ((PMP_ENTRIES != 0) && (pmp_g < PMP_ENTRIES)) ?
+                                             pmpcfg_r[pmp_g] : 8'h00;
+            assign pmp_addr_o[pmp_g*32 +: 32] = ((PMP_ENTRIES != 0) && (pmp_g < PMP_ENTRIES)) ?
+                                                pmpaddr_r[pmp_g] : 32'h0;
+        end
+    endgenerate
 
     // Interrupt arbitration (ADR-0019). mip[3,7,11] are CLINT/ext-sourced (RO to CSR
     // writes); only mie + mstatus.MIE gate delivery. Priority MEI > MSI > MTI (priv spec).

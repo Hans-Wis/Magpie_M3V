@@ -9,5 +9,5 @@ PASS: PLIC mcause=8000000b claim=1 meip_deasserted=1; UART string='MAGPIE PLIC U
 '; smoke mcause=8000000b claim=1
 - tb_plic_uart_directed.v:205: Verilog $finish
 - S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 3us; walltime 0.001 s; speed 2.827 ms/s
-- Verilator: cpu 0.001 s on 1 threads; allocated 17 MB
+- Verilator: $finish at 3us; walltime 0.002 s; speed 2.001 ms/s
+- Verilator: cpu 0.002 s on 1 threads; allocated 17 MB
