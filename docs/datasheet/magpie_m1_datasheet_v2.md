@@ -108,7 +108,7 @@ Clock/reset: single `clk`, active-low `resetn`.
 met; 4 817 LUT / 9.05%) + LED blink. **Verified (ASIC)**: `cpu_m1_asic_top` boots ROM → TSMC28 1RW1R SRAM
 macro → MMIO PASS; DC TSMC28HPC+ 699.30 MHz, total area 42 682 µm² (logic ~27 167 + SRAM macro 15 515).
 **RTOS-capable subsystem (`cpu_m1_clint_top`)**: CLINT (MTIP/MSIP) integrated — timer + software interrupt
-verified (§4.4, ADR-0019). PLIC (ext int) + UART are the next first-party-X3-RTL increment.
+verified (§4.4, ADR-0019). **PLIC** (ext int, claim/complete) + **UART** (console) integrated in `cpu_m1_soc_top` (ADR-0020) — full RTOS+console SoC.
 
 ---
 
