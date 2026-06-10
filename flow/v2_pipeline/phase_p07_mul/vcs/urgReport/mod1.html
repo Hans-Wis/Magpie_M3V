@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: tb_mul_unit</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_tb_mul_unit'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_tb_mul_unit')">tb_mul_unit</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s8 cl rt"> 89.07</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 93.91</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Cond" > 90.00</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Toggle" > 99.03</a></td>
+<td class="s7 cl rt"><a href="mod1.html#Branch" > 73.33</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p07_mul/vcs/../../../../IP/cpu_m1/dv/tb/tb_mul_unit.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p07_mul/vcs/../../../../IP/cpu_m1/dv/tb/tb_mul_unit.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod1.html#inst_tag_1"  onclick="showContent('inst_tag_1')">tb_mul_unit</a></td>
+<td class="s8 cl rt"> 89.07</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 93.91</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Cond" > 90.00</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Toggle" > 99.03</a></td>
+<td class="s7 cl rt"><a href="mod1.html#Branch" > 73.33</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_tb_mul_unit'>
+<hr>
+<a name="inst_tag_1"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_1" >tb_mul_unit</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s8 cl rt"> 89.07</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 93.91</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Cond" > 90.00</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Toggle" > 99.03</a></td>
+<td class="s7 cl rt"><a href="mod1.html#Branch" > 73.33</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 93.73</td>
+<td class="s9 cl rt"> 94.74</td>
+<td class="s9 cl rt"> 96.67</td>
+<td class="s9 cl rt"> 99.51</td>
+<td class="s8 cl rt"> 84.00</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<span class=inst>none</span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod0.html#inst_tag_0" id="tag_urg_inst_0">dut</a></td>
+<td class="s9 cl rt"> 99.92</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s9 cl rt"> 99.67</td>
+<td class="s10 cl rt">100.00</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_tb_mul_unit'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod1.html" >tb_mul_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">TOTAL</td><td></td><td>115</td><td>108</td><td>93.91</td></tr>
+<tr class="s10"><td class="lf">INITIAL</td><td>39</td><td>4</td><td>4</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>47</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">ROUTINE</td><td>62</td><td>11</td><td>10</td><td>90.91</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>94</td><td>2</td><td>2</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>101</td><td>11</td><td>11</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>117</td><td>9</td><td>9</td><td>100.00</td></tr>
+<tr class="s8"><td class="lf">ROUTINE</td><td>135</td><td>12</td><td>10</td><td>83.33</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>158</td><td>2</td><td>2</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">ROUTINE</td><td>166</td><td>20</td><td>18</td><td>90.00</td></tr>
+<tr class="s9"><td class="lf">INITIAL</td><td>189</td><td>43</td><td>41</td><td>95.35</td></tr>
+</table>
+<pre class="code"><br clear=all>
+38                          initial begin
+39         1/1                  clk = 1'b0;
+40         3/3                  forever #5 clk = ~clk;
+41                          end
+42                      
+43                          function [31:0] signed_value;
+44                              input [31:0] magnitude;
+45                              input        negative;
+46                              begin
+47         1/1                      signed_value = negative ? (~magnitude + 32'd1) : magnitude;
+48                              end
+49                          endfunction
+50                      
+51                          function [63:0] golden_product;
+52                              input [2:0]  f_md_op;
+53                              input [31:0] f_op_a;
+54                              input [31:0] f_op_b;
+55                              reg signed [63:0] a_s64;
+56                              reg signed [63:0] b_s64;
+57                              reg signed [63:0] p_s64;
+58                              reg        [63:0] a_u64;
+59                              reg        [63:0] b_u64;
+60                              reg        [63:0] p_u64;
+61                              begin
+62         1/1                      a_s64 = {{32{f_op_a[31]}}, f_op_a};
+63         1/1                      b_s64 = {{32{f_op_b[31]}}, f_op_b};
+64         1/1                      a_u64 = {32'b0, f_op_a};
+65         1/1                      b_u64 = {32'b0, f_op_b};
+66                      
+67         1/1                      case (f_md_op)
+68                                      `MD_MUL,
+69                                      `MD_MULH: begin
+70         1/1                              p_s64 = a_s64 * b_s64;
+71         1/1                              golden_product = p_s64[63:0];
+72                                      end
+73                                      `MD_MULHSU: begin
+74         1/1                              p_u64 = (f_op_a[31]) ? ((~({32'b0, (~f_op_a + 32'd1)} * b_u64)) + 64'd1) :
+75                                                                 (a_u64 * b_u64);
+76         1/1                              golden_product = p_u64;
+77                                      end
+78                                      `MD_MULHU: begin
+79         1/1                              golden_product = a_u64 * b_u64;
+80                                      end
+81                                      default: begin
+82         <font color = "red">0/1     ==>                      golden_product = 64'h0000_0000_0000_0000;</font>
+83                                      end
+84                                  endcase
+85                              end
+86                          endfunction
+87                      
+88                          function [31:0] golden_result;
+89                              input [2:0]  f_md_op;
+90                              input [31:0] f_op_a;
+91                              input [31:0] f_op_b;
+92                              reg [63:0] product;
+93                              begin
+94         1/1                      product = golden_product(f_md_op, f_op_a, f_op_b);
+95         1/1                      golden_result = (f_md_op == `MD_MUL) ? product[31:0] : product[63:32];
+96                              end
+97                          endfunction
+98                      
+99                          task reset_dut;
+100                             begin
+101        1/1                      resetn = 1'b0;
+102        1/1                      start  = 1'b0;
+103        1/1                      md_op  = `MD_MUL;
+104        1/1                      op_a   = 32'h0000_0000;
+105        1/1                      op_b   = 32'h0000_0000;
+106        3/3                      repeat (3) @(posedge clk);
+                        REPEAT_FALSE
+107        1/1                      resetn = 1'b1;
+108        2/2                      @(posedge clk);
+109                             end
+110                         endtask
+111                     
+112                         task launch_vector;
+113                             input [2:0]  t_md_op;
+114                             input [31:0] t_op_a;
+115                             input [31:0] t_op_b;
+116                             begin
+117        2/2                      @(negedge clk);
+118        1/1                      md_op = t_md_op;
+119        1/1                      op_a  = t_op_a;
+120        1/1                      op_b  = t_op_b;
+121        1/1                      start = 1'b1;
+122        2/2                      @(negedge clk);
+123        1/1                      start = 1'b0;
+124                             end
+125                         endtask
+126                     
+127                         task wait_and_check;
+128                             input [2:0]  t_md_op;
+129                             input [31:0] t_op_a;
+130                             input [31:0] t_op_b;
+131                             input [8*40-1:0] tag;
+132                             reg [31:0] exp_result;
+133                             integer wait_cycles;
+134                             begin
+135        1/1                      wait_cycles = 0;
+136        1/1                      while (done !== 1'b1 &amp;&amp; wait_cycles &lt; 8) begin
+137        2/2                          @(posedge clk);
+138        2/2                          #1;
+139        1/1                          wait_cycles = wait_cycles + 1;
+140                                 end
+                   <font color = "red">==>  WHILE_FALSE</font>
+141        1/1                      exp_result = golden_result(t_md_op, t_op_a, t_op_b);
+142        1/1                      vectors = vectors + 1;
+143        1/1                      if (done !== 1'b1 || result !== exp_result) begin
+144        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+145        <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s op=%b a=%h b=%h result=%h exp=%h done=%b wait=%0d product=%h&quot;,</font>
+146                                            vectors, tag, t_md_op, t_op_a, t_op_b, result, exp_result,
+147                                            done, wait_cycles, golden_product(t_md_op, t_op_a, t_op_b));
+148                                 end
+                        MISSING_ELSE
+149                             end
+150                         endtask
+151                     
+152                         task run_vector;
+153                             input [2:0]  t_md_op;
+154                             input [31:0] t_op_a;
+155                             input [31:0] t_op_b;
+156                             input [8*40-1:0] tag;
+157                             begin
+158        1/1                      launch_vector(t_md_op, t_op_a, t_op_b);
+159        1/1                      wait_and_check(t_md_op, t_op_a, t_op_b, tag);
+160                             end
+161                         endtask
+162                     
+163                         task run_ignored_busy_start;
+164                             reg [31:0] exp_result;
+165                             begin
+166        2/2                      @(negedge clk);
+167        1/1                      md_op = `MD_MULH;
+168        1/1                      op_a  = 32'h8000_0000;
+169        1/1                      op_b  = 32'hffff_ffff;
+170        1/1                      start = 1'b1;
+171        2/2                      @(negedge clk);
+172        1/1                      md_op = `MD_MULHU;
+173        1/1                      op_a  = 32'h0000_0003;
+174        1/1                      op_b  = 32'h0000_0007;
+175        1/1                      start = 1'b1;
+176        2/2                      @(negedge clk);
+177        1/1                      start = 1'b0;
+178                     
+179        1/1                      wait_and_check(`MD_MULH, 32'h8000_0000, 32'hffff_ffff, &quot;BUSY_START_IGNORED&quot;);
+180        1/1                      exp_result = golden_result(`MD_MULH, 32'h8000_0000, 32'hffff_ffff);
+181        1/1                      if (result !== exp_result) begin
+182        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+183        <font color = "red">0/1     ==>                  $error(&quot;FAIL busy-start overwrite check result=%h exp=%h&quot;, result, exp_result);</font>
+184                                 end
+                        MISSING_ELSE
+185                             end
+186                         endtask
+187                     
+188                         initial begin
+189        1/1                  vectors    = 0;
+190        1/1                  errors     = 0;
+191        1/1                  rand_state = 32'h1357_9bdf;
+192                     
+193        1/1                  op_table[0] = `MD_MUL;
+194        1/1                  op_table[1] = `MD_MULH;
+195        1/1                  op_table[2] = `MD_MULHU;
+196        1/1                  op_table[3] = `MD_MULHSU;
+197                     
+198        1/1                  magnitude_table[0] = 32'h0000_0000;
+199        1/1                  magnitude_table[1] = 32'h0000_0001;
+200        1/1                  magnitude_table[2] = 32'h0000_0002;
+201        1/1                  magnitude_table[3] = 32'h0000_0003;
+202        1/1                  magnitude_table[4] = 32'h0000_ffff;
+203        1/1                  magnitude_table[5] = 32'h7fff_ffff;
+204        1/1                  magnitude_table[6] = 32'h8000_0000;
+205        1/1                  magnitude_table[7] = 32'hffff_ffff;
+206        1/1                  magnitude_table[8] = 32'h5555_aaaa;
+207                     
+208        1/1                  reset_dut();
+209                     
+210        1/1                  run_ignored_busy_start();
+211                     
+212        1/1                  reset_dut();
+213                     
+214        1/1                  for (op_i = 0; op_i &lt; 4; op_i = op_i + 1) begin
+215        1/1                      for (sign_i = 0; sign_i &lt; 4; sign_i = sign_i + 1) begin
+216        1/1                          for (mag_a_i = 0; mag_a_i &lt; 9; mag_a_i = mag_a_i + 1) begin
+217        1/1                              for (mag_b_i = 0; mag_b_i &lt; 9; mag_b_i = mag_b_i + 1) begin
+218        1/1                                  run_vector(op_table[op_i],
+219                                                        signed_value(magnitude_table[mag_a_i], sign_i[1]),
+220                                                        signed_value(magnitude_table[mag_b_i], sign_i[0]),
+221                                                        &quot;OP_SIGN_MAG_MATRIX&quot;);
+222                                         end
+223                                     end
+224                                 end
+225                             end
+226                     
+227        1/1                  for (op_i = 0; op_i &lt; 4; op_i = op_i + 1) begin
+228        1/1                      for (i = 0; i &lt; 32; i = i + 1) begin
+229        1/1                          run_vector(op_table[op_i], (32'h0000_0001 &lt;&lt; i), 32'hffff_ffff, &quot;WALK_A_ONES_B&quot;);
+230        1/1                          run_vector(op_table[op_i], 32'hffff_ffff, (32'h0000_0001 &lt;&lt; i), &quot;ONES_A_WALK_B&quot;);
+231        1/1                          run_vector(op_table[op_i], (32'h8000_0000 &gt;&gt; i), (32'h0000_0001 &lt;&lt; i), &quot;CROSS_WALK&quot;);
+232        1/1                          run_vector(op_table[op_i], ~(32'h0000_0001 &lt;&lt; i), (32'h0000_0001 &lt;&lt; i), &quot;INV_WALK_A&quot;);
+233                                 end
+234                             end
+235                     
+236        1/1                  for (op_i = 0; op_i &lt; 4; op_i = op_i + 1) begin
+237        1/1                      for (i = 0; i &lt; 128; i = i + 1) begin
+238        1/1                          rand_state = (rand_state * 32'd1664525) + 32'd1013904223;
+239        1/1                          j = rand_state;
+240        1/1                          rand_state = (rand_state * 32'd1664525) + 32'd1013904223;
+241        1/1                          run_vector(op_table[op_i], j[31:0], rand_state[31:0], &quot;LCG_RANDOM&quot;);
+242                                 end
+243                             end
+244                     
+245        2/2                  @(posedge clk);
+246        1/1                  if (errors == 0) begin
+247        1/1                      $display(&quot;PASS: mul unit %0d/%0d vectors&quot;, vectors, vectors);
+248        1/1                      $finish;
+249                             end else begin
+250        <font color = "red">0/1     ==>              $display(&quot;FAIL: mul unit %0d/%0d vectors failed&quot;, errors, vectors);</font>
+251        <font color = "red">0/1     ==>              $fatal(1);</font>
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod1.html" >tb_mul_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">Conditions</td><td>10</td><td>9</td><td>90.00</td></tr>
+<tr class="s9"><td class="lf">Logical</td><td>10</td><td>9</td><td>90.00</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       47
+ EXPRESSION (negative ? (((~magnitude) + 32'b1)) : magnitude)
+             ----1---
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       74
+ EXPRESSION (f_op_a[31] ? (((~({32'b0, ((~f_op_a) + 32'b1)} * b_u64)) + 64'b1)) : ((a_u64 * b_u64)))
+             -----1----
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       95
+ EXPRESSION ((f_md_op == 3'b0) ? product[31:0] : product[63:32])
+             --------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       95
+ SUB-EXPRESSION (f_md_op == 3'b0)
+                --------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       246
+ EXPRESSION (errors == 0)
+            ------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod1.html" >tb_mul_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s8">
+<td>Totals</td>
+<td class="rt">8</td>
+<td class="rt">7</td>
+<td class="rt">87.50 </td>
+</tr><tr class="s9">
+<td>Total Bits</td>
+<td class="rt">206</td>
+<td class="rt">204</td>
+<td class="rt">99.03 </td>
+</tr><tr class="s9">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">103</td>
+<td class="rt">102</td>
+<td class="rt">99.03 </td>
+</tr><tr class="s9">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">103</td>
+<td class="rt">102</td>
+<td class="rt">99.03 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s8">
+<td>Signals</td>
+<td class="rt">8</td>
+<td class="rt">7</td>
+<td class="rt">87.50 </td>
+</tr><tr class="s9">
+<td>Signal Bits</td>
+<td class="rt">206</td>
+<td class="rt">204</td>
+<td class="rt">99.03 </td>
+</tr><tr class="s9">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">103</td>
+<td class="rt">102</td>
+<td class="rt">99.03 </td>
+</tr><tr class="s9">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">103</td>
+<td class="rt">102</td>
+<td class="rt">99.03 </td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>clk</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>resetn</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>start</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>md_op[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>md_op[2]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>op_a[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>op_b[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>result[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>done</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod1.html" >tb_mul_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s7">
+<td>Branches</td>
+<td></td>
+<td class="rt">15</td>
+<td class="rt">11</td>
+<td class="rt">73.33 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">246</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">143</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">181</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s10">
+<td>TERNARY</td>
+<td class="rt">47</td>
+<td class="rt">2</td>
+<td class="rt">2</td>
+<td class="rt">100.00</td>
+</tr><tr class="s8">
+<td>CASE</td>
+<td class="rt">67</td>
+<td class="rt">5</td>
+<td class="rt">4</td>
+<td class="rt">80.00 </td>
+</tr><tr class="s10">
+<td>TERNARY</td>
+<td class="rt">95</td>
+<td class="rt">2</td>
+<td class="rt">2</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+246                if (errors == 0) begin
+                   <font color = "red">-1-</font>  
+247                    $display("PASS: mul unit %0d/%0d vectors", vectors, vectors);
+           <font color = "green">            ==></font>
+248                    $finish;
+249                end else begin
+250                    $display("FAIL: mul unit %0d/%0d vectors failed", errors, vectors);
+           <font color = "red">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+143                    if (done !== 1'b1 || result !== exp_result) begin
+                       <font color = "red">-1-</font>  
+144                        errors = errors + 1;
+           <font color = "red">                ==></font>
+145                        $error("FAIL[%0d] %0s op=%b a=%h b=%h result=%h exp=%h done=%b wait=%0d product=%h",
+146                               vectors, tag, t_md_op, t_op_a, t_op_b, result, exp_result,
+147                               done, wait_cycles, golden_product(t_md_op, t_op_a, t_op_b));
+148                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+181                    if (result !== exp_result) begin
+                       <font color = "red">-1-</font>  
+182                        errors = errors + 1;
+           <font color = "red">                ==></font>
+183                        $error("FAIL busy-start overwrite check result=%h exp=%h", result, exp_result);
+184                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+47                     signed_value = negative ? (~magnitude + 32'd1) : magnitude;
+                                               <font color = "green">-1-</font>  
+                                               <font color = "green">==></font>  
+                                               <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+67                     case (f_md_op)
+                       <font color = "red">-1-</font>  
+68                         `MD_MUL,
+69                         `MD_MULH: begin
+70                             p_s64 = a_s64 * b_s64;
+           <font color = "green">                    ==></font>
+71                             golden_product = p_s64[63:0];
+72                         end
+73                         `MD_MULHSU: begin
+74                             p_u64 = (f_op_a[31]) ? ((~({32'b0, (~f_op_a + 32'd1)} * b_u64)) + 64'd1) :
+                                                    <font color = "green">-2-</font>  
+                                                    <font color = "green">==></font>  
+                                                    <font color = "green">==></font>  
+75                                                    (a_u64 * b_u64);
+76                             golden_product = p_u64;
+77                         end
+78                         `MD_MULHU: begin
+79                             golden_product = a_u64 * b_u64;
+           <font color = "green">                    ==></font>
+80                         end
+81                         default: begin
+82                             golden_product = 64'h0000_0000_0000_0000;
+           <font color = "red">                    ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>3'b0 3'b1 </td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b010 </td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b010 </td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b011 </td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+95                     golden_result = (f_md_op == `MD_MUL) ? product[31:0] : product[63:32];
+                                                            <font color = "green">-1-</font>  
+                                                            <font color = "green">==></font>  
+                                                            <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_1">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_tb_mul_unit">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

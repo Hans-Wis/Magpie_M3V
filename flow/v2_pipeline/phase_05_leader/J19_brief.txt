@@ -1,0 +1,24 @@
+ROLE: Codex EXECUTOR (gpt-5.5), PL=Claude. design_id=cpu_m1 (RV32IMC_Zicsr, M-mode). -s danger-full-access. Spike GOLDEN. report-faithfully; do NOT touch RTL unless a real DUT bug is PROVEN.
+
+CONTEXT: sync-trap lockstep is now unblocked (Claude fixed the Spike --instructions budget). 2/5 seeds pass cleanly (6 real sync-traps each). 3/5 seeds (e.g. 2026061801/02/03) diverge in a NESTED-TRAP scenario: DUT & Spike match for ~516 commits incl. a trap+handler+mret, both commit `mret`@0x1f0e, then the DUT's next commit is 0x1d9c (re-enters a handler) while Spike's stream ends -> their mret resumed to different mepc.
+
+GROK (RISC-V priv expert) opinion (docs/reports/csr_compliance/grok_nestedtrap_opinion.md): this is MOST LIKELY a handler-design artifact, NOT a DUT bug. M-mode has a single-level mstatus stack and NO hardware mepc nesting; if a random instruction inside the minimal (non-nesting-safe) handler faults, the outer mepc is clobbered BY DESIGN -> divergence is expected. riscv-dv standard practice: make the handler nesting-safe (save mepc/mcause early) OR filter/waive seeds that trap while MPP==M. Only a mismatch that REMAINS after hardening is a credible DUT bug.
+
+DO (in this order):
+1. DECISIVE CHECK on a failing seed (2026061801): at the nested trap, did the DUT and Spike BOTH take a trap on the SAME instruction (same pc, same mcause, same mtval)? Dump both. 
+   - If SAME instr+cause -> it's the non-nesting-safe-handler artifact (NOT a DUT bug). Proceed to step 2.
+   - If DIFFERENT (DUT trapped where Spike did not, or different mcause on identical bytes) -> REAL DUT bug: root-cause (per Grok's checklist: nested mepc precise-PC missed J17 fix? wrong mcause? trapped on a legal instr?), fix RTL clean-room + ADR. Then step 3.
+2. FIX (harness, standard practice): make the riscv-dv M-mode trap handler NESTING-SAFE -- save mepc/mcause/mtval (and any needed GPRs) to a dedicated scratch region at handler entry BEFORE any potentially-faulting op, and restore before the outer mret. (Prefer hardening the handler over filtering, so nested traps are actually lockstepped.) If hardening the generated handler is impractical, fall back to FILTERING: detect "trap taken while MPP==M" (nested) and treat those seeds as a documented, lockstep-equivalent waiver (DUT==Spike up to the nesting point) -- NOT a silent skip; record why.
+3. RE-RUN >=5 sync-trap seeds (incl. 2026061801/02/03/04/05). Goal: all clean (per-commit match) OR cleanly+honestly waived with evidence. gate_03_09 back to PASS.
+4. RE-VALIDATE: full pytest >=183 green, gate_02_00/02_02/02_03 trap + gate_03_08 + gate_02_01 + gate_04_08 PASS, full-mix 100k still clean. Keep Claude's run_spike budget + write_tohost-truncation harness fixes.
+
+CONSTRAINTS: no RTL change unless a real DUT bug is proven (step 1); no test relaxation/masking; explicit paths.
+
+OUTPUT (write <=36 lines) flow/v2_pipeline/phase_05_leader/J19_result.md:
+  ## decisive_check (nested trap: same instr+mcause on DUT & Spike? -> handler-artifact or REAL DUT bug; evidence)
+  ## fix (handler hardened nesting-safe? or seeds waived? or RTL fix+ADR if real bug)
+  ## synctrap_seeds (N seeds: pass/waived counts + matched commits)
+  ## revalidate (pytest pass count; key gates PASS; full-mix still clean)
+  ## regressions
+  ## verdict (handler-artifact resolved / real-DUT-bug-fixed)
+  ## tokens

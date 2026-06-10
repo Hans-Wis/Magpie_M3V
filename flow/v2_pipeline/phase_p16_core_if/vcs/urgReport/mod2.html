@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: alu</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_alu'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_alu')">alu</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s5 cl rt"> 58.00</td>
+<td class="s2 cl rt"><a href="mod2.html#Line" > 21.43</a></td>
+<td class="s10 cl rt"><a href="mod2.html#Cond" >100.00</a></td>
+<td class="s9 cl rt"><a href="mod2.html#Toggle" > 95.20</a></td>
+<td class="wht cl rt"></td>
+<td class="s1 cl rt"><a href="mod2.html#Branch" > 15.38</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p16_core_if/../../../IP/cpu_m1/rtl/alu.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p16_core_if/../../../IP/cpu_m1/rtl/alu.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod2.html#inst_tag_2"  onclick="showContent('inst_tag_2')">tb_directed_lockstep.dut.u_alu</a></td>
+<td class="s5 cl rt"> 58.00</td>
+<td class="s2 cl rt"><a href="mod2.html#Line" > 21.43</a></td>
+<td class="s10 cl rt"><a href="mod2.html#Cond" >100.00</a></td>
+<td class="s9 cl rt"><a href="mod2.html#Toggle" > 95.20</a></td>
+<td class="wht cl rt"></td>
+<td class="s1 cl rt"><a href="mod2.html#Branch" > 15.38</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_alu'>
+<hr>
+<a name="inst_tag_2"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_2" >tb_directed_lockstep.dut.u_alu</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s5 cl rt"> 58.00</td>
+<td class="s2 cl rt"><a href="mod2.html#Line" > 21.43</a></td>
+<td class="s10 cl rt"><a href="mod2.html#Cond" >100.00</a></td>
+<td class="s9 cl rt"><a href="mod2.html#Toggle" > 95.20</a></td>
+<td class="wht cl rt"></td>
+<td class="s1 cl rt"><a href="mod2.html#Branch" > 15.38</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s5 cl rt"> 58.00</td>
+<td class="s2 cl rt"> 21.43</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s9 cl rt"> 95.20</td>
+<td class="wht cl rt"></td>
+<td class="s1 cl rt"> 15.38</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td><td class="alfsrt">NAME</td></tr><tr>
+<td class="s7 cl rt"> 71.18</td>
+<td class="s9 cl rt"> 92.16</td>
+<td class="s5 cl rt"> 55.64</td>
+<td class="s6 cl rt"> 64.19</td>
+<td class="wht cl rt"></td>
+<td class="s7 cl rt"> 72.73</td>
+<td><a href="mod11.html#inst_tag_11" >dut</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td colspan=7>no children</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_alu'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod2.html" >alu</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s2"><td class="lf">TOTAL</td><td></td><td>14</td><td>3</td><td>21.43</td></tr>
+<tr class="s2"><td class="lf">ALWAYS</td><td>54</td><td>14</td><td>3</td><td>21.43</td></tr>
+</table>
+<pre class="code"><br clear=all>
+53                          always @* begin
+54         1/1                  case (alu_op)
+55         1/1                      `ALU_ADD    : result = sum;
+56         <font color = "red">0/1     ==>              `ALU_SUB    : result = diff;</font>
+57         <font color = "red">0/1     ==>              `ALU_AND    : result = op_a &amp; op_b;</font>
+58         <font color = "red">0/1     ==>              `ALU_OR     : result = op_a | op_b;</font>
+59         <font color = "red">0/1     ==>              `ALU_XOR    : result = op_a ^ op_b;</font>
+60         <font color = "red">0/1     ==>              `ALU_SLL    : result = sll_o;</font>
+61         <font color = "red">0/1     ==>              `ALU_SRL    : result = srl_o;</font>
+62         <font color = "red">0/1     ==>              `ALU_SRA    : result = sra_o;</font>
+63         <font color = "red">0/1     ==>              `ALU_SLT    : result = {31'b0, lt_s};</font>
+64         <font color = "red">0/1     ==>              `ALU_SLTU   : result = {31'b0, lt_u};</font>
+65         1/1                      `ALU_SEQ    : result = {31'b0, eq};
+66         <font color = "red">0/1     ==>              `ALU_COPY_B : result = op_b;</font>
+67         <font color = "red">0/1     ==>              default     : result = 32'h0;</font>
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod2.html" >alu</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s10"><td class="lf">Conditions</td><td>2</td><td>2</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">Logical</td><td>2</td><td>2</td><td>100.00</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       42
+ EXPRESSION (op_a == op_b)
+            -------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod2.html" >alu</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s8">
+<td>Totals</td>
+<td class="rt">16</td>
+<td class="rt">13</td>
+<td class="rt">81.25 </td>
+</tr><tr class="s9">
+<td>Total Bits</td>
+<td class="rt">542</td>
+<td class="rt">516</td>
+<td class="rt">95.20 </td>
+</tr><tr class="s9">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">271</td>
+<td class="rt">258</td>
+<td class="rt">95.20 </td>
+</tr><tr class="s9">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">271</td>
+<td class="rt">258</td>
+<td class="rt">95.20 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s8">
+<td>Ports</td>
+<td class="rt">7</td>
+<td class="rt">6</td>
+<td class="rt">85.71 </td>
+</tr><tr class="s9">
+<td>Port Bits</td>
+<td class="rt">206</td>
+<td class="rt">202</td>
+<td class="rt">98.06 </td>
+</tr><tr class="s9">
+<td nowrap>Port Bits 0->1</td>
+<td class="rt">103</td>
+<td class="rt">101</td>
+<td class="rt">98.06 </td>
+</tr><tr class="s9">
+<td nowrap>Port Bits 1->0</td>
+<td class="rt">103</td>
+<td class="rt">101</td>
+<td class="rt">98.06 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s7">
+<td>Signals</td>
+<td class="rt">9</td>
+<td class="rt">7</td>
+<td class="rt">77.78 </td>
+</tr><tr class="s9">
+<td>Signal Bits</td>
+<td class="rt">336</td>
+<td class="rt">314</td>
+<td class="rt">93.45 </td>
+</tr><tr class="s9">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">168</td>
+<td class="rt">157</td>
+<td class="rt">93.45 </td>
+</tr><tr class="s9">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">168</td>
+<td class="rt">157</td>
+<td class="rt">93.45 </td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Port Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td><td class="alfsrt">Direction</td></tr><tr>
+<td>op_a[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>op_b[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>alu_op[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>alu_op[1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>alu_op[2]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>alu_op[3]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>result[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>OUTPUT</td>
+</tr><tr>
+<td>cmp_eq</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>OUTPUT</td>
+</tr><tr>
+<td>cmp_lt_s</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>OUTPUT</td>
+</tr><tr>
+<td>cmp_lt_u</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>OUTPUT</td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>sum[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>diff[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>lt_s</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>lt_u</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>eq</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>shamt[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>sll_o[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>sll_o[31:1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>srl_o[21:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>srl_o[31:22]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>sra_o[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod2.html" >alu</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s1">
+<td>Branches</td>
+<td></td>
+<td class="rt">13</td>
+<td class="rt">2</td>
+<td class="rt">15.38 </td>
+</tr><tr class="s1">
+<td>CASE</td>
+<td class="rt">54</td>
+<td class="rt">13</td>
+<td class="rt">2</td>
+<td class="rt">15.38 </td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+54                 case (alu_op)
+                   <font color = "red">-1-</font>  
+55                     `ALU_ADD    : result = sum;
+           <font color = "green">            ==></font>
+56                     `ALU_SUB    : result = diff;
+           <font color = "red">            ==></font>
+57                     `ALU_AND    : result = op_a & op_b;
+           <font color = "red">            ==></font>
+58                     `ALU_OR     : result = op_a | op_b;
+           <font color = "red">            ==></font>
+59                     `ALU_XOR    : result = op_a ^ op_b;
+           <font color = "red">            ==></font>
+60                     `ALU_SLL    : result = sll_o;
+           <font color = "red">            ==></font>
+61                     `ALU_SRL    : result = srl_o;
+           <font color = "red">            ==></font>
+62                     `ALU_SRA    : result = sra_o;
+           <font color = "red">            ==></font>
+63                     `ALU_SLT    : result = {31'b0, lt_s};
+           <font color = "red">            ==></font>
+64                     `ALU_SLTU   : result = {31'b0, lt_u};
+           <font color = "red">            ==></font>
+65                     `ALU_SEQ    : result = {31'b0, eq};
+           <font color = "green">            ==></font>
+66                     `ALU_COPY_B : result = op_b;
+           <font color = "red">            ==></font>
+67                     default     : result = 32'h0;
+           <font color = "red">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>4'b0 </td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>4'b1 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>4'd2 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>4'd3 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>4'd4 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>4'd5 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>4'd6 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>4'd7 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>4'd8 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>4'd9 </td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>4'd10 </td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>4'd11 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>default</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_2">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_alu">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

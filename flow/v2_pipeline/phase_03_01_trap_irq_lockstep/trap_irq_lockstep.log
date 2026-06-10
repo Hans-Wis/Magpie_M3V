@@ -1,0 +1,1 @@
+PASS: prefix lockstep matched 13 commits; trap events matched mepc/mcause/mstatus/mret

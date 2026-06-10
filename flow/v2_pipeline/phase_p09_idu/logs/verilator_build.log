@@ -1,0 +1,33 @@
+%Warning-PINMISSING: ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/dv/tb/tb_idu_unit.v:95:9: Instance has missing pin: 'is_amo'
+   95 |     idu dut (
+      |         ^~~
+                     ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/rtl/idu.v:58:23: ... Location of port declaration
+   58 |     output            is_amo,
+      |                       ^~~~~~
+                     ... For warning description see https://verilator.org/warn/PINMISSING?v=5.046
+                     ... Use "/* verilator lint_off PINMISSING */" and lint_on around source to disable this message.
+%Warning-PINMISSING: ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/dv/tb/tb_idu_unit.v:95:9: Instance has missing pin: 'amo_is_lr'
+   95 |     idu dut (
+      |         ^~~
+                     ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/rtl/idu.v:59:23: ... Location of port declaration
+   59 |     output            amo_is_lr,
+      |                       ^~~~~~~~~
+%Warning-PINMISSING: ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/dv/tb/tb_idu_unit.v:95:9: Instance has missing pin: 'amo_is_sc'
+   95 |     idu dut (
+      |         ^~~
+                     ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/rtl/idu.v:60:23: ... Location of port declaration
+   60 |     output            amo_is_sc,
+      |                       ^~~~~~~~~
+%Warning-PINMISSING: ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/dv/tb/tb_idu_unit.v:95:9: Instance has missing pin: 'amo_op'
+   95 |     idu dut (
+      |         ^~~
+                     ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/rtl/idu.v:61:23: ... Location of port declaration
+   61 |     output [ 3:0]     amo_op,
+      |                       ^~~~~~
+%Warning-PINMISSING: ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/dv/tb/tb_idu_unit.v:95:9: Instance has missing pin: 'is_dret'
+   95 |     idu dut (
+      |         ^~~
+                     ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/rtl/idu.v:70:23: ... Location of port declaration
+   70 |     output            is_dret,
+      |                       ^~~~~~~
+%Error: Exiting due to 5 warning(s)

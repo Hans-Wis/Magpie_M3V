@@ -1,0 +1,1 @@
+PASS: P16 IF analyzed; PASS: P16 IF cross-boundary lockstep matched 42 commits; core.v merged toggle 3813/4878 (78.17%, +481); owned covered 96/200; not marking gate green

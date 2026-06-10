@@ -1,0 +1,164 @@
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ram              0x00000000         0x00040000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+                0x00000000                        . = ORIGIN (ram)
+
+.text           0x00000000     0x48ba
+ *(.init)
+ .init          0x00000000       0x34 /tmp/ccUWBfoE.o
+                0x00000000                _start
+ *(.text*)
+ .text          0x00000034        0x0 /tmp/ccUWBfoE.o
+ .text          0x00000034       0xe2 /tmp/ccfiJpWt.o
+                0x00000034                barebones_clock
+                0x0000003a                start_time
+                0x00000060                stop_time
+                0x000000d0                get_time
+                0x000000e2                time_in_secs
+                0x000000f0                portable_init
+                0x000000f8                portable_fini
+                0x0000010e                uart_send_char
+ .text          0x00000116      0x3e2 /tmp/cc36jCb5.o
+                0x000002cc                ee_printf
+ .text          0x000004f8      0x1c0 /tmp/cc9xWQCz.o
+                0x000004f8                iterate
+ .text.startup  0x000006b8      0x5aa /tmp/cc9xWQCz.o
+                0x000006b8                main
+ .text          0x00000c62      0x8bc /tmp/ccfLSqe5.o
+                0x00000c62                cmp_idx
+                0x00000cb4                calc_func
+                0x00000d9a                cmp_complex
+                0x00000dc2                copy_info
+                0x00000dd4                core_list_insert_new
+                0x00000e24                core_list_remove
+                0x00000e3a                core_list_undo_remove
+                0x00000e4a                core_list_find
+                0x00000e84                core_list_reverse
+                0x00000e96                core_list_mergesort
+                0x00000ff4                core_bench_list
+                0x0000120a                core_list_init
+ .text          0x0000151e     0x23da /tmp/cc4NLVY2.o
+                0x0000151e                core_init_matrix
+                0x000017e4                matrix_sum
+                0x00001bdc                matrix_mul_const
+                0x00001d3e                matrix_add_const
+                0x00001f2e                matrix_mul_vect
+                0x000020cc                matrix_mul_matrix
+                0x000022b8                matrix_mul_matrix_bitextract
+                0x00002460                matrix_test
+                0x000038d6                core_bench_matrix
+ .text          0x000038f8      0x546 /tmp/ccmpFLKT.o
+                0x000038f8                core_init_state
+                0x00003ac4                core_state_transition
+                0x00003d10                core_bench_state
+ .text          0x00003e3e      0xa7c /tmp/ccYNkTbN.o
+                0x00003e3e                get_seed_32
+                0x00003e82                crcu8
+                0x00003fa2                crcu16
+                0x000041e2                crcu32
+                0x0000466c                crc16
+                0x000048b6                check_data_types
+
+.rodata         0x000048bc      0x6b0
+ *(.srodata*)
+ *(.rodata*)
+ .rodata        0x000048bc      0x108 /tmp/cc36jCb5.o
+ .rodata.str1.4
+                0x000049c4      0x529 /tmp/cc9xWQCz.o
+                                0x47a (size before relaxing)
+ *fill*         0x00004eed        0x3 
+ .rodata        0x00004ef0       0x22 /tmp/cc9xWQCz.o
+ .rodata.str1.4
+                0x00004f12       0xad /tmp/ccmpFLKT.o
+ *fill*         0x00004f12        0x2 
+ .rodata        0x00004f14       0x40 /tmp/ccmpFLKT.o
+ .rodata        0x00004f54       0x18 /tmp/ccYNkTbN.o
+
+.rela.dyn       0x00004f6c        0x0
+ .rela.init     0x00004f6c        0x0 /tmp/ccUWBfoE.o
+
+.data           0x00004f6c       0x18
+ *(.sdata*)
+ .sdata         0x00004f6c        0xc /tmp/ccfiJpWt.o
+                0x00004f6c                default_num_contexts
+                0x00004f70                seed4_volatile
+                0x00004f74                seed3_volatile
+ *(.data*)
+ .data          0x00004f78        0x0 /tmp/ccUWBfoE.o
+ .data          0x00004f78        0x0 /tmp/ccfiJpWt.o
+ .data          0x00004f78        0x0 /tmp/cc36jCb5.o
+ .data          0x00004f78        0xc /tmp/cc9xWQCz.o
+                0x00004f78                mem_name
+ .data          0x00004f84        0x0 /tmp/ccfLSqe5.o
+ .data          0x00004f84        0x0 /tmp/cc4NLVY2.o
+ .data          0x00004f84        0x0 /tmp/ccmpFLKT.o
+ .data          0x00004f84        0x0 /tmp/ccYNkTbN.o
+
+.bss            0x00004f84      0x7ec
+                0x00004f84                        __bss_start = .
+ *(.sbss*)
+ .sbss          0x00004f84       0x1c /tmp/ccfiJpWt.o
+                0x00004f94                seed5_volatile
+                0x00004f98                seed2_volatile
+                0x00004f9c                seed1_volatile
+ *(.bss*)
+ .bss           0x00004fa0        0x0 /tmp/ccUWBfoE.o
+ .bss           0x00004fa0        0x0 /tmp/ccfiJpWt.o
+ .bss           0x00004fa0        0x0 /tmp/cc36jCb5.o
+ .bss           0x00004fa0      0x7d0 /tmp/cc9xWQCz.o
+                0x00004fa0                static_memblk
+ .bss           0x00005770        0x0 /tmp/ccfLSqe5.o
+ .bss           0x00005770        0x0 /tmp/cc4NLVY2.o
+ .bss           0x00005770        0x0 /tmp/ccmpFLKT.o
+ .bss           0x00005770        0x0 /tmp/ccYNkTbN.o
+ *(COMMON)
+                0x00005770                        __bss_end = .
+                0x00005770                        . = ALIGN (0x10)
+                0x00040000                        __stack_top = (ORIGIN (ram) + LENGTH (ram))
+LOAD /tmp/ccUWBfoE.o
+LOAD /tmp/ccfiJpWt.o
+LOAD /tmp/cc36jCb5.o
+LOAD /tmp/cc9xWQCz.o
+LOAD /tmp/ccfLSqe5.o
+LOAD /tmp/cc4NLVY2.o
+LOAD /tmp/ccmpFLKT.o
+LOAD /tmp/ccYNkTbN.o
+LOAD /home/edauser/.local/opt/riscv/xpack-riscv-none-elf-gcc-13.2.0-2/bin/../lib/gcc/riscv-none-elf/13.2.0/rv32imc/ilp32/libgcc.a
+OUTPUT(firmware.elf elf32-littleriscv)
+
+.riscv.attributes
+                0x00000000       0x2f
+ .riscv.attributes
+                0x00000000       0x2d /tmp/ccUWBfoE.o
+ .riscv.attributes
+                0x0000002d       0x2f /tmp/ccfiJpWt.o
+ .riscv.attributes
+                0x0000005c       0x2f /tmp/cc36jCb5.o
+ .riscv.attributes
+                0x0000008b       0x2f /tmp/cc9xWQCz.o
+ .riscv.attributes
+                0x000000ba       0x2f /tmp/ccfLSqe5.o
+ .riscv.attributes
+                0x000000e9       0x2f /tmp/cc4NLVY2.o
+ .riscv.attributes
+                0x00000118       0x2f /tmp/ccmpFLKT.o
+ .riscv.attributes
+                0x00000147       0x2f /tmp/ccYNkTbN.o
+
+.comment        0x00000000       0x33
+ .comment       0x00000000       0x33 /tmp/ccfiJpWt.o
+                                 0x34 (size before relaxing)
+ .comment       0x00000033       0x34 /tmp/cc36jCb5.o
+ .comment       0x00000033       0x34 /tmp/cc9xWQCz.o
+ .comment       0x00000033       0x34 /tmp/ccfLSqe5.o
+ .comment       0x00000033       0x34 /tmp/cc4NLVY2.o
+ .comment       0x00000033       0x34 /tmp/ccmpFLKT.o
+ .comment       0x00000033       0x34 /tmp/ccYNkTbN.o

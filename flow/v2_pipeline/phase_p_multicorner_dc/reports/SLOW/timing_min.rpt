@@ -1,0 +1,741 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay min
+        -nworst 5
+        -max_paths 20
+Design : cpu_m1_top
+Version: X-2025.06-SP2
+Date   : Tue Jun  9 23:21:20 2026
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: ssg0p81v0c   Library: tcbn28hpcplusbwp40p140ssg0p81v0c
+Wire Load Model Mode: segmented
+
+  Startpoint: u_core/u_csr/cycle_cnt_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_csr/cycle_cnt_reg[0]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_csr/cycle_cnt_reg[0]/CP (DFQD2BWP40P140)       0.00 #     0.00 r
+  u_core/u_csr/cycle_cnt_reg[0]/Q (DFQD2BWP40P140)        0.06       0.06 r
+  U6704/ZN (NR2D0BWP40P140)                               0.01       0.08 f
+  u_core/u_csr/cycle_cnt_reg[0]/D (DFQD2BWP40P140)        0.00       0.08 f
+  data arrival time                                                  0.08
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_csr/cycle_cnt_reg[0]/CP (DFQD2BWP40P140)       0.00       0.05 r
+  library hold time                                       0.02       0.07
+  data required time                                                 0.07
+  --------------------------------------------------------------------------
+  data required time                                                 0.07
+  data arrival time                                                 -0.08
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.01
+
+
+  Startpoint: primed_reg (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: primed_reg (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  primed_reg/CP (DFQD1BWP40P140)           0.00 #     0.00 r
+  primed_reg/Q (DFQD1BWP40P140)            0.07       0.07 r
+  U10015/ZN (MUX2ND0BWP40P140)             0.02       0.09 f
+  primed_reg/D (DFQD1BWP40P140)            0.00       0.09 f
+  data arrival time                                   0.09
+
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  clock uncertainty                        0.05       0.05
+  primed_reg/CP (DFQD1BWP40P140)           0.00       0.05 r
+  library hold time                        0.01       0.06
+  data required time                                  0.06
+  -----------------------------------------------------------
+  data required time                                  0.06
+  data arrival time                                  -0.09
+  -----------------------------------------------------------
+  slack (MET)                                         0.02
+
+
+  Startpoint: u_core/u_csr/instret_cnt_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_csr/instret_cnt_reg[0]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_csr/instret_cnt_reg[0]/CP (DFQD1BWP40P140)     0.00 #     0.00 r
+  u_core/u_csr/instret_cnt_reg[0]/Q (DFQD1BWP40P140)      0.07       0.07 r
+  U2268/ZN (MUX2ND0BWP40P140)                             0.02       0.09 f
+  u_core/u_csr/instret_cnt_reg[0]/D (DFQD1BWP40P140)      0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_csr/instret_cnt_reg[0]/CP (DFQD1BWP40P140)     0.00       0.05 r
+  library hold time                                       0.01       0.06
+  data required time                                                 0.06
+  --------------------------------------------------------------------------
+  data required time                                                 0.06
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.03
+
+
+  Startpoint: u_core/u_div/iter_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_div/iter_reg[0]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_div/iter_reg[0]/CP (DFQD1BWP40P140)            0.00 #     0.00 r
+  u_core/u_div/iter_reg[0]/Q (DFQD1BWP40P140)             0.07       0.07 r
+  U290/ZN (MAOI22D1BWP40P140)                             0.02       0.09 f
+  u_core/u_div/iter_reg[0]/D (DFQD1BWP40P140)             0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_div/iter_reg[0]/CP (DFQD1BWP40P140)            0.00       0.05 r
+  library hold time                                       0.02       0.07
+  data required time                                                 0.07
+  --------------------------------------------------------------------------
+  data required time                                                 0.07
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.03
+
+
+  Startpoint: u_core/u_div/iter_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_div/iter_reg[0]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_div/iter_reg[0]/CP (DFQD1BWP40P140)            0.00 #     0.00 r
+  u_core/u_div/iter_reg[0]/Q (DFQD1BWP40P140)             0.07       0.07 r
+  U290/ZN (MAOI22D1BWP40P140)                             0.02       0.09 f
+  u_core/u_div/iter_reg[0]/D (DFQD1BWP40P140)             0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_div/iter_reg[0]/CP (DFQD1BWP40P140)            0.00       0.05 r
+  library hold time                                       0.02       0.07
+  data required time                                                 0.07
+  --------------------------------------------------------------------------
+  data required time                                                 0.07
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.03
+
+
+  Startpoint: u_core/u_div/iter_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_div/iter_reg[0]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_div/iter_reg[0]/CP (DFQD1BWP40P140)            0.00 #     0.00 r
+  u_core/u_div/iter_reg[0]/Q (DFQD1BWP40P140)             0.07       0.07 r
+  U290/ZN (MAOI22D1BWP40P140)                             0.02       0.09 f
+  u_core/u_div/iter_reg[0]/D (DFQD1BWP40P140)             0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_div/iter_reg[0]/CP (DFQD1BWP40P140)            0.00       0.05 r
+  library hold time                                       0.02       0.07
+  data required time                                                 0.07
+  --------------------------------------------------------------------------
+  data required time                                                 0.07
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.03
+
+
+  Startpoint: u_core/u_div/iter_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_div/iter_reg[4]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_div/iter_reg[4]/CP (DFQD1BWP40P140)            0.00 #     0.00 r
+  u_core/u_div/iter_reg[4]/Q (DFQD1BWP40P140)             0.07       0.07 r
+  U9708/ZN (OAI32D0BWP40P140)                             0.02       0.09 f
+  u_core/u_div/iter_reg[4]/D (DFQD1BWP40P140)             0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_div/iter_reg[4]/CP (DFQD1BWP40P140)            0.00       0.05 r
+  library hold time                                       0.01       0.06
+  data required time                                                 0.06
+  --------------------------------------------------------------------------
+  data required time                                                 0.06
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.03
+
+
+  Startpoint: u_core/u_mul/done_pending_reg
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_mul/done_reg
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_mul/done_pending_reg/CP (DFKCNQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/u_mul/done_pending_reg/Q (DFKCNQD1BWP40P140)     0.09       0.09 f
+  u_core/u_mul/done_reg/CN (DFKCNQD1BWP40P140)            0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_mul/done_reg/CP (DFKCNQD1BWP40P140)            0.00       0.05 r
+  library hold time                                       0.01       0.06
+  data required time                                                 0.06
+  --------------------------------------------------------------------------
+  data required time                                                 0.06
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.03
+
+
+  Startpoint: u_core/u_div/iter_reg[2]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_div/iter_reg[2]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_div/iter_reg[2]/CP (DFQD1BWP40P140)            0.00 #     0.00 r
+  u_core/u_div/iter_reg[2]/Q (DFQD1BWP40P140)             0.06       0.06 r
+  U7601/ZN (OAI31D0BWP40P140)                             0.03       0.09 f
+  u_core/u_div/iter_reg[2]/D (DFQD1BWP40P140)             0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_div/iter_reg[2]/CP (DFQD1BWP40P140)            0.00       0.05 r
+  library hold time                                       0.01       0.06
+  data required time                                                 0.06
+  --------------------------------------------------------------------------
+  data required time                                                 0.06
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.03
+
+
+  Startpoint: u_core/u_div/iter_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_div/iter_reg[4]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_div/iter_reg[4]/CP (DFQD1BWP40P140)            0.00 #     0.00 r
+  u_core/u_div/iter_reg[4]/Q (DFQD1BWP40P140)             0.07       0.07 r
+  U9708/ZN (OAI32D0BWP40P140)                             0.03       0.09 f
+  u_core/u_div/iter_reg[4]/D (DFQD1BWP40P140)             0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_div/iter_reg[4]/CP (DFQD1BWP40P140)            0.00       0.05 r
+  library hold time                                       0.01       0.06
+  data required time                                                 0.06
+  --------------------------------------------------------------------------
+  data required time                                                 0.06
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.03
+
+
+  Startpoint: u_core/u_div/iter_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_div/iter_reg[4]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_div/iter_reg[4]/CP (DFQD1BWP40P140)            0.00 #     0.00 r
+  u_core/u_div/iter_reg[4]/Q (DFQD1BWP40P140)             0.07       0.07 r
+  U9708/ZN (OAI32D0BWP40P140)                             0.03       0.10 f
+  u_core/u_div/iter_reg[4]/D (DFQD1BWP40P140)             0.00       0.10 f
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_div/iter_reg[4]/CP (DFQD1BWP40P140)            0.00       0.05 r
+  library hold time                                       0.01       0.06
+  data required time                                                 0.06
+  --------------------------------------------------------------------------
+  data required time                                                 0.06
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.03
+
+
+  Startpoint: u_core/u_csr/cycle_cnt_reg[42]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_csr/cycle_cnt_reg[42]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_csr/cycle_cnt_reg[42]/CP (DFKCNQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/u_csr/cycle_cnt_reg[42]/Q (DFKCNQD1BWP40P140)
+                                                          0.07       0.07 r
+  U294/Z (XOR2UD1BWP40P140)                               0.03       0.09 f
+  u_core/u_csr/cycle_cnt_reg[42]/D (DFKCNQD1BWP40P140)
+                                                          0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_csr/cycle_cnt_reg[42]/CP (DFKCNQD1BWP40P140)
+                                                          0.00       0.05 r
+  library hold time                                       0.01       0.06
+  data required time                                                 0.06
+  --------------------------------------------------------------------------
+  data required time                                                 0.06
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.04
+
+
+  Startpoint: u_core/u_csr/cycle_cnt_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_csr/cycle_cnt_reg[1]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_csr/cycle_cnt_reg[0]/CP (DFQD2BWP40P140)       0.00 #     0.00 r
+  u_core/u_csr/cycle_cnt_reg[0]/Q (DFQD2BWP40P140)        0.06       0.06 r
+  U10014/ZN (XNR2UD0BWP40P140)                            0.03       0.09 f
+  u_core/u_csr/cycle_cnt_reg[1]/D (DFKCNQD1BWP40P140)     0.00       0.09 f
+  data arrival time                                                  0.09
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_csr/cycle_cnt_reg[1]/CP (DFKCNQD1BWP40P140)
+                                                          0.00       0.05 r
+  library hold time                                       0.01       0.06
+  data required time                                                 0.06
+  --------------------------------------------------------------------------
+  data required time                                                 0.06
+  data arrival time                                                 -0.09
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.04
+
+
+  Startpoint: u_core/u_mul/done_pending_reg
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_mul/done_reg
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_mul/done_pending_reg/CP (DFKCNQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/u_mul/done_pending_reg/Q (DFKCNQD1BWP40P140)     0.07       0.07 r
+  u_core/u_mul/done_reg/CN (DFKCNQD1BWP40P140)            0.00       0.07 r
+  data arrival time                                                  0.07
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_mul/done_reg/CP (DFKCNQD1BWP40P140)            0.00       0.05 r
+  library hold time                                      -0.02       0.03
+  data required time                                                 0.03
+  --------------------------------------------------------------------------
+  data required time                                                 0.03
+  data arrival time                                                 -0.07
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.04
+
+
+  Startpoint: u_core/u_csr/mscratch_reg[16]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_csr/mscratch_reg[16]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_csr/mscratch_reg[16]/CP (DFQD1BWP40P140)       0.00 #     0.00 r
+  u_core/u_csr/mscratch_reg[16]/Q (DFQD1BWP40P140)        0.08       0.08 f
+  U6744/Z (AO22D0BWP40P140)                               0.03       0.11 f
+  u_core/u_csr/mscratch_reg[16]/D (DFQD1BWP40P140)        0.00       0.11 f
+  data arrival time                                                  0.11
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_csr/mscratch_reg[16]/CP (DFQD1BWP40P140)       0.00       0.05 r
+  library hold time                                       0.02       0.07
+  data required time                                                 0.07
+  --------------------------------------------------------------------------
+  data required time                                                 0.07
+  data arrival time                                                 -0.11
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.05
+
+
+  Startpoint: u_core/u_csr/mscratch_reg[15]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_csr/mscratch_reg[15]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_csr/mscratch_reg[15]/CP (DFQD1BWP40P140)       0.00 #     0.00 r
+  u_core/u_csr/mscratch_reg[15]/Q (DFQD1BWP40P140)        0.08       0.08 f
+  U6764/Z (AO22D0BWP40P140)                               0.03       0.11 f
+  u_core/u_csr/mscratch_reg[15]/D (DFQD1BWP40P140)        0.00       0.11 f
+  data arrival time                                                  0.11
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_csr/mscratch_reg[15]/CP (DFQD1BWP40P140)       0.00       0.05 r
+  library hold time                                       0.02       0.07
+  data required time                                                 0.07
+  --------------------------------------------------------------------------
+  data required time                                                 0.07
+  data arrival time                                                 -0.11
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.05
+
+
+  Startpoint: u_core/u_csr/mscratch_reg[14]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_csr/mscratch_reg[14]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_csr/mscratch_reg[14]/CP (DFQD1BWP40P140)       0.00 #     0.00 r
+  u_core/u_csr/mscratch_reg[14]/Q (DFQD1BWP40P140)        0.08       0.08 f
+  U6786/Z (AO22D0BWP40P140)                               0.03       0.11 f
+  u_core/u_csr/mscratch_reg[14]/D (DFQD1BWP40P140)        0.00       0.11 f
+  data arrival time                                                  0.11
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_csr/mscratch_reg[14]/CP (DFQD1BWP40P140)       0.00       0.05 r
+  library hold time                                       0.02       0.07
+  data required time                                                 0.07
+  --------------------------------------------------------------------------
+  data required time                                                 0.07
+  data arrival time                                                 -0.11
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.05
+
+
+  Startpoint: u_core/u_csr/mscratch_reg[13]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_csr/mscratch_reg[13]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_csr/mscratch_reg[13]/CP (DFQD1BWP40P140)       0.00 #     0.00 r
+  u_core/u_csr/mscratch_reg[13]/Q (DFQD1BWP40P140)        0.08       0.08 f
+  U6806/Z (AO22D0BWP40P140)                               0.03       0.11 f
+  u_core/u_csr/mscratch_reg[13]/D (DFQD1BWP40P140)        0.00       0.11 f
+  data arrival time                                                  0.11
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_csr/mscratch_reg[13]/CP (DFQD1BWP40P140)       0.00       0.05 r
+  library hold time                                       0.02       0.07
+  data required time                                                 0.07
+  --------------------------------------------------------------------------
+  data required time                                                 0.07
+  data arrival time                                                 -0.11
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.05
+
+
+  Startpoint: u_core/u_csr/mscratch_reg[10]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_csr/mscratch_reg[10]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_csr/mscratch_reg[10]/CP (DFQD1BWP40P140)       0.00 #     0.00 r
+  u_core/u_csr/mscratch_reg[10]/Q (DFQD1BWP40P140)        0.08       0.08 f
+  U6822/Z (AO22D0BWP40P140)                               0.03       0.11 f
+  u_core/u_csr/mscratch_reg[10]/D (DFQD1BWP40P140)        0.00       0.11 f
+  data arrival time                                                  0.11
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_csr/mscratch_reg[10]/CP (DFQD1BWP40P140)       0.00       0.05 r
+  library hold time                                       0.02       0.07
+  data required time                                                 0.07
+  --------------------------------------------------------------------------
+  data required time                                                 0.07
+  data arrival time                                                 -0.11
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.05
+
+
+  Startpoint: u_core/u_csr/mscratch_reg[2]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_csr/mscratch_reg[2]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: min
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/u_csr/mscratch_reg[2]/CP (DFQD1BWP40P140)        0.00 #     0.00 r
+  u_core/u_csr/mscratch_reg[2]/Q (DFQD1BWP40P140)         0.08       0.08 f
+  U6740/Z (AO22D0BWP40P140)                               0.03       0.11 f
+  u_core/u_csr/mscratch_reg[2]/D (DFQD1BWP40P140)         0.00       0.11 f
+  data arrival time                                                  0.11
+
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  clock uncertainty                                       0.05       0.05
+  u_core/u_csr/mscratch_reg[2]/CP (DFQD1BWP40P140)        0.00       0.05 r
+  library hold time                                       0.02       0.07
+  data required time                                                 0.07
+  --------------------------------------------------------------------------
+  data required time                                                 0.07
+  data arrival time                                                 -0.11
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.05
+
+
+1

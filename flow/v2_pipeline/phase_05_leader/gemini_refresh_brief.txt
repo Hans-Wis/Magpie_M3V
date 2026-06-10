@@ -1,0 +1,10 @@
+Update the progress report file SOC/Magpie_M1/flow/v2_pipeline/phase_05_leader/PROGRESS.md (overwrite it) to reflect the latest state. Write the file directly.
+
+Ground truth to read:
+- SOC/Magpie_M1/flow/state/magpie_m1.dv.state.json and magpie_m1.rtl.state.json
+- SOC/Magpie_M1/flow/v2_pipeline/phase_05_leader/J1_result.md
+- SOC/Magpie_M1/CLAUDE.md §2 flow table
+Recently: J1 accepted by Claude PL. New gates gate_02_02_misalign_trap (mcause 4/6, no misaligned bus request) and gate_03_08_lockstep_revalidate (rebuilds+reruns RTL vs Spike, closing the cached-log integrity hole). Full suite = 163 pass. J2 (functional coverage bins under VCS) is now IN PROGRESS.
+
+Keep the same structure (Where we are / Flow stage table 0..5.0 / Recently completed / In progress-next / Honest gaps). 
+CORRECTIONS vs previous version: DUT line coverage is ~99.6% (not 77.61% — that was an early number); functional coverage bins = 0 and are the J2 target. Mark 3.0 lockstep status as pass (now re-validating gate exists), 4.0 coverage as partial (line high, functional bins pending J2). Use honesty taxonomy; IP NOT yet qualified. Be concise and factual.

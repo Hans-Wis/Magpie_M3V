@@ -1,0 +1,13 @@
+(1) CSR CLEAN: 5 seeds (2026061401..1405), 1,922 matched commits; sync-traps INCOMPLETE.
+(2) TIMING-CSR: {cycle, cycleh, instret, instreth} + aliases EXCLUDED (do-not-compare).
+Mstatus/mie/mtvec/mepc/mcause/mscratch/mtval/mip STILL compared exactly.
+(3) Divergences:
+pc=0x1102 csrr mstatus: REAL-DUT; fix mstatus_mpp/M-only behavior; ADR-0010.
+pc=0x110a csrr mscratch: REAL-DUT; fix EX/MEM and WB forwarding; ADR-0010.
+pc=0x112a csrr cycle: HARNESS; fix Spike ISA rv32imc_zicsr_zifencei_zicntr.
+sync-traps: HARNESS; Spike 1.1.1-dev stops after logs/pre-commit; open.
+(4) Regressions: gate_02_02_misalign_trap fails after one trap.
+(5) RTL changed: IP/cpu_m1/rtl/csr.v; ADR-0010.
+(6) Interrupts: Not explicitly mentioned (no-random-sync-trap scope).
+(7) gate_03_09 verdict: NOT LISTED (overall gate_* FAIL, 162 passed / 18 failed).
+(8) OPEN: Sync-trap continuation, gate_02_02 regression, 18 pytest failures.

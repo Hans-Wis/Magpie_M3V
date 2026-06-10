@@ -1,0 +1,8 @@
+rule,generated_warnings,waived_warnings,reported_warnings
+SYNTH_5143,1,1,0
+STARC05-2.11.3.1,1,1,0
+STARC05-2.2.3.3,7,7,0
+W287b,3,3,0
+W415a,4,4,0
+W528,6,6,0
+TOTAL,24,24,0

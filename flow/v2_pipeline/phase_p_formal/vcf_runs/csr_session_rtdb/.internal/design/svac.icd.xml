@@ -1,0 +1,111 @@
+<ICD>
+  <SystemReset name="" value="" />
+  <Module name="csr_assert_bind" DesignLang="Verilog" FileName="IP/cpu_m1/dv/formal/csr_assert_bind.sv" LineNo="4">
+    <ModuleVariant name="csr_assert_bind"  CheckerModule="">
+      <Property name="unnamed$$_0" type="assert" kind="immediate" InFunction="0" PropLang="SVA" FileName="IP/cpu_m1/dv/formal/csr_assert_bind.sv" LineNo="10" MultiAutomata="1">
+        <PropertySource><![CDATA[assert((mstatus_val[12:11] == 2'b11));
+]]></PropertySource>
+        <PropertyLeafs> 
+          <PropertyLeaf signal="mstatus_val" />
+        </PropertyLeafs> 
+        <RegInitializations> 
+          <RegInitialization signal="_SVAC_ended_reg_0" rhs="1'b0" />
+          <RegInitialization signal="_SVAC_ended_reg" rhs="1'b0" />
+        </RegInitializations> 
+        <PropertyEncoding type="Deterministic" kind="negativeAlways" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg" />
+        </PropertyEncoding>
+        <PropertyEncoding type="Deterministic" kind="positiveEventually" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_0" />
+        </PropertyEncoding>
+      </Property>
+      <Property name="unnamed$$_1" type="assert" kind="immediate" InFunction="0" PropLang="SVA" FileName="IP/cpu_m1/dv/formal/csr_assert_bind.sv" LineNo="11" MultiAutomata="1">
+        <PropertySource><![CDATA[assert((mstatus_val[31:13] == 19'b0));
+]]></PropertySource>
+        <PropertyLeafs> 
+          <PropertyLeaf signal="mstatus_val" />
+        </PropertyLeafs> 
+        <RegInitializations> 
+          <RegInitialization signal="_SVAC_ended_reg_2" rhs="1'b0" />
+          <RegInitialization signal="_SVAC_ended_reg_1" rhs="1'b0" />
+        </RegInitializations> 
+        <PropertyEncoding type="Deterministic" kind="negativeAlways" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_1" />
+        </PropertyEncoding>
+        <PropertyEncoding type="Deterministic" kind="positiveEventually" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_2" />
+        </PropertyEncoding>
+      </Property>
+      <Property name="unnamed$$_2" type="assert" kind="immediate" InFunction="0" PropLang="SVA" FileName="IP/cpu_m1/dv/formal/csr_assert_bind.sv" LineNo="12" MultiAutomata="1">
+        <PropertySource><![CDATA[assert((mstatus_val[10:8] == 3'b0));
+]]></PropertySource>
+        <PropertyLeafs> 
+          <PropertyLeaf signal="mstatus_val" />
+        </PropertyLeafs> 
+        <RegInitializations> 
+          <RegInitialization signal="_SVAC_ended_reg_4" rhs="1'b0" />
+          <RegInitialization signal="_SVAC_ended_reg_3" rhs="1'b0" />
+        </RegInitializations> 
+        <PropertyEncoding type="Deterministic" kind="negativeAlways" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_3" />
+        </PropertyEncoding>
+        <PropertyEncoding type="Deterministic" kind="positiveEventually" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_4" />
+        </PropertyEncoding>
+      </Property>
+      <Property name="unnamed$$_3" type="assert" kind="immediate" InFunction="0" PropLang="SVA" FileName="IP/cpu_m1/dv/formal/csr_assert_bind.sv" LineNo="13" MultiAutomata="1">
+        <PropertySource><![CDATA[assert((mstatus_val[6:4] == 3'b0));
+]]></PropertySource>
+        <PropertyLeafs> 
+          <PropertyLeaf signal="mstatus_val" />
+        </PropertyLeafs> 
+        <RegInitializations> 
+          <RegInitialization signal="_SVAC_ended_reg_6" rhs="1'b0" />
+          <RegInitialization signal="_SVAC_ended_reg_5" rhs="1'b0" />
+        </RegInitializations> 
+        <PropertyEncoding type="Deterministic" kind="negativeAlways" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_5" />
+        </PropertyEncoding>
+        <PropertyEncoding type="Deterministic" kind="positiveEventually" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_6" />
+        </PropertyEncoding>
+      </Property>
+      <Property name="unnamed$$_4" type="assert" kind="immediate" InFunction="0" PropLang="SVA" FileName="IP/cpu_m1/dv/formal/csr_assert_bind.sv" LineNo="14" MultiAutomata="1">
+        <PropertySource><![CDATA[assert((mstatus_val[2:0] == 3'b0));
+]]></PropertySource>
+        <PropertyLeafs> 
+          <PropertyLeaf signal="mstatus_val" />
+        </PropertyLeafs> 
+        <RegInitializations> 
+          <RegInitialization signal="_SVAC_ended_reg_8" rhs="1'b0" />
+          <RegInitialization signal="_SVAC_ended_reg_7" rhs="1'b0" />
+        </RegInitializations> 
+        <PropertyEncoding type="Deterministic" kind="negativeAlways" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_7" />
+        </PropertyEncoding>
+        <PropertyEncoding type="Deterministic" kind="positiveEventually" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_8" />
+        </PropertyEncoding>
+      </Property>
+      <Property name="unnamed$$_5" type="assert" kind="immediate" InFunction="0" PropLang="SVA" FileName="IP/cpu_m1/dv/formal/csr_assert_bind.sv" LineNo="20" MultiAutomata="1">
+        <PropertySource><![CDATA[assert((mstatus_val[12:11] == 2'b11));
+]]></PropertySource>
+        <PropertyLeafs> 
+          <PropertyLeaf signal="mstatus_val" />
+        </PropertyLeafs> 
+        <RegInitializations> 
+          <RegInitialization signal="_SVAC_ended_reg_a" rhs="1'b0" />
+          <RegInitialization signal="_SVAC_ended_reg_9" rhs="1'b0" />
+        </RegInitializations> 
+        <PropertyEncoding type="Deterministic" kind="negativeAlways" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_9" />
+        </PropertyEncoding>
+        <PropertyEncoding type="Deterministic" kind="positiveEventually" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_a" />
+        </PropertyEncoding>
+      </Property>
+      <VariantInstance name="csr.csr_assert_i" FileName="IP/cpu_m1/dv/formal/csr_assert_bind.sv" LineNo="24">
+      </VariantInstance>
+    </ModuleVariant>
+  </Module>
+</ICD>

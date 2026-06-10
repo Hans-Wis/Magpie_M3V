@@ -1,0 +1,15 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc z3
+
+[script]
+read_verilog -formal -sv -I ../../rtl ../../rtl/forward.v forward_assert_bind.sv
+prep -top forward
+
+[files]
+../../rtl/def.vh
+../../rtl/forward.v
+forward_assert_bind.sv

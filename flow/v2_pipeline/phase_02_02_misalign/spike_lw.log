@@ -1,0 +1,8 @@
+core   0: >>>>  $xrv32i2p1_m2p0_zicsr2p0_zifencei2p0_zmmul1p0
+core   0: 0x80000000 (0x00000517) auipc   a0, 0x0
+core   0: 3 0x80000000 (0x00000517) x10 0x80000000
+core   0: 0x80000004 (0x01050513) addi    a0, a0, 16
+core   0: 3 0x80000004 (0x01050513) x10 0x80000010
+core   0: 0x80000008 (0x00152783) lw      a5, 1(a0)
+core   0: exception trap_load_address_misaligned, epc 0x80000008
+core   0:           tval 0x80000011

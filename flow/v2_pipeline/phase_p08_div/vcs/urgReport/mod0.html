@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: tb_div_unit</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_tb_div_unit'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_tb_div_unit')">tb_div_unit</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s8 cl rt"> 87.41</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 91.11</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 90.57</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Toggle" > 99.06</a></td>
+<td class="wht cl rt"></td>
+<td class="s6 cl rt"><a href="mod0.html#Branch" > 68.89</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p08_div/vcs/../../../../IP/cpu_m1/dv/tb/tb_div_unit.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p08_div/vcs/../../../../IP/cpu_m1/dv/tb/tb_div_unit.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod0.html#inst_tag_0"  onclick="showContent('inst_tag_0')">tb_div_unit</a></td>
+<td class="s8 cl rt"> 87.41</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 91.11</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 90.57</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Toggle" > 99.06</a></td>
+<td class="wht cl rt"></td>
+<td class="s6 cl rt"><a href="mod0.html#Branch" > 68.89</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_tb_div_unit'>
+<hr>
+<a name="inst_tag_0"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_0" >tb_div_unit</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s8 cl rt"> 87.41</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 91.11</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 90.57</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Toggle" > 99.06</a></td>
+<td class="wht cl rt"></td>
+<td class="s6 cl rt"><a href="mod0.html#Branch" > 68.89</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 92.89</td>
+<td class="s9 cl rt"> 91.99</td>
+<td class="s9 cl rt"> 95.97</td>
+<td class="s9 cl rt"> 99.55</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s7 cl rt"> 76.92</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<span class=inst>none</span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod1.html#inst_tag_1" id="tag_urg_inst_1">dut</a></td>
+<td class="s9 cl rt"> 98.47</td>
+<td class="s9 cl rt"> 97.62</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s9 cl rt"> 99.71</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s9 cl rt"> 95.00</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_tb_div_unit'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod0.html" >tb_div_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">TOTAL</td><td></td><td>270</td><td>246</td><td>91.11</td></tr>
+<tr class="s10"><td class="lf">INITIAL</td><td>49</td><td>4</td><td>4</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">ALWAYS</td><td>54</td><td>25</td><td>24</td><td>96.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>98</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">ROUTINE</td><td>109</td><td>12</td><td>11</td><td>91.67</td></tr>
+<tr class="s0"><td class="lf">ROUTINE</td><td>133</td><td>6</td><td>0</td><td>0.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>146</td><td>15</td><td>15</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>165</td><td>12</td><td>12</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>178</td><td>7</td><td>7</td><td>100.00</td></tr>
+<tr class="s8"><td class="lf">ROUTINE</td><td>193</td><td>12</td><td>10</td><td>83.33</td></tr>
+<tr class="s7"><td class="lf">ROUTINE</td><td>215</td><td>19</td><td>15</td><td>78.95</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>246</td><td>2</td><td>2</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>253</td><td>17</td><td>17</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>271</td><td>16</td><td>16</td><td>100.00</td></tr>
+<tr class="s4"><td class="lf">ROUTINE</td><td>289</td><td>10</td><td>4</td><td>40.00</td></tr>
+<tr class="s7"><td class="lf">ROUTINE</td><td>304</td><td>10</td><td>8</td><td>80.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>319</td><td>20</td><td>20</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">INITIAL</td><td>343</td><td>82</td><td>80</td><td>97.56</td></tr>
+</table>
+<pre class="code"><br clear=all>
+48                          initial begin
+49         1/1                  clk = 1'b0;
+50         3/3                  forever #5 clk = ~clk;
+51                          end
+52                      
+53                          always @(posedge clk) begin
+54         1/1                  if (!resetn) begin
+55         1/1                      prev_state &lt;= ST_IDLE;
+56                              end else begin
+57         1/1                      state_hits[dut.state] = state_hits[dut.state] + 1;
+58                      
+59         1/1                      case ({prev_state, dut.state})
+60         1/1                          {ST_IDLE,  ST_IDLE}:  arc_hits[2]  = arc_hits[2]  + 1;
+61                                      {ST_IDLE,  ST_WORK}:  begin
+62         1/1                              arc_hits[0]  = arc_hits[0]  + 1;
+63         1/1                              arc_hits[13] = arc_hits[13] + 1;
+64                                      end
+65                                      {ST_WORK,  ST_WORK}:  begin
+66         1/1                              arc_hits[3]  = arc_hits[3]  + 1;
+67         1/1                              arc_hits[14] = arc_hits[14] + 1;
+68         1/1                              arc_hits[15] = arc_hits[15] + 1;
+69                                      end
+70         1/1                          {ST_WORK,  ST_FIXUP}: arc_hits[4]  = arc_hits[4]  + 1;
+71         1/1                          {ST_FIXUP, ST_DONE}:  arc_hits[11] = arc_hits[11] + 1;
+72                                      {ST_DONE,  ST_IDLE}:  begin
+73         1/1                              arc_hits[9]  = arc_hits[9]  + 1;
+74         1/1                              arc_hits[12] = arc_hits[12] + 1;
+75                                      end
+76         <font color = "red">0/1     ==>                  default: ;</font>
+77                                  endcase
+78                      
+79         1/1                      if (prev_state == ST_WORK &amp;&amp; dut.state == ST_FIXUP) begin
+80         1/1                          if (dut.divisor == 32'd1)
+81         1/1                              arc_hits[5] = arc_hits[5] + 1;
+                        MISSING_ELSE
+82         1/1                          if (dut.orig_a == 32'd0)
+83         1/1                              arc_hits[6] = arc_hits[6] + 1;
+                        MISSING_ELSE
+84         1/1                          if (dut.dividend &lt;= dut.divisor)
+85         1/1                              arc_hits[7] = arc_hits[7] + 1;
+                   <font color = "red">==>  MISSING_ELSE</font>
+86         1/1                          if (dut.overflow)
+87         1/1                              arc_hits[8] = arc_hits[8] + 1;
+                        MISSING_ELSE
+88                                  end
+                        MISSING_ELSE
+89                      
+90         1/1                      prev_state &lt;= dut.state;
+91                              end
+92                          end
+93                      
+94                          function [31:0] signed_value;
+95                              input [31:0] magnitude;
+96                              input        negative;
+97                              begin
+98         1/1                      signed_value = negative ? (~magnitude + 32'd1) : magnitude;
+99                              end
+100                         endfunction
+101                     
+102                         function [31:0] golden_result;
+103                             input [2:0]  f_md_op;
+104                             input [31:0] f_op_a;
+105                             input [31:0] f_op_b;
+106                             reg signed [31:0] a_s;
+107                             reg signed [31:0] b_s;
+108                             begin
+109        1/1                      a_s = f_op_a;
+110        1/1                      b_s = f_op_b;
+111                     
+112        1/1                      if (f_op_b == 32'h0000_0000) begin
+113        1/1                          golden_result = ((f_md_op == `MD_REM) || (f_md_op == `MD_REMU)) ?
+114                                                     f_op_a : 32'hffff_ffff;
+115        1/1                      end else if (((f_md_op == `MD_DIV) || (f_md_op == `MD_REM)) &amp;&amp;
+116                                              (f_op_a == 32'h8000_0000) &amp;&amp; (f_op_b == 32'hffff_ffff)) begin
+117        1/1                          golden_result = (f_md_op == `MD_REM) ? 32'h0000_0000 : 32'h8000_0000;
+118                                 end else begin
+119        1/1                          case (f_md_op)
+120        1/1                              `MD_DIV:  golden_result = a_s / b_s;
+121        1/1                              `MD_DIVU: golden_result = f_op_a / f_op_b;
+122        1/1                              `MD_REM:  golden_result = a_s % b_s;
+123        1/1                              `MD_REMU: golden_result = f_op_a % f_op_b;
+124        <font color = "red">0/1     ==>                      default:  golden_result = 32'h0000_0000;</font>
+125                                     endcase
+126                                 end
+127                             end
+128                         endfunction
+129                     
+130                         function [8*8-1:0] op_name;
+131                             input [2:0] f_md_op;
+132                             begin
+133        <font color = "red">0/1     ==>              case (f_md_op)</font>
+134        <font color = "red">0/1     ==>                  `MD_DIV:  op_name = &quot;DIV&quot;;</font>
+135        <font color = "red">0/1     ==>                  `MD_DIVU: op_name = &quot;DIVU&quot;;</font>
+136        <font color = "red">0/1     ==>                  `MD_REM:  op_name = &quot;REM&quot;;</font>
+137        <font color = "red">0/1     ==>                  `MD_REMU: op_name = &quot;REMU&quot;;</font>
+138        <font color = "red">0/1     ==>                  default:  op_name = &quot;BAD&quot;;</font>
+139                                 endcase
+140                             end
+141                         endfunction
+142                     
+143                         task reset_dut;
+144                             integer k;
+145                             begin
+146        1/1                      resetn = 1'b0;
+147        1/1                      start  = 1'b0;
+148        1/1                      md_op  = `MD_DIV;
+149        1/1                      op_a   = 32'h0000_0000;
+150        1/1                      op_b   = 32'h0000_0001;
+151        1/1                      for (k = 0; k &lt; 4; k = k + 1) begin
+152        1/1                          state_hits[k] = 0;
+153                                 end
+154        1/1                      for (k = 0; k &lt; 16; k = k + 1) begin
+155        1/1                          arc_hits[k] = 0;
+156                                 end
+157        3/3                      repeat (4) @(posedge clk);
+                        REPEAT_FALSE
+158        1/1                      resetn = 1'b1;
+159        2/2                      @(posedge clk);
+160                             end
+161                         endtask
+162                     
+163                         task pulse_reset_no_clear;
+164                             begin
+165        2/2                      @(negedge clk);
+166        1/1                      start  = 1'b0;
+167        1/1                      resetn = 1'b0;
+168        3/3                      repeat (2) @(posedge clk);
+                        REPEAT_FALSE
+169        2/2                      @(negedge clk);
+170        1/1                      resetn = 1'b1;
+171        2/2                      @(posedge clk);
+172                             end
+173                         endtask
+174                     
+175                         task idle_soak;
+176                             input integer cycles;
+177                             begin
+178        1/1                      repeat (cycles) begin
+179        2/2                          @(negedge clk);
+180        1/1                          start = 1'b0;
+181        1/1                          md_op = `MD_DIVU;
+182        1/1                          op_a  = 32'h5555_aaaa;
+183        1/1                          op_b  = 32'haaaa_5555;
+184                                 end
+185                             end
+186                         endtask
+187                     
+188                         task launch_vector;
+189                             input [2:0]  t_md_op;
+190                             input [31:0] t_op_a;
+191                             input [31:0] t_op_b;
+192                             begin
+193        1/1                      if (busy || done) begin
+194        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+195        <font color = "red">0/1     ==>                  $error(&quot;TB launch while not idle: busy=%b done=%b state=%0d&quot;, busy, done, dut.state);</font>
+196                                 end
+                        MISSING_ELSE
+197        2/2                      @(negedge clk);
+198        1/1                      md_op = t_md_op;
+199        1/1                      op_a  = t_op_a;
+200        1/1                      op_b  = t_op_b;
+201        1/1                      start = 1'b1;
+202        2/2                      @(negedge clk);
+203        1/1                      start = 1'b0;
+204                             end
+205                         endtask
+206                     
+207                         task wait_and_check;
+208                             input [2:0]  t_md_op;
+209                             input [31:0] t_op_a;
+210                             input [31:0] t_op_b;
+211                             input [8*48-1:0] tag;
+212                             reg [31:0] exp_result;
+213                             integer wait_cycles;
+214                             begin
+215        1/1                      wait_cycles = 0;
+216        1/1                      while (done !== 1'b1 &amp;&amp; wait_cycles &lt; 80) begin
+217        2/2                          @(posedge clk);
+218        2/2                          #1;
+219        1/1                          wait_cycles = wait_cycles + 1;
+220                                 end
+                   <font color = "red">==>  WHILE_FALSE</font>
+221                     
+222        1/1                      exp_result = golden_result(t_md_op, t_op_a, t_op_b);
+223        1/1                      vectors = vectors + 1;
+224        1/1                      if (done !== 1'b1 || result !== exp_result) begin
+225        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+226        <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s %0s a=%h b=%h result=%h exp=%h done=%b wait=%0d&quot;,</font>
+227                                            vectors, tag, op_name(t_md_op), t_op_a, t_op_b, result,
+228                                            exp_result, done, wait_cycles);
+229                                 end
+                        MISSING_ELSE
+230                     
+231        2/2                      @(posedge clk);
+232        2/2                      #1;
+233        1/1                      if (done !== 1'b0 || dut.state !== ST_IDLE) begin
+234        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+235        <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] post-DONE cleanup done=%b state=%0d&quot;, vectors, done, dut.state);</font>
+236                                 end
+                        MISSING_ELSE
+237                             end
+238                         endtask
+239                     
+240                         task run_vector;
+241                             input [2:0]  t_md_op;
+242                             input [31:0] t_op_a;
+243                             input [31:0] t_op_b;
+244                             input [8*48-1:0] tag;
+245                             begin
+246        1/1                      launch_vector(t_md_op, t_op_a, t_op_b);
+247        1/1                      wait_and_check(t_md_op, t_op_a, t_op_b, tag);
+248                             end
+249                         endtask
+250                     
+251                         task run_busy_reject;
+252                             begin
+253        2/2                      @(negedge clk);
+254        1/1                      md_op = `MD_DIVU;
+255        1/1                      op_a  = 32'hffff_ffff;
+256        1/1                      op_b  = 32'h0001_0001;
+257        1/1                      start = 1'b1;
+258        2/2                      @(negedge clk);
+259        1/1                      md_op = `MD_DIV;
+260        1/1                      op_a  = 32'h0000_0007;
+261        1/1                      op_b  = 32'h0000_0003;
+262        1/1                      start = 1'b1;
+263        3/3                      repeat (5) @(negedge clk);
+                        REPEAT_FALSE
+264        1/1                      start = 1'b0;
+265        1/1                      wait_and_check(`MD_DIVU, 32'hffff_ffff, 32'h0001_0001, &quot;BUSY_START_IGNORED&quot;);
+266                             end
+267                         endtask
+268                     
+269                         task run_done_start_ignored;
+270                             begin
+271        1/1                      launch_vector(`MD_DIVU, 32'h0000_0009, 32'h0000_0003);
+272        1/1                      while (dut.state !== ST_DONE) begin
+273        2/2                          @(posedge clk);
+274        2/2                          #1;
+275                                 end
+                   <font color = "red">==>  WHILE_FALSE</font>
+276        2/2                      @(negedge clk);
+277        1/1                      md_op = `MD_DIVU;
+278        1/1                      op_a  = 32'h0000_0010;
+279        1/1                      op_b  = 32'h0000_0002;
+280        1/1                      start = 1'b1;
+281        2/2                      @(negedge clk);
+282        1/1                      start = 1'b0;
+283        1/1                      wait_and_check(`MD_DIVU, 32'h0000_0009, 32'h0000_0003, &quot;DONE_START_IGNORED&quot;);
+284                             end
+285                         endtask
+286                     
+287                         task run_reset_from_work;
+288                             begin
+289        1/1                      launch_vector(`MD_DIVU, 32'hffff_ffff, 32'h0000_0003);
+290        1/1                      while (dut.state !== ST_WORK) begin
+291        <font color = "red">0/2     ==>                  @(posedge clk);</font>
+292        <font color = "red">0/2     ==>                  #1;</font>
+293                                 end
+                   <font color = "red">==>  WHILE_FALSE</font>
+294        1/1                      pulse_reset_no_clear();
+295        1/1                      if (dut.state !== ST_IDLE || done !== 1'b0) begin
+296        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+297        <font color = "red">0/1     ==>                  $error(&quot;FAIL reset-from-WORK state=%0d done=%b&quot;, dut.state, done);</font>
+298                                 end
+                        MISSING_ELSE
+299                             end
+300                         endtask
+301                     
+302                         task run_reset_from_fixup;
+303                             begin
+304        1/1                      launch_vector(`MD_DIVU, 32'hffff_ffff, 32'h0000_0003);
+305        1/1                      while (dut.state !== ST_FIXUP) begin
+306        2/2                          @(posedge clk);
+307        2/2                          #1;
+308                                 end
+                   <font color = "red">==>  WHILE_FALSE</font>
+309        1/1                      pulse_reset_no_clear();
+310        1/1                      if (dut.state !== ST_IDLE || done !== 1'b0) begin
+311        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+312        <font color = "red">0/1     ==>                  $error(&quot;FAIL reset-from-FIXUP state=%0d done=%b&quot;, dut.state, done);</font>
+313                                 end
+                        MISSING_ELSE
+314                             end
+315                         endtask
+316                     
+317                         task print_fsm_report;
+318                             begin
+319        1/1                      $display(&quot;FSM_STATE IDLE  covered=%0d&quot;, state_hits[ST_IDLE]);
+320        1/1                      $display(&quot;FSM_STATE WORK  covered=%0d&quot;, state_hits[ST_WORK]);
+321        1/1                      $display(&quot;FSM_STATE FIXUP covered=%0d&quot;, state_hits[ST_FIXUP]);
+322        1/1                      $display(&quot;FSM_STATE DONE  covered=%0d&quot;, state_hits[ST_DONE]);
+323        1/1                      $display(&quot;FSM_ARC A0  IDLE-&gt;WORK normal_or_zero_div=%0d&quot;, arc_hits[0]);
+324        1/1                      $display(&quot;FSM_ARC A1  IDLE-&gt;ZERODIV structural_no_such_state=0&quot;);
+325        1/1                      $display(&quot;FSM_ARC A2  IDLE-&gt;IDLE idle_soak=%0d&quot;, arc_hits[2]);
+326        1/1                      $display(&quot;FSM_ARC A3  WORK-&gt;WORK loop=%0d&quot;, arc_hits[3]);
+327        1/1                      $display(&quot;FSM_ARC A4  WORK-&gt;FIXUP loop_complete=%0d&quot;, arc_hits[4]);
+328        1/1                      $display(&quot;FSM_ARC A5  divisor_one_no_earlyout_work_to_fixup=%0d&quot;, arc_hits[5]);
+329        1/1                      $display(&quot;FSM_ARC A6  dividend_zero_no_earlyout_work_to_fixup=%0d&quot;, arc_hits[6]);
+330        1/1                      $display(&quot;FSM_ARC A7  dividend_le_divisor_no_earlyout_work_to_fixup=%0d&quot;, arc_hits[7]);
+331        1/1                      $display(&quot;FSM_ARC A8  signed_overflow_no_earlyout_work_to_fixup=%0d&quot;, arc_hits[8]);
+332        1/1                      $display(&quot;FSM_ARC A9  DONE-&gt;IDLE auto_clear=%0d&quot;, arc_hits[9]);
+333        1/1                      $display(&quot;FSM_ARC A10 DONE-&gt;WORK direct structural_start_ignored_in_DONE=0&quot;);
+334        1/1                      $display(&quot;FSM_ARC A11 FIXUP-&gt;DONE zero_div_and_all_results=%0d&quot;, arc_hits[11]);
+335        1/1                      $display(&quot;FSM_ARC A12 ZERODIV-&gt;IDLE structural_no_such_state maps_DONE_IDLE=%0d&quot;, arc_hits[12]);
+336        1/1                      $display(&quot;FSM_ARC A13 IDLE-&gt;WORK signed_unsigned_mux=%0d&quot;, arc_hits[13]);
+337        1/1                      $display(&quot;FSM_ARC A14 WORK-&gt;WORK signed_restore_internal=%0d&quot;, arc_hits[14]);
+338        1/1                      $display(&quot;FSM_ARC A15 WORK-&gt;WORK unsigned_borrow_internal=%0d&quot;, arc_hits[15]);
+339                             end
+340                         endtask
+341                     
+342                         initial begin
+343        1/1                  vectors    = 0;
+344        1/1                  errors     = 0;
+345        1/1                  rand_state = 32'h2468_ace1;
+346                     
+347        1/1                  op_table[0] = `MD_DIV;
+348        1/1                  op_table[1] = `MD_DIVU;
+349        1/1                  op_table[2] = `MD_REM;
+350        1/1                  op_table[3] = `MD_REMU;
+351                     
+352        1/1                  magnitude_table[0]  = 32'h0000_0000;
+353        1/1                  magnitude_table[1]  = 32'h0000_0001;
+354        1/1                  magnitude_table[2]  = 32'h0000_0002;
+355        1/1                  magnitude_table[3]  = 32'h0000_0003;
+356        1/1                  magnitude_table[4]  = 32'h0000_0007;
+357        1/1                  magnitude_table[5]  = 32'h0000_ffff;
+358        1/1                  magnitude_table[6]  = 32'h0001_0001;
+359        1/1                  magnitude_table[7]  = 32'h4000_0000;
+360        1/1                  magnitude_table[8]  = 32'h7fff_ffff;
+361        1/1                  magnitude_table[9]  = 32'h8000_0000;
+362        1/1                  magnitude_table[10] = 32'hffff_ffff;
+363                     
+364        1/1                  reset_dut();
+365        1/1                  idle_soak(8);
+366                     
+367        1/1                  run_reset_from_work();
+368        1/1                  run_reset_from_fixup();
+369        1/1                  run_busy_reject();
+370        1/1                  run_done_start_ignored();
+371                     
+372        1/1                  run_vector(`MD_DIV,  32'h0000_1234, 32'h0000_0000, &quot;Z1_DIV_BY_ZERO&quot;);
+373        1/1                  run_vector(`MD_DIVU, 32'h0000_1234, 32'h0000_0000, &quot;Z2_DIVU_BY_ZERO&quot;);
+374        1/1                  run_vector(`MD_REM,  32'h8000_0000, 32'h0000_0000, &quot;Z3_REM_BY_ZERO&quot;);
+375        1/1                  run_vector(`MD_REMU, 32'h0000_0001, 32'h0000_0000, &quot;Z4_REMU_BY_ZERO&quot;);
+376                     
+377        1/1                  run_vector(`MD_DIV, 32'h8000_0000, 32'hffff_ffff, &quot;O1_SIGNED_OVERFLOW_DIV&quot;);
+378        1/1                  run_vector(`MD_REM, 32'h8000_0000, 32'hffff_ffff, &quot;O2_SIGNED_OVERFLOW_REM&quot;);
+379                     
+380        1/1                  run_vector(`MD_DIV, 32'd100,        32'd7,          &quot;S_PP_DIV&quot;);
+381        1/1                  run_vector(`MD_DIV, 32'd100,        -32'sd7,        &quot;S_PN_DIV&quot;);
+382        1/1                  run_vector(`MD_DIV, -32'sd100,      32'd7,          &quot;S_NP_DIV&quot;);
+383        1/1                  run_vector(`MD_DIV, -32'sd100,      -32'sd7,        &quot;S_NN_DIV&quot;);
+384        1/1                  run_vector(`MD_REM, 32'd100,        32'd7,          &quot;R_PP_REM&quot;);
+385        1/1                  run_vector(`MD_REM, 32'd100,        -32'sd7,        &quot;R_PN_REM&quot;);
+386        1/1                  run_vector(`MD_REM, -32'sd100,      32'd7,          &quot;R_NP_REM&quot;);
+387        1/1                  run_vector(`MD_REM, -32'sd100,      -32'sd7,        &quot;R_NN_REM&quot;);
+388                     
+389        1/1                  run_vector(`MD_DIVU, 32'hffff_ffff, 32'h0000_0001, &quot;Q1_ALL_ONES_QUOT&quot;);
+390        1/1                  run_vector(`MD_DIVU, 32'h8000_0000, 32'h0000_0001, &quot;Q2_MSB_QUOT&quot;);
+391        1/1                  run_vector(`MD_DIVU, 32'h0000_0001, 32'h8000_0000, &quot;Q3_ZERO_QUOT&quot;);
+392        1/1                  run_vector(`MD_DIVU, 32'h7fff_ffff, 32'h4000_0000, &quot;Q4_LSB_QUOT&quot;);
+393        1/1                  run_vector(`MD_DIVU, 32'haaaa_aaaa, 32'h0001_0001, &quot;Q5_PATTERN_QUOT&quot;);
+394        1/1                  run_vector(`MD_DIV,  32'h7fff_ffff, 32'h0000_0003, &quot;Q6_LARGE_SIGNED&quot;);
+395        1/1                  run_vector(`MD_DIVU, 32'hffff_ffff, 32'hffff_fffe, &quot;Q7_NEAR_EQUAL&quot;);
+396                     
+397        1/1                  run_vector(`MD_DIVU, 32'h0000_0003, 32'h0000_0009, &quot;E0_DIVISOR_GT&quot;);
+398        1/1                  run_vector(`MD_DIV,  -32'sd3,       32'h0000_0009, &quot;E1_SIGNED_DIVISOR_GT&quot;);
+399        1/1                  run_vector(`MD_DIVU, 32'h0000_000a, 32'h0000_000a, &quot;E2_EQUAL&quot;);
+400        1/1                  run_vector(`MD_DIV,  32'hffff_ffff, 32'hffff_ffff, &quot;E3_EQUAL_NEG&quot;);
+401        1/1                  run_vector(`MD_DIVU, 32'h0000_0001, 32'h0000_0002, &quot;E4_MINIMAL&quot;);
+402        1/1                  run_vector(`MD_DIVU, 32'h0000_0000, 32'h0000_0005, &quot;E5_ZERO_DIVIDEND&quot;);
+403        1/1                  run_vector(`MD_DIVU, 32'hc000_0000, 32'h4000_0000, &quot;A15_UNSIGNED_BORROW&quot;);
+404        1/1                  run_vector(`MD_DIV,  -32'sd7,       32'h0000_0003, &quot;A14_SIGNED_RESTORE&quot;);
+405        1/1                  run_vector(`MD_REM,  -32'sd7,       32'h0000_0003, &quot;A14_SIGNED_RESTORE_REM&quot;);
+406        1/1                  run_vector(`MD_DIVU, 32'hffff_ffff, 32'h0001_0001, &quot;H5_FULL_32_ITER&quot;);
+407                     
+408        1/1                  for (op_i = 0; op_i &lt; 4; op_i = op_i + 1) begin
+409        1/1                      for (sign_i = 0; sign_i &lt; 4; sign_i = sign_i + 1) begin
+410        1/1                          for (mag_a_i = 0; mag_a_i &lt; 11; mag_a_i = mag_a_i + 1) begin
+411        1/1                              for (mag_b_i = 0; mag_b_i &lt; 11; mag_b_i = mag_b_i + 1) begin
+412        1/1                                  run_vector(op_table[op_i],
+413                                                        signed_value(magnitude_table[mag_a_i], sign_i[1]),
+414                                                        signed_value(magnitude_table[mag_b_i], sign_i[0]),
+415                                                        &quot;OP_SIGN_MAG_MATRIX&quot;);
+416                                         end
+417                                     end
+418                                 end
+419                             end
+420                     
+421        1/1                  for (op_i = 0; op_i &lt; 4; op_i = op_i + 1) begin
+422        1/1                      for (i = 0; i &lt; 32; i = i + 1) begin
+423        1/1                          run_vector(op_table[op_i], (32'h0000_0001 &lt;&lt; i), 32'hffff_ffff, &quot;WALK_A_ONES_B&quot;);
+424        1/1                          run_vector(op_table[op_i], 32'hffff_ffff, (32'h0000_0001 &lt;&lt; i), &quot;ONES_A_WALK_B&quot;);
+425        1/1                          run_vector(op_table[op_i], (32'h8000_0000 &gt;&gt; i), (32'h0000_0001 &lt;&lt; i), &quot;CROSS_WALK&quot;);
+426        1/1                          run_vector(op_table[op_i], ~(32'h0000_0001 &lt;&lt; i), (32'h0000_0001 &lt;&lt; i), &quot;INV_WALK_A&quot;);
+427        1/1                          run_vector(op_table[op_i], 32'hffff_ffff ^ (32'h0000_0001 &lt;&lt; i),
+428                                                32'h8000_0001 ^ (32'h0000_0001 &lt;&lt; (31 - i)), &quot;DIAGONAL_WALK&quot;);
+429                                 end
+430                             end
+431                     
+432        1/1                  for (op_i = 0; op_i &lt; 4; op_i = op_i + 1) begin
+433        1/1                      for (i = 0; i &lt; 160; i = i + 1) begin
+434        1/1                          rand_state = (rand_state * 32'd1664525) + 32'd1013904223;
+435        1/1                          op_a = rand_state;
+436        1/1                          rand_state = (rand_state * 32'd1664525) + 32'd1013904223;
+437        1/1                          op_b = rand_state;
+438        1/1                          run_vector(op_table[op_i], op_a, op_b, &quot;LCG_RANDOM&quot;);
+439                                 end
+440                             end
+441                     
+442        1/1                  print_fsm_report();
+443        2/2                  @(posedge clk);
+444        1/1                  if (errors == 0) begin
+445        1/1                      $display(&quot;PASS: div unit %0d/%0d vectors&quot;, vectors, vectors);
+446        1/1                      $finish;
+447                             end else begin
+448        <font color = "red">0/1     ==>              $display(&quot;FAIL: div unit %0d/%0d vectors failed&quot;, errors, vectors);</font>
+449        <font color = "red">0/1     ==>              $fatal(1);</font>
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod0.html" >tb_div_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">Conditions</td><td>53</td><td>48</td><td>90.57</td></tr>
+<tr class="s9"><td class="lf">Logical</td><td>53</td><td>48</td><td>90.57</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       14
+ EXPRESSION ((tb_div_unit.dut.state != 2'b0) &amp;&amp; ((!done)))
+             ---------------1---------------    ----2----
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       14
+ SUB-EXPRESSION (tb_div_unit.dut.state != 2'b0)
+                ---------------1---------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       79
+ EXPRESSION ((prev_state == ST_WORK) &amp;&amp; (tb_div_unit.dut.state == ST_FIXUP))
+             -----------1-----------    -----------------2-----------------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       79
+ SUB-EXPRESSION (prev_state == ST_WORK)
+                -----------1-----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       79
+ SUB-EXPRESSION (tb_div_unit.dut.state == ST_FIXUP)
+                -----------------1-----------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       80
+ EXPRESSION (tb_div_unit.dut.divisor == 32'b1)
+            -----------------1----------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       82
+ EXPRESSION (tb_div_unit.dut.orig_a == 32'b0)
+            ----------------1----------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       98
+ EXPRESSION (negative ? (((~magnitude) + 32'b1)) : magnitude)
+             ----1---
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       112
+ EXPRESSION (f_op_b == 32'b0)
+            --------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       113
+ EXPRESSION (((f_md_op == 3'b110) || (f_md_op == 3'b111)) ? f_op_a : 32'hffffffff)
+             ----------------------1---------------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       113
+ SUB-EXPRESSION ((f_md_op == 3'b110) || (f_md_op == 3'b111))
+                 ---------1---------    ---------2---------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       113
+ SUB-EXPRESSION (f_md_op == 3'b110)
+                ---------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       113
+ SUB-EXPRESSION (f_md_op == 3'b111)
+                ---------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       115
+ EXPRESSION (((f_md_op == 3'b100) || (f_md_op == 3'b110)) &amp;&amp; (f_op_a == 32'h80000000) &amp;&amp; (f_op_b == 32'hffffffff))
+             ----------------------1---------------------    ------------2-----------    ------------3-----------
+</pre>
+<table class="noborder">
+<col span="3" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       115
+ SUB-EXPRESSION ((f_md_op == 3'b100) || (f_md_op == 3'b110))
+                 ---------1---------    ---------2---------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       115
+ SUB-EXPRESSION (f_md_op == 3'b100)
+                ---------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       115
+ SUB-EXPRESSION (f_md_op == 3'b110)
+                ---------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       115
+ SUB-EXPRESSION (f_op_a == 32'h80000000)
+                ------------1-----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       115
+ SUB-EXPRESSION (f_op_b == 32'hffffffff)
+                ------------1-----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       117
+ EXPRESSION ((f_md_op == 3'b110) ? 32'b0 : 32'h80000000)
+             ---------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       117
+ SUB-EXPRESSION (f_md_op == 3'b110)
+                ---------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       193
+ EXPRESSION (busy || done)
+             --1-    --2-
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       444
+ EXPRESSION (errors == 0)
+            ------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod0.html" >tb_div_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s9">
+<td>Totals</td>
+<td class="rt">10</td>
+<td class="rt">9</td>
+<td class="rt">90.00 </td>
+</tr><tr class="s9">
+<td>Total Bits</td>
+<td class="rt">212</td>
+<td class="rt">210</td>
+<td class="rt">99.06 </td>
+</tr><tr class="s9">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">106</td>
+<td class="rt">105</td>
+<td class="rt">99.06 </td>
+</tr><tr class="s9">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">106</td>
+<td class="rt">105</td>
+<td class="rt">99.06 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s9">
+<td>Signals</td>
+<td class="rt">10</td>
+<td class="rt">9</td>
+<td class="rt">90.00 </td>
+</tr><tr class="s9">
+<td>Signal Bits</td>
+<td class="rt">212</td>
+<td class="rt">210</td>
+<td class="rt">99.06 </td>
+</tr><tr class="s9">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">106</td>
+<td class="rt">105</td>
+<td class="rt">99.06 </td>
+</tr><tr class="s9">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">106</td>
+<td class="rt">105</td>
+<td class="rt">99.06 </td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>clk</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>resetn</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>start</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>md_op[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>md_op[2]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>op_a[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>op_b[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>result[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>done</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>busy</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>prev_state[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod0.html" >tb_div_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s6">
+<td>Branches</td>
+<td></td>
+<td class="rt">45</td>
+<td class="rt">31</td>
+<td class="rt">68.89 </td>
+</tr><tr class="s8">
+<td>IF</td>
+<td class="rt">54</td>
+<td class="rt">17</td>
+<td class="rt">15</td>
+<td class="rt">88.24 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">444</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">193</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">224</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">233</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">295</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">310</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s10">
+<td>TERNARY</td>
+<td class="rt">98</td>
+<td class="rt">2</td>
+<td class="rt">2</td>
+<td class="rt">100.00</td>
+</tr><tr class="s8">
+<td>IF</td>
+<td class="rt">112</td>
+<td class="rt">9</td>
+<td class="rt">8</td>
+<td class="rt">88.89 </td>
+</tr><tr class="s0">
+<td>CASE</td>
+<td class="rt">133</td>
+<td class="rt">5</td>
+<td class="rt">0</td>
+<td class="rt">0.00  </td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+54                 if (!resetn) begin
+                   <font color = "green">-1-</font>  
+55                     prev_state <= ST_IDLE;
+           <font color = "green">            ==></font>
+56                 end else begin
+57                     state_hits[dut.state] = state_hits[dut.state] + 1;
+58         
+59                     case ({prev_state, dut.state})
+                       <font color = "red">-2-</font>  
+60                         {ST_IDLE,  ST_IDLE}:  arc_hits[2]  = arc_hits[2]  + 1;
+           <font color = "green">                ==></font>
+61                         {ST_IDLE,  ST_WORK}:  begin
+62                             arc_hits[0]  = arc_hits[0]  + 1;
+           <font color = "green">                    ==></font>
+63                             arc_hits[13] = arc_hits[13] + 1;
+64                         end
+65                         {ST_WORK,  ST_WORK}:  begin
+66                             arc_hits[3]  = arc_hits[3]  + 1;
+           <font color = "green">                    ==></font>
+67                             arc_hits[14] = arc_hits[14] + 1;
+68                             arc_hits[15] = arc_hits[15] + 1;
+69                         end
+70                         {ST_WORK,  ST_FIXUP}: arc_hits[4]  = arc_hits[4]  + 1;
+           <font color = "green">                ==></font>
+71                         {ST_FIXUP, ST_DONE}:  arc_hits[11] = arc_hits[11] + 1;
+           <font color = "green">                ==></font>
+72                         {ST_DONE,  ST_IDLE}:  begin
+73                             arc_hits[9]  = arc_hits[9]  + 1;
+           <font color = "green">                    ==></font>
+74                             arc_hits[12] = arc_hits[12] + 1;
+75                         end
+76                         default: ;
+           <font color = "red">                ==></font>
+77                     endcase
+78         
+79                     if (prev_state == ST_WORK && dut.state == ST_FIXUP) begin
+                       <font color = "green">-3-</font>  
+80                         if (dut.divisor == 32'd1)
+                           <font color = "green">-4-</font>  
+81                             arc_hits[5] = arc_hits[5] + 1;
+           <font color = "green">                    ==></font>
+                               MISSING_ELSE
+           <font color = "green">                    ==></font>
+82                         if (dut.orig_a == 32'd0)
+                           <font color = "green">-5-</font>  
+83                             arc_hits[6] = arc_hits[6] + 1;
+           <font color = "green">                    ==></font>
+                               MISSING_ELSE
+           <font color = "green">                    ==></font>
+84                         if (dut.dividend <= dut.divisor)
+                           <font color = "red">-6-</font>  
+85                             arc_hits[7] = arc_hits[7] + 1;
+           <font color = "green">                    ==></font>
+                               MISSING_ELSE
+           <font color = "red">                    ==></font>
+86                         if (dut.overflow)
+                           <font color = "green">-7-</font>  
+87                             arc_hits[8] = arc_hits[8] + 1;
+           <font color = "green">                    ==></font>
+                               MISSING_ELSE
+           <font color = "green">                    ==></font>
+88                     end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>-5-</th><th nowrap width=80>-6-</th><th nowrap width=80>-7-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{ST_IDLE, ST_IDLE} </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{ST_IDLE, ST_WORK} </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{ST_WORK, ST_WORK} </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{ST_WORK, ST_FIXUP} </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{ST_FIXUP, ST_DONE} </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{ST_DONE, ST_IDLE} </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+444                if (errors == 0) begin
+                   <font color = "red">-1-</font>  
+445                    $display("PASS: div unit %0d/%0d vectors", vectors, vectors);
+           <font color = "green">            ==></font>
+446                    $finish;
+447                end else begin
+448                    $display("FAIL: div unit %0d/%0d vectors failed", errors, vectors);
+           <font color = "red">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+193                    if (busy || done) begin
+                       <font color = "red">-1-</font>  
+194                        errors = errors + 1;
+           <font color = "red">                ==></font>
+195                        $error("TB launch while not idle: busy=%b done=%b state=%0d", busy, done, dut.state);
+196                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+224                    if (done !== 1'b1 || result !== exp_result) begin
+                       <font color = "red">-1-</font>  
+225                        errors = errors + 1;
+           <font color = "red">                ==></font>
+226                        $error("FAIL[%0d] %0s %0s a=%h b=%h result=%h exp=%h done=%b wait=%0d",
+227                               vectors, tag, op_name(t_md_op), t_op_a, t_op_b, result,
+228                               exp_result, done, wait_cycles);
+229                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+233                    if (done !== 1'b0 || dut.state !== ST_IDLE) begin
+                       <font color = "red">-1-</font>  
+234                        errors = errors + 1;
+           <font color = "red">                ==></font>
+235                        $error("FAIL[%0d] post-DONE cleanup done=%b state=%0d", vectors, done, dut.state);
+236                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+295                    if (dut.state !== ST_IDLE || done !== 1'b0) begin
+                       <font color = "red">-1-</font>  
+296                        errors = errors + 1;
+           <font color = "red">                ==></font>
+297                        $error("FAIL reset-from-WORK state=%0d done=%b", dut.state, done);
+298                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+310                    if (dut.state !== ST_IDLE || done !== 1'b0) begin
+                       <font color = "red">-1-</font>  
+311                        errors = errors + 1;
+           <font color = "red">                ==></font>
+312                        $error("FAIL reset-from-FIXUP state=%0d done=%b", dut.state, done);
+313                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+98                     signed_value = negative ? (~magnitude + 32'd1) : magnitude;
+                                               <font color = "green">-1-</font>  
+                                               <font color = "green">==></font>  
+                                               <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+112                    if (f_op_b == 32'h0000_0000) begin
+                       <font color = "green">-1-</font>  
+113                        golden_result = ((f_md_op == `MD_REM) || (f_md_op == `MD_REMU)) ?
+                                                                                           <font color = "green">-2-</font>  
+                                                                                           <font color = "green">==></font>  
+                                                                                           <font color = "green">==></font>  
+114                                        f_op_a : 32'hffff_ffff;
+115                    end else if (((f_md_op == `MD_DIV) || (f_md_op == `MD_REM)) &&
+                                <font color = "green">-3-</font>  
+116                                 (f_op_a == 32'h8000_0000) && (f_op_b == 32'hffff_ffff)) begin
+117                        golden_result = (f_md_op == `MD_REM) ? 32'h0000_0000 : 32'h8000_0000;
+                                                                <font color = "green">-4-</font>  
+                                                                <font color = "green">==></font>  
+                                                                <font color = "green">==></font>  
+118                    end else begin
+119                        case (f_md_op)
+                           <font color = "red">-5-</font>  
+120                            `MD_DIV:  golden_result = a_s / b_s;
+           <font color = "green">                    ==></font>
+121                            `MD_DIVU: golden_result = f_op_a / f_op_b;
+           <font color = "green">                    ==></font>
+122                            `MD_REM:  golden_result = a_s % b_s;
+           <font color = "green">                    ==></font>
+123                            `MD_REMU: golden_result = f_op_a % f_op_b;
+           <font color = "green">                    ==></font>
+124                            default:  golden_result = 32'h0000_0000;
+           <font color = "red">                    ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>-5-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b101 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b110 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b111 </td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>default</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+133                    case (f_md_op)
+                       <font color = "red">-1-</font>  
+134                        `MD_DIV:  op_name = "DIV";
+           <font color = "red">                ==></font>
+135                        `MD_DIVU: op_name = "DIVU";
+           <font color = "red">                ==></font>
+136                        `MD_REM:  op_name = "REM";
+           <font color = "red">                ==></font>
+137                        `MD_REMU: op_name = "REMU";
+           <font color = "red">                ==></font>
+138                        default:  op_name = "BAD";
+           <font color = "red">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>3'b100 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>3'b101 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>3'b110 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>3'b111 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>default</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_0">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_tb_div_unit">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

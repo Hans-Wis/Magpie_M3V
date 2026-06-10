@@ -1,0 +1,28 @@
+{
+  "artifacts": [
+    "flow/v2_pipeline/phase_05_00_lint/reports/lint_rtl.moresimple.rpt",
+    "tests/gates/gate_05_00_lint.py"
+  ],
+  "autonomy": "L2",
+  "data_quality": "full",
+  "design": "magpie_m1",
+  "gate": "gate_05_00_lint",
+  "metrics": {
+    "active_gates_total": "172 pass",
+    "license": "available (no-sandbox danger-full-access)",
+    "spyglass_lint_rtl": "0 fatal, 0 error, 24 warn, 3 info",
+    "starc": "0 error, 9 warn",
+    "top": "cpu_m1_top",
+    "verdict": "PASS (errors block; warnings advisory, ADR-0006)"
+  },
+  "reviewed_by_codex": "none",
+  "run": {
+    "command": "codex exec -m gpt-5.5 -s danger-full-access; sg_shell -tcl run_spyglass.tcl",
+    "ended": "2026-06-08T14:19:14",
+    "host": "eda",
+    "id": "run-j3lint-20260608",
+    "started": "2026-06-08T14:19:14"
+  },
+  "stage": "rtl_signoff",
+  "status": "pass"
+}

@@ -1,0 +1,21 @@
+{
+ "stage": "P14_ifu",
+ "reviewer": "Codex (producer) — honestly split structural vs integration-deferred (no green-wash)",
+ "approver": "Claude (PL) — verified pc_inc vs ifu.v:50 RTL 2026-06-09",
+ "integration_deferred": [
+   {"item": "cross-boundary RV32C residue assembly", "owner": "P16 core IF slice",
+    "basis": "standalone ifu.v has only PC state/mux/increment; the fetch-response residue datapath lives in core.v — covered at integration, NOT faked or waived here."}
+ ],
+ "waivers": [
+   {"waiver_id": "TW-IFU-PCINC-BIT0", "module": "ifu.v", "dut_scope": "core",
+    "signal_re": "^pc_inc\\[", "bit_lo": 0, "bit_hi": 0, "metric": "toggle",
+    "structural_basis": "pc_inc = is_16bit ? 32'd2 : 32'd4 (ifu.v:50) — increment is only ever 2 or 4; bit[0] is constant 0 (both values even). Only bits[1,2] toggle.",
+    "stimulus_considered": "both is_16bit=0/1 driven (pc_inc 2 and 4); no input can make pc_inc any other value",
+    "spike_impact": "none (coverage-only)", "approved": true, "approver": "Claude"},
+   {"waiver_id": "TW-IFU-PCINC-HI", "module": "ifu.v", "dut_scope": "core",
+    "signal_re": "^pc_inc\\[", "bit_lo": 3, "bit_hi": 31, "metric": "toggle",
+    "structural_basis": "pc_inc = is_16bit ? 32'd2 : 32'd4 (ifu.v:50) — bits[31:3] are constant 0 (max value 4 = bit2); RTL-determined two-value mux.",
+    "stimulus_considered": "both increment values driven; high bits are RTL constants",
+    "spike_impact": "none (coverage-only)", "approved": true, "approver": "Claude"}
+ ]
+}

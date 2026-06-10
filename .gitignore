@@ -1,0 +1,33 @@
+# ============ Magpie_M1 .gitignore — snapshot SOURCE + key deliverables ============
+# build / tool scratch (regenerable)
+**/obj_dir/
+**/work/
+**/alib*/
+**/db/
+**/build/
+**/compiled_db/
+**/.Xil/
+/.run/
+__pycache__/
+*.pyc
+*.o
+*.d
+*.svf
+*.jou
+*.gch
+*.str
+vivado*.log
+# LICENSED PDK derivatives — never commit
+*.db
+*.lib
+*.ndm
+# regenerable sim / coverage / disasm (re-run gates to regenerate)
+*.disasm
+*.dat
+*.info
+*.elf
+*.vcd
+*.fst
+*.trace
+# arch-test / riscv-dv per-seed runs (regenerable, large)
+**/runs/

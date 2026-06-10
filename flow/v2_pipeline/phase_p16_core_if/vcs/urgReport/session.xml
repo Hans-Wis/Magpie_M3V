@@ -1,0 +1,32 @@
+<session version="1.1" release="X-2025.06-SP1" timestp="2026-06-09 12:39:10 GMT">
+  <info>
+    <attr name="datetime" value="Tue Jun  9 20:39:11 2026
+"/>
+    <attr name="command" value="urg -full64 -dir vcs/simv.vdb -report vcs/urgReport -metric line+cond+branch+fsm+tgl"/>
+    <attr name="top_instance" value="tb_directed_lockstep"/>
+  </info>
+  <hvp>
+    <datadef>
+      <metdef name="Line" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="Cond" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="Toggle" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="FSM" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="Branch" type="ratio" aggregator="average" builtin="1" />
+    </datadef>
+  </hvp>
+  <old_coverage>
+  <scope type="top" name="top">
+    <metric name="Line" value="436/656" />
+    <metric name="Cond" value="445/832" />
+    <metric name="Toggle" value="7384/13120" />
+    <metric name="FSM" value="0/6" />
+    <metric name="Branch" value="192/379" />
+  </scope>
+  <scope type="instance" name="top">
+  </scope>
+  <scope type="group" name="top">
+  </scope>
+  <scope type="assert" name="Statistics">
+  </scope>
+  </old_coverage>
+</session>

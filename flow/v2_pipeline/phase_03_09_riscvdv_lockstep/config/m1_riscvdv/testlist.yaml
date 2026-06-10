@@ -1,0 +1,23 @@
+- test: m1_rv32imc_arith
+  description: >
+    cpu_m1 RV32IMC_Zicsr_Zifencei riscv-dv pyflow bar-B-minus mix (P1, ADR-0012 MVP):
+    arithmetic/compressed, load/store, branch/jump, M, M-mode supported CSR
+    instructions, synchronous trap streams, AND FENCE/FENCE.I (Zifencei).
+    Async interrupts (MTI/MSI/MEI), A/F/D/V, and unsupported privileged behavior
+    remain excluded (async IRQ deferred to Gold SKU per ADR-0012).
+  iterations: 1
+  gen_test: riscv_instr_base_test
+  gen_opts: >
+    --instr_cnt=4000
+    --num_of_sub_program=0
+    --no_fence=0
+    --no_data_page=0
+    --no_csr_instr=0
+    --enable_interrupt=0
+    --no_ebreak=1
+    --illegal_instr_ratio=0
+    --enable_unaligned_load_store=1
+    --enable_misaligned_instr=0
+    --bare_program_mode=0
+    --boot_mode=m
+  rtl_test: core_base_test

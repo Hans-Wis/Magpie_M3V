@@ -1,0 +1,21 @@
+ 
+****************************************
+Report : constraint
+        -all_violators
+Design : cpu_m1_top
+Version: X-2025.06-SP2
+Date   : Mon Jun  8 14:23:15 2026
+****************************************
+
+
+   min_delay/hold ('clk' group)
+
+                             Required        Actual
+   Endpoint                 Path Delay     Path Delay        Slack
+   -----------------------------------------------------------------
+   u_core/u_csr/cycle_cnt_reg[0]/D
+                                0.06           0.05 f        -0.01  (VIOLATED)
+   primed_reg/D                 0.06           0.06 f         0.00  (VIOLATED: increase significant digits)
+
+
+1

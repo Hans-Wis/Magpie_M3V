@@ -1,0 +1,10 @@
+covergroup,hit,total,hit_percent,uncovered
+cg_opcode_instr_class,13,13,100.00,
+cg_alu_m_funct,21,21,100.00,
+cg_load_store,12,12,100.00,
+cg_branch_jump_bp_ras,10,10,100.00,
+cg_hazard_flush,6,6,100.00,
+cg_csr_trap,10,10,100.00,
+cg_riscvisacov_operands,103,103,100.00,
+cg_riscvisacov_value_corners,12,12,100.00,
+cg_riscvisacov_immediates,23,23,100.00,j:max (justified exclusion)

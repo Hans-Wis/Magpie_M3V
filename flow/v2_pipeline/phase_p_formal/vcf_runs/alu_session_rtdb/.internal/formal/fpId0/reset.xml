@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<File version="1">
+	<State />
+	<Input>
+		<Pair vector="32'bx" name="op_a" />
+		<Pair vector="32'bx" name="op_b" />
+		<Pair vector="4'bx" name="alu_op" />
+		<Pair vector="1'b1" name="_atZero" />
+	</Input>
+</File>

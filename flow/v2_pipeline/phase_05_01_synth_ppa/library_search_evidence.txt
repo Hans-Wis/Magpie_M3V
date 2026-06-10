@@ -1,0 +1,8 @@
+timestamp=2026-06-08T14:19:10+08:00
+host=eda
+search_1=find /home/edauser/project/PDK -maxdepth 8 -type f \( -iname '*.lib' -o -iname '*.db' -o -iname '*28*' -o -iname '*hpc*' -o -iname '*hpcplus*' -o -iname '*tsmc28*' \)
+search_1_result=TSMC28HPC+ PDK/model/memory artifacts found under /home/edauser/project/PDK/TSMC28, but no extracted standard-cell .lib/.db was found in that tree by this search.
+search_2=find /home/edauser/project -maxdepth 6 \( -iname '*28hpc*' -o -iname '*28*hpc*' -o -iname '*tsmc28*' -o -iname '*hpcplus*' -o -iname '*28nm*' \)
+search_2_selected=/home/edauser/project/SOC/Magpie_X3/APR/ref/db/tcbn28hpcplusbwp40p140tt0p9v25c.db
+search_2_other_db=/home/edauser/project/SOC/Magpie_X3/APR/ref/db/tsdn28hpcpa512x32m4mwaso_130a_tt0p9v25c.db
+library_used=tcbn28hpcplusbwp40p140tt0p9v25c.db, TSMC 28HPC+ BWP40P140 standard cell, tt0p9v25c

@@ -1,0 +1,6 @@
+(1) c.lui root cause = Comparator/parser bug (False golden in normalization); not cdec or fetch bug.
+(2) what file/line was fixed: flow/v2_pipeline/lib/spike_commit.py (added _eval_norm_wdata).
+(3) regressions: no per J10_result.
+(4) seed 2026060801 NEW matched-commit count: 981 (was 58).
+(5) NEXT divergence if any: none (no mismatch detected before sentinel/limit in bounded run).
+(6) does the seed now run CLEAN to end, or still diverges? Runs clean to end of bounded run.

@@ -1,0 +1,19 @@
+Write a FINAL completion report for the Magpie_M1 CPU IP "flow to stage 5.0" effort. Write it directly to: SOC/Magpie_M1/flow/v2_pipeline/phase_05_leader/FINAL_REPORT.md (do not ask).
+Ground truth: SOC/Magpie_M1/flow/state/*.state.json (rtl, dv, rtl_signoff, synth); SOC/Magpie_M1/flow/v2_pipeline/phase_05_leader/{J1_result.md,J2b_J3_result.md,J4_result.md}; CLAUDE.md §2.
+Facts (use, don't invent):
+- Goal: drive CPU IP flow 0 -> stage 5.0. ACHIEVED for 5.0 (lint + synth/PPA trial both done with real licensed-tool data).
+- Stage 5.0 lint: Spyglass 0 error/0 fatal/24 warn; STARC 0 error -> PASS (ADR-0006).
+- Stage 5.0 synth/PPA TRIAL (DC, TSMC 28HPC+ tcbn28hpcplusbwp40p140 tt0p9v25c): ~699 MHz (clk 1.43ns, setup WNS 0.00 MET), area 26298 um^2, power 15.85 mW (vectorless est). TRIAL caveats: no DFT/SAIF/wireload, 2 hold violators, single corner.
+- Functional coverage MEASURED real = 55.56% (40/72): load/store 92%, ALU/M 81%, opcode 69%, branch/BP/RAS 0%, CSR/trap 0% (random-only stimulus). PARTIAL.
+- 176 pytest gates pass. RTL integrity: a re-validating lockstep gate (gate_03_08) rebuilds+reruns RTL vs Spike = PASS.
+- Bug found+fixed earlier: BUG-ALIGN-0001 misalign operator-precedence (SLT spurious trap).
+- Co-work model: Claude=Project Leader/judge, Codex gpt-5.5=executor, Gemini=docs. KEY operational fix: licensed EDA via Codex needs -s danger-full-access (sandbox -s workspace-write unshares network -> no license).
+Report sections: 
+  # Magpie_M1 — Flow-to-5.0 Completion Report
+  ## Executive summary (what was delivered; IP is NOT yet qualified)
+  ## Final flow stage table (0..5.0 with status)
+  ## Stage 5.0 results (lint + PPA table with the real numbers)
+  ## What the team did (J1..J4, who executed, the license root-cause fix)
+  ## Honest residuals / NOT-qualified gaps (functional coverage 55% partial, hold violators, single-corner trial, lockstep 81 commits)
+  ## Recommended next steps (lift functional coverage by merging directed stimulus; multi-corner; APR hold-fix; larger lockstep/riscv-dv)
+Be factual, scannable, honesty taxonomy. Concise (~60 lines).

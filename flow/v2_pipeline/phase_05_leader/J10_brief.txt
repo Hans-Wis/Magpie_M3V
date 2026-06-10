@@ -1,0 +1,14 @@
+ROLE: Codex EXECUTOR (gpt-5.5), PL=Claude. design_id=cpu_m1. OSS+riscv-none-elf-gcc; -s danger-full-access. clean-room. report-faithfully. Spike is GOLDEN.
+CONTEXT: After the BUG-XBOUND-0001 fix, riscv-dv seed 2026060801 now matches Spike for 58 commits, then diverges at idx 59: instruction c.lui (compressed LUI) at pc=0x0d2 -> DUT wdata=0x0000d000 but Spike (golden) wdata=0x0000c000. The DUT's c.lui immediate decode is off by one bit. Likely in cdec.v (RVC expander) c.lui immediate (nzimm[17:12]) extraction — BUT first CONFIRM it is a pure decode bug and not a residual cross-boundary fetch issue (check whether this c.lui sits at a cross-boundary / its fetched bits).
+TASK J10:
+1. CONFIRM root cause: reproduce seed 2026060801; at the c.lui@0x0d2 commit, dump the raw 16-bit cinstr fed to cdec, the cdec_expanded output, and compare to the correct RV32C c.lui encoding. Show whether DUT mis-extracts the immediate (cdec bug) OR fetched wrong bits (fetch bug). Write evidence.
+2. FIX clean-room the actual root cause (most likely cdec.v c.lui imm bits). Minimal.
+3. ADR if it's a microarch decision; otherwise note as a decode-correctness fix in docs/reports/bug_xbound_0001/ (or a new bug_rvc_lui report).
+4. RE-VALIDATE (all must stay green): pytest full suite (>=179), gate_03_08 lockstep, gate_02_01 mem_wrapper, gate_04_08 coverage 100%. Then re-run riscv-dv seed 2026060801 and report the NEW matched-commit count + the NEXT divergence (if any) — keep going only on THIS seed for now (do not launch the full 100k multi-seed yet).
+CONSTRAINTS: minimal RTL change, clean-room, no regression. Explicit paths.
+OUTPUT (write <=35 lines) flow/v2_pipeline/phase_05_leader/J10_result.md:
+  ## root_cause (cdec bug or fetch? the raw cinstr + expanded bits)
+  ## fix (files changed, what)
+  ## revalidate (pytest pass count; gate_03_08/02_01/04_08 PASS?; seed2026060801 new matched-commit count; next divergence if any)
+  ## regressions
+  ## tokens

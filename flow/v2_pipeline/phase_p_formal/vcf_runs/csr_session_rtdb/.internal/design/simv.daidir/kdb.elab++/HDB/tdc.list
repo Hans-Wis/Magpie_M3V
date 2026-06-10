@@ -1,0 +1,3 @@
+IP/cpu_m1/dv/formal/csr_assert_bind.sv
+IP/cpu_m1/rtl/csr.v
+IP/cpu_m1/rtl/def.vh

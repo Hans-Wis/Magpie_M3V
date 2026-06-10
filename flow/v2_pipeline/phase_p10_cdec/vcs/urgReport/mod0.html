@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: tb_cdec_unit</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_tb_cdec_unit'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_tb_cdec_unit')">tb_cdec_unit</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 92.73</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 95.11</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 94.00</a></td>
+<td class="s10 cl rt"><a href="mod0.html#Toggle" >100.00</a></td>
+<td class="s8 cl rt"><a href="mod0.html#Branch" > 81.82</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p10_cdec/vcs/../../../../IP/cpu_m1/dv/tb/tb_cdec_unit.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p10_cdec/vcs/../../../../IP/cpu_m1/dv/tb/tb_cdec_unit.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod0.html#inst_tag_0"  onclick="showContent('inst_tag_0')">tb_cdec_unit</a></td>
+<td class="s9 cl rt"> 92.73</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 95.11</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 94.00</a></td>
+<td class="s10 cl rt"><a href="mod0.html#Toggle" >100.00</a></td>
+<td class="s8 cl rt"><a href="mod0.html#Branch" > 81.82</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_tb_cdec_unit'>
+<hr>
+<a name="inst_tag_0"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_0" >tb_cdec_unit</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 92.73</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 95.11</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 94.00</a></td>
+<td class="s10 cl rt"><a href="mod0.html#Toggle" >100.00</a></td>
+<td class="s8 cl rt"><a href="mod0.html#Branch" > 81.82</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 91.26</td>
+<td class="s9 cl rt"> 95.92</td>
+<td class="s9 cl rt"> 96.34</td>
+<td class="s8 cl rt"> 87.59</td>
+<td class="s8 cl rt"> 85.19</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<span class=inst>none</span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod1.html#inst_tag_1" id="tag_urg_inst_1">dut</a></td>
+<td class="s9 cl rt"> 93.41</td>
+<td class="s9 cl rt"> 98.36</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s8 cl rt"> 84.79</td>
+<td class="s9 cl rt"> 90.48</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_tb_cdec_unit'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod0.html" >tb_cdec_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">TOTAL</td><td></td><td>184</td><td>175</td><td>95.11</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>30</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>41</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>52</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>62</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>73</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>81</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>88</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>95</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>102</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>109</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>116</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>123</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>130</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>137</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>144</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>155</td><td>37</td><td>37</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">ROUTINE</td><td>225</td><td>48</td><td>45</td><td>93.75</td></tr>
+<tr class="s7"><td class="lf">ROUTINE</td><td>311</td><td>9</td><td>7</td><td>77.78</td></tr>
+<tr class="s7"><td class="lf">ROUTINE</td><td>333</td><td>9</td><td>7</td><td>77.78</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>351</td><td>3</td><td>3</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">INITIAL</td><td>359</td><td>63</td><td>61</td><td>96.83</td></tr>
+</table>
+<pre class="code"><br clear=all>
+29                              begin
+30         1/1                      prime_reg = {2'b01, r3};
+31                              end
+32                          endfunction
+33                      
+34                          function [31:0] enc_i;
+35                              input [11:0] imm;
+36                              input [4:0]  rs1;
+37                              input [2:0]  funct3;
+38                              input [4:0]  rd;
+39                              input [6:0]  opcode;
+40                              begin
+41         1/1                      enc_i = {imm, rs1, funct3, rd, opcode};
+42                              end
+43                          endfunction
+44                      
+45                          function [31:0] enc_s;
+46                              input [11:0] imm;
+47                              input [4:0]  rs2;
+48                              input [4:0]  rs1;
+49                              input [2:0]  funct3;
+50                              input [6:0]  opcode;
+51                              begin
+52         1/1                      enc_s = {imm[11:5], rs2, rs1, funct3, imm[4:0], opcode};
+53                              end
+54                          endfunction
+55                      
+56                          function [31:0] enc_b;
+57                              input [12:0] imm;
+58                              input [4:0]  rs2;
+59                              input [4:0]  rs1;
+60                              input [2:0]  funct3;
+61                              begin
+62         1/1                      enc_b = {imm[12], imm[10:5], rs2, rs1, funct3, imm[4:1], imm[11], OPC_BRANCH};
+63                              end
+64                          endfunction
+65                      
+66                          function [31:0] enc_r;
+67                              input [6:0] funct7;
+68                              input [4:0] rs2;
+69                              input [4:0] rs1;
+70                              input [2:0] funct3;
+71                              input [4:0] rd;
+72                              begin
+73         1/1                      enc_r = {funct7, rs2, rs1, funct3, rd, OPC_OP};
+74                              end
+75                          endfunction
+76                      
+77                          function [31:0] enc_j;
+78                              input [20:0] imm;
+79                              input [4:0]  rd;
+80                              begin
+81         1/1                      enc_j = {imm[20], imm[10:1], imm[11], imm[19:12], rd, OPC_JAL};
+82                              end
+83                          endfunction
+84                      
+85                          function [11:0] imm_addi4spn;
+86                              input [15:0] c;
+87                              begin
+88         1/1                      imm_addi4spn = {2'b0, c[10:7], c[12:11], c[5], c[6], 2'b0};
+89                              end
+90                          endfunction
+91                      
+92                          function [11:0] imm_lwsw;
+93                              input [15:0] c;
+94                              begin
+95         1/1                      imm_lwsw = {5'b0, c[5], c[12:10], c[6], 2'b0};
+96                              end
+97                          endfunction
+98                      
+99                          function [11:0] imm_addi;
+100                             input [15:0] c;
+101                             begin
+102        1/1                      imm_addi = {{7{c[12]}}, c[6:2]};
+103                             end
+104                         endfunction
+105                     
+106                         function [19:0] imm_lui;
+107                             input [15:0] c;
+108                             begin
+109        1/1                      imm_lui = {{15{c[12]}}, c[6:2]};
+110                             end
+111                         endfunction
+112                     
+113                         function [11:0] imm_addi16sp;
+114                             input [15:0] c;
+115                             begin
+116        1/1                      imm_addi16sp = {{3{c[12]}}, c[4:3], c[5], c[2], c[6], 4'b0};
+117                             end
+118                         endfunction
+119                     
+120                         function [20:0] imm_cj;
+121                             input [15:0] c;
+122                             begin
+123        1/1                      imm_cj = {{10{c[12]}}, c[8], c[10:9], c[6], c[7], c[2], c[11], c[5:3], 1'b0};
+124                             end
+125                         endfunction
+126                     
+127                         function [12:0] imm_cb;
+128                             input [15:0] c;
+129                             begin
+130        1/1                      imm_cb = {{5{c[12]}}, c[6:5], c[2], c[11:10], c[4:3], 1'b0};
+131                             end
+132                         endfunction
+133                     
+134                         function [11:0] imm_lwsp;
+135                             input [15:0] c;
+136                             begin
+137        1/1                      imm_lwsp = {4'b0, c[3:2], c[12], c[6:4], 2'b0};
+138                             end
+139                         endfunction
+140                     
+141                         function [11:0] imm_swsp;
+142                             input [15:0] c;
+143                             begin
+144        1/1                      imm_swsp = {4'b0, c[8:7], c[12:9], 2'b0};
+145                             end
+146                         endfunction
+147                     
+148                         function golden_illegal;
+149                             input [15:0] c;
+150                             reg [1:0] op;
+151                             reg [2:0] funct3;
+152                             reg [4:0] rd_rs1_5;
+153                             reg [4:0] rs2_5;
+154                             begin
+155        1/1                      op        = c[1:0];
+156        1/1                      funct3    = c[15:13];
+157        1/1                      rd_rs1_5  = c[11:7];
+158        1/1                      rs2_5     = c[6:2];
+159        1/1                      golden_illegal = 1'b0;
+160                     
+161        1/1                      case (op)
+162                                     2'b00: begin
+163        1/1                              case (funct3)
+164        1/1                                  3'b000: golden_illegal = (c[12:5] == 8'h00);
+165        1/1                                  3'b010: golden_illegal = 1'b0;
+166        1/1                                  3'b110: golden_illegal = 1'b0;
+167        1/1                                  default: golden_illegal = 1'b1;
+168                                         endcase
+169                                     end
+170                                     2'b01: begin
+171        1/1                              case (funct3)
+172        1/1                                  3'b000: golden_illegal = 1'b0;
+173        1/1                                  3'b001: golden_illegal = 1'b0;
+174        1/1                                  3'b010: golden_illegal = 1'b0;
+175                                             3'b011: begin
+176        1/1                                      if (rd_rs1_5 == 5'd2)
+177        1/1                                          golden_illegal = (c[12] == 1'b0 &amp;&amp; c[6:2] == 5'b0);
+178                                                 else
+179        1/1                                          golden_illegal = (rd_rs1_5 == 5'd0) ||
+180                                                                      (c[12] == 1'b0 &amp;&amp; c[6:2] == 5'b0);
+181                                             end
+182                                             3'b100: begin
+183        1/1                                      case (c[11:10])
+184        1/1                                          2'b00: golden_illegal = c[12];
+185        1/1                                          2'b01: golden_illegal = c[12];
+186        1/1                                          2'b10: golden_illegal = 1'b0;
+187        1/1                                          2'b11: golden_illegal = (c[12] == 1'b1);
+                   <font color = "red">==>  MISSING_DEFAULT</font>
+188                                                 endcase
+189                                             end
+190        1/1                                  3'b101: golden_illegal = 1'b0;
+191        1/1                                  3'b110: golden_illegal = 1'b0;
+192        1/1                                  3'b111: golden_illegal = 1'b0;
+                   <font color = "red">==>  MISSING_DEFAULT</font>
+193                                         endcase
+194                                     end
+195                                     2'b10: begin
+196        1/1                              case (funct3)
+197        1/1                                  3'b000: golden_illegal = c[12];
+198        1/1                                  3'b010: golden_illegal = (rd_rs1_5 == 5'd0);
+199                                             3'b100: begin
+200        1/1                                      if (c[12] == 1'b0)
+201        1/1                                          golden_illegal = (rs2_5 == 5'd0) &amp;&amp; (rd_rs1_5 == 5'd0);
+202        1/1                                      else if (rs2_5 == 5'd0)
+203        1/1                                          golden_illegal = 1'b0;
+204                                                 else
+205        1/1                                          golden_illegal = 1'b0;
+206                                             end
+207        1/1                                  3'b110: golden_illegal = 1'b0;
+208        1/1                                  default: golden_illegal = 1'b1;
+209                                         endcase
+210                                     end
+211        1/1                          2'b11: golden_illegal = 1'b1;
+                   <font color = "red">==>  MISSING_DEFAULT</font>
+212                                 endcase
+213                             end
+214                         endfunction
+215                     
+216                         function [31:0] golden_expand;
+217                             input [15:0] c;
+218                             reg [1:0] op;
+219                             reg [2:0] funct3;
+220                             reg [4:0] rd_rs1_5;
+221                             reg [4:0] rs2_5;
+222                             reg [4:0] rd_rs1_p;
+223                             reg [4:0] rs2_p;
+224                             begin
+225        1/1                      op        = c[1:0];
+226        1/1                      funct3    = c[15:13];
+227        1/1                      rd_rs1_5  = c[11:7];
+228        1/1                      rs2_5     = c[6:2];
+229        1/1                      rd_rs1_p  = prime_reg(c[9:7]);
+230        1/1                      rs2_p     = prime_reg(c[4:2]);
+231        1/1                      golden_expand = 32'h0000_0000;
+232                     
+233        1/1                      if (!golden_illegal(c)) begin
+234        1/1                          case (op)
+235                                         2'b00: begin
+236        1/1                                  case (funct3)
+237        1/1                                      3'b000: golden_expand = enc_i(imm_addi4spn(c), 5'd2, 3'b000, rs2_p, OPC_OP_IMM);
+238        1/1                                      3'b010: golden_expand = enc_i(imm_lwsw(c), rd_rs1_p, 3'b010, rs2_p, OPC_LOAD);
+239        1/1                                      3'b110: golden_expand = enc_s(imm_lwsw(c), rs2_p, rd_rs1_p, 3'b010, OPC_STORE);
+240        <font color = "red">0/1     ==>                              default: golden_expand = 32'h0000_0000;</font>
+241                                             endcase
+242                                         end
+243                                         2'b01: begin
+244        1/1                                  case (funct3)
+245        1/1                                      3'b000: golden_expand = enc_i(imm_addi(c), rd_rs1_5, 3'b000, rd_rs1_5, OPC_OP_IMM);
+246        1/1                                      3'b001: golden_expand = enc_j(imm_cj(c), 5'd1);
+247        1/1                                      3'b010: golden_expand = enc_i(imm_addi(c), 5'd0, 3'b000, rd_rs1_5, OPC_OP_IMM);
+248                                                 3'b011: begin
+249        1/1                                          if (rd_rs1_5 == 5'd2)
+250        1/1                                              golden_expand = enc_i(imm_addi16sp(c), 5'd2, 3'b000, 5'd2, OPC_OP_IMM);
+251                                                     else
+252        1/1                                              golden_expand = {imm_lui(c), rd_rs1_5, OPC_LUI};
+253                                                 end
+254                                                 3'b100: begin
+255        1/1                                          case (c[11:10])
+256        1/1                                              2'b00: golden_expand = enc_i({7'b0, c[6:2]}, rd_rs1_p, 3'b101, rd_rs1_p, OPC_OP_IMM);
+257        1/1                                              2'b01: golden_expand = enc_i({7'b0100000, c[6:2]}, rd_rs1_p, 3'b101, rd_rs1_p, OPC_OP_IMM);
+258        1/1                                              2'b10: golden_expand = enc_i(imm_addi(c), rd_rs1_p, 3'b111, rd_rs1_p, OPC_OP_IMM);
+259                                                         2'b11: begin
+260        1/1                                                  case (c[6:5])
+261        1/1                                                      2'b00: golden_expand = enc_r(7'b0100000, rs2_p, rd_rs1_p, 3'b000, rd_rs1_p);
+262        1/1                                                      2'b01: golden_expand = enc_r(7'b0000000, rs2_p, rd_rs1_p, 3'b100, rd_rs1_p);
+263        1/1                                                      2'b10: golden_expand = enc_r(7'b0000000, rs2_p, rd_rs1_p, 3'b110, rd_rs1_p);
+264        1/1                                                      2'b11: golden_expand = enc_r(7'b0000000, rs2_p, rd_rs1_p, 3'b111, rd_rs1_p);
+                   <font color = "red">==>  MISSING_DEFAULT</font>
+265                                                             endcase
+266                                                         end
+                   <font color = "red">==>  MISSING_DEFAULT</font>
+267                                                     endcase
+268                                                 end
+269        1/1                                      3'b101: golden_expand = enc_j(imm_cj(c), 5'd0);
+270        1/1                                      3'b110: golden_expand = enc_b(imm_cb(c), 5'd0, rd_rs1_p, 3'b000);
+271        1/1                                      3'b111: golden_expand = enc_b(imm_cb(c), 5'd0, rd_rs1_p, 3'b001);
+                   <font color = "red">==>  MISSING_DEFAULT</font>
+272                                             endcase
+273                                         end
+274                                         2'b10: begin
+275        1/1                                  case (funct3)
+276        1/1                                      3'b000: golden_expand = enc_i({7'b0, c[6:2]}, rd_rs1_5, 3'b001, rd_rs1_5, OPC_OP_IMM);
+277        1/1                                      3'b010: golden_expand = enc_i(imm_lwsp(c), 5'd2, 3'b010, rd_rs1_5, OPC_LOAD);
+278                                                 3'b100: begin
+279        1/1                                          if (c[12] == 1'b0) begin
+280        1/1                                              if (rs2_5 == 5'd0)
+281        1/1                                                  golden_expand = enc_i(12'b0, rd_rs1_5, 3'b000, 5'd0, OPC_JALR);
+282                                                         else
+283        1/1                                                  golden_expand = enc_r(7'b0, rs2_5, 5'd0, 3'b000, rd_rs1_5);
+284                                                     end else begin
+285        1/1                                              if (rs2_5 == 5'd0) begin
+286        1/1                                                  if (rd_rs1_5 == 5'd0)
+287        1/1                                                      golden_expand = 32'h0010_0073;
+288                                                             else
+289        1/1                                                      golden_expand = enc_i(12'b0, rd_rs1_5, 3'b000, 5'd1, OPC_JALR);
+290                                                         end else begin
+291        1/1                                                  golden_expand = enc_r(7'b0, rs2_5, rd_rs1_5, 3'b000, rd_rs1_5);
+292                                                         end
+293                                                     end
+294                                                 end
+295        1/1                                      3'b110: golden_expand = enc_s(imm_swsp(c), rs2_5, 5'd2, 3'b010, OPC_STORE);
+296        <font color = "red">0/1     ==>                              default: golden_expand = 32'h0000_0000;</font>
+297                                             endcase
+298                                         end
+299        <font color = "red">0/1     ==>                      default: golden_expand = 32'h0000_0000;</font>
+300                                     endcase
+301                                 end
+                        MISSING_ELSE
+302                             end
+303                         endfunction
+304                     
+305                         task check_vector;
+306                             input [15:0] t_cinstr;
+307                             input [8*40-1:0] tag;
+308                             reg [31:0] exp_expanded;
+309                             reg        exp_illegal;
+310                             begin
+311        1/1                      cinstr = t_cinstr;
+312        2/2                      #1;
+313                     
+314        1/1                      exp_expanded = golden_expand(t_cinstr);
+315        1/1                      exp_illegal  = golden_illegal(t_cinstr);
+316        1/1                      vectors = vectors + 1;
+317        1/1                      if (expanded !== exp_expanded || illegal !== exp_illegal) begin
+318        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+319        <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s cinstr=%h expanded=%h exp=%h illegal=%b exp_illegal=%b&quot;,</font>
+320                                            vectors, tag, t_cinstr, expanded, exp_expanded, illegal, exp_illegal);
+321                                 end
+                        MISSING_ELSE
+322                             end
+323                         endtask
+324                     
+325                         task check_vector_expect;
+326                             input [15:0] t_cinstr;
+327                             input [8*40-1:0] tag;
+328                             input [31:0] exp_expanded;
+329                             input        exp_illegal;
+330                             reg [31:0] golden_expanded;
+331                             reg        golden_exp_illegal;
+332                             begin
+333        1/1                      cinstr = t_cinstr;
+334        2/2                      #1;
+335                     
+336        1/1                      golden_expanded    = golden_expand(t_cinstr);
+337        1/1                      golden_exp_illegal = golden_illegal(t_cinstr);
+338        1/1                      vectors = vectors + 1;
+339        1/1                      if (golden_expanded !== exp_expanded || golden_exp_illegal !== exp_illegal ||
+340                                     expanded !== exp_expanded || illegal !== exp_illegal) begin
+341        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+342        <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s cinstr=%h expanded=%h exp=%h illegal=%b exp_illegal=%b golden=%h golden_illegal=%b&quot;,</font>
+343                                            vectors, tag, t_cinstr, expanded, exp_expanded, illegal, exp_illegal,
+344                                            golden_expanded, golden_exp_illegal);
+345                                 end
+                        MISSING_ELSE
+346                             end
+347                         endtask
+348                     
+349                         task check_q0_lwsw_prime_rs1_sweep;
+350                             begin
+351        1/1                      for (i = 0; i &lt; 8; i = i + 1) begin
+352        1/1                          check_vector({3'b010, 3'b101, i[2:0], 1'b1, 1'b0, 3'b010, 2'b00}, &quot;C.LW_RS1P_SWEEP&quot;);
+353        1/1                          check_vector({3'b110, 3'b011, i[2:0], 1'b0, 1'b1, 3'b101, 2'b00}, &quot;C.SW_RS1P_SWEEP&quot;);
+354                                 end
+355                             end
+356                         endtask
+357                     
+358                         initial begin
+359        1/1                  vectors = 0;
+360        1/1                  errors  = 0;
+361        1/1                  cinstr  = 16'h0000;
+362        2/2                  #1;
+363                     
+364        1/1                  check_vector(16'h9002, &quot;C.EBREAK&quot;);
+365        1/1                  check_vector(16'h0001, &quot;C.NOP&quot;);
+366        1/1                  check_vector(16'h6105, &quot;C.ADDI16SP_POS&quot;);
+367        1/1                  check_vector(16'h717d, &quot;C.ADDI16SP_NEG&quot;);
+368        1/1                  check_vector(16'h7101, &quot;C.ADDI16SP_NEG_LOW_ZERO&quot;);
+369                     
+370        1/1                  check_q0_lwsw_prime_rs1_sweep();
+371        1/1                  check_vector_expect(16'h0000, &quot;C.ADDI4SPN_ILLEGAL_ZERO&quot;, 32'h0000_0000, 1'b1);
+372        1/1                  check_vector(16'h0080, &quot;C.ADDI4SPN_LEGAL&quot;);
+373        1/1                  check_vector(16'h2000, &quot;Q0_ILLEGAL_FUNCT3_001&quot;);
+374        1/1                  check_vector(16'ha000, &quot;Q0_ILLEGAL_FUNCT3_101&quot;);
+375                     
+376        1/1                  check_vector(16'h00bd, &quot;C.ADDI_POS_SIGNEXT_ZERO&quot;);
+377        1/1                  check_vector(16'h107d, &quot;C.ADDI_NEG_SIGNEXT_ONE&quot;);
+378        1/1                  check_vector(16'h40fd, &quot;C.LI_NEG&quot;);
+379        1/1                  check_vector_expect(16'h4001, &quot;C.LI_HINT_NOP&quot;,
+380                                                 enc_i(imm_addi(16'h4001), 5'd0, 3'b000, 5'd0, OPC_OP_IMM), 1'b0);
+381        1/1                  check_vector(16'h6505, &quot;C.LUI_POS&quot;);
+382        1/1                  check_vector(16'h70fd, &quot;C.LUI_NEG&quot;);
+383        1/1                  check_vector(16'h7501, &quot;C.LUI_NEG_LOW_ZERO&quot;);
+384        1/1                  check_vector(16'h6001, &quot;C.LUI_X0_ILLEGAL&quot;);
+385        1/1                  check_vector(16'h6501, &quot;C.LUI_ZERO_IMM_ILLEGAL&quot;);
+386        1/1                  check_vector(16'h6101, &quot;C.ADDI16SP_ILLEGAL_ZERO&quot;);
+387                     
+388        1/1                  check_vector(16'h2011, &quot;C.JAL_POS&quot;);
+389        1/1                  check_vector(16'h3ffd, &quot;C.JAL_NEG&quot;);
+390        1/1                  check_vector(16'ha021, &quot;C.J_POS&quot;);
+391        1/1                  check_vector(16'hbffd, &quot;C.J_NEG&quot;);
+392        1/1                  check_vector(16'hc011, &quot;C.BEQZ_POS&quot;);
+393        1/1                  check_vector(16'hdcfd, &quot;C.BEQZ_NEG&quot;);
+394        1/1                  check_vector(16'he011, &quot;C.BNEZ_POS&quot;);
+395        1/1                  check_vector(16'hfcfd, &quot;C.BNEZ_NEG&quot;);
+396                     
+397        1/1                  check_vector(16'h8005, &quot;C.SRLI&quot;);
+398        1/1                  check_vector(16'h9005, &quot;C.SRLI_SHAMT32_ILLEGAL&quot;);
+399        1/1                  check_vector(16'h8405, &quot;C.SRAI&quot;);
+400        1/1                  check_vector(16'h9405, &quot;C.SRAI_SHAMT32_ILLEGAL&quot;);
+401        1/1                  check_vector(16'h987d, &quot;C.ANDI_NEG&quot;);
+402        1/1                  check_vector(16'h8c11, &quot;C.SUB&quot;);
+403        1/1                  check_vector(16'h8c31, &quot;C.XOR&quot;);
+404        1/1                  check_vector(16'h8c51, &quot;C.OR&quot;);
+405        1/1                  check_vector(16'h8c71, &quot;C.AND&quot;);
+406                     
+407        1/1                  check_vector(16'h0086, &quot;C.SLLI&quot;);
+408        1/1                  check_vector(16'h1006, &quot;C.SLLI_SHAMT32_ILLEGAL&quot;);
+409        1/1                  check_vector_expect(16'h0002, &quot;C.SLLI_X0_HINT_NOP&quot;,
+410                                                 enc_i(12'h000, 5'd0, 3'b001, 5'd0, OPC_OP_IMM), 1'b0);
+411        1/1                  check_vector(16'h408a, &quot;C.LWSP&quot;);
+412        1/1                  check_vector(16'h4002, &quot;C.LWSP_X0_ILLEGAL&quot;);
+413        1/1                  check_vector(16'h8082, &quot;C.JR&quot;);
+414        1/1                  check_vector_expect(16'h8002, &quot;C.JR_RESERVED_ILLEGAL&quot;, 32'h0000_0000, 1'b1);
+415        1/1                  check_vector(16'h808e, &quot;C.MV&quot;);
+416        1/1                  check_vector_expect(16'h800e, &quot;C.MV_X0_HINT_NOP&quot;,
+417                                                 enc_r(7'b0, 5'd3, 5'd0, 3'b000, 5'd0), 1'b0);
+418        1/1                  check_vector(16'h9082, &quot;C.JALR&quot;);
+419        1/1                  check_vector(16'h908e, &quot;C.ADD&quot;);
+420        1/1                  check_vector_expect(16'h900e, &quot;C.ADD_X0_HINT_NOP&quot;,
+421                                                 enc_r(7'b0, 5'd3, 5'd0, 3'b000, 5'd0), 1'b0);
+422        1/1                  check_vector(16'hc086, &quot;C.SWSP&quot;);
+423        1/1                  check_vector(16'h2002, &quot;Q2_ILLEGAL_FUNCT3_001&quot;);
+424        1/1                  check_vector(16'ha002, &quot;Q2_ILLEGAL_FUNCT3_101&quot;);
+425        1/1                  check_vector(16'h0003, &quot;Q3_ILLEGAL_NORMAL32&quot;);
+426                     
+427        1/1                  if (errors == 0) begin
+428        1/1                      $display(&quot;PASS: cdec unit %0d/%0d vectors&quot;, vectors, vectors);
+429        1/1                      $finish;
+430                             end else begin
+431        <font color = "red">0/1     ==>              $display(&quot;FAIL: cdec unit %0d/%0d vectors failed&quot;, errors, vectors);</font>
+432        <font color = "red">0/1     ==>              $fatal(1);</font>
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod0.html" >tb_cdec_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">Conditions</td><td>50</td><td>47</td><td>94.00</td></tr>
+<tr class="s9"><td class="lf">Logical</td><td>50</td><td>47</td><td>94.00</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       164
+ EXPRESSION (c[12:5] == 8'b0)
+            --------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       176
+ EXPRESSION (rd_rs1_5 == 5'd2)
+            ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       177
+ EXPRESSION ((c[12] == 1'b0) &amp;&amp; (c[6:2] == 5'b0))
+             -------1-------    --------2-------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       177
+ SUB-EXPRESSION (c[12] == 1'b0)
+                -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       177
+ SUB-EXPRESSION (c[6:2] == 5'b0)
+                --------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       179
+ EXPRESSION ((rd_rs1_5 == 5'b0) || ((c[12] == 1'b0) &amp;&amp; (c[6:2] == 5'b0)))
+             ---------1--------    ------------------2------------------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       179
+ SUB-EXPRESSION (rd_rs1_5 == 5'b0)
+                ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       179
+ SUB-EXPRESSION ((c[12] == 1'b0) &amp;&amp; (c[6:2] == 5'b0))
+                 -------1-------    --------2-------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       179
+ SUB-EXPRESSION (c[12] == 1'b0)
+                -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       179
+ SUB-EXPRESSION (c[6:2] == 5'b0)
+                --------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       187
+ EXPRESSION (c[12] == 1'b1)
+            -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       198
+ EXPRESSION (rd_rs1_5 == 5'b0)
+            ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       200
+ EXPRESSION (c[12] == 1'b0)
+            -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       201
+ EXPRESSION ((rs2_5 == 5'b0) &amp;&amp; (rd_rs1_5 == 5'b0))
+             -------1-------    ---------2--------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       201
+ SUB-EXPRESSION (rs2_5 == 5'b0)
+                -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       201
+ SUB-EXPRESSION (rd_rs1_5 == 5'b0)
+                ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       202
+ EXPRESSION (rs2_5 == 5'b0)
+            -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       249
+ EXPRESSION (rd_rs1_5 == 5'd2)
+            ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       279
+ EXPRESSION (c[12] == 1'b0)
+            -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       280
+ EXPRESSION (rs2_5 == 5'b0)
+            -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       285
+ EXPRESSION (rs2_5 == 5'b0)
+            -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       286
+ EXPRESSION (rd_rs1_5 == 5'b0)
+            ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       427
+ EXPRESSION (errors == 0)
+            ------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod0.html" >tb_cdec_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s10">
+<td>Totals</td>
+<td class="rt">3</td>
+<td class="rt">3</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>Total Bits</td>
+<td class="rt">98</td>
+<td class="rt">98</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">49</td>
+<td class="rt">49</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">49</td>
+<td class="rt">49</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s10">
+<td>Signals</td>
+<td class="rt">3</td>
+<td class="rt">3</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>Signal Bits</td>
+<td class="rt">98</td>
+<td class="rt">98</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">49</td>
+<td class="rt">49</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">49</td>
+<td class="rt">49</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>cinstr[15:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>expanded[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>illegal</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod0.html" >tb_cdec_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s8">
+<td>Branches</td>
+<td></td>
+<td class="rt">66</td>
+<td class="rt">54</td>
+<td class="rt">81.82 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">427</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">317</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">339</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s8">
+<td>CASE</td>
+<td class="rt">161</td>
+<td class="rt">27</td>
+<td class="rt">24</td>
+<td class="rt">88.89 </td>
+</tr><tr class="s8">
+<td>IF</td>
+<td class="rt">233</td>
+<td class="rt">33</td>
+<td class="rt">27</td>
+<td class="rt">81.82 </td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+427                if (errors == 0) begin
+                   <font color = "red">-1-</font>  
+428                    $display("PASS: cdec unit %0d/%0d vectors", vectors, vectors);
+           <font color = "green">            ==></font>
+429                    $finish;
+430                end else begin
+431                    $display("FAIL: cdec unit %0d/%0d vectors failed", errors, vectors);
+           <font color = "red">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+317                    if (expanded !== exp_expanded || illegal !== exp_illegal) begin
+                       <font color = "red">-1-</font>  
+318                        errors = errors + 1;
+           <font color = "red">                ==></font>
+319                        $error("FAIL[%0d] %0s cinstr=%h expanded=%h exp=%h illegal=%b exp_illegal=%b",
+320                               vectors, tag, t_cinstr, expanded, exp_expanded, illegal, exp_illegal);
+321                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+339                    if (golden_expanded !== exp_expanded || golden_exp_illegal !== exp_illegal ||
+                       <font color = "red">-1-</font>  
+340                        expanded !== exp_expanded || illegal !== exp_illegal) begin
+341                        errors = errors + 1;
+           <font color = "red">                ==></font>
+342                        $error("FAIL[%0d] %0s cinstr=%h expanded=%h exp=%h illegal=%b exp_illegal=%b golden=%h golden_illegal=%b",
+343                               vectors, tag, t_cinstr, expanded, exp_expanded, illegal, exp_illegal,
+344                               golden_expanded, golden_exp_illegal);
+345                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+161                    case (op)
+                       <font color = "red">-1-</font>  
+162                        2'b00: begin
+163                            case (funct3)
+                               <font color = "green">-2-</font>  
+164                                3'b000: golden_illegal = (c[12:5] == 8'h00);
+           <font color = "green">                        ==></font>
+165                                3'b010: golden_illegal = 1'b0;
+           <font color = "green">                        ==></font>
+166                                3'b110: golden_illegal = 1'b0;
+           <font color = "green">                        ==></font>
+167                                default: golden_illegal = 1'b1;
+           <font color = "green">                        ==></font>
+168                            endcase
+169                        end
+170                        2'b01: begin
+171                            case (funct3)
+                               <font color = "red">-3-</font>  
+172                                3'b000: golden_illegal = 1'b0;
+           <font color = "green">                        ==></font>
+173                                3'b001: golden_illegal = 1'b0;
+           <font color = "green">                        ==></font>
+174                                3'b010: golden_illegal = 1'b0;
+           <font color = "green">                        ==></font>
+175                                3'b011: begin
+176                                    if (rd_rs1_5 == 5'd2)
+                                       <font color = "green">-4-</font>  
+177                                        golden_illegal = (c[12] == 1'b0 && c[6:2] == 5'b0);
+           <font color = "green">                                ==></font>
+178                                    else
+179                                        golden_illegal = (rd_rs1_5 == 5'd0) ||
+           <font color = "green">                                ==></font>
+180                                                         (c[12] == 1'b0 && c[6:2] == 5'b0);
+181                                end
+182                                3'b100: begin
+183                                    case (c[11:10])
+                                       <font color = "red">-5-</font>  
+184                                        2'b00: golden_illegal = c[12];
+           <font color = "green">                                ==></font>
+185                                        2'b01: golden_illegal = c[12];
+           <font color = "green">                                ==></font>
+186                                        2'b10: golden_illegal = 1'b0;
+           <font color = "green">                                ==></font>
+187                                        2'b11: golden_illegal = (c[12] == 1'b1);
+           <font color = "green">                                ==></font>
+                                           MISSING_DEFAULT
+           <font color = "red">                                ==></font>
+188                                    endcase
+189                                end
+190                                3'b101: golden_illegal = 1'b0;
+           <font color = "green">                        ==></font>
+191                                3'b110: golden_illegal = 1'b0;
+           <font color = "green">                        ==></font>
+192                                3'b111: golden_illegal = 1'b0;
+           <font color = "green">                        ==></font>
+                                   MISSING_DEFAULT
+           <font color = "red">                        ==></font>
+193                            endcase
+194                        end
+195                        2'b10: begin
+196                            case (funct3)
+                               <font color = "green">-6-</font>  
+197                                3'b000: golden_illegal = c[12];
+           <font color = "green">                        ==></font>
+198                                3'b010: golden_illegal = (rd_rs1_5 == 5'd0);
+           <font color = "green">                        ==></font>
+199                                3'b100: begin
+200                                    if (c[12] == 1'b0)
+                                       <font color = "green">-7-</font>  
+201                                        golden_illegal = (rs2_5 == 5'd0) && (rd_rs1_5 == 5'd0);
+           <font color = "green">                                ==></font>
+202                                    else if (rs2_5 == 5'd0)
+                                            <font color = "green">-8-</font>  
+203                                        golden_illegal = 1'b0;
+           <font color = "green">                                ==></font>
+204                                    else
+205                                        golden_illegal = 1'b0;
+           <font color = "green">                                ==></font>
+206                                end
+207                                3'b110: golden_illegal = 1'b0;
+           <font color = "green">                        ==></font>
+208                                default: golden_illegal = 1'b1;
+           <font color = "green">                        ==></font>
+209                            endcase
+210                        end
+211                        2'b11: golden_illegal = 1'b1;
+           <font color = "green">                ==></font>
+                           MISSING_DEFAULT
+           <font color = "red">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>-5-</th><th nowrap width=80>-6-</th><th nowrap width=80>-7-</th><th nowrap width=80>-8-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>2'b00 </td>
+<td align=center>3'b000 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b00 </td>
+<td align=center>3'b010 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b00 </td>
+<td align=center>3'b110 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b00 </td>
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b000 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b001 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b010 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b011 </td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b011 </td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b00 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b11 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>MISSING_DEFAULT</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b101 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b110 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b111 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>MISSING_DEFAULT</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b000 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b010 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b110 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b11 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>MISSING_DEFAULT</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+233                    if (!golden_illegal(c)) begin
+                       <font color = "green">-1-</font>  
+234                        case (op)
+                           <font color = "red">-2-</font>  
+235                            2'b00: begin
+236                                case (funct3)
+                                   <font color = "red">-3-</font>  
+237                                    3'b000: golden_expand = enc_i(imm_addi4spn(c), 5'd2, 3'b000, rs2_p, OPC_OP_IMM);
+           <font color = "green">                            ==></font>
+238                                    3'b010: golden_expand = enc_i(imm_lwsw(c), rd_rs1_p, 3'b010, rs2_p, OPC_LOAD);
+           <font color = "green">                            ==></font>
+239                                    3'b110: golden_expand = enc_s(imm_lwsw(c), rs2_p, rd_rs1_p, 3'b010, OPC_STORE);
+           <font color = "green">                            ==></font>
+240                                    default: golden_expand = 32'h0000_0000;
+           <font color = "red">                            ==></font>
+241                                endcase
+242                            end
+243                            2'b01: begin
+244                                case (funct3)
+                                   <font color = "red">-4-</font>  
+245                                    3'b000: golden_expand = enc_i(imm_addi(c), rd_rs1_5, 3'b000, rd_rs1_5, OPC_OP_IMM);
+           <font color = "green">                            ==></font>
+246                                    3'b001: golden_expand = enc_j(imm_cj(c), 5'd1);
+           <font color = "green">                            ==></font>
+247                                    3'b010: golden_expand = enc_i(imm_addi(c), 5'd0, 3'b000, rd_rs1_5, OPC_OP_IMM);
+           <font color = "green">                            ==></font>
+248                                    3'b011: begin
+249                                        if (rd_rs1_5 == 5'd2)
+                                           <font color = "green">-5-</font>  
+250                                            golden_expand = enc_i(imm_addi16sp(c), 5'd2, 3'b000, 5'd2, OPC_OP_IMM);
+           <font color = "green">                                    ==></font>
+251                                        else
+252                                            golden_expand = {imm_lui(c), rd_rs1_5, OPC_LUI};
+           <font color = "green">                                    ==></font>
+253                                    end
+254                                    3'b100: begin
+255                                        case (c[11:10])
+                                           <font color = "red">-6-</font>  
+256                                            2'b00: golden_expand = enc_i({7'b0, c[6:2]}, rd_rs1_p, 3'b101, rd_rs1_p, OPC_OP_IMM);
+           <font color = "green">                                    ==></font>
+257                                            2'b01: golden_expand = enc_i({7'b0100000, c[6:2]}, rd_rs1_p, 3'b101, rd_rs1_p, OPC_OP_IMM);
+           <font color = "green">                                    ==></font>
+258                                            2'b10: golden_expand = enc_i(imm_addi(c), rd_rs1_p, 3'b111, rd_rs1_p, OPC_OP_IMM);
+           <font color = "green">                                    ==></font>
+259                                            2'b11: begin
+260                                                case (c[6:5])
+                                                   <font color = "red">-7-</font>  
+261                                                    2'b00: golden_expand = enc_r(7'b0100000, rs2_p, rd_rs1_p, 3'b000, rd_rs1_p);
+           <font color = "green">                                            ==></font>
+262                                                    2'b01: golden_expand = enc_r(7'b0000000, rs2_p, rd_rs1_p, 3'b100, rd_rs1_p);
+           <font color = "green">                                            ==></font>
+263                                                    2'b10: golden_expand = enc_r(7'b0000000, rs2_p, rd_rs1_p, 3'b110, rd_rs1_p);
+           <font color = "green">                                            ==></font>
+264                                                    2'b11: golden_expand = enc_r(7'b0000000, rs2_p, rd_rs1_p, 3'b111, rd_rs1_p);
+           <font color = "green">                                            ==></font>
+                                                       MISSING_DEFAULT
+           <font color = "red">                                            ==></font>
+265                                                endcase
+266                                            end
+                                               MISSING_DEFAULT
+           <font color = "red">                                    ==></font>
+267                                        endcase
+268                                    end
+269                                    3'b101: golden_expand = enc_j(imm_cj(c), 5'd0);
+           <font color = "green">                            ==></font>
+270                                    3'b110: golden_expand = enc_b(imm_cb(c), 5'd0, rd_rs1_p, 3'b000);
+           <font color = "green">                            ==></font>
+271                                    3'b111: golden_expand = enc_b(imm_cb(c), 5'd0, rd_rs1_p, 3'b001);
+           <font color = "green">                            ==></font>
+                                       MISSING_DEFAULT
+           <font color = "red">                            ==></font>
+272                                endcase
+273                            end
+274                            2'b10: begin
+275                                case (funct3)
+                                   <font color = "red">-8-</font>  
+276                                    3'b000: golden_expand = enc_i({7'b0, c[6:2]}, rd_rs1_5, 3'b001, rd_rs1_5, OPC_OP_IMM);
+           <font color = "green">                            ==></font>
+277                                    3'b010: golden_expand = enc_i(imm_lwsp(c), 5'd2, 3'b010, rd_rs1_5, OPC_LOAD);
+           <font color = "green">                            ==></font>
+278                                    3'b100: begin
+279                                        if (c[12] == 1'b0) begin
+                                           <font color = "green">-9-</font>  
+280                                            if (rs2_5 == 5'd0)
+                                               <font color = "green">-10-</font>  
+281                                                golden_expand = enc_i(12'b0, rd_rs1_5, 3'b000, 5'd0, OPC_JALR);
+           <font color = "green">                                        ==></font>
+282                                            else
+283                                                golden_expand = enc_r(7'b0, rs2_5, 5'd0, 3'b000, rd_rs1_5);
+           <font color = "green">                                        ==></font>
+284                                        end else begin
+285                                            if (rs2_5 == 5'd0) begin
+                                               <font color = "green">-11-</font>  
+286                                                if (rd_rs1_5 == 5'd0)
+                                                   <font color = "green">-12-</font>  
+287                                                    golden_expand = 32'h0010_0073;
+           <font color = "green">                                            ==></font>
+288                                                else
+289                                                    golden_expand = enc_i(12'b0, rd_rs1_5, 3'b000, 5'd1, OPC_JALR);
+           <font color = "green">                                            ==></font>
+290                                            end else begin
+291                                                golden_expand = enc_r(7'b0, rs2_5, rd_rs1_5, 3'b000, rd_rs1_5);
+           <font color = "green">                                        ==></font>
+292                                            end
+293                                        end
+294                                    end
+295                                    3'b110: golden_expand = enc_s(imm_swsp(c), rs2_5, 5'd2, 3'b010, OPC_STORE);
+           <font color = "green">                            ==></font>
+296                                    default: golden_expand = 32'h0000_0000;
+           <font color = "red">                            ==></font>
+297                                endcase
+298                            end
+299                            default: golden_expand = 32'h0000_0000;
+           <font color = "red">                    ==></font>
+300                        endcase
+301                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>-5-</th><th nowrap width=80>-6-</th><th nowrap width=80>-7-</th><th nowrap width=80>-8-</th><th nowrap width=80>-9-</th><th nowrap width=80>-10-</th><th nowrap width=80>-11-</th><th nowrap width=80>-12-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b00 </td>
+<td align=center>3'b000 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b00 </td>
+<td align=center>3'b010 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b00 </td>
+<td align=center>3'b110 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>2'b00 </td>
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b000 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b001 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b010 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b011 </td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b011 </td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b00 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b11 </td>
+<td align=center>2'b00 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b11 </td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b11 </td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b11 </td>
+<td align=center>2'b11 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>2'b11 </td>
+<td align=center>MISSING_DEFAULT</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center>MISSING_DEFAULT</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b101 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b110 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>3'b111 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>MISSING_DEFAULT</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b000 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b010 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b110 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_0">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_tb_cdec_unit">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

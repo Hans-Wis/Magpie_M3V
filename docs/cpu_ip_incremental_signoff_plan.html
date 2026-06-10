@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CPU IP Incremental RTL Sign-off Plan Template</title>
+  <style>
+    :root { --ink:#1f2933; --muted:#5d6b78; --line:#d8dee5; --panel:#fff; --band:#f3f7fa; --blue:#155e8a; --green:#217a58; --amber:#a96500; }
+    * { box-sizing: border-box; }
+    body { margin:0; color:var(--ink); background:#eef3f8; font-family:Arial,"Noto Sans TC","Microsoft JhengHei",sans-serif; line-height:1.55; }
+    header { background:#124f73; color:#fff; padding:36px 28px 30px; }
+    header .wrap, main { max-width:1220px; margin:0 auto; }
+    h1 { margin:0 0 10px; font-size:42px; line-height:1.08; letter-spacing:0; }
+    h2 { margin:0 0 16px; font-size:25px; }
+    h3 { margin:0 0 10px; font-size:18px; }
+    p { margin:0 0 14px; }
+    code { background:#edf3f7; border:1px solid #d7e1e8; border-radius:5px; padding:1px 5px; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.94em; }
+    .subtitle { max-width:940px; color:#dceef8; font-size:18px; }
+    .meta { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+    .pill { border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:5px 10px; background:rgba(255,255,255,.08); color:#eef8fc; font-size:14px; }
+    main { padding:24px 18px 58px; }
+    section { background:var(--panel); border:1px solid var(--line); border-radius:8px; margin:16px 0; padding:22px; box-shadow:0 8px 24px rgba(18,38,63,.06); }
+    table { width:100%; border-collapse:collapse; margin:12px 0 6px; font-size:14px; }
+    th,td { border:1px solid var(--line); padding:9px 10px; vertical-align:top; }
+    th { background:#e9f1f7; color:#17394e; text-align:left; }
+    tbody tr:nth-child(even) td { background:#fbfdff; }
+    .note { border-left:4px solid var(--blue); background:var(--band); padding:12px 14px; margin:12px 0; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .card { border:1px solid var(--line); border-radius:8px; background:#fbfcfe; padding:16px; }
+    .stage { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-weight:700; color:var(--blue); }
+    .checklist { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 14px; }
+    .checklist li { border:1px solid var(--line); border-radius:8px; padding:9px 10px; background:#fbfcfe; }
+    .checklist input { margin:2px 8px 0 0; vertical-align:top; }
+    footer { max-width:1220px; margin:0 auto 28px; padding:0 18px; color:var(--muted); font-size:13px; }
+    @media (max-width:850px) { h1{font-size:32px} .grid,.checklist{grid-template-columns:1fr} section{padding:18px} table{font-size:13px} }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>CPU IP Incremental RTL Sign-off Plan Template</h1>
+      <p class="subtitle">Development stages are phase gates derived from ADR/spec scope, independent from microarchitecture pipeline stages. Active scope is ADR-0002: Ch2 <code>lab08e</code> <code>RV32IMC_Zicsr_Zifencei</code> 4-stage pipeline + BP + RAS + RV32C + pre-fetch.</p>
+      <div class="meta">
+        <span class="pill">active: RV32IMC_Zicsr_Zifencei</span>
+        <span class="pill">scope-derived gates</span>
+        <span class="pill">Google RISC-V DV + Spike</span>
+        <span class="pill">FPGA-based PPA optional</span>
+        <span class="pill">Line coverage target: 100%</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>1. Claude Code Recommendation Review</h2>
+      <table>
+        <thead><tr><th>Recommendation</th><th>Decision</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Close stage 1 first</td><td>Adopt</td><td><code>ADR-0001</code>, spec, ip.json, and <code>gate_00_spec</code> are the real first gate.</td></tr>
+          <tr><td>Option 1 revised</td><td>Adopt</td><td>ADR-0001 FSM is superseded for implementation; ADR-0002 lab08e is the single active productization line.</td></tr>
+          <tr><td>Use CLAUDE.md flow shape</td><td>Adopt with clarification</td><td>Development gates are derived from ADR scope, not a fixed sacred count.</td></tr>
+          <tr><td>Fix gate_00</td><td>Adopt</td><td>Gate checks accepted ADR, no TBD spec, and ip.json consistency.</td></tr>
+          <tr><td>rview to design-ide</td><td>Adopt</td><td>Use <code>platform/design-ide/server.py</code>; gates should not assert old branding.</td></tr>
+          <tr><td>Must-have versus stretch</td><td>Adopt</td><td>Prevents wide-ISA/formal/benchmark/FPGA/PPA scope explosion.</td></tr>
+          <tr><td>Reference policy</td><td>Adjust</td><td>Legal references are allowed with provenance/license notes and Magpie_M1 evidence; direct third-party RTL inclusion needs explicit review.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>2. Active Scope</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Must-have</h3>
+          <p><code>RV32IMC_Zicsr_Zifencei</code>, M-mode only, Ch2 lab08e 4-stage pipeline + BP + RAS + RV32C + pre-fetch, Magpie_M1 memory wrapper, directed tests, Spike compare, Verilator sim/coverage, Python gates, lint/PPA, full verification report.</p>
+        </div>
+        <div class="card">
+          <h3>Stretch / Roadmap</h3>
+          <p>RV32A, riscv-arch-test, riscv-formal, CoreMark/Dhrystone, ASIC PPA. Ch2 <code>lab08e</code> is integrated under <code>IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e</code> as active target, but still requires qualification gates.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>3. Scope-Derived Development Gate List</h2>
+      <table>
+        <thead><tr><th>#</th><th>Development gate</th><th>Incremental scope</th><th>Required evidence</th><th>Gate</th></tr></thead>
+        <tbody>
+          <tr><td class="stage">1</td><td><code>isa_scope</code></td><td>ADR/spec/ip.json contract for RV32IM_Zicsr</td><td>accepted ADR, spec no TBD, ip.json consistency</td><td><code>gate_00_spec.py</code></td></tr>
+          <tr><td class="stage">2</td><td><code>fetch</code></td><td>reset PC, PC sequencing, imem valid-ready</td><td>Verilator lint/sim, smoke fetch, VCD, coverage, pytest</td><td><code>gate_01_fetch.py</code></td></tr>
+          <tr><td class="stage">3</td><td><code>decode_execute</code></td><td>RV32I decode/ALU/regfile and RV32M corners</td><td>directed RV32I/M tests, coverage, commit checker</td><td><code>gate_02_exec.py</code></td></tr>
+          <tr><td class="stage">4</td><td><code>core_assembly</code></td><td>complete multi-cycle FSM path, branch/jump redirect</td><td>program smoke, branch/control gate, VCD</td><td><code>gate_03_core.py</code></td></tr>
+          <tr><td class="stage">5</td><td><code>trap_interrupt</code></td><td>Zicsr and selected M-mode trap behavior</td><td>CSR/trap directed tests, reference compare where applicable</td><td><code>gate_04_trap.py</code></td></tr>
+          <tr><td class="stage">6</td><td><code>mem_integration</code></td><td>dmem valid-ready, byte lanes, sign/zero extension, misalign policy</td><td>memory scoreboard, directed LSU tests, coverage residual</td><td><code>gate_05_mem.py</code></td></tr>
+          <tr><td class="stage">7</td><td><code>spike_lockstep</code></td><td>per-commit trace and reference comparison</td><td>Spike first-fail report, Google RISC-V DV smoke seeds when stable</td><td><code>gate_06_cosim.py</code></td></tr>
+          <tr><td class="stage">8</td><td><code>coverage</code></td><td>line/toggle/functional coverage closure</td><td>line 100% or uncovered-line reason list</td><td><code>gate_07_coverage.py</code></td></tr>
+          <tr><td class="stage">9</td><td><code>lint_synth_signoff</code></td><td>RTL quality and optional synth/PPA handoff</td><td>no unwaived high/critical lint; synth/PPA if enabled</td><td><code>gate_08_lint.py</code>, <code>gate_09_synth.py</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4. Evidence Rules</h2>
+      <div class="note">Every development gate needs Verilator sim, code coverage, smoke/gate tests, Python/pytest checks, state JSON, and residual risk notes unless explicitly not-applicable. Pipeline hazard/forwarding/flush gates are not-applicable for multi-cycle v1.</div>
+      <table>
+        <thead><tr><th>Area</th><th>Rule</th></tr></thead>
+        <tbody>
+          <tr><td>Coverage</td><td>Line coverage target is 100%; uncovered lines require reason, reachability, closure plan or waiver. Toggle >= 85%, functional >= 95% unless waived.</td></tr>
+          <tr><td>DV</td><td>Directed tests close intent first. Spike is the reference for lockstep/first-fail triage. Google RISC-V DV runs after deterministic directed flow is stable.</td></tr>
+          <tr><td>FPGA/PPA</td><td>Optional evaluation track: LUT/FF/BRAM/DSP, WNS/TNS/Fmax, optional power, regression deltas. It does not replace functional sign-off.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. Subtask Mapping</h2>
+      <table>
+        <thead><tr><th>Old subtask</th><th>Optimized status</th><th>Development gate</th></tr></thead>
+        <tbody>
+          <tr><td>P0 Spec/contract</td><td>kept</td><td><code>isa_scope</code></td></tr>
+          <tr><td>P1 Fetch baseline</td><td>kept</td><td><code>fetch</code></td></tr>
+          <tr><td>P2 RV32I decode/ALU</td><td>kept</td><td><code>decode_execute</code></td></tr>
+          <tr><td>P3 Branch/jump/control</td><td>kept as FSM redirect subtask; no pipeline flush</td><td><code>core_assembly</code></td></tr>
+          <tr><td>P4 Load/store</td><td>kept</td><td><code>mem_integration</code></td></tr>
+          <tr><td>P5 RV32M</td><td>kept</td><td><code>decode_execute</code></td></tr>
+          <tr><td>P6 CSR/trap/IRQ</td><td>narrowed to selected M-mode CSR/trap</td><td><code>trap_interrupt</code></td></tr>
+          <tr><td>P7 RVC</td><td>roadmap, independent ADR/gates</td><td>backlog</td></tr>
+          <tr><td>P8 RV32A</td><td>roadmap, independent ADR/gates</td><td>backlog</td></tr>
+          <tr><td>P9 Pipeline closure</td><td>not-applicable to multi-cycle FSM v1; future pipeline ADR required</td><td>backlog</td></tr>
+          <tr><td>P10 Arch compatibility</td><td>stretch</td><td>backlog</td></tr>
+          <tr><td>P11 Random DV</td><td>Google RISC-V DV + Spike</td><td><code>spike_lockstep</code></td></tr>
+          <tr><td>P12 Formal</td><td>stretch</td><td>backlog</td></tr>
+          <tr><td>P13 RTL sign-off pack</td><td>kept</td><td><code>lint_synth_signoff</code></td></tr>
+          <tr><td>P14/P15 FPGA/PPA</td><td>optional evaluation</td><td>backlog</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>6. Sign-off Checklist</h2>
+      <ul class="checklist">
+        <li><label><input type="checkbox">ADR-0001 superseded for implementation; ADR-0002 accepted.</label></li>
+        <li><label><input type="checkbox">Spec has no TBD.</label></li>
+        <li><label><input type="checkbox">ip.json interfaces and risks match spec.</label></li>
+        <li><label><input type="checkbox">All scope-derived development gates are present or explicitly not-applicable.</label></li>
+        <li><label><input type="checkbox">RV32IM_Zicsr directed tests pass.</label></li>
+        <li><label><input type="checkbox">Spike comparison archived.</label></li>
+        <li><label><input type="checkbox">Google RISC-V DV seeds are reproducible.</label></li>
+        <li><label><input type="checkbox">Verilator logs and VCD excerpts archived.</label></li>
+        <li><label><input type="checkbox">Line coverage 100% or all uncovered lines explained.</label></li>
+        <li><label><input type="checkbox">No unwaived high/critical lint issue remains.</label></li>
+        <li><label><input type="checkbox">AI Design IDE displays hierarchy, gate matrix, logs, VCD, coverage and report.</label></li>
+        <li><label><input type="checkbox">Stretch items do not block v1 unless promoted by ADR.</label></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>Template document. Actual PASS status must come from project-local flow/state records and archived logs.</footer>
+</body>
+</html>

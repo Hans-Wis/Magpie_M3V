@@ -1,0 +1,197 @@
+set_fml_appmode FPV
+1
+read_file -top axil_bridge_formal -format sverilog -sva {
+  ../../../IP/cpu_m1/rtl/axil_bridge.v
+  axil_bridge_formal.sv
+}
+Info: Invoking New SVA Compiler Instrument...
+Info: SVAC-NC Start
+Info: SVAC-NC Finished
+Info: Invoking Simon...
+Info: Simon VCS Start
+
+Warning-[SM_IGN_IAD] Initial Assignment at Declaration
+axil_bridge_formal.sv, 94
+  Initial Assignment at Declaration for "f_past_valid" is ignored by synthesis
+
+=======================================================
+VCS CPU Time(s)     :0.11
+SIMON CPU Time(s)   :0.12
+SIMON Total Time(s) :0.05
+Peak Memory(MB)     :415
+=======================================================
+Info: Simon VCS Finished
+Info: Simon call complete 
+Info: Exiting after Simon Analysis 
+Verdi KDB elaboration done and the database successfully generated: 0 error(s), 0 warning(s)
+[Info] DB_COPT045: Vcs analyzer task has finished.
+# Gate Counts 
+Number of Flat Instances = 1476
+Number of Operator = 1476
+Number of Libcells = 0
+Number of Black-Box Instances = 0
+Number of FlipFlop BitWise = 330
+Number of Latch Bitwise = 0
+Number of Nand BitWise = 72
+Number of Comb logic = 548
+
+[Info] PROP_I_COLLECT: Collecting Source Properties from the view:axil_bridge_formal.
+1
+create_clock clk -period 10
+1
+create_reset resetn -sense low
+1
+check_fv_setup
+[Info] CLOCK_PERIOD_ADJUSTMENT: The clock period for formal clock generation is multiplied by 10 to prevent round-off and preserve the relative frequencies of the clocks.
+	Users can adjust the time unit in the Verdi waveform to display the original periods. Use adjustment: 1ns/100ps.
+[Info] AUTO_SIM_RUN: Running the reset simulation.
+	Either the command 'sim_run' has not been run or the reset simulation needs to be rerun to keep the consistency of the signal reset values.
+[Info] SIM_I_CREATE: Create Simulation Model.
+Warning: No COI signal is found!!!
+[Info] AUTO_SIM_SAVE_RESET: Saving the reset states.
+	Either the command 'sim_save_reset' has not been run or the reset states need to be saved again.
+[Info] AUTO_SIM_NEW_RESET_GENERATED: The Auto Reset has resulted in a new initial state being generated for the current task: 'FPV'.
+	Any subsequent simulation commands applied to this task will not affect the already generated initial state of the other tasks.
+[Info] FORMAL_I_CREATE: Create Formal Model:axil_bridge_formal.
+[Info] FORMAL_I_RUN: Starting formal verification for check_fv_setup
+	  Id: 0  Goals: 0  Constraints: 0  Block Mode: true
+[Info] APP_LIC_CHKOUT: Checkout 1 app license(s).
+[Info] FDC_FVS: No setup issues found.
+	The results can be viewed again by using the report_fv_setup command.
+1
+check_fv -block
+[Info] FORMAL_I_REUSE: Reuse Formal Model:axil_bridge_formal.
+[Info] FORMAL_I_RUN: Starting formal verification for check_fv
+	  Id: 1  Goals: 36  Constraints: 2  Block Mode: true
+[Info] APP_LIC_CHKOUT: Checkout 1 app license(s).
+[Info] PERF_DIAGNOSTICS_ALERTS_START
+Run configuration:
+[Info] FV_RUN_CONFIG_INFO:  Task : FPV, cmd : check_fv
+[Info] Configuration Details
+[Info] Orchestration/Effort : default
+[Info] Run time limit : 12H
+[Info] Memory limit : 8GB
+[Info] Number of workers requested : 4
+[Info] FPV flow ver : v7 
+[Info] PERF_DIAGNOSTICS_ALERTS_END
+[Info] BITLEVEL_MODEL_STATS: Generated model with 1594 gates, 110 inputs, 298 registers, 0 initial constraints, 2 constraints.
+[Info] BITLEVEL_MODEL_STATS: Generated model with 929 gates, 110 inputs, 271 registers, 0 initial constraints, 2 constraints.
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_10  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_10  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_11  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_11  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_12  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_12  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_13  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_13  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_14  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_14  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_15  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_15  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_16  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_16  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_17  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_17  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_18  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_18  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_19  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_19  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_20  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_20  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_3  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_3  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_4  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_4  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_5  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_5  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_6  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_6  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_7  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_7  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_8  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_8  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_9  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_9  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_10  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_14  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_18  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_19  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_3  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_4  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_7  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_8  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_9  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_15  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_20  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_5  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_6  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_13  b8  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_11  b8  non_vacuous:3  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_16  b8  non_vacuous:3  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_17  b8  non_vacuous:3  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_12  b8  non_vacuous:3  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_14  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_15  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_16  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_17  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_18  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_19  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_20  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_10  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_11  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_12  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_13  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_3  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_4  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_5  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_6  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_7  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_8  e2  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_9  e2  proven  property  00:00:01
+[Info] PERF_DIAGNOSTICS_ALERTS_START
+
+  Summary Results
+   Property Summary: FPV
+   -----------------
+   > Assertion
+     - # found        : 18
+     - # proven       : 18
+
+   > Vacuity
+     - # found        : 18
+     - # non_vacuous  : 18
+
+   > Constraint
+     - # found        : 3
+
+Solver jobs summary for verification task FPV (11 solver jobs)
+    #scheduled     :     0 
+    #running       :     0 
+    #completed     :    11 
+        #normal        :     8 
+        #timeout       :     0 
+        #memout        :     0 
+        #orc_killed    :     3 
+        #sig_killed    :     0 
+        #crash         :     0 
+        #start_fail    :     0 
+        #misc_error    :     0 
+[Info] PERF_DIAGNOSTICS_ALERTS_END
+1
+report_fv -list > formal_results.txt
+report_fv > formal_summary.txt
+exit
+=======================================================
+Total Time(S)  :7.01
+CPU Time(S)    :3.36
+Peak Memory(MB):2223
+========================Formal=========================
+Engine Wall Time(S)    :3.38
+Engine Peak Memory(MB) :153
+=======================================================
+=======================================================
+Total Time(S)  :7.1
+CPU Time(S)    :3.5
+Peak Memory(MB):1449
+Current RSS(MB):999
+=======================================================

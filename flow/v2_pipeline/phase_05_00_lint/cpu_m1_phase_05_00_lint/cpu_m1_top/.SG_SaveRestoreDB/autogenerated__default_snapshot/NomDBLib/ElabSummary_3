@@ -1,0 +1,113 @@
+================================================================================
+Elaborated Name: 'core'
+    (RTL Design Unit name: 'core', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/core.v:18)
+     Parameters (Total: 0)
+     Instances (Total: 1): cpu_m1_top.u_core 
+
+================================================================================
+
+Elaborated Name: 'cdec'
+    (RTL Design Unit name: 'cdec', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/cdec.v:26)
+     Parameters (Total: 0)
+     Instances (Total: 1): cpu_m1_top.u_core.u_cdec 
+
+================================================================================
+
+Elaborated Name: 'bp'
+    (RTL Design Unit name: 'bp', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/bp.v:29)
+     Parameters (Total: 5)
+         IDX_BITS = 5 (default: 5)
+         IDX_LSB  = 1 (default: 1)
+         TAG_LSB  = 6 (default: (IDX_LSB + IDX_BITS))
+         TAG_BITS = 26 (default: (32 - TAG_LSB))
+         N_SETS   = 32 (default: (1 << IDX_BITS))
+     Instances (Total: 1): cpu_m1_top.u_core.u_bp 
+
+================================================================================
+
+Elaborated Name: 'ras'
+    (RTL Design Unit name: 'ras', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/ras.v:29)
+     Parameters (Total: 2)
+         DEPTH    = 8 (default: 8)
+         PTR_BITS = 3 (default: 3)
+     Instances (Total: 1): cpu_m1_top.u_core.u_ras 
+
+================================================================================
+
+Elaborated Name: 'ifu'
+    (RTL Design Unit name: 'ifu', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/ifu.v:24)
+     Parameters (Total: 0)
+     Instances (Total: 1): cpu_m1_top.u_core.u_ifu 
+
+================================================================================
+
+Elaborated Name: 'idu'
+    (RTL Design Unit name: 'idu', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/idu.v:24)
+     Parameters (Total: 0)
+     Instances (Total: 1): cpu_m1_top.u_core.u_idu 
+
+================================================================================
+
+Elaborated Name: 'rfu'
+    (RTL Design Unit name: 'rfu', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/rfu.v:19)
+     Parameters (Total: 0)
+     Instances (Total: 1): cpu_m1_top.u_core.u_rfu 
+
+================================================================================
+
+Elaborated Name: 'forward'
+    (RTL Design Unit name: 'forward', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/forward.v:19)
+     Parameters (Total: 0)
+     Instances (Total: 1): cpu_m1_top.u_core.u_forward 
+
+================================================================================
+
+Elaborated Name: 'alu'
+    (RTL Design Unit name: 'alu', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/alu.v:25)
+     Parameters (Total: 0)
+     Instances (Total: 1): cpu_m1_top.u_core.u_alu 
+
+================================================================================
+
+Elaborated Name: 'mul'
+    (RTL Design Unit name: 'mul', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/mul.v:22)
+     Parameters (Total: 0)
+     Instances (Total: 1): cpu_m1_top.u_core.u_mul 
+
+================================================================================
+
+Elaborated Name: 'div'
+    (RTL Design Unit name: 'div', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/div.v:20)
+     Parameters (Total: 3)
+         IDLE  = 0 (default: 2'd0)
+         WORK  = 1 (default: 2'd1)
+         FIXUP = 2 (default: 2'd2)
+     Instances (Total: 1): cpu_m1_top.u_core.u_div 
+
+================================================================================
+
+Elaborated Name: 'lsu'
+    (RTL Design Unit name: 'lsu', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/lsu.v:31)
+     Parameters (Total: 0)
+     Instances (Total: 2): cpu_m1_top.u_core.u_lsu_wb, cpu_m1_top.u_core.u_lsu_id 
+
+================================================================================
+
+Elaborated Name: 'csr'
+    (RTL Design Unit name: 'csr', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/csr.v:31)
+     Parameters (Total: 0)
+     Instances (Total: 1): cpu_m1_top.u_core.u_csr 
+
+================================================================================
+
+Elaborated Name: 'hazard'
+    (RTL Design Unit name: 'hazard', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/hazard.v:19)
+     Parameters (Total: 0)
+     Instances (Total: 1): cpu_m1_top.u_core.u_hazard 
+
+================================================================================
+
+Elaborated Name: 'cpu_m1_top'
+    (RTL Design Unit name: 'cpu_m1_top', ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/cpu_m1_top.v:29)
+     Parameters (Total: 0)
+================================================================================

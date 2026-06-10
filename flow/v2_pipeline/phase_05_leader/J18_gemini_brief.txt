@@ -1,0 +1,8 @@
+(1) Spike ecall: Root cause was ecall-tohost-exit alias; fixed firmware/handler but Spike still halts at M-mode ECALL. Newer Spike build (3e7bf3) failed to resolve.
+(2) SYNC-TRAP: Not clean. Seed 2026061801 logs DUT handling/resuming traps, but Spike stops at entry. Per-commit lockstep pending.
+(3) CSR/J17: DUT confirmed mepc (0x10f8)/mcause (0x0b)/mtval/mstatus at trap, verifying J17 fix; full cross-check blocked by Spike truncation.
+(4) New Divergence: Seed 2026061801 (ECALL); harness/ISS blocker, no DUT defect. No RTL fix/ADR.
+(5) Regressions: None; gate_02*, gate_03_08, gate_04_08 green.
+(6) Pytest: 34 directed tests passed; gate_03_09 fails on divergence.
+(7) 100k: Not rerun; prior green standing.
+(8) Open: J18 sync-trap Spike-side continuation/logging.

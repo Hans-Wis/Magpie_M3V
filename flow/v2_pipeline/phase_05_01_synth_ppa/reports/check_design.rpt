@@ -1,0 +1,370 @@
+ 
+****************************************
+check_design summary:
+Version:     X-2025.06-SP2
+Date:        Mon Jun  8 14:20:45 2026
+****************************************
+
+                   Name                                            Total
+--------------------------------------------------------------------------------
+Inputs/Outputs                                                    138
+    Unconnected ports (LINT-28)                                    11
+    Feedthrough (LINT-29)                                          52
+    Shorted outputs (LINT-31)                                      46
+    Constant outputs (LINT-52)                                     29
+
+Cells                                                             111
+    Cells do not drive (LINT-1)                                    16
+    Connected to power or ground (LINT-32)                         92
+    Nets connected to multiple pins on same cell (LINT-33)          3
+
+Nets                                                                1
+    Unloaded nets (LINT-2)                                          1
+--------------------------------------------------------------------------------
+
+Warning: In design 'core', cell 'B_44' does not drive any nets. (LINT-1)
+Warning: In design 'core', cell 'C2580' does not drive any nets. (LINT-1)
+Warning: In design 'bp', cell 'B_22' does not drive any nets. (LINT-1)
+Warning: In design 'bp', cell 'B_23' does not drive any nets. (LINT-1)
+Warning: In design 'ras', cell 'C1206' does not drive any nets. (LINT-1)
+Warning: In design 'ras', cell 'C1212' does not drive any nets. (LINT-1)
+Warning: In design 'ifu', cell 'B_5' does not drive any nets. (LINT-1)
+Warning: In design 'mul', cell 'C656' does not drive any nets. (LINT-1)
+Warning: In design 'div', cell 'C1707' does not drive any nets. (LINT-1)
+Warning: In design 'div', cell 'C1712' does not drive any nets. (LINT-1)
+Warning: In design 'div', cell 'C1717' does not drive any nets. (LINT-1)
+Warning: In design 'div', cell 'C1740' does not drive any nets. (LINT-1)
+Warning: In design 'div', cell 'C1751' does not drive any nets. (LINT-1)
+Warning: In design 'lsu', cell 'C228' does not drive any nets. (LINT-1)
+Warning: In design 'lsu', cell 'C229' does not drive any nets. (LINT-1)
+Warning: In design 'csr', cell 'C2536' does not drive any nets. (LINT-1)
+Warning: In design 'cpu_m1_top', net 'u_core/cdec_illegal' driven by pin 'u_core/u_cdec/illegal' has no loads. (LINT-2)
+Warning: In design 'bp', port 'if_pc[0]' is not connected to any nets. (LINT-28)
+Warning: In design 'bp', port 'upd_pc[0]' is not connected to any nets. (LINT-28)
+Warning: In design 'forward', port 'wb_is_load' is not connected to any nets. (LINT-28)
+Warning: In design 'hazard', port 'wb_valid' is not connected to any nets. (LINT-28)
+Warning: In design 'hazard', port 'wb_rd_we' is not connected to any nets. (LINT-28)
+Warning: In design 'hazard', port 'wb_rd_idx[4]' is not connected to any nets. (LINT-28)
+Warning: In design 'hazard', port 'wb_rd_idx[3]' is not connected to any nets. (LINT-28)
+Warning: In design 'hazard', port 'wb_rd_idx[2]' is not connected to any nets. (LINT-28)
+Warning: In design 'hazard', port 'wb_rd_idx[1]' is not connected to any nets. (LINT-28)
+Warning: In design 'hazard', port 'wb_rd_idx[0]' is not connected to any nets. (LINT-28)
+Warning: In design 'hazard', port 'wb_is_load' is not connected to any nets. (LINT-28)
+Warning: In design 'idu', input port 'instr[31]' is connected directly to output port 'csr_addr[11]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[30]' is connected directly to output port 'csr_addr[10]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[29]' is connected directly to output port 'csr_addr[9]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[28]' is connected directly to output port 'csr_addr[8]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[27]' is connected directly to output port 'csr_addr[7]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[26]' is connected directly to output port 'csr_addr[6]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[25]' is connected directly to output port 'csr_addr[5]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[24]' is connected directly to output port 'csr_addr[4]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[24]' is connected directly to output port 'rs2_idx[4]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[23]' is connected directly to output port 'csr_addr[3]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[23]' is connected directly to output port 'rs2_idx[3]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[22]' is connected directly to output port 'csr_addr[2]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[22]' is connected directly to output port 'rs2_idx[2]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[21]' is connected directly to output port 'csr_addr[1]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[21]' is connected directly to output port 'rs2_idx[1]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[20]' is connected directly to output port 'csr_addr[0]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[20]' is connected directly to output port 'rs2_idx[0]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[19]' is connected directly to output port 'csr_zimm[4]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[19]' is connected directly to output port 'rs1_idx[4]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[18]' is connected directly to output port 'csr_zimm[3]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[18]' is connected directly to output port 'rs1_idx[3]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[17]' is connected directly to output port 'csr_zimm[2]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[17]' is connected directly to output port 'rs1_idx[2]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[16]' is connected directly to output port 'csr_zimm[1]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[16]' is connected directly to output port 'rs1_idx[1]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[15]' is connected directly to output port 'csr_zimm[0]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[15]' is connected directly to output port 'rs1_idx[0]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[14]' is connected directly to output port 'ls_funct3[2]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[14]' is connected directly to output port 'br_type[1]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[14]' is connected directly to output port 'md_is_div'. (LINT-29)
+Warning: In design 'idu', input port 'instr[14]' is connected directly to output port 'csr_uses_imm'. (LINT-29)
+Warning: In design 'idu', input port 'instr[14]' is connected directly to output port 'md_op[2]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[13]' is connected directly to output port 'ls_funct3[1]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[13]' is connected directly to output port 'br_type[0]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[13]' is connected directly to output port 'md_op[1]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[13]' is connected directly to output port 'csr_op[1]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[12]' is connected directly to output port 'ls_funct3[0]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[12]' is connected directly to output port 'md_op[0]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[12]' is connected directly to output port 'csr_op[0]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[11]' is connected directly to output port 'rd_idx[4]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[10]' is connected directly to output port 'rd_idx[3]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[9]' is connected directly to output port 'rd_idx[2]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[8]' is connected directly to output port 'rd_idx[1]'. (LINT-29)
+Warning: In design 'idu', input port 'instr[7]' is connected directly to output port 'rd_idx[0]'. (LINT-29)
+Warning: In design 'lsu', input port 'wdata_raw[7]' is connected directly to output port 'mem_wdata[7]'. (LINT-29)
+Warning: In design 'lsu', input port 'wdata_raw[6]' is connected directly to output port 'mem_wdata[6]'. (LINT-29)
+Warning: In design 'lsu', input port 'wdata_raw[5]' is connected directly to output port 'mem_wdata[5]'. (LINT-29)
+Warning: In design 'lsu', input port 'wdata_raw[4]' is connected directly to output port 'mem_wdata[4]'. (LINT-29)
+Warning: In design 'lsu', input port 'wdata_raw[3]' is connected directly to output port 'mem_wdata[3]'. (LINT-29)
+Warning: In design 'lsu', input port 'wdata_raw[2]' is connected directly to output port 'mem_wdata[2]'. (LINT-29)
+Warning: In design 'lsu', input port 'wdata_raw[1]' is connected directly to output port 'mem_wdata[1]'. (LINT-29)
+Warning: In design 'lsu', input port 'wdata_raw[0]' is connected directly to output port 'mem_wdata[0]'. (LINT-29)
+Warning: In design 'idu', output port 'rs1_idx[4]' is connected directly to output port 'csr_zimm[4]'. (LINT-31)
+Warning: In design 'idu', output port 'rs1_idx[3]' is connected directly to output port 'csr_zimm[3]'. (LINT-31)
+Warning: In design 'idu', output port 'rs1_idx[2]' is connected directly to output port 'csr_zimm[2]'. (LINT-31)
+Warning: In design 'idu', output port 'rs1_idx[1]' is connected directly to output port 'csr_zimm[1]'. (LINT-31)
+Warning: In design 'idu', output port 'rs1_idx[0]' is connected directly to output port 'csr_zimm[0]'. (LINT-31)
+Warning: In design 'idu', output port 'rs2_idx[4]' is connected directly to output port 'csr_addr[4]'. (LINT-31)
+Warning: In design 'idu', output port 'rs2_idx[3]' is connected directly to output port 'csr_addr[3]'. (LINT-31)
+Warning: In design 'idu', output port 'rs2_idx[2]' is connected directly to output port 'csr_addr[2]'. (LINT-31)
+Warning: In design 'idu', output port 'rs2_idx[1]' is connected directly to output port 'csr_addr[1]'. (LINT-31)
+Warning: In design 'idu', output port 'rs2_idx[0]' is connected directly to output port 'csr_addr[0]'. (LINT-31)
+Warning: In design 'idu', output port 'br_type[1]' is connected directly to output port 'ls_funct3[2]'. (LINT-31)
+Warning: In design 'idu', output port 'br_type[1]' is connected directly to output port 'md_is_div'. (LINT-31)
+Warning: In design 'idu', output port 'br_type[1]' is connected directly to output port 'csr_uses_imm'. (LINT-31)
+Warning: In design 'idu', output port 'br_type[1]' is connected directly to output port 'md_op[2]'. (LINT-31)
+Warning: In design 'idu', output port 'br_type[0]' is connected directly to output port 'ls_funct3[1]'. (LINT-31)
+Warning: In design 'idu', output port 'br_type[0]' is connected directly to output port 'md_op[1]'. (LINT-31)
+Warning: In design 'idu', output port 'br_type[0]' is connected directly to output port 'csr_op[1]'. (LINT-31)
+Warning: In design 'idu', output port 'ls_funct3[0]' is connected directly to output port 'md_op[0]'. (LINT-31)
+Warning: In design 'idu', output port 'ls_funct3[0]' is connected directly to output port 'csr_op[0]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[5]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[6]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[7]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[8]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[9]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[10]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[11]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[12]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[13]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[14]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[15]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[16]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[17]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[18]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[19]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[20]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[21]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[22]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[23]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[24]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[25]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[26]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[27]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[28]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[29]'. (LINT-31)
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to output port 'csr_zimm[30]'. (LINT-31)
+Warning: In design 'csr', output port 'mtvec_o[1]' is connected directly to output port 'mtvec_o[0]'. (LINT-31)
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[31]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[30]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[29]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[28]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[27]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[26]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[25]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[24]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[23]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[22]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[21]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[20]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[19]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[18]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[17]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[16]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[15]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[14]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[13]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[12]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[11]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[10]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[9]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[8]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[7]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[6]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[5]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[4]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[3]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[2]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[1]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_id' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'mem_rdata[0]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[30]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[29]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[28]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[27]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[26]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[25]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[24]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[23]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[22]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[21]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[20]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[19]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[18]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[17]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[16]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[15]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[14]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[13]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[12]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[11]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[10]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[9]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[8]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[7]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[6]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[5]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_csr' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'trap_cause[4]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[31]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[30]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[29]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[28]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[27]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[26]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[25]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[24]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[23]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[22]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[21]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[20]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[19]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[18]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[17]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[16]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[15]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[14]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[13]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[12]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[11]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[10]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[9]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[8]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[7]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[6]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[5]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[4]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[3]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[2]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[1]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'wdata_raw[0]' is connected to logic 0. 
+Warning: In design 'core', a pin on submodule 'u_lsu_wb' is connected to logic 1 or logic 0. (LINT-32)
+   Pin 'is_store' is connected to logic 0. 
+Warning: In design 'core', the same net is connected to more than one pin on submodule 'u_lsu_id'. (LINT-33)
+   Net '*Logic0*' is connected to pins 'mem_rdata[31]', 'mem_rdata[30]'', 'mem_rdata[29]', 'mem_rdata[28]', 'mem_rdata[27]', 'mem_rdata[26]', 'mem_rdata[25]', 'mem_rdata[24]', 'mem_rdata[23]', 'mem_rdata[22]', 'mem_rdata[21]', 'mem_rdata[20]', 'mem_rdata[19]', 'mem_rdata[18]', 'mem_rdata[17]', 'mem_rdata[16]', 'mem_rdata[15]', 'mem_rdata[14]', 'mem_rdata[13]', 'mem_rdata[12]', 'mem_rdata[11]', 'mem_rdata[10]', 'mem_rdata[9]', 'mem_rdata[8]', 'mem_rdata[7]', 'mem_rdata[6]', 'mem_rdata[5]', 'mem_rdata[4]', 'mem_rdata[3]', 'mem_rdata[2]', 'mem_rdata[1]', 'mem_rdata[0]'.
+Warning: In design 'core', the same net is connected to more than one pin on submodule 'u_csr'. (LINT-33)
+   Net '*Logic0*' is connected to pins 'trap_cause[30]', 'trap_cause[29]'', 'trap_cause[28]', 'trap_cause[27]', 'trap_cause[26]', 'trap_cause[25]', 'trap_cause[24]', 'trap_cause[23]', 'trap_cause[22]', 'trap_cause[21]', 'trap_cause[20]', 'trap_cause[19]', 'trap_cause[18]', 'trap_cause[17]', 'trap_cause[16]', 'trap_cause[15]', 'trap_cause[14]', 'trap_cause[13]', 'trap_cause[12]', 'trap_cause[11]', 'trap_cause[10]', 'trap_cause[9]', 'trap_cause[8]', 'trap_cause[7]', 'trap_cause[6]', 'trap_cause[5]', 'trap_cause[4]'.
+Warning: In design 'core', the same net is connected to more than one pin on submodule 'u_lsu_wb'. (LINT-33)
+   Net '*Logic0*' is connected to pins 'wdata_raw[31]', 'wdata_raw[30]'', 'wdata_raw[29]', 'wdata_raw[28]', 'wdata_raw[27]', 'wdata_raw[26]', 'wdata_raw[25]', 'wdata_raw[24]', 'wdata_raw[23]', 'wdata_raw[22]', 'wdata_raw[21]', 'wdata_raw[20]', 'wdata_raw[19]', 'wdata_raw[18]', 'wdata_raw[17]', 'wdata_raw[16]', 'wdata_raw[15]', 'wdata_raw[14]', 'wdata_raw[13]', 'wdata_raw[12]', 'wdata_raw[11]', 'wdata_raw[10]', 'wdata_raw[9]', 'wdata_raw[8]', 'wdata_raw[7]', 'wdata_raw[6]', 'wdata_raw[5]', 'wdata_raw[4]', 'wdata_raw[3]', 'wdata_raw[2]', 'wdata_raw[1]', 'wdata_raw[0]', 'is_store'.
+Warning: In design 'idu', output port 'csr_zimm[31]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[30]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[29]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[28]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[27]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[26]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[25]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[24]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[23]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[22]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[21]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[20]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[19]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[18]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[17]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[16]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[15]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[14]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[13]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[12]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[11]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[10]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[9]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[8]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[7]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[6]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'idu', output port 'csr_zimm[5]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'csr', output port 'mtvec_o[1]' is connected directly to 'logic 0'. (LINT-52)
+Warning: In design 'csr', output port 'mtvec_o[0]' is connected directly to 'logic 0'. (LINT-52)
+1

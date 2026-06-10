@@ -1,0 +1,181 @@
+{
+  "id": "cpu.cpu_m1",
+  "name": "cpu_m1",
+  "display_name": "Magpie M1 — RV32IMC_Zicsr_Zifencei Pipeline CPU IP",
+  "kind": "cpu",
+  "flow": "cpu",
+  "maturity": "draft",
+  "maturity_taxonomy": ["draft", "qualified-mvp", "production-qualified"],
+  "commercial": {
+    "decision_ref": "docs/adr/0012-mvp-irq-scope-and-commercial-cut.md",
+    "model": "two-sku-staged",
+    "note": "maturity stays 'draft' until the SKU-1 MVP exit bar is met (DV bar-B-minus + code/functional coverage closure + integrator docs + non-author handoff test). Do not bump on gate count alone (ADR-0012 honesty guardrail).",
+    "sku1_mvp": {
+      "maturity_target": "qualified-mvp",
+      "isa": "RV32IMC_Zicsr_Zifencei",
+      "irq_scope": "external-MEI-only (irq_external_pulse); MTI/MSI/async OUT OF SCOPE, documented not waived",
+      "fence_i": "in-scope (architected NOP, no I-cache)",
+      "dv_bar": "bar-B-minus = riscv-dv full-mix EXCLUDING async interrupts; Spike per-commit lockstep",
+      "coverage_bar": "functional 100% on scope (incl fence.i + MEI) AND code line/toggle >=85% or ADR waiver",
+      "ppa": "DC trial = indicative, not production signoff",
+      "package": ["integration-guide", "programmers-model", "dv-signoff-report", "handoff-test"]
+    },
+    "sku2_gold": {
+      "maturity_target": "production-qualified",
+      "adds": ["async MTI/MSI RTL+ADR", "riscv-dv async stress (full bar B)", "riscv-arch-test/compliance", "CDC/RDC signoff", "DFT/scan", "multi-corner hold-clean STA", "first-class retire/trap observability ports", "datasheet + SDC package"]
+    }
+  },
+  "design_id": "cpu_m1",
+  "source_mode": "greenfield-ip-native",
+  "path_policy": "ip-native",
+  "active_variant": "v2_pipeline_ch2_lab08e",
+  "microarchitecture": {
+    "kind": "4-stage-pipeline-bp-ras-rv32c-prefetch",
+    "pipeline_stages": 4,
+    "pipeline_hazards": "required-for-qualification"
+  },
+  "variants": {
+    "v1_fsm": {
+      "status": "superseded-for-implementation",
+      "microarchitecture": "multi-cycle-fsm",
+      "scope": "RV32IM_Zicsr",
+      "superseded_by": "v2_pipeline_ch2_lab08e"
+    },
+    "v2_pipeline_ch2_lab08b": {
+      "status": "roadmap-reference-integration",
+      "source": "/home/edauser/project/lab/CPU/Ch2/lab08b/rtl",
+      "local_rtl": "IP/cpu_m1/rtl/variants/ch2_lab08b",
+      "filelist": "IP/cpu_m1/rtl/variants/ch2_lab08b/filelist.f",
+      "microarchitecture": "4-stage-pipeline",
+      "scope": "RV32IM_Zicsr",
+      "features": [
+        "branch-predictor",
+        "forwarding",
+        "load-use-stall",
+        "muldiv-stall",
+        "flush-redirect",
+        "CSR",
+        "IRQ"
+      ],
+      "reference_gate": "tests/gates/gate_10_pipeline_v2_reference.py",
+      "qualification_status": "not-yet-qualified"
+    },
+    "v2_pipeline_ch2_lab08e": {
+      "status": "active-signoff-baseline",
+      "source": "/home/edauser/project/lab/CPU/Ch2/lab08e/rtl",
+      "local_rtl": "IP/cpu_m1/rtl",
+      "filelist": "IP/cpu_m1/rtl/filelist.f",
+      "microarchitecture": "4-stage-pipeline-bp-ras-rv32c-prefetch",
+      "scope": "RV32IMC_Zicsr_Zifencei",
+      "features": [
+        "branch-predictor",
+        "RAS",
+        "RV32C",
+        "pre-fetch-residue-buffer",
+        "cross-boundary-zero-cycle-assemble",
+        "forwarding",
+        "load-use-stall",
+        "muldiv-stall",
+        "flush-redirect",
+        "CSR",
+        "IRQ"
+      ],
+      "reported_ch2_fpga": {
+        "clock_mhz": 85,
+        "wns_ns": 0.017,
+        "source": "/home/edauser/project/lab/CPU/Ch2/lab08e/README.md"
+      },
+      "local_modifications": [
+        {
+          "file": "IP/cpu_m1/rtl/csr.v",
+          "source_file": "/home/edauser/project/lab/CPU/Ch2/lab08e/rtl/csr.v",
+          "adr": "docs/adr/0003-csr-external-irq-pending-collision.md",
+          "change": "ext_pending priority changed from lab08e pulse-priority to trap-entry ack priority",
+          "reason": "Phase 3.1 directed trap/IRQ test found repeated IRQ after mret when a one-cycle pulse overlaps trap entry",
+          "regression": "Phase 3.2 verifies the current pulse contract: same-cycle trap_enter pulse is acked with current trap; post-trap pulse remains pending and causes a second IRQ after mret"
+        },
+        {
+          "file": "IP/cpu_m1/rtl/core.v",
+          "source_file": "/home/edauser/project/lab/CPU/Ch2/lab08e/rtl/core.v",
+          "adr": "docs/adr/0004-m-unit-result-latch.md",
+          "change": "M-unit operation type and completed result are latched with md_active_is_div, md_result_valid, and md_result_q",
+          "reason": "Phase 3.5 deterministic random Spike lockstep found a DIV writeback mismatch: DUT wrote 0x00000000 where Spike expected 0x0000007b",
+          "regression": "Phase 3.5 verifies seed 20260607 count 48: random lockstep matched 81 commits; Phase 3.4 remains the directed M-extension regression"
+        }
+      ],
+      "verification_report": "docs/v2_pipeline_full_verification_report.md",
+      "reference_gate": "tests/gates/gate_10_pipeline_v2_reference.py",
+      "qualification_status": "not-yet-qualified"
+    }
+  },
+  "rtl": [
+    "IP/cpu_m1/rtl/rfu.v",
+    "IP/cpu_m1/rtl/alu.v",
+    "IP/cpu_m1/rtl/idu.v",
+    "IP/cpu_m1/rtl/ifu.v",
+    "IP/cpu_m1/rtl/lsu.v",
+    "IP/cpu_m1/rtl/csr.v",
+    "IP/cpu_m1/rtl/mul.v",
+    "IP/cpu_m1/rtl/div.v",
+    "IP/cpu_m1/rtl/forward.v",
+    "IP/cpu_m1/rtl/hazard.v",
+    "IP/cpu_m1/rtl/bp.v",
+    "IP/cpu_m1/rtl/ras.v",
+    "IP/cpu_m1/rtl/cdec.v",
+    "IP/cpu_m1/rtl/core.v"
+  ],
+  "vendor_rtl": [],
+  "dv": { "filelists": [], "testbenches": [] },
+  "depends": [],
+  "interfaces": [
+    { "name": "imem", "protocol": "valid-ready", "role": "manager" },
+    { "name": "dmem", "protocol": "valid-ready", "role": "manager" }
+  ],
+  "evidence": {
+    "spec": "IP/cpu_m1/docs/spec.md",
+    "adr": "docs/adr/0002-pipeline-v2-ch2-integration.md",
+    "rtl_deviation_adr": "docs/adr/0003-csr-external-irq-pending-collision.md",
+    "verification_report": "docs/v2_pipeline_full_verification_report.md",
+    "bug_taxonomy": "docs/v2_pipeline_bug_taxonomy.md"
+  },
+  "gate_map": {
+    "isa_scope": "tests/gates/gate_00_spec.py",
+    "pipeline_reference": "tests/gates/gate_10_pipeline_v2_reference.py",
+    "fetch_rv32c_prefetch": "tests/gates/gate_01_01_fetch_rv32c_prefetch.py",
+    "decode_execute_rv32imc": "tests/gates/gate_01_02_decode_execute_rv32imc.py",
+    "pipeline_hazard": "tests/gates/gate_01_03_pipeline_hazard.py",
+    "bp_ras_redirect": "tests/gates/gate_01_04_bp_ras_redirect.py",
+    "phase1_closure": "tests/gates/gate_01_99_phase1_closure.py",
+    "trap_interrupt": "tests/gates/gate_02_00_trap_interrupt.py",
+    "mem_wrapper": "tests/gates/gate_02_01_mem_wrapper.py",
+    "spike_lockstep": "tests/gates/gate_03_00_spike_lockstep.py",
+    "trap_irq_lockstep": "tests/gates/gate_03_01_trap_irq_lockstep.py",
+    "irq_collision_contract": "tests/gates/gate_03_02_irq_collision.py",
+    "spike_comparator_lib": "tests/gates/gate_03_03_spike_comparator_lib.py",
+    "directed_lockstep": "tests/gates/gate_03_04_directed_lockstep.py",
+    "random_lockstep": "tests/gates/gate_03_05_random_lockstep.py",
+    "multi_seed_coverage": "tests/gates/gate_03_06_multi_seed_coverage.py",
+    "muldiv_hazard": "tests/gates/gate_03_07_muldiv_hazard.py",
+    "coverage": "tests/gates/gate_04_00_coverage.py",
+    "csr_irq_coverage": "tests/gates/gate_04_01_csr_irq_coverage.py",
+    "bp_ras_coverage": "tests/gates/gate_04_02_bp_ras_coverage.py",
+    "rv32c_cross_coverage": "tests/gates/gate_04_03_rv32c_cross_coverage.py",
+    "illegal_munit_coverage": "tests/gates/gate_04_04_illegal_munit_coverage.py",
+    "residual_triage": "tests/gates/gate_04_05_residual_triage.py",
+    "ras_recovery_coverage": "tests/gates/gate_04_06_ras_recovery_coverage.py",
+    "lint_synth_ppa_signoff": ["tests/gates/gate_05_00_lint.py", "tests/gates/gate_05_01_synth_ppa.py"]
+  },
+  "risks": [
+    "ADR-0001 FSM path is superseded for implementation; do not present it as active sign-off RTL",
+    "A extension is roadmap, not active scope",
+    "Spike lockstep development gate not yet reached — do not claim verified",
+    "Pipeline hazards/forwarding/flush/RV32C/pre-fetch/RAS/BP require qualification gates",
+    "Ch2 lab08e pipeline RTL is active target but still needs Magpie_M1 interface wrapper, gates, Spike lockstep, coverage, and lint/PPA closure",
+    "Active lab08e copy has local CSR IRQ-pending RTL deviation tracked by ADR-0003; Phase 3.2 closes the current pulse contract, but future level/claim-clear IRQ wrapper remains an architecture decision",
+    "Active lab08e copy has local M-unit result-latch RTL deviation tracked by ADR-0004; Phase 3.5 closes seed 20260607 but broader M-extension DV remains required",
+    "Copied Ch2 RTL and reports are not qualification evidence; v2 needs a complete Magpie_M1 verification report",
+    "FPGA-based PPA is required evidence for productization trend, not a substitute for functional sign-off"
+  ],
+  "owner_agent": "Claude Code",
+  "schema_ref": "../../../../doc/ip_flow_plan_of_record.md (ip.json schema)"
+}

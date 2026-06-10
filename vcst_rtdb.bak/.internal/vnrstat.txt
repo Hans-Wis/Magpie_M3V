@@ -1,0 +1,7 @@
+M is representing peak till the message
+Malloc-M represents malloc memory at the message
+Available-M represents available memory in the system
+STATS:: before RegisterApps : M=840.207mb, Malloc-M=7mb, Available-M=93427mb, T=0s CPU=0s W=(2026-06-09 23:56:41)
+STATS:: |   before LicenseMgr Init : M=1263.17mb, Malloc-M=430mb, Available-M=93005mb, T=0s CPU=0s W=(2026-06-09 23:56:42)
+STATS:: |   after  LicenseMgr Init : M=1268.43mb, Malloc-M=431mb, Available-M=92999mb, T=0s CPU=0.3s W=(2026-06-09 23:56:42)
+STATS:: after  RegisterApps : M=1339.15mb, Malloc-M=432mb, Available-M=92999mb, T=1s CPU=0.84s W=(2026-06-09 23:56:42)

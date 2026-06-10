@@ -1,0 +1,22 @@
+You are an adversarial reviewer (RISC-V CPU DV + verification methodology expert) auditing the recent JUDGMENTS made by the lead engineer (Claude) on the Magpie_M1 riscv-dv lockstep effort. For EACH judgment below: state AGREE / DISAGREE / PARTIAL, give the strongest counter-argument or failure mode, and a concrete improvement. Be skeptical and specific. Do NOT use tools; answer from the context + your expertise. Output concise Markdown.
+
+JUDGMENT 1 — Spike "halts at ecall" root cause.
+Claim: it was NOT a Spike version bug; the harness ran Spike with `--instructions = len(dut)+32`, too tight to cover setup+handler instructions around a sync trap, so Spike truncated at the ecall. Proof offered: same firmware + same Spike + `--instructions=100000` -> Spike correctly takes the ecall trap, runs the mtvec handler, mret, and tohost-exits (14278 log lines vs the harness's 148). Fix applied: budget = `len(dut)*8 + 20000`.
+Review: is the proof airtight? Is `len(dut)*8+20000` a sound budget heuristic, or are there failure modes (non-terminating program / runaway / very long programs / budget still too small for many traps)? Better formulation?
+
+JUDGMENT 2 — terminal-alignment harness fix.
+Claim: Spike (HTIF) stops at the tohost write but the DUT TB keeps looping at write_tohost, inflating DUT commit count; so truncate the DUT trace at the first commit whose pc == write_tohost symbol, keeping `dut[:i+2]` (the auipc + the tohost store), "no masking because compare_commits still checks per-commit up to the shared exit." 
+Review: is `dut[:i+2]` robust (could the write_tohost block be a different size / not auipc+sw)? Can this truncation EVER hide a real divergence (e.g. a divergence that happens to route the DUT into write_tohost early, or pc aliasing)? Safer formulation?
+
+JUDGMENT 3 — initial mischaracterization.
+Claim history: Claude first declared the dut(1134) vs spike(516) gap a "benign terminal asymmetry", then on deeper per-commit inspection found 3/5 seeds actually diverge at a NESTED trap (DUT mret resumes into a handler; Spike does not). 
+Review: what's the methodological lesson? What check should have been done FIRST before calling any count-mismatch "benign"? 
+
+JUDGMENT 4 — "2/5 seeds passing proves sync-trap lockstep works".
+Review: is passing 2 of 5 seeds (each with 6 sync-traps, full per-commit match) sufficient to claim "sync-trap lockstep is functional", or is that overclaiming given 3/5 fail? How should this be stated honestly to a customer?
+
+JUDGMENT 5 — overall claim posture.
+Facts: full-mix RV32IMC_Zicsr instruction-stream lockstep = 103,766 commits / 31 seeds / zero divergence (timing CSRs excluded-not-faked; sync-trap-streams + interrupts documented out of scope). Earlier an arith-only 114k run was honesty-corrected to "not full-mix". ~8-9 real DUT bugs found+fixed (cross-boundary fetch, branch-target, M-unit done-race, wrong-path M-start, mstatus.MPP, mscratch fwd, mepc off-by-4, mepc[0] mask).
+Review: is "Magpie_M1 passes 103k+ full-RV32IMC_Zicsr riscv-dv instruction-stream lockstep vs Spike, zero divergence (sync-trap-stream + interrupts out of scope)" an honest, defensible customer statement? What's the single biggest remaining risk to that claim's credibility, and what one thing would most strengthen it?
+
+Also: any judgment you think is OUTRIGHT WRONG or risky that I should revisit now?

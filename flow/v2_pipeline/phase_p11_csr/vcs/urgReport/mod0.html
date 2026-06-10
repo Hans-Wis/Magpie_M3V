@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: tb_csr_unit</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_tb_csr_unit'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_tb_csr_unit')">tb_csr_unit</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 94.36</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 97.94</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 93.33</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Toggle" > 95.05</a></td>
+<td class="wht cl rt"></td>
+<td class="s9 cl rt"><a href="mod0.html#Branch" > 91.11</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p11_csr/vcs/../../../../IP/cpu_m1/dv/tb/tb_csr_unit.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p11_csr/vcs/../../../../IP/cpu_m1/dv/tb/tb_csr_unit.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod0.html#inst_tag_0"  onclick="showContent('inst_tag_0')">tb_csr_unit</a></td>
+<td class="s9 cl rt"> 94.36</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 97.94</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 93.33</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Toggle" > 95.05</a></td>
+<td class="wht cl rt"></td>
+<td class="s9 cl rt"><a href="mod0.html#Branch" > 91.11</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_tb_csr_unit'>
+<hr>
+<a name="inst_tag_0"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_0" >tb_csr_unit</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 94.36</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 97.94</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 93.33</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Toggle" > 95.05</a></td>
+<td class="wht cl rt"></td>
+<td class="s9 cl rt"><a href="mod0.html#Branch" > 91.11</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 95.20</td>
+<td class="s9 cl rt"> 98.23</td>
+<td class="s9 cl rt"> 96.43</td>
+<td class="s9 cl rt"> 90.96</td>
+<td class="wht cl rt"></td>
+<td class="s9 cl rt"> 95.18</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<span class=inst>none</span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod1.html#inst_tag_1" id="tag_urg_inst_1">dut</a></td>
+<td class="s9 cl rt"> 96.96</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s8 cl rt"> 87.86</td>
+<td class="wht cl rt"></td>
+<td class="s10 cl rt">100.00</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_tb_csr_unit'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod0.html" >tb_csr_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">TOTAL</td><td></td><td>389</td><td>381</td><td>97.94</td></tr>
+<tr class="s10"><td class="lf">INITIAL</td><td>80</td><td>4</td><td>4</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ALWAYS</td><td>85</td><td>12</td><td>12</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>104</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>112</td><td>14</td><td>14</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>135</td><td>5</td><td>5</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>148</td><td>11</td><td>11</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>168</td><td>3</td><td>3</td><td>100.00</td></tr>
+<tr class="s3"><td class="lf">ROUTINE</td><td>179</td><td>3</td><td>1</td><td>33.33</td></tr>
+<tr class="s8"><td class="lf">ROUTINE</td><td>191</td><td>11</td><td>9</td><td>81.82</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>211</td><td>14</td><td>14</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>233</td><td>27</td><td>27</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">ROUTINE</td><td>271</td><td>29</td><td>27</td><td>93.10</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>308</td><td>40</td><td>40</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>348</td><td>20</td><td>20</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>372</td><td>17</td><td>17</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>393</td><td>45</td><td>45</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>443</td><td>30</td><td>30</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>473</td><td>6</td><td>6</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>482</td><td>10</td><td>10</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">INITIAL</td><td>496</td><td>87</td><td>85</td><td>97.70</td></tr>
+</table>
+<pre class="code"><br clear=all>
+79                          initial begin
+80         1/1                  clk = 1'b0;
+81         3/3                  forever #5 clk = ~clk;
+82                          end
+83                      
+84                          always @(posedge clk) begin
+85         1/1                  if (!resetn) begin
+86         1/1                      prev_tb_state &lt;= TB_IDLE;
+87                              end else begin
+88         1/1                      state_hits[tb_state] = state_hits[tb_state] + 1;
+89         1/1                      case ({prev_tb_state, tb_state})
+90         1/1                          {TB_IDLE,       TB_IDLE}:       arc_hits[0] = arc_hits[0] + 1;
+91         1/1                          {TB_IDLE,       TB_TRAP_ENTER}: arc_hits[1] = arc_hits[1] + 1;
+92         1/1                          {TB_TRAP_ENTER, TB_IN_HANDLER}: arc_hits[2] = arc_hits[2] + 1;
+93         1/1                          {TB_IN_HANDLER, TB_IN_HANDLER}: arc_hits[3] = arc_hits[3] + 1;
+94         1/1                          {TB_IN_HANDLER, TB_MRET}:       arc_hits[4] = arc_hits[4] + 1;
+95         1/1                          {TB_MRET,       TB_IDLE}:       arc_hits[5] = arc_hits[5] + 1;
+96         1/1                          default: ;
+97                                  endcase
+98         1/1                      prev_tb_state &lt;= tb_state;
+99                              end
+100                         end
+101                     
+102                         function [31:0] mstatus_value;
+103                             begin
+104        1/1                      mstatus_value = {19'b0, g_mstatus_mpp, 3'b0, g_mstatus_mpie,
+105                                                  3'b0, g_mstatus_mie, 3'b0};
+106                             end
+107                         endfunction
+108                     
+109                         function [31:0] csr_model_read;
+110                             input [11:0] addr;
+111                             begin
+112        1/1                      case (addr)
+113        1/1                          `CSR_MSTATUS : csr_model_read = mstatus_value();
+114        1/1                          `CSR_MIE     : csr_model_read = {20'b0, g_mie_meie, 11'b0};
+115        1/1                          `CSR_MTVEC   : csr_model_read = {g_mtvec_base, 2'b00};
+116        1/1                          `CSR_MSCRATCH: csr_model_read = g_mscratch;
+117        1/1                          `CSR_MEPC    : csr_model_read = g_mepc;
+118        1/1                          `CSR_MCAUSE  : csr_model_read = g_mcause;
+119        1/1                          `CSR_MTVAL   : csr_model_read = g_mtval;
+120        1/1                          `CSR_MIP     : csr_model_read = {20'b0, g_ext_pending, 11'b0};
+121        1/1                          `CSR_CYCLE   : csr_model_read = g_cycle[31:0];
+122        1/1                          `CSR_CYCLEH  : csr_model_read = g_cycle[63:32];
+123        1/1                          `CSR_INSTRET : csr_model_read = g_instret[31:0];
+124        1/1                          `CSR_INSTRETH: csr_model_read = g_instret[63:32];
+125        1/1                          default      : csr_model_read = 32'h0000_0000;
+126                                 endcase
+127                             end
+128                         endfunction
+129                     
+130                         function [31:0] csr_new_value;
+131                             input [1:0]  op;
+132                             input [31:0] old_v;
+133                             input [31:0] data_v;
+134                             begin
+135        1/1                      case (op)
+136        1/1                          `CSR_OP_W: csr_new_value = data_v;
+137        1/1                          `CSR_OP_S: csr_new_value = old_v | data_v;
+138        1/1                          `CSR_OP_C: csr_new_value = old_v &amp; ~data_v;
+139        1/1                          default:   csr_new_value = old_v;
+140                                 endcase
+141                             end
+142                         endfunction
+143                     
+144                         task model_write;
+145                             input [11:0] addr;
+146                             input [31:0] value;
+147                             begin
+148        1/1                      case (addr)
+149                                     `CSR_MSTATUS: begin
+150        1/1                              g_mstatus_mie  = value[`MSTATUS_MIE_BIT];
+151        1/1                              g_mstatus_mpie = value[`MSTATUS_MPIE_BIT];
+152        1/1                              g_mstatus_mpp  = value[`MSTATUS_MPP_HI_BIT:`MSTATUS_MPP_LO_BIT];
+153                                     end
+154        1/1                          `CSR_MIE:      g_mie_meie    = value[`MIE_MEIE_BIT];
+155        1/1                          `CSR_MTVEC:    g_mtvec_base  = value[31:2];
+156        1/1                          `CSR_MSCRATCH: g_mscratch    = value;
+157        1/1                          `CSR_MEPC:     g_mepc        = {value[31:1], 1'b0};
+158        1/1                          `CSR_MCAUSE:   g_mcause      = value;
+159        1/1                          `CSR_MTVAL:    g_mtval       = value;
+160        1/1                          default: ;
+161                                 endcase
+162                             end
+163                         endtask
+164                     
+165                         task model_tick;
+166                             input retired;
+167                             begin
+168        1/1                      g_cycle = g_cycle + 64'd1;
+169        1/1                      if (retired) begin
+170        1/1                          g_instret = g_instret + 64'd1;
+171                                 end
+                        MISSING_ELSE
+172                             end
+173                         endtask
+174                     
+175                         task check;
+176                             input cond;
+177                             input [8*80-1:0] msg;
+178                             begin
+179        1/1                      if (!cond) begin
+180        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+181        <font color = "red">0/1     ==>                  $error(&quot;%0s&quot;, msg);</font>
+182                                 end
+                        MISSING_ELSE
+183                             end
+184                         endtask
+185                     
+186                         task check_read;
+187                             input [11:0] addr;
+188                             input [8*64-1:0] tag;
+189                             reg [31:0] exp;
+190                             begin
+191        1/1                      csr_raddr = addr;
+192        2/2                      #1;
+193        1/1                      if ((addr == `CSR_CYCLE) || (addr == `CSR_CYCLEH) ||
+194                                     (addr == `CSR_INSTRET) || (addr == `CSR_INSTRETH)) begin
+195        1/1                          g_cycle = dut.cycle_cnt;
+196        1/1                          g_instret = dut.instret_cnt;
+197                                 end
+                        MISSING_ELSE
+198        1/1                      exp = csr_model_read(addr);
+199        1/1                      vectors = vectors + 1;
+200        1/1                      if (csr_rdata !== exp) begin
+201        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+202        <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s read addr=%h got=%h exp=%h&quot;,</font>
+203                                            vectors, tag, addr, csr_rdata, exp);
+204                                 end
+                        MISSING_ELSE
+205                             end
+206                         endtask
+207                     
+208                         task cycle_idle;
+209                             input retired;
+210                             begin
+211        2/2                      @(negedge clk);
+212        1/1                      csr_we             = 1'b0;
+213        1/1                      instr_retired      = retired;
+214        1/1                      trap_enter         = 1'b0;
+215        1/1                      trap_exit          = 1'b0;
+216        1/1                      irq_external_pulse = 1'b0;
+217        1/1                      tb_state           = TB_IDLE;
+218        1/1                      model_tick(retired);
+219        2/2                      @(posedge clk);
+220        2/2                      #1;
+221        1/1                      instr_retired = 1'b0;
+222                             end
+223                         endtask
+224                     
+225                         task csr_write_and_check;
+226                             input [11:0] addr;
+227                             input [1:0]  op;
+228                             input [31:0] data;
+229                             input [8*64-1:0] tag;
+230                             reg [31:0] old_v;
+231                             reg [31:0] new_v;
+232                             begin
+233        1/1                      old_v = csr_model_read(addr);
+234        1/1                      new_v = csr_new_value(op, old_v, data);
+235        2/2                      @(negedge clk);
+236        1/1                      csr_raddr           = addr;
+237        1/1                      csr_we              = 1'b1;
+238        1/1                      csr_waddr           = addr;
+239        1/1                      csr_op              = op;
+240        1/1                      csr_wdata           = data;
+241        1/1                      csr_old_val         = old_v;
+242        1/1                      instr_retired       = 1'b1;
+243        1/1                      trap_enter          = 1'b0;
+244        1/1                      trap_exit           = 1'b0;
+245        1/1                      irq_external_pulse  = 1'b0;
+246        1/1                      tb_state            = TB_IDLE;
+247        1/1                      model_tick(1'b1);
+248        1/1                      model_write(addr, new_v);
+249        2/2                      @(posedge clk);
+250        2/2                      #1;
+251        1/1                      csr_we        = 1'b0;
+252        1/1                      instr_retired = 1'b0;
+253        1/1                      check_read(addr, tag);
+254        1/1                      check(mtvec_o === csr_model_read(`CSR_MTVEC), &quot;mtvec_o mismatch after csr write&quot;);
+255        1/1                      check(mepc_o === csr_model_read(`CSR_MEPC), &quot;mepc_o mismatch after csr write&quot;);
+256        1/1                      check(irq_pending === (g_ext_pending &amp; g_mie_meie &amp; g_mstatus_mie),
+257                                       &quot;irq_pending mismatch after csr write&quot;);
+258                             end
+259                         endtask
+260                     
+261                         task csr_write_mismatch_read;
+262                             input [11:0] waddr;
+263                             input [11:0] raddr;
+264                             input [1:0]  op;
+265                             input [31:0] data;
+266                             input [8*64-1:0] tag;
+267                             reg [31:0] old_v;
+268                             reg [31:0] new_v;
+269                             reg [31:0] exp_r;
+270                             begin
+271        1/1                      old_v = csr_model_read(waddr);
+272        1/1                      new_v = csr_new_value(op, old_v, data);
+273        1/1                      exp_r = csr_model_read(raddr);
+274        2/2                      @(negedge clk);
+275        1/1                      csr_raddr          = raddr;
+276        1/1                      csr_we             = 1'b1;
+277        1/1                      csr_waddr          = waddr;
+278        1/1                      csr_op             = op;
+279        1/1                      csr_wdata          = data;
+280        1/1                      csr_old_val        = old_v;
+281        1/1                      instr_retired      = 1'b1;
+282        1/1                      trap_enter         = 1'b0;
+283        1/1                      trap_exit          = 1'b0;
+284        1/1                      irq_external_pulse = 1'b0;
+285        1/1                      tb_state           = TB_IDLE;
+286        1/1                      model_tick(1'b1);
+287        1/1                      model_write(waddr, new_v);
+288        2/2                      @(posedge clk);
+289        2/2                      #1;
+290        1/1                      vectors = vectors + 1;
+291        1/1                      if (csr_rdata !== exp_r) begin
+292        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+293        <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s mismatch read got=%h exp=%h&quot;,</font>
+294                                            vectors, tag, csr_rdata, exp_r);
+295                                 end
+                        MISSING_ELSE
+296        1/1                      csr_we        = 1'b0;
+297        1/1                      instr_retired = 1'b0;
+298        1/1                      check_read(waddr, tag);
+299                             end
+300                         endtask
+301                     
+302                         task trap_enter_and_check;
+303                             input [31:0] pc;
+304                             input [31:0] cause;
+305                             input [31:0] val;
+306                             input [8*64-1:0] tag;
+307                             begin
+308        2/2                      @(negedge clk);
+309        1/1                      csr_we             = 1'b0;
+310        1/1                      instr_retired      = 1'b1;
+311        1/1                      trap_enter         = 1'b1;
+312        1/1                      trap_exit          = 1'b0;
+313        1/1                      trap_pc            = pc;
+314        1/1                      trap_cause         = cause;
+315        1/1                      trap_mtval         = val;
+316        1/1                      irq_external_pulse = 1'b0;
+317        1/1                      tb_state           = TB_TRAP_ENTER;
+318        1/1                      model_tick(1'b1);
+319        1/1                      g_mepc        = pc;
+320        1/1                      g_mcause      = cause;
+321        1/1                      g_mtval       = val;
+322        1/1                      g_mstatus_mpie = g_mstatus_mie;
+323        1/1                      g_mstatus_mie  = 1'b0;
+324        1/1                      g_mstatus_mpp  = 2'b11;
+325        1/1                      g_ext_pending  = 1'b0;
+326        2/2                      @(posedge clk);
+327        2/2                      #1;
+328        1/1                      trap_enter = 1'b0;
+329        1/1                      tb_state   = TB_IN_HANDLER;
+330        2/2                      @(negedge clk);
+331        1/1                      model_tick(1'b0);
+332        2/2                      @(posedge clk);
+333        2/2                      #1;
+334        1/1                      check_read(`CSR_MEPC, tag);
+335        1/1                      check_read(`CSR_MCAUSE, tag);
+336        1/1                      check_read(`CSR_MTVAL, tag);
+337        1/1                      check_read(`CSR_MSTATUS, tag);
+338        1/1                      check_read(`CSR_MIP, tag);
+339        1/1                      check(mtvec_o === csr_model_read(`CSR_MTVEC), &quot;mtvec_o mismatch after trap_enter&quot;);
+340        1/1                      check(mepc_o === csr_model_read(`CSR_MEPC), &quot;mepc_o mismatch after trap_enter&quot;);
+341        1/1                      check(irq_pending === 1'b0, &quot;irq_pending not cleared by trap_enter&quot;);
+342                             end
+343                         endtask
+344                     
+345                         task trap_exit_and_check;
+346                             input [8*64-1:0] tag;
+347                             begin
+348        2/2                      @(negedge clk);
+349        1/1                      csr_we             = 1'b0;
+350        1/1                      instr_retired      = 1'b1;
+351        1/1                      trap_enter         = 1'b0;
+352        1/1                      trap_exit          = 1'b1;
+353        1/1                      irq_external_pulse = 1'b0;
+354        1/1                      tb_state           = TB_MRET;
+355        1/1                      model_tick(1'b1);
+356        1/1                      g_mstatus_mie  = g_mstatus_mpie;
+357        1/1                      g_mstatus_mpie = 1'b1;
+358        1/1                      g_mstatus_mpp  = 2'b11;
+359        2/2                      @(posedge clk);
+360        2/2                      #1;
+361        1/1                      trap_exit = 1'b0;
+362        1/1                      tb_state  = TB_IDLE;
+363        1/1                      check_read(`CSR_MSTATUS, tag);
+364        1/1                      check(irq_pending === (g_ext_pending &amp; g_mie_meie &amp; g_mstatus_mie),
+365                                       &quot;irq_pending mismatch after trap_exit&quot;);
+366                             end
+367                         endtask
+368                     
+369                         task irq_pulse_and_check;
+370                             input [8*64-1:0] tag;
+371                             begin
+372        2/2                      @(negedge clk);
+373        1/1                      csr_we             = 1'b0;
+374        1/1                      instr_retired      = 1'b0;
+375        1/1                      trap_enter         = 1'b0;
+376        1/1                      trap_exit          = 1'b0;
+377        1/1                      irq_external_pulse = 1'b1;
+378        1/1                      tb_state           = TB_IDLE;
+379        1/1                      model_tick(1'b0);
+380        1/1                      g_ext_pending = 1'b1;
+381        2/2                      @(posedge clk);
+382        2/2                      #1;
+383        1/1                      irq_external_pulse = 1'b0;
+384        1/1                      check_read(`CSR_MIP, tag);
+385        1/1                      check(irq_pending === (g_ext_pending &amp; g_mie_meie &amp; g_mstatus_mie),
+386                                       &quot;irq_pending mismatch after external pulse&quot;);
+387                             end
+388                         endtask
+389                     
+390                         task reset_dut;
+391                             integer k;
+392                             begin
+393        1/1                      resetn             = 1'b0;
+394        1/1                      csr_raddr          = `CSR_MSTATUS;
+395        1/1                      csr_we             = 1'b0;
+396        1/1                      csr_waddr          = `CSR_MSTATUS;
+397        1/1                      csr_op             = `CSR_OP_W;
+398        1/1                      csr_wdata          = 32'h0;
+399        1/1                      csr_old_val        = 32'h0;
+400        1/1                      instr_retired      = 1'b0;
+401        1/1                      trap_enter         = 1'b0;
+402        1/1                      trap_pc            = 32'h0;
+403        1/1                      trap_cause         = 32'h0;
+404        1/1                      trap_mtval         = 32'h0;
+405        1/1                      trap_exit          = 1'b0;
+406        1/1                      irq_external_pulse = 1'b0;
+407        1/1                      tb_state           = TB_IDLE;
+408        1/1                      prev_tb_state      = TB_IDLE;
+409                     
+410        1/1                      g_mie_meie     = 1'b0;
+411        1/1                      g_mstatus_mie  = 1'b0;
+412        1/1                      g_mstatus_mpie = 1'b0;
+413        1/1                      g_mstatus_mpp  = 2'b11;
+414        1/1                      g_mtvec_base   = 30'b0;
+415        1/1                      g_mscratch     = 32'h0;
+416        1/1                      g_mepc         = 32'h0;
+417        1/1                      g_mcause       = 32'h0;
+418        1/1                      g_mtval        = 32'h0;
+419        1/1                      g_ext_pending  = 1'b0;
+420        1/1                      g_cycle        = 64'h0;
+421        1/1                      g_instret      = 64'h0;
+422                     
+423        1/1                      for (k = 0; k &lt; 4; k = k + 1) begin
+424        1/1                          state_hits[k] = 0;
+425                                 end
+426        1/1                      for (k = 0; k &lt; 6; k = k + 1) begin
+427        1/1                          arc_hits[k] = 0;
+428                                 end
+429                     
+430        3/3                      repeat (4) @(posedge clk);
+                        REPEAT_FALSE
+431        2/2                      @(negedge clk);
+432        1/1                      resetn = 1'b1;
+433        1/1                      model_tick(1'b0);
+434        2/2                      @(posedge clk);
+435        2/2                      #1;
+436        1/1                      g_cycle = dut.cycle_cnt;
+437        1/1                      g_instret = dut.instret_cnt;
+438                             end
+439                         endtask
+440                     
+441                         task accelerate_counter_toggle;
+442                             begin
+443        2/2                      @(negedge clk);
+444        1/1                      dut.cycle_cnt   = 64'h0000_0000_0000_0000;
+445        1/1                      dut.instret_cnt = 64'h0000_0000_0000_0000;
+446        2/2                      #1;
+447        1/1                      dut.cycle_cnt   = 64'hffff_ffff_ffff_ffff;
+448        1/1                      dut.instret_cnt = 64'hffff_ffff_ffff_ffff;
+449        2/2                      #1;
+450        1/1                      dut.cycle_cnt   = 64'h0000_0000_0000_0000;
+451        1/1                      dut.instret_cnt = 64'h0000_0000_0000_0000;
+452        2/2                      #1;
+453        1/1                      dut.cycle_cnt   = 64'haaaa_aaaa_aaaa_aa00;
+454        1/1                      dut.instret_cnt = 64'h5555_5555_5555_5500;
+455        1/1                      g_cycle         = 64'haaaa_aaaa_aaaa_aa00;
+456        1/1                      g_instret       = 64'h5555_5555_5555_5500;
+457        1/1                      cycle_idle(1'b1);
+458        2/2                      @(negedge clk);
+459        1/1                      dut.cycle_cnt   = 64'h5555_5555_5555_5500;
+460        1/1                      dut.instret_cnt = 64'haaaa_aaaa_aaaa_aa00;
+461        1/1                      g_cycle         = 64'h5555_5555_5555_5500;
+462        1/1                      g_instret       = 64'haaaa_aaaa_aaaa_aa00;
+463        1/1                      cycle_idle(1'b1);
+464        1/1                      check_read(`CSR_CYCLE, &quot;COUNTER_LOW&quot;);
+465        1/1                      check_read(`CSR_CYCLEH, &quot;COUNTER_HIGH&quot;);
+466        1/1                      check_read(`CSR_INSTRET, &quot;INSTRET_LOW&quot;);
+467        1/1                      check_read(`CSR_INSTRETH, &quot;INSTRET_HIGH&quot;);
+468                             end
+469                         endtask
+470                     
+471                         task pulse_reset_for_coverage;
+472                             begin
+473        2/2                      @(negedge clk);
+474        1/1                      resetn = 1'b0;
+475        2/2                      @(negedge clk);
+476        1/1                      resetn = 1'b1;
+477                             end
+478                         endtask
+479                     
+480                         task print_fsm_report;
+481                             begin
+482        1/1                      $display(&quot;FSM_STATE CSR_IDLE       covered=%0d&quot;, state_hits[TB_IDLE]);
+483        1/1                      $display(&quot;FSM_STATE CSR_TRAP_ENTER covered=%0d&quot;, state_hits[TB_TRAP_ENTER]);
+484        1/1                      $display(&quot;FSM_STATE CSR_IN_HANDLER covered=%0d&quot;, state_hits[TB_IN_HANDLER]);
+485        1/1                      $display(&quot;FSM_STATE CSR_MRET       covered=%0d&quot;, state_hits[TB_MRET]);
+486        1/1                      $display(&quot;FSM_ARC CSR_IDLE-&gt;CSR_IDLE             covered=%0d&quot;, arc_hits[0]);
+487        1/1                      $display(&quot;FSM_ARC CSR_IDLE-&gt;CSR_TRAP_ENTER       covered=%0d&quot;, arc_hits[1]);
+488        1/1                      $display(&quot;FSM_ARC CSR_TRAP_ENTER-&gt;CSR_IN_HANDLER covered=%0d&quot;, arc_hits[2]);
+489        1/1                      $display(&quot;FSM_ARC CSR_IN_HANDLER-&gt;CSR_IN_HANDLER covered=%0d&quot;, arc_hits[3]);
+490        1/1                      $display(&quot;FSM_ARC CSR_IN_HANDLER-&gt;CSR_MRET       covered=%0d&quot;, arc_hits[4]);
+491        1/1                      $display(&quot;FSM_ARC CSR_MRET-&gt;CSR_IDLE             covered=%0d&quot;, arc_hits[5]);
+492                             end
+493                         endtask
+494                     
+495                         initial begin
+496        1/1                  vectors = 0;
+497        1/1                  errors  = 0;
+498                     
+499        1/1                  csr_rw_table[0] = `CSR_MSTATUS;
+500        1/1                  csr_rw_table[1] = `CSR_MIE;
+501        1/1                  csr_rw_table[2] = `CSR_MTVEC;
+502        1/1                  csr_rw_table[3] = `CSR_MSCRATCH;
+503        1/1                  csr_rw_table[4] = `CSR_MEPC;
+504        1/1                  csr_rw_table[5] = `CSR_MCAUSE;
+505        1/1                  csr_rw_table[6] = `CSR_MTVAL;
+506                     
+507        1/1                  pattern_table[0] = 32'haaaa_aaaa;
+508        1/1                  pattern_table[1] = 32'h5555_5555;
+509        1/1                  pattern_table[2] = 32'hffff_ffff;
+510        1/1                  pattern_table[3] = 32'h0000_0000;
+511        1/1                  pattern_table[4] = 32'h0000_0808;
+512        1/1                  pattern_table[5] = 32'h0000_0880;
+513        1/1                  pattern_table[6] = 32'hffff_fffc;
+514        1/1                  pattern_table[7] = 32'h0000_1001;
+515        1/1                  pattern_table[8] = 32'h8000_000b;
+516        1/1                  pattern_table[9] = 32'h7fff_ffff;
+517                     
+518        1/1                  reset_dut();
+519                     
+520        1/1                  check_read(`CSR_MSTATUS, &quot;RESET&quot;);
+521        1/1                  check_read(`CSR_MIE, &quot;RESET&quot;);
+522        1/1                  check_read(`CSR_MTVEC, &quot;RESET&quot;);
+523        1/1                  check_read(`CSR_MSCRATCH, &quot;RESET&quot;);
+524        1/1                  check_read(`CSR_MEPC, &quot;RESET&quot;);
+525        1/1                  check_read(`CSR_MCAUSE, &quot;RESET&quot;);
+526        1/1                  check_read(`CSR_MTVAL, &quot;RESET&quot;);
+527        1/1                  check_read(`CSR_MIP, &quot;RESET&quot;);
+528        1/1                  check_read(12'hf14, &quot;UNKNOWN_MHARTID_ZERO&quot;);
+529        1/1                  check_read(12'h301, &quot;UNKNOWN_MISA_ZERO&quot;);
+530                     
+531        1/1                  for (addr_i = 0; addr_i &lt; 7; addr_i = addr_i + 1) begin
+532        1/1                      for (pat_i = 0; pat_i &lt; 10; pat_i = pat_i + 1) begin
+533        1/1                          csr_write_and_check(csr_rw_table[addr_i], `CSR_OP_W, pattern_table[pat_i], &quot;CSRRW_PATTERN&quot;);
+534        1/1                          csr_write_and_check(csr_rw_table[addr_i], `CSR_OP_S, ~pattern_table[pat_i], &quot;CSRRS_PATTERN&quot;);
+535        1/1                          csr_write_and_check(csr_rw_table[addr_i], `CSR_OP_C, pattern_table[pat_i], &quot;CSRRC_PATTERN&quot;);
+536                                 end
+537                             end
+538                     
+539        1/1                  csr_write_and_check(`CSR_MTVEC, `CSR_OP_W, 32'haaaa_aaa3, &quot;MTVEC_MODE_MASK_A&quot;);
+540        1/1                  csr_write_and_check(`CSR_MTVEC, `CSR_OP_W, 32'h5555_5557, &quot;MTVEC_MODE_MASK_B&quot;);
+541        1/1                  csr_write_and_check(`CSR_MEPC,  `CSR_OP_W, 32'haaaa_aaab, &quot;MEPC_ALIGN_MASK_A&quot;);
+542        1/1                  csr_write_and_check(`CSR_MEPC,  `CSR_OP_W, 32'h5555_5555, &quot;MEPC_ALIGN_MASK_B&quot;);
+543        1/1                  csr_write_and_check(`CSR_MIP,   `CSR_OP_W, 32'hffff_ffff, &quot;MIP_WRITE_IGNORED&quot;);
+544        1/1                  csr_write_and_check(`CSR_CYCLE, `CSR_OP_W, 32'hffff_ffff, &quot;CYCLE_WRITE_IGNORED&quot;);
+545        1/1                  csr_write_and_check(`CSR_INSTRET, `CSR_OP_W, 32'hffff_ffff, &quot;INSTRET_WRITE_IGNORED&quot;);
+546        1/1                  csr_write_and_check(12'h7c0, `CSR_OP_W, 32'hffff_ffff, &quot;UNKNOWN_WRITE_IGNORED&quot;);
+547        1/1                  csr_write_and_check(12'h338, `CSR_OP_W, 32'h0000_0000, &quot;UNKNOWN_WADDR_BITS_3_5_A&quot;);
+548        1/1                  csr_write_and_check(12'h360, `CSR_OP_W, 32'h0000_0000, &quot;UNKNOWN_WADDR_BITS_3_5_B&quot;);
+549        1/1                  csr_write_mismatch_read(`CSR_MSCRATCH, `CSR_MTVEC, `CSR_OP_W, 32'h1357_9bdf, &quot;WRITE_READ_MISMATCH&quot;);
+550        1/1                  csr_write_and_check(`CSR_MSCRATCH, 2'b00, 32'h2468_ace0, &quot;CSR_OP_DEFAULT_HOLD&quot;);
+551        1/1                  check_read(12'h328, &quot;UNKNOWN_RADDR_BITS_3_5_A&quot;);
+552        1/1                  check_read(12'h360, &quot;UNKNOWN_RADDR_BITS_3_5_B&quot;);
+553                     
+554        1/1                  csr_write_and_check(`CSR_MSTATUS, `CSR_OP_W, 32'h0000_0008, &quot;ENABLE_MIE&quot;);
+555        1/1                  csr_write_and_check(`CSR_MIE,     `CSR_OP_W, 32'h0000_0800, &quot;ENABLE_MEIE&quot;);
+556        1/1                  irq_pulse_and_check(&quot;IRQ_MASKED_UNMASKED_SET&quot;);
+557        1/1                  check(irq_pending === 1'b1, &quot;irq_pending should assert when ext_pending/MIE/MEIE are set&quot;);
+558        1/1                  csr_write_and_check(`CSR_MIE,     `CSR_OP_C, 32'h0000_0800, &quot;MASK_MEIE_CLEAR_PENDING_HELD&quot;);
+559        1/1                  check(irq_pending === 1'b0, &quot;irq_pending should clear when MEIE is masked&quot;);
+560        1/1                  csr_write_and_check(`CSR_MIE,     `CSR_OP_S, 32'h0000_0800, &quot;UNMASK_MEIE_PENDING_HELD&quot;);
+561        1/1                  check(irq_pending === 1'b1, &quot;irq_pending should reassert when MEIE is unmasked&quot;);
+562                     
+563        1/1                  trap_enter_and_check(32'haaaa_aaa0, `MCAUSE_EXT_IRQ, 32'h5555_5555, &quot;TRAP_IRQ&quot;);
+564        1/1                  trap_exit_and_check(&quot;MRET_RESTORE_FROM_IRQ&quot;);
+565        1/1                  irq_pulse_and_check(&quot;IRQ_SECOND_PULSE&quot;);
+566                     
+567        1/1                  trap_enter_and_check(32'h5555_5554, `MCAUSE_ILLEGAL_INSTRUCTION, 32'haaaa_aaaa, &quot;TRAP_ILLEGAL&quot;);
+568        1/1                  irq_pulse_and_check(&quot;IRQ_WHILE_MIE_DISABLED_IN_HANDLER&quot;);
+569        1/1                  trap_exit_and_check(&quot;MRET_RESTORE_FROM_ILLEGAL&quot;);
+570        1/1                  trap_enter_and_check(32'h0000_1001, `MCAUSE_BREAKPOINT, 32'h0000_0001, &quot;TRAP_ODD_PC_REACHABILITY&quot;);
+571        1/1                  trap_exit_and_check(&quot;MRET_RESTORE_FROM_ODD_PC&quot;);
+572                     
+573        1/1                  for (i = 0; i &lt; 32; i = i + 1) begin
+574        1/1                      trap_enter_and_check((32'h0000_0001 &lt;&lt; i) &amp; 32'hffff_fffe,
+575                                                      32'h0000_0001 &lt;&lt; i,
+576                                                      32'hffff_ffff ^ (32'h0000_0001 &lt;&lt; i),
+577                                                      &quot;TRAP_WALKING_ONE_ZERO&quot;);
+578        1/1                      trap_exit_and_check(&quot;MRET_WALKING&quot;);
+579                             end
+580                     
+581        1/1                  for (op_i = 0; op_i &lt; 3; op_i = op_i + 1) begin
+582        1/1                      for (i = 0; i &lt; 32; i = i + 1) begin
+583        1/1                          csr_write_and_check(`CSR_MSCRATCH, op_i[1:0] + 2'b01, 32'h0000_0001 &lt;&lt; i, &quot;MSCRATCH_WALK&quot;);
+584        1/1                          csr_write_and_check(`CSR_MTVAL,    op_i[1:0] + 2'b01, ~(32'h0000_0001 &lt;&lt; i), &quot;MTVAL_WALK&quot;);
+585        1/1                          csr_write_and_check(`CSR_MCAUSE,   op_i[1:0] + 2'b01, 32'h8000_0000 &gt;&gt; i, &quot;MCAUSE_WALK&quot;);
+586        1/1                          csr_write_and_check(`CSR_MEPC,     op_i[1:0] + 2'b01, 32'hffff_fffe ^ (32'h0000_0001 &lt;&lt; i), &quot;MEPC_WALK&quot;);
+587        1/1                          csr_write_and_check(`CSR_MTVEC,    op_i[1:0] + 2'b01, 32'hffff_fffc ^ (32'h0000_0004 &lt;&lt; (i % 30)), &quot;MTVEC_WALK&quot;);
+588                                 end
+589                             end
+590                     
+591        1/1                  accelerate_counter_toggle();
+592                     
+593        2/2                  repeat (16) cycle_idle(1'b0);
+                        REPEAT_FALSE
+594                     
+595        1/1                  print_fsm_report();
+596        1/1                  pulse_reset_for_coverage();
+597        2/2                  @(posedge clk);
+598        1/1                  if (errors == 0) begin
+599        1/1                      $display(&quot;PASS: csr unit %0d/%0d vectors&quot;, vectors, vectors);
+600        1/1                      $finish;
+601                             end else begin
+602        <font color = "red">0/1     ==>              $display(&quot;FAIL: csr unit %0d/%0d vectors failed&quot;, errors, vectors);</font>
+603        <font color = "red">0/1     ==>              $fatal(1);</font>
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod0.html" >tb_csr_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">Conditions</td><td>15</td><td>14</td><td>93.33</td></tr>
+<tr class="s9"><td class="lf">Logical</td><td>15</td><td>14</td><td>93.33</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       193
+ EXPRESSION ((addr == 12'hc00) || (addr == 12'hc80) || (addr == 12'hc02) || (addr == 12'hc82))
+             --------1--------    --------2--------    --------3--------    --------4--------
+</pre>
+<table class="noborder">
+<col span="4" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>-4-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       193
+ SUB-EXPRESSION (addr == 12'hc00)
+                --------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       193
+ SUB-EXPRESSION (addr == 12'hc80)
+                --------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       193
+ SUB-EXPRESSION (addr == 12'hc02)
+                --------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       193
+ SUB-EXPRESSION (addr == 12'hc82)
+                --------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       598
+ EXPRESSION (errors == 0)
+            ------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod0.html" >tb_csr_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s9">
+<td>Totals</td>
+<td class="rt">33</td>
+<td class="rt">30</td>
+<td class="rt">90.91 </td>
+</tr><tr class="s9">
+<td>Total Bits</td>
+<td class="rt">1172</td>
+<td class="rt">1114</td>
+<td class="rt">95.05 </td>
+</tr><tr class="s9">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">586</td>
+<td class="rt">584</td>
+<td class="rt">99.66 </td>
+</tr><tr class="s9">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">586</td>
+<td class="rt">530</td>
+<td class="rt">90.44 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s9">
+<td>Signals</td>
+<td class="rt">33</td>
+<td class="rt">30</td>
+<td class="rt">90.91 </td>
+</tr><tr class="s9">
+<td>Signal Bits</td>
+<td class="rt">1172</td>
+<td class="rt">1114</td>
+<td class="rt">95.05 </td>
+</tr><tr class="s9">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">586</td>
+<td class="rt">584</td>
+<td class="rt">99.66 </td>
+</tr><tr class="s9">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">586</td>
+<td class="rt">530</td>
+<td class="rt">90.44 </td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>clk</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>resetn</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>csr_raddr[11:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>csr_rdata[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>csr_we</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>csr_waddr[11:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>csr_op[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>csr_wdata[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>csr_old_val[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>instr_retired</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>trap_enter</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>trap_pc[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>trap_cause[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>trap_mtval[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>trap_exit</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>irq_external_pulse</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>mtvec_o[1:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mtvec_o[31:2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>mepc_o[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>irq_pending</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>tb_state[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>prev_tb_state[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_mie_meie</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_mstatus_mie</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_mstatus_mpie</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_mstatus_mpp[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_mtvec_base[31:2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_mscratch[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_mepc[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_mcause[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_mtval[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_ext_pending</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[9:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[10]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[11]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[12]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[13]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[14]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[15]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[16]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[17]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[18]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[19]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[20]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[21]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[22]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[23]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[24]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[25]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[26]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[27]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[28]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[29]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[30]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[31]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[32]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[33]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[34]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[35]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[36]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[37]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[38]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[39]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[40]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[41]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[42]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[43]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[44]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[45]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[46]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[47]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[48]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[49]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[50]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[51]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[52]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[53]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[54]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[55]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[56]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[57]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[58]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[59]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[60]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[61]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[62]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_cycle[63]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[10:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[11]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[12]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[13]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[14]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[15]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[16]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[17]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[18]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[19]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[20]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[21]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[22]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[23]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[24]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[25]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[26]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[27]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[28]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[29]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[30]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[31]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[32]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[33]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[34]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[35]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[36]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[37]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[38]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[39]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[40]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[41]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[42]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[43]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[44]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[45]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[46]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[47]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[48]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[49]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[50]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[51]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[52]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[53]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[54]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[55]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[56]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[57]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[58]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[59]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[60]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[61]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[62]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_instret[63]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod0.html" >tb_csr_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s9">
+<td>Branches</td>
+<td></td>
+<td class="rt">45</td>
+<td class="rt">41</td>
+<td class="rt">91.11 </td>
+</tr><tr class="s10">
+<td>IF</td>
+<td class="rt">85</td>
+<td class="rt">8</td>
+<td class="rt">8</td>
+<td class="rt">100.00</td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">598</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s10">
+<td>CASE</td>
+<td class="rt">148</td>
+<td class="rt">8</td>
+<td class="rt">8</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>IF</td>
+<td class="rt">169</td>
+<td class="rt">2</td>
+<td class="rt">2</td>
+<td class="rt">100.00</td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">179</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s10">
+<td>IF</td>
+<td class="rt">193</td>
+<td class="rt">2</td>
+<td class="rt">2</td>
+<td class="rt">100.00</td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">200</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">291</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s10">
+<td>CASE</td>
+<td class="rt">112</td>
+<td class="rt">13</td>
+<td class="rt">13</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>CASE</td>
+<td class="rt">135</td>
+<td class="rt">4</td>
+<td class="rt">4</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+85                 if (!resetn) begin
+                   <font color = "green">-1-</font>  
+86                     prev_tb_state <= TB_IDLE;
+           <font color = "green">            ==></font>
+87                 end else begin
+88                     state_hits[tb_state] = state_hits[tb_state] + 1;
+89                     case ({prev_tb_state, tb_state})
+                       <font color = "green">-2-</font>  
+90                         {TB_IDLE,       TB_IDLE}:       arc_hits[0] = arc_hits[0] + 1;
+           <font color = "green">                ==></font>
+91                         {TB_IDLE,       TB_TRAP_ENTER}: arc_hits[1] = arc_hits[1] + 1;
+           <font color = "green">                ==></font>
+92                         {TB_TRAP_ENTER, TB_IN_HANDLER}: arc_hits[2] = arc_hits[2] + 1;
+           <font color = "green">                ==></font>
+93                         {TB_IN_HANDLER, TB_IN_HANDLER}: arc_hits[3] = arc_hits[3] + 1;
+           <font color = "green">                ==></font>
+94                         {TB_IN_HANDLER, TB_MRET}:       arc_hits[4] = arc_hits[4] + 1;
+           <font color = "green">                ==></font>
+95                         {TB_MRET,       TB_IDLE}:       arc_hits[5] = arc_hits[5] + 1;
+           <font color = "green">                ==></font>
+96                         default: ;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{TB_IDLE, TB_IDLE} </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{TB_IDLE, TB_TRAP_ENTER} </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{TB_TRAP_ENTER, TB_IN_HANDLER} </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{TB_IN_HANDLER, TB_IN_HANDLER} </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{TB_IN_HANDLER, TB_MRET} </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>{TB_MRET, TB_IDLE} </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+598                if (errors == 0) begin
+                   <font color = "red">-1-</font>  
+599                    $display("PASS: csr unit %0d/%0d vectors", vectors, vectors);
+           <font color = "green">            ==></font>
+600                    $finish;
+601                end else begin
+602                    $display("FAIL: csr unit %0d/%0d vectors failed", errors, vectors);
+           <font color = "red">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+148                    case (addr)
+                       <font color = "green">-1-</font>  
+149                        `CSR_MSTATUS: begin
+150                            g_mstatus_mie  = value[`MSTATUS_MIE_BIT];
+           <font color = "green">                    ==></font>
+151                            g_mstatus_mpie = value[`MSTATUS_MPIE_BIT];
+152                            g_mstatus_mpp  = value[`MSTATUS_MPP_HI_BIT:`MSTATUS_MPP_LO_BIT];
+153                        end
+154                        `CSR_MIE:      g_mie_meie    = value[`MIE_MEIE_BIT];
+           <font color = "green">                ==></font>
+155                        `CSR_MTVEC:    g_mtvec_base  = value[31:2];
+           <font color = "green">                ==></font>
+156                        `CSR_MSCRATCH: g_mscratch    = value;
+           <font color = "green">                ==></font>
+157                        `CSR_MEPC:     g_mepc        = {value[31:1], 1'b0};
+           <font color = "green">                ==></font>
+158                        `CSR_MCAUSE:   g_mcause      = value;
+           <font color = "green">                ==></font>
+159                        `CSR_MTVAL:    g_mtval       = value;
+           <font color = "green">                ==></font>
+160                        default: ;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>12'h300 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h304 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h305 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h340 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h341 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h342 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h343 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+169                    if (retired) begin
+                       <font color = "green">-1-</font>  
+170                        g_instret = g_instret + 64'd1;
+           <font color = "green">                ==></font>
+171                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+179                    if (!cond) begin
+                       <font color = "red">-1-</font>  
+180                        errors = errors + 1;
+           <font color = "red">                ==></font>
+181                        $error("%0s", msg);
+182                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+193                    if ((addr == `CSR_CYCLE) || (addr == `CSR_CYCLEH) ||
+                       <font color = "green">-1-</font>  
+194                        (addr == `CSR_INSTRET) || (addr == `CSR_INSTRETH)) begin
+195                        g_cycle = dut.cycle_cnt;
+           <font color = "green">                ==></font>
+196                        g_instret = dut.instret_cnt;
+197                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+200                    if (csr_rdata !== exp) begin
+                       <font color = "red">-1-</font>  
+201                        errors = errors + 1;
+           <font color = "red">                ==></font>
+202                        $error("FAIL[%0d] %0s read addr=%h got=%h exp=%h",
+203                               vectors, tag, addr, csr_rdata, exp);
+204                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+291                    if (csr_rdata !== exp_r) begin
+                       <font color = "red">-1-</font>  
+292                        errors = errors + 1;
+           <font color = "red">                ==></font>
+293                        $error("FAIL[%0d] %0s mismatch read got=%h exp=%h",
+294                               vectors, tag, csr_rdata, exp_r);
+295                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+112                    case (addr)
+                       <font color = "green">-1-</font>  
+113                        `CSR_MSTATUS : csr_model_read = mstatus_value();
+           <font color = "green">                ==></font>
+114                        `CSR_MIE     : csr_model_read = {20'b0, g_mie_meie, 11'b0};
+           <font color = "green">                ==></font>
+115                        `CSR_MTVEC   : csr_model_read = {g_mtvec_base, 2'b00};
+           <font color = "green">                ==></font>
+116                        `CSR_MSCRATCH: csr_model_read = g_mscratch;
+           <font color = "green">                ==></font>
+117                        `CSR_MEPC    : csr_model_read = g_mepc;
+           <font color = "green">                ==></font>
+118                        `CSR_MCAUSE  : csr_model_read = g_mcause;
+           <font color = "green">                ==></font>
+119                        `CSR_MTVAL   : csr_model_read = g_mtval;
+           <font color = "green">                ==></font>
+120                        `CSR_MIP     : csr_model_read = {20'b0, g_ext_pending, 11'b0};
+           <font color = "green">                ==></font>
+121                        `CSR_CYCLE   : csr_model_read = g_cycle[31:0];
+           <font color = "green">                ==></font>
+122                        `CSR_CYCLEH  : csr_model_read = g_cycle[63:32];
+           <font color = "green">                ==></font>
+123                        `CSR_INSTRET : csr_model_read = g_instret[31:0];
+           <font color = "green">                ==></font>
+124                        `CSR_INSTRETH: csr_model_read = g_instret[63:32];
+           <font color = "green">                ==></font>
+125                        default      : csr_model_read = 32'h0000_0000;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>12'h300 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h304 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h305 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h340 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h341 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h342 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h343 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'h344 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'hc00 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'hc80 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'hc02 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>12'hc82 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+135                    case (op)
+                       <font color = "green">-1-</font>  
+136                        `CSR_OP_W: csr_new_value = data_v;
+           <font color = "green">                ==></font>
+137                        `CSR_OP_S: csr_new_value = old_v | data_v;
+           <font color = "green">                ==></font>
+138                        `CSR_OP_C: csr_new_value = old_v & ~data_v;
+           <font color = "green">                ==></font>
+139                        default:   csr_new_value = old_v;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b11 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_0">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_tb_csr_unit">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

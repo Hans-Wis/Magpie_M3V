@@ -1,0 +1,20 @@
+ROLE: Codex EXECUTOR (gpt-5.5), PL=Claude. design_id=cpu_m1 (RV32IMC_Zicsr_Zifencei, M-mode, IALIGN=16 due to C). -s danger-full-access. Spike GOLDEN where usable. clean-room. report-faithfully: each candidate -> REAL bug or FALSE alarm WITH concrete evidence (observed mepc value vs expected). Do not fix what is already correct.
+
+CONTEXT: A whole-spec compliance check (Gemini) raised 2 candidate mepc bugs to VERIFY. These live in the synchronous-trap area, which the riscv-dv lockstep currently can't reach (Spike 1.1.1 limitation), so verify via DIRECTED tests + manual analysis, not riscv-dv. RTL: IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/csr.v (mepc) + core.v (wb_sync_exception_pc, wb_trap_pc_for_mepc, ex_wb_pc_r). NOTE: J16 (a riscv-dv run) may be running concurrently and READS the RTL; if you edit core.v/csr.v, do it cleanly; the mepc area is orthogonal to J16's scope.
+
+CANDIDATE #2 (MAJOR) — precise mepc for synchronous exceptions:
+  core.v computes `wb_sync_exception_pc = ex_wb_pc_r - 32'd4`. Per spec, on a synchronous exception mepc MUST equal the FAULTING instruction's own address. 
+  VERIFY: determine the exact semantics of ex_wb_pc_r in this pipeline (is it the faulting instr's PC, or pc+4/next?). Write a DIRECTED program that causes a synchronous exception (illegal instr, and separately ebreak, and a misaligned load) at a KNOWN, controlled PC (mix in a compressed instr before it so the faulting PC is at an odd-half address too). Read mepc in the handler. Confirm mepc == faulting instruction address EXACTLY for: 32-bit instr at aligned PC, 32-bit instr at odd-half PC (cross-boundary), and a compressed instr. If mepc is wrong for ANY case -> REAL bug -> fix core.v so mepc is the precise faulting PC for all instruction sizes/alignments + ADR. If `-4` happens to be correct given ex_wb_pc_r semantics, say so with the evidence.
+
+CANDIDATE #1 — mepc low-bit masking on CSR write:
+  Per spec, mepc[0] is masked to 0 (with C/IALIGN=16, only bit 0; bit 1 is writable). VERIFY: directed test does `csrw mepc, <odd value bit0=1>` then `csrr` -> confirm bit0 reads 0. If csr.v does not mask mepc[0] on software write -> REAL bug -> fix csr.v (mask bit 0 only, keep bit 1 writable for RVC) + ADR.
+
+DO: verify both; fix the real ones (clean-room + ADR docs/adr/00NN-*.md); add the directed test(s) as a gate or under an existing trap phase. RE-VALIDATE: pytest full suite (>=180) green, gate_02_00 trap + gate_02_02 misalign + gate_03_08 lockstep + gate_02_01 mem_wrapper + gate_04_08 coverage all PASS, no regression.
+
+OUTPUT (write <=30 lines) flow/v2_pipeline/phase_05_leader/J17_result.md:
+  ## candidate_2_mepc_precise (REAL bug or FALSE alarm; evidence = observed mepc vs expected for each alignment case; fix+ADR if real)
+  ## candidate_1_mepc_lsb_mask (REAL or FALSE; observed csrr-back value; fix+ADR if real)
+  ## ex_wb_pc_r semantics (what it actually holds)
+  ## revalidate (pytest pass count; key gates PASS?)
+  ## regressions
+  ## tokens

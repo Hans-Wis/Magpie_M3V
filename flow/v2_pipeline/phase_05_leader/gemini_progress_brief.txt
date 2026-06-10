@@ -1,0 +1,17 @@
+You are the documentation assistant for the Magpie_M1 CPU IP project. Produce a concise, accurate, USER-FACING progress report in Markdown. Write it to: flow/v2_pipeline/phase_05_leader/PROGRESS.md
+
+Read these for ground truth (do not invent):
+- SOC/Magpie_M1/CLAUDE.md  (sections §2 flow table, §8 current status)
+- SOC/Magpie_M1/flow/state/magpie_m1.rtl.state.json  (latest stage = mem_wrapper)
+- SOC/Magpie_M1/flow/state/magpie_m1.isa_scope.state.json
+- SOC/Magpie_M1/docs/adr/0005-mem-valid-ready-wrapper.md and 0006-rtl-lint-signoff-contract.md
+- SOC/Magpie_M1/flow/v2_pipeline/phase_02_01_mem_wrapper/codex_review.md
+
+Report structure:
+  # Magpie_M1 CPU IP — Progress
+  ## Where we are (one paragraph)
+  ## Flow stage table  (stage | gate | status pass/partial/not-run | one-line evidence)  — use the §2 stages 0..5.0
+  ## Recently completed (stage 2.1 mem_wrapper: what + how validated + the misalign bug found/fixed + Codex review outcome)
+  ## In progress / next (Project Leader plan: J1 misalign+revalidate-lockstep, J2 functional coverage, J3 lint, J4 synth/PPA)
+  ## Honest gaps (functional coverage bins, lint/synth/PPA not-run, lockstep cached-log hole)
+Keep it factual and scannable. Use the project's honesty taxonomy (pass/partial/not-run/waived). Do not overclaim "qualified" — the IP is NOT yet qualified.

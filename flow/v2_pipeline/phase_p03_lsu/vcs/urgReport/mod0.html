@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: tb_lsu_unit</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_tb_lsu_unit'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_tb_lsu_unit')">tb_lsu_unit</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s8 cl rt"> 89.81</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 94.78</a></td>
+<td class="s7 cl rt"><a href="mod0.html#Cond" > 75.00</a></td>
+<td class="s10 cl rt"><a href="mod0.html#Toggle" >100.00</a></td>
+<td class="s8 cl rt"><a href="mod0.html#Branch" > 89.47</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p03_lsu/vcs/../../../../IP/cpu_m1/dv/tb/tb_lsu_unit.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p03_lsu/vcs/../../../../IP/cpu_m1/dv/tb/tb_lsu_unit.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod0.html#inst_tag_0"  onclick="showContent('inst_tag_0')">tb_lsu_unit</a></td>
+<td class="s8 cl rt"> 89.81</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 94.78</a></td>
+<td class="s7 cl rt"><a href="mod0.html#Cond" > 75.00</a></td>
+<td class="s10 cl rt"><a href="mod0.html#Toggle" >100.00</a></td>
+<td class="s8 cl rt"><a href="mod0.html#Branch" > 89.47</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_tb_lsu_unit'>
+<hr>
+<a name="inst_tag_0"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_0" >tb_lsu_unit</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s8 cl rt"> 89.81</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 94.78</a></td>
+<td class="s7 cl rt"><a href="mod0.html#Cond" > 75.00</a></td>
+<td class="s10 cl rt"><a href="mod0.html#Toggle" >100.00</a></td>
+<td class="s8 cl rt"><a href="mod0.html#Branch" > 89.47</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 94.03</td>
+<td class="s9 cl rt"> 95.62</td>
+<td class="s8 cl rt"> 87.50</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s9 cl rt"> 92.98</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<span class=inst>none</span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod1.html#inst_tag_1" id="tag_urg_inst_1">dut</a></td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_tb_lsu_unit'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod0.html" >tb_lsu_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">TOTAL</td><td></td><td>115</td><td>109</td><td>94.78</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>41</td><td>5</td><td>5</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>54</td><td>5</td><td>5</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>70</td><td>9</td><td>9</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>87</td><td>5</td><td>5</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>100</td><td>5</td><td>5</td><td>100.00</td></tr>
+<tr class="s8"><td class="lf">ROUTINE</td><td>112</td><td>7</td><td>6</td><td>85.71</td></tr>
+<tr class="s7"><td class="lf">ROUTINE</td><td>126</td><td>5</td><td>4</td><td>80.00</td></tr>
+<tr class="s8"><td class="lf">ROUTINE</td><td>146</td><td>14</td><td>12</td><td>85.71</td></tr>
+<tr class="s9"><td class="lf">INITIAL</td><td>173</td><td>60</td><td>58</td><td>96.67</td></tr>
+</table>
+<pre class="code"><br clear=all>
+40                              begin
+41         1/1                      case (f_addr_lo)
+42         1/1                          2'b00: golden_byte_sel = f_mem_rdata[ 7: 0];
+43         1/1                          2'b01: golden_byte_sel = f_mem_rdata[15: 8];
+44         1/1                          2'b10: golden_byte_sel = f_mem_rdata[23:16];
+45         1/1                          default: golden_byte_sel = f_mem_rdata[31:24];
+46                                  endcase
+47                              end
+48                          endfunction
+49                      
+50                          function [15:0] golden_half_sel;
+51                              input [31:0] f_mem_rdata;
+52                              input [ 1:0] f_addr_lo;
+53                              begin
+54         1/1                      case (f_addr_lo)
+55         1/1                          2'b00: golden_half_sel = f_mem_rdata[15:0];
+56         1/1                          2'b01: golden_half_sel = f_mem_rdata[15:0];
+57         1/1                          2'b10: golden_half_sel = f_mem_rdata[31:16];
+58         1/1                          default: golden_half_sel = f_mem_rdata[31:16];
+59                                  endcase
+60                              end
+61                          endfunction
+62                      
+63                          function [31:0] golden_ld_result;
+64                              input [2:0]  f_funct3;
+65                              input [1:0]  f_addr_lo;
+66                              input [31:0] f_mem_rdata;
+67                              reg   [7:0]  f_byte;
+68                              reg   [15:0] f_half;
+69                              begin
+70         1/1                      f_byte = golden_byte_sel(f_mem_rdata, f_addr_lo);
+71         1/1                      f_half = golden_half_sel(f_mem_rdata, f_addr_lo);
+72         1/1                      case (f_funct3)
+73         1/1                          `F3_LB : golden_ld_result = {{24{f_byte[7]}}, f_byte};
+74         1/1                          `F3_LH : golden_ld_result = {{16{f_half[15]}}, f_half};
+75         1/1                          `F3_LW : golden_ld_result = f_mem_rdata;
+76         1/1                          `F3_LBU: golden_ld_result = {24'h000000, f_byte};
+77         1/1                          `F3_LHU: golden_ld_result = {16'h0000, f_half};
+78         1/1                          default: golden_ld_result = f_mem_rdata;
+79                                  endcase
+80                              end
+81                          endfunction
+82                      
+83                          function [31:0] golden_mem_wdata;
+84                              input [2:0]  f_funct3;
+85                              input [31:0] f_wdata_raw;
+86                              begin
+87         1/1                      case (f_funct3)
+88         1/1                          `F3_SB : golden_mem_wdata = {4{f_wdata_raw[7:0]}};
+89         1/1                          `F3_SH : golden_mem_wdata = {2{f_wdata_raw[15:0]}};
+90         1/1                          `F3_SW : golden_mem_wdata = f_wdata_raw;
+91         1/1                          default: golden_mem_wdata = f_wdata_raw;
+92                                  endcase
+93                              end
+94                          endfunction
+95                      
+96                          function [3:0] golden_raw_wstrb;
+97                              input [2:0] f_funct3;
+98                              input [1:0] f_addr_lo;
+99                              begin
+100        1/1                      case (f_funct3)
+101        1/1                          `F3_SB : golden_raw_wstrb = 4'b0001 &lt;&lt; f_addr_lo;
+102        1/1                          `F3_SH : golden_raw_wstrb = 4'b0011 &lt;&lt; {f_addr_lo[1], 1'b0};
+103        1/1                          `F3_SW : golden_raw_wstrb = 4'b1111;
+104        1/1                          default: golden_raw_wstrb = 4'b0000;
+105                                 endcase
+106                             end
+107                         endfunction
+108                     
+109                         function [8*24-1:0] load_name;
+110                             input [2:0] f_funct3;
+111                             begin
+112        1/1                      case (f_funct3)
+113        1/1                          `F3_LB : load_name = &quot;LB&quot;;
+114        1/1                          `F3_LH : load_name = &quot;LH&quot;;
+115        1/1                          `F3_LW : load_name = &quot;LW&quot;;
+116        1/1                          `F3_LBU: load_name = &quot;LBU&quot;;
+117        1/1                          `F3_LHU: load_name = &quot;LHU&quot;;
+118        <font color = "red">0/1     ==>                  default: load_name = &quot;ILL&quot;;</font>
+119                                 endcase
+120                             end
+121                         endfunction
+122                     
+123                         function [8*24-1:0] store_name;
+124                             input [2:0] f_funct3;
+125                             begin
+126        1/1                      case (f_funct3)
+127        1/1                          `F3_SB : store_name = &quot;SB&quot;;
+128        1/1                          `F3_SH : store_name = &quot;SH&quot;;
+129        1/1                          `F3_SW : store_name = &quot;SW&quot;;
+130        <font color = "red">0/1     ==>                  default: store_name = &quot;ILL&quot;;</font>
+131                                 endcase
+132                             end
+133                         endfunction
+134                     
+135                         task check_vector;
+136                             input [2:0]  t_funct3;
+137                             input [1:0]  t_addr_lo;
+138                             input        t_is_store;
+139                             input [31:0] t_wdata_raw;
+140                             input [31:0] t_mem_rdata;
+141                             input [8*24-1:0] tag;
+142                             reg [31:0] exp_ld_result;
+143                             reg [31:0] exp_mem_wdata;
+144                             reg [ 3:0] exp_mem_wstrb;
+145                             begin
+146        1/1                      funct3    = t_funct3;
+147        1/1                      addr_lo   = t_addr_lo;
+148        1/1                      is_store  = t_is_store;
+149        1/1                      wdata_raw = t_wdata_raw;
+150        1/1                      mem_rdata = t_mem_rdata;
+151        2/2                      #1;
+152                     
+153        1/1                      exp_ld_result = golden_ld_result(t_funct3, t_addr_lo, t_mem_rdata);
+154        1/1                      exp_mem_wdata = golden_mem_wdata(t_funct3, t_wdata_raw);
+155        1/1                      exp_mem_wstrb = t_is_store ? golden_raw_wstrb(t_funct3, t_addr_lo) : 4'b0000;
+156                     
+157        1/1                      vectors = vectors + 1;
+158        1/1                      if (ld_result !== exp_ld_result ||
+159                                     mem_wdata !== exp_mem_wdata ||
+160                                     mem_wstrb !== exp_mem_wstrb) begin
+161        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+162        <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s f3=%b addr_lo=%b store=%b wdata=%h rdata=%h ld=%h exp_ld=%h mwdata=%h exp_mwdata=%h wstrb=%b exp_wstrb=%b&quot;,</font>
+163                                            vectors, tag, t_funct3, t_addr_lo, t_is_store,
+164                                            t_wdata_raw, t_mem_rdata,
+165                                            ld_result, exp_ld_result,
+166                                            mem_wdata, exp_mem_wdata,
+167                                            mem_wstrb, exp_mem_wstrb);
+168                                 end
+                        MISSING_ELSE
+169                             end
+170                         endtask
+171                     
+172                         initial begin
+173        1/1                  load_funct3[0] = `F3_LB;
+174        1/1                  load_funct3[1] = `F3_LH;
+175        1/1                  load_funct3[2] = `F3_LW;
+176        1/1                  load_funct3[3] = `F3_LBU;
+177        1/1                  load_funct3[4] = `F3_LHU;
+178                     
+179        1/1                  store_funct3[0] = `F3_SB;
+180        1/1                  store_funct3[1] = `F3_SH;
+181        1/1                  store_funct3[2] = `F3_SW;
+182                     
+183        1/1                  load_patterns[0] = 32'h0000_0000;
+184        1/1                  load_patterns[1] = 32'hffff_ffff;
+185        1/1                  load_patterns[2] = 32'h0102_7f80;
+186        1/1                  load_patterns[3] = 32'h8000_7fff;
+187        1/1                  load_patterns[4] = 32'h7fff_8000;
+188        1/1                  load_patterns[5] = 32'h807f_0080;
+189        1/1                  load_patterns[6] = 32'h0080_8000;
+190        1/1                  load_patterns[7] = 32'ha5a5_5a5a;
+191        1/1                  load_patterns[8] = 32'h3cc3_c33c;
+192        1/1                  load_patterns[9] = 32'h9696_6969;
+193                     
+194        1/1                  store_patterns[0] = 32'h0000_0000;
+195        1/1                  store_patterns[1] = 32'hffff_ffff;
+196        1/1                  store_patterns[2] = 32'h0000_0080;
+197        1/1                  store_patterns[3] = 32'h0000_8000;
+198        1/1                  store_patterns[4] = 32'h1234_5678;
+199        1/1                  store_patterns[5] = 32'h8765_4321;
+200        1/1                  store_patterns[6] = 32'ha5a5_5a5a;
+201        1/1                  store_patterns[7] = 32'h3cc3_c33c;
+202                     
+203        1/1                  vectors   = 0;
+204        1/1                  errors    = 0;
+205        1/1                  addr_lo   = 2'b00;
+206        1/1                  wdata_raw = 32'h0000_0000;
+207        1/1                  funct3    = `F3_LB;
+208        1/1                  is_store  = 1'b0;
+209        1/1                  mem_rdata = 32'h0000_0000;
+210        2/2                  #1;
+211                     
+212        1/1                  for (fidx = 0; fidx &lt; 5; fidx = fidx + 1) begin
+213        1/1                      for (aidx = 0; aidx &lt; 4; aidx = aidx + 1) begin
+214        1/1                          for (pidx = 0; pidx &lt; 10; pidx = pidx + 1) begin
+215        1/1                              check_vector(load_funct3[fidx], aidx[1:0], 1'b0,
+216                                                      32'hcafe_babe ^ load_patterns[pidx],
+217                                                      load_patterns[pidx],
+218                                                      load_name(load_funct3[fidx]));
+219                                     end
+220                                 end
+221                             end
+222                     
+223        1/1                  for (fidx = 0; fidx &lt; 3; fidx = fidx + 1) begin
+224        1/1                      for (aidx = 0; aidx &lt; 4; aidx = aidx + 1) begin
+225        1/1                          for (pidx = 0; pidx &lt; 8; pidx = pidx + 1) begin
+226        1/1                              check_vector(store_funct3[fidx], aidx[1:0], 1'b1,
+227                                                      store_patterns[pidx],
+228                                                      32'h1357_9bdf ^ store_patterns[pidx],
+229                                                      store_name(store_funct3[fidx]));
+230                                     end
+231                                 end
+232                             end
+233                     
+234        1/1                  check_vector(3'b011, 2'b00, 1'b0, 32'h0123_4567, 32'h89ab_cdef, &quot;ILL_LOAD_011&quot;);
+235        1/1                  check_vector(3'b110, 2'b01, 1'b0, 32'h89ab_cdef, 32'h0123_4567, &quot;ILL_LOAD_110&quot;);
+236        1/1                  check_vector(3'b111, 2'b10, 1'b0, 32'hffff_0000, 32'h0000_ffff, &quot;ILL_LOAD_111&quot;);
+237        1/1                  check_vector(3'b011, 2'b11, 1'b1, 32'h55aa_00ff, 32'hf0f0_0f0f, &quot;ILL_STORE_011&quot;);
+238        1/1                  check_vector(3'b110, 2'b10, 1'b1, 32'haa55_ff00, 32'h0f0f_f0f0, &quot;ILL_STORE_110&quot;);
+239        1/1                  check_vector(3'b111, 2'b01, 1'b1, 32'h1357_2468, 32'hdead_beef, &quot;ILL_STORE_111&quot;);
+240        1/1                  check_vector(`F3_LW, 2'bxx, 1'b0, 32'h2468_1357, 32'h5a5a_a5a5, &quot;X_ADDR_LW&quot;);
+241                     
+242        1/1                  for (i = 0; i &lt; 32; i = i + 1) begin
+243        1/1                      check_vector(`F3_LB, i[1:0], 1'b0, ~(32'h0000_0001 &lt;&lt; i),
+244                                              (32'h0000_0001 &lt;&lt; i), &quot;WALK_LB&quot;);
+245        1/1                      check_vector(`F3_LHU, i[1:0], 1'b0, (32'h8000_0000 &gt;&gt; i),
+246                                              ~(32'h8000_0000 &gt;&gt; i), &quot;WALK_LHU&quot;);
+247        1/1                      check_vector(`F3_SB, i[1:0], 1'b1, (32'h0000_0001 &lt;&lt; i),
+248                                              ~(32'h0000_0001 &lt;&lt; i), &quot;WALK_SB&quot;);
+249        1/1                      check_vector(`F3_SH, i[1:0], 1'b1, ~(32'h0000_0001 &lt;&lt; i),
+250                                              (32'h8000_0000 &gt;&gt; i), &quot;WALK_SH&quot;);
+251                             end
+252                     
+253        1/1                  if (errors == 0) begin
+254        1/1                      $display(&quot;PASS: lsu unit %0d/%0d vectors&quot;, vectors, vectors);
+255        1/1                      $finish;
+256                             end else begin
+257        <font color = "red">0/1     ==>              $display(&quot;FAIL: lsu unit %0d/%0d vectors failed&quot;, errors, vectors);</font>
+258        <font color = "red">0/1     ==>              $fatal(1);</font>
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod0.html" >tb_lsu_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s7"><td class="lf">Conditions</td><td>4</td><td>3</td><td>75.00</td></tr>
+<tr class="s7"><td class="lf">Logical</td><td>4</td><td>3</td><td>75.00</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       155
+ EXPRESSION (t_is_store ? golden_raw_wstrb(t_funct3, t_addr_lo) : 4'b0)
+             -----1----
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       253
+ EXPRESSION (errors == 0)
+            ------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod0.html" >tb_lsu_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s10">
+<td>Totals</td>
+<td class="rt">8</td>
+<td class="rt">8</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>Total Bits</td>
+<td class="rt">276</td>
+<td class="rt">276</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">138</td>
+<td class="rt">138</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">138</td>
+<td class="rt">138</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s10">
+<td>Signals</td>
+<td class="rt">8</td>
+<td class="rt">8</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>Signal Bits</td>
+<td class="rt">276</td>
+<td class="rt">276</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">138</td>
+<td class="rt">138</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">138</td>
+<td class="rt">138</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>addr_lo[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wdata_raw[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>funct3[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>is_store</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>mem_rdata[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>mem_wdata[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>mem_wstrb[3:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>ld_result[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod0.html" >tb_lsu_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s8">
+<td>Branches</td>
+<td></td>
+<td class="rt">38</td>
+<td class="rt">34</td>
+<td class="rt">89.47 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">253</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s10">
+<td>TERNARY</td>
+<td class="rt">155</td>
+<td class="rt">2</td>
+<td class="rt">2</td>
+<td class="rt">100.00</td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">158</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s10">
+<td>CASE</td>
+<td class="rt">41</td>
+<td class="rt">4</td>
+<td class="rt">4</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>CASE</td>
+<td class="rt">54</td>
+<td class="rt">4</td>
+<td class="rt">4</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>CASE</td>
+<td class="rt">72</td>
+<td class="rt">6</td>
+<td class="rt">6</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>CASE</td>
+<td class="rt">87</td>
+<td class="rt">4</td>
+<td class="rt">4</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>CASE</td>
+<td class="rt">100</td>
+<td class="rt">4</td>
+<td class="rt">4</td>
+<td class="rt">100.00</td>
+</tr><tr class="s8">
+<td>CASE</td>
+<td class="rt">112</td>
+<td class="rt">6</td>
+<td class="rt">5</td>
+<td class="rt">83.33 </td>
+</tr><tr class="s7">
+<td>CASE</td>
+<td class="rt">126</td>
+<td class="rt">4</td>
+<td class="rt">3</td>
+<td class="rt">75.00 </td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+253                if (errors == 0) begin
+                   <font color = "red">-1-</font>  
+254                    $display("PASS: lsu unit %0d/%0d vectors", vectors, vectors);
+           <font color = "green">            ==></font>
+255                    $finish;
+256                end else begin
+257                    $display("FAIL: lsu unit %0d/%0d vectors failed", errors, vectors);
+           <font color = "red">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+155                    exp_mem_wstrb = t_is_store ? golden_raw_wstrb(t_funct3, t_addr_lo) : 4'b0000;
+                                                  <font color = "green">-1-</font>  
+                                                  <font color = "green">==></font>  
+                                                  <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+158                    if (ld_result !== exp_ld_result ||
+                       <font color = "red">-1-</font>  
+159                        mem_wdata !== exp_mem_wdata ||
+160                        mem_wstrb !== exp_mem_wstrb) begin
+161                        errors = errors + 1;
+           <font color = "red">                ==></font>
+162                        $error("FAIL[%0d] %0s f3=%b addr_lo=%b store=%b wdata=%h rdata=%h ld=%h exp_ld=%h mwdata=%h exp_mwdata=%h wstrb=%b exp_wstrb=%b",
+163                               vectors, tag, t_funct3, t_addr_lo, t_is_store,
+164                               t_wdata_raw, t_mem_rdata,
+165                               ld_result, exp_ld_result,
+166                               mem_wdata, exp_mem_wdata,
+167                               mem_wstrb, exp_mem_wstrb);
+168                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+41                     case (f_addr_lo)
+                       <font color = "green">-1-</font>  
+42                         2'b00: golden_byte_sel = f_mem_rdata[ 7: 0];
+           <font color = "green">                ==></font>
+43                         2'b01: golden_byte_sel = f_mem_rdata[15: 8];
+           <font color = "green">                ==></font>
+44                         2'b10: golden_byte_sel = f_mem_rdata[23:16];
+           <font color = "green">                ==></font>
+45                         default: golden_byte_sel = f_mem_rdata[31:24];
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>2'b00 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+54                     case (f_addr_lo)
+                       <font color = "green">-1-</font>  
+55                         2'b00: golden_half_sel = f_mem_rdata[15:0];
+           <font color = "green">                ==></font>
+56                         2'b01: golden_half_sel = f_mem_rdata[15:0];
+           <font color = "green">                ==></font>
+57                         2'b10: golden_half_sel = f_mem_rdata[31:16];
+           <font color = "green">                ==></font>
+58                         default: golden_half_sel = f_mem_rdata[31:16];
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>2'b00 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+72                     case (f_funct3)
+                       <font color = "green">-1-</font>  
+73                         `F3_LB : golden_ld_result = {{24{f_byte[7]}}, f_byte};
+           <font color = "green">                ==></font>
+74                         `F3_LH : golden_ld_result = {{16{f_half[15]}}, f_half};
+           <font color = "green">                ==></font>
+75                         `F3_LW : golden_ld_result = f_mem_rdata;
+           <font color = "green">                ==></font>
+76                         `F3_LBU: golden_ld_result = {24'h000000, f_byte};
+           <font color = "green">                ==></font>
+77                         `F3_LHU: golden_ld_result = {16'h0000, f_half};
+           <font color = "green">                ==></font>
+78                         default: golden_ld_result = f_mem_rdata;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>3'b000 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b001 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b010 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b100 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b101 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+87                     case (f_funct3)
+                       <font color = "green">-1-</font>  
+88                         `F3_SB : golden_mem_wdata = {4{f_wdata_raw[7:0]}};
+           <font color = "green">                ==></font>
+89                         `F3_SH : golden_mem_wdata = {2{f_wdata_raw[15:0]}};
+           <font color = "green">                ==></font>
+90                         `F3_SW : golden_mem_wdata = f_wdata_raw;
+           <font color = "green">                ==></font>
+91                         default: golden_mem_wdata = f_wdata_raw;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>3'b000 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b001 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b010 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+100                    case (f_funct3)
+                       <font color = "green">-1-</font>  
+101                        `F3_SB : golden_raw_wstrb = 4'b0001 << f_addr_lo;
+           <font color = "green">                ==></font>
+102                        `F3_SH : golden_raw_wstrb = 4'b0011 << {f_addr_lo[1], 1'b0};
+           <font color = "green">                ==></font>
+103                        `F3_SW : golden_raw_wstrb = 4'b1111;
+           <font color = "green">                ==></font>
+104                        default: golden_raw_wstrb = 4'b0000;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>3'b000 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b001 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b010 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+112                    case (f_funct3)
+                       <font color = "red">-1-</font>  
+113                        `F3_LB : load_name = "LB";
+           <font color = "green">                ==></font>
+114                        `F3_LH : load_name = "LH";
+           <font color = "green">                ==></font>
+115                        `F3_LW : load_name = "LW";
+           <font color = "green">                ==></font>
+116                        `F3_LBU: load_name = "LBU";
+           <font color = "green">                ==></font>
+117                        `F3_LHU: load_name = "LHU";
+           <font color = "green">                ==></font>
+118                        default: load_name = "ILL";
+           <font color = "red">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>3'b000 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b001 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b010 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b100 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b101 </td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>default</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+126                    case (f_funct3)
+                       <font color = "red">-1-</font>  
+127                        `F3_SB : store_name = "SB";
+           <font color = "green">                ==></font>
+128                        `F3_SH : store_name = "SH";
+           <font color = "green">                ==></font>
+129                        `F3_SW : store_name = "SW";
+           <font color = "green">                ==></font>
+130                        default: store_name = "ILL";
+           <font color = "red">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>3'b000 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b001 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>3'b010 </td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>default</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_0">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_tb_lsu_unit">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

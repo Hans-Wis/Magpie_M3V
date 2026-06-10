@@ -1,0 +1,13 @@
+(1) Load/Store and Branch/Jump enabled: yes (RV32IC scope)
+(2) Clean seeds: 3 (2026061206/07/08); 1534 matched commits total
+(3) Div 1 (HARNESS): Mem-map mismatch (ELF_BASE 0x1000/PC 0)
+    Fix: tb_riscvdv_lockstep.v indexing, firmware.lds data sections
+(3) Div 2 (REAL-DUT): PC 0xec branch -> target 0xf8 stale instr latch
+    DUT: 0x0006e033 | Spike: 0x0021f763
+    Fix: core.v (ADR 0008-btb-target-mispredict-recovery)
+(4) Branch-target fix: core.v redirect_warmup & redirect-over-stall
+(5) Regressions: None (180/180 pytest gates passed)
+(6) Arith-only 100k path: Still clean (via J11 artifact check)
+(7) gate_03_09 verdict: PASS
+(8) Remaining open: M-unit result association (RV32IMC exploratory)
+    Example: PC 0x1478 rem s10,s8,gp (DUT x26=0x472816d0 vs Spike 0)

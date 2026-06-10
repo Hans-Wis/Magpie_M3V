@@ -1,0 +1,1 @@
+{"ok": true, "waived": false, "matched_commits": 1542, "stage": "sim", "message": "riscv-dv seed 2026090088 matched 1542 commits; sync_traps=6", "seed": 2026090088, "git_rev": "3860f24", "rtl_cksum": "de1b876f6905"}

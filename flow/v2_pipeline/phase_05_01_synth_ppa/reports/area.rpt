@@ -1,0 +1,45 @@
+ 
+****************************************
+Report : area
+Design : cpu_m1_top
+Version: X-2025.06-SP2
+Date   : Mon Jun  8 14:23:14 2026
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp40p140tt0p9v25c (File: /home/edauser/project/SOC/Magpie_X3/APR/ref/db/tcbn28hpcplusbwp40p140tt0p9v25c.db)
+
+Number of ports:                          486
+Number of nets:                         28354
+Number of cells:                        27565
+Number of combinational cells:          20867
+Number of sequential cells:              6696
+Number of macros/black boxes:               0
+Number of buf/inv:                       1880
+Number of references:                     101
+
+Combinational area:              13632.317893
+Buf/Inv area:                      497.826006
+Noncombinational area:           12666.149903
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                 26298.467795
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area            Local cell area
+                                  -------------------  ------------------------------ 
+Hierarchical cell                 Absolute    Percent  Combi-      Noncombi-   Black-
+                                  Total       Total    national    national    boxes   Design
+--------------------------------  ----------  -------  ----------  ----------  ------  ---------
+cpu_m1_top                        26298.4678    100.0   6152.3280   3352.2300  0.0000  cpu_m1_top
+u_core/u_bp                       13252.4279     50.4   5813.3879   7439.0399  0.0000  bp
+u_core/u_rfu                       3541.4820     13.5   1666.6020   1874.8800  0.0000  rfu
+--------------------------------  ----------  -------  ----------  ----------  ------  ---------
+Total                                                  13632.3179  12666.1499  0.0000
+
+1

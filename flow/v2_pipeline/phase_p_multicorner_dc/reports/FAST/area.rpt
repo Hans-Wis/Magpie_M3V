@@ -1,0 +1,45 @@
+ 
+****************************************
+Report : area
+Design : cpu_m1_top
+Version: X-2025.06-SP2
+Date   : Tue Jun  9 23:23:46 2026
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp40p140ffg0p88v125c (File: /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ffg0p88v125c.db)
+
+Number of ports:                          487
+Number of nets:                         28110
+Number of cells:                        27296
+Number of combinational cells:          20495
+Number of sequential cells:              6799
+Number of macros/black boxes:               0
+Number of buf/inv:                       1386
+Number of references:                     100
+
+Combinational area:              13933.205990
+Buf/Inv area:                      363.006005
+Noncombinational area:           12867.623900
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                 26800.829889
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area            Local cell area
+                                  -------------------  ------------------------------ 
+Hierarchical cell                 Absolute    Percent  Combi-      Noncombi-   Black-
+                                  Total       Total    national    national    boxes   Design
+--------------------------------  ----------  -------  ----------  ----------  ------  ---------
+cpu_m1_top                        26800.8299    100.0   6356.9520   3552.6960  0.0000  cpu_m1_top
+u_core/u_bp                       13348.0620     49.8   5909.0220   7439.0399  0.0000  bp
+u_core/u_rfu                       3543.1200     13.2   1667.2320   1875.8880  0.0000  rfu
+--------------------------------  ----------  -------  ----------  ----------  ------  ---------
+Total                                                  13933.2060  12867.6239  0.0000
+
+1

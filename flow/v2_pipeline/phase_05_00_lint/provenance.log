@@ -1,0 +1,14 @@
+host=eda
+timestamp=2026-06-08T14:14:03+08:00
+spyglass_version=SpyGlass X-2025.06-SP1 for linux64; Sep 02 2025
+tool=/soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/bin/sg_shell
+license_outcome=available; lint/lint_rtl ran to completion; dashboard HTML summary notes separate dashboard feature not available but raw lint reports exist
+key_command=mkdir -p reports work && /soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/bin/sg_shell -licqueue -tcl run_spyglass.tcl -shell_log_file spyglass_shell.log > spyglass_stdout.log 2>&1
+top=cpu_m1_top
+filelist=files.f; full ch2_lab08e RTL plus cpu_m1_top.v
+methodology=/soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff
+goals=lint/lint_rtl; STARC/starc2005 policies included in lint/lint_rtl
+exploratory_goal_result=lint/lint_turbo not found in current methodology; see spyglass_shell.log
+raw_reports=reports/lint_rtl.moresimple.rpt; reports/starc.moresimple.rpt; cpu_m1_phase_05_00_lint/consolidated_reports/cpu_m1_top_lint_lint_rtl/moresimple.rpt
+result=0 fatals, 0 errors, 24 warnings, 3 infos; STARC policy 0 errors, 9 warnings
+verdict=pass per ADR-0006

@@ -1,0 +1,23 @@
+ROLE: Codex EXECUTOR (gpt-5.5), PL=Claude. design_id=cpu_m1 (RV32IMC_Zicsr). OSS+riscv-none-elf-gcc; -s danger-full-access. Spike GOLDEN. report-faithfully: classify every divergence (real DUT bug vs harness) WITH evidence; never hide.
+
+CONTEXT: The clean 114k riscv-dv lockstep (J11) was ARITH+COMPRESSED ONLY — config m1_rv32imc_arith used --no_load_store --no_branch_jump --no_csr_instr --no_data_page. That is too narrow for a credible "passes riscv-dv" claim. Harness: flow/v2_pipeline/phase_03_09_riscvdv_lockstep/. Comparator: flow/v2_pipeline/lib/spike_commit.py (already base-normalizes auipc/lui via _eval_norm_wdata on the Spike parse).
+
+GOAL J12: ENABLE load/store + branch/jump in riscv-dv generation, get the lockstep running, root-cause+fix whatever diverges, until a few seeds run clean with these classes. (Keep CSR disabled for now — that's a later wave. M/mul-div may stay as-is.)
+
+DO:
+1. Edit the riscv-dv gen config: remove --no_load_store and --no_branch_jump; enable a data page (--no_data_page=0) sized/located to MATCH the DUT TB memory map. THE CRITICAL PART: the DUT testbench memory and Spike must model the SAME data memory (same address range, same initial contents from the generated data page) so loads return identical data; store/load addresses may differ from Spike only by the known base offset — ensure the comparator's base-normalization (or address handling) accounts for it. Verify the DUT TB actually loads riscv-dv's data section.
+2. Run a few seeds (start small, e.g. --instr-cnt 2000, 3-5 seeds). For EACH divergence: STOP that seed, save idx/pc/instr/dut-vs-spike + last ~20 commits, and ROOT-CAUSE with evidence:
+   - HARNESS (memmap/base-norm/parse mismatch): fix the harness/comparator correctly (must not mask real DUT bugs — only fix genuine parse/normalization, like J10).
+   - REAL DUT bug: root-cause via DUT-internal signals, FIX clean-room + ADR (docs/adr/000N-*.md), like J9.
+3. RE-VALIDATE after each fix — ALL must stay green: pytest full suite (>=180), gate_03_08 lockstep, gate_02_01 mem_wrapper, gate_04_08 coverage 100%, AND the prior arith 100k path must still be clean.
+4. Iterate until 3-5 seeds run clean WITH load/store + branch/jump enabled. Do NOT launch the full 100k yet.
+
+CONSTRAINTS: clean-room RTL fixes + ADR; harness fixes must not mask DUT bugs; explicit paths; keep big logs/traces in phase dir.
+
+OUTPUT (write <=40 lines) flow/v2_pipeline/phase_05_leader/J12_result.md:
+  ## summary (load/store+branch/jump enabled? seeds clean? matched commits with these classes)
+  ## divergences_found (each: pc/instr/dut-vs-spike + REAL-DUT or HARNESS + root cause + fix + ADR if RTL)
+  ## memmap (how DUT TB data memory was matched to Spike)
+  ## revalidate (pytest pass count; gate_03_08/02_01/04_08 PASS?; arith path still clean?)
+  ## regressions
+  ## tokens

@@ -1,0 +1,166 @@
+
+                                   VC Static 
+
+               Version X-2025.06-SP1 for linux64 - Sep 02, 2025 
+
+                    Copyright (c) 2010 - 2025 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+restore_session -level none
+set_fml_appmode FPV
+1
+set design csr
+csr
+read_file -top $design -format sverilog -sva -vcs {+incdir+IP/cpu_m1/rtl IP/cpu_m1/rtl/csr.v IP/cpu_m1/dv/formal/csr_assert_bind.sv}
+Info: Invoking New SVA Compiler Instrument...
+Info: SVAC-NC Start
+Info: SVAC-NC Finished
+Info: Invoking Simon...
+Info: Simon VCS Start
+=======================================================
+VCS CPU Time(s)     :0.06
+SIMON CPU Time(s)   :0.02
+SIMON Total Time(s) :0.02
+Peak Memory(MB)     :415
+=======================================================
+Info: Simon VCS Finished
+Info: Simon call complete 
+Info: Exiting after Simon Analysis 
+Verdi KDB elaboration done and the database successfully generated: 0 error(s), 0 warning(s)
+[Info] DB_COPT045: Vcs analyzer task has finished.
+[Info] PROP_I_COLLECT: Collecting Source Properties from the view:csr.
+# Gate Counts 
+Number of Flat Instances = 1430
+Number of Operator = 1430
+Number of Libcells = 0
+Number of Black-Box Instances = 0
+Number of FlipFlop BitWise = 292
+Number of Latch Bitwise = 0
+Number of Nand BitWise = 0
+Number of Comb logic = 245
+
+1
+create_clock clk -period 10
+1
+create_reset resetn -value low
+1
+sim_run -stable
+[Info] CLOCK_PERIOD_ADJUSTMENT: The clock period for formal clock generation is multiplied by 10 to prevent round-off and preserve the relative frequencies of the clocks.
+	Users can adjust the time unit in the Verdi waveform to display the original periods. Use adjustment: 1ns/100ps.
+[Info] SIM_I_CREATE: Create Simulation Model.
+1
+sim_save_reset
+[Info] SIM_NEW_RESET_GENERATED: The 'sim_save_reset' command has been issued resulting in a new initial state being generated for the current task: 'FPV'.
+	Any subsequent simulation commands applied to this task will not affect the already generated initial state of the other tasks.
+1
+check_fv -block
+[Info] FORMAL_I_CREATE: Create Formal Model:csr.
+[Info] FORMAL_I_RUN: Starting formal verification for check_fv
+	  Id: 0  Goals: 6  Constraints: 0  Block Mode: true
+[Info] LIC_RT_CHECKOUT: VC Formal run time license checkout. Base:1  FPV:1.
+[Info] PERF_DIAGNOSTICS_ALERTS_START
+Run configuration:
+[Info] FV_RUN_CONFIG_INFO:  Task : FPV, cmd : check_fv
+[Info] Configuration Details
+[Info] Orchestration/Effort : default
+[Info] Run time limit : 12H
+[Info] Memory limit : 8GB
+[Info] Number of workers requested : 4
+[Info] FPV flow ver : v7 
+[Info] PERF_DIAGNOSTICS_ALERTS_END
+[Info] BITLEVEL_MODEL_STATS: Generated model with 1 gates, 0 inputs, 2 registers, 0 initial constraints, 0 constraints.
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_0  t1  proven  property  00:00:00
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_1  t1  proven  property  00:00:00
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_2  t1  proven  property  00:00:00
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_3  t1  proven  property  00:00:00
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_4  t1  proven  property  00:00:00
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_5  t1  proven  property  00:00:00
+[Info] BITLEVEL_MODEL_STATS: Generated model with 0 gates, 0 inputs, 0 registers, 0 initial constraints, 0 constraints.
+[Info] PERF_DIAGNOSTICS_ALERTS_START
+
+  Summary Results
+   Property Summary: FPV
+   -----------------
+   > Assertion
+     - # found        : 6
+     - # proven       : 6
+
+   > Constraint
+     - # found        : 1
+
+Solver jobs summary for verification task FPV (4 solver jobs)
+    #scheduled     :     0 
+    #running       :     0 
+    #completed     :     4 
+        #normal        :     4 
+        #timeout       :     0 
+        #memout        :     0 
+        #orc_killed    :     0 
+        #sig_killed    :     0 
+        #crash         :     0 
+        #start_fail    :     0 
+        #misc_error    :     0 
+[Info] PERF_DIAGNOSTICS_ALERTS_END
+1
+redirect -file flow/v2_pipeline/phase_p_formal/logs/csr_vcf_report_fv.txt {report_fv}
+redirect -file flow/v2_pipeline/phase_p_formal/logs/csr_vcf_report_fv_verbose.txt {report_fv -verbose -no_summary}
+redirect -file flow/v2_pipeline/phase_p_formal/logs/csr_vcf_report_fv_list.txt {report_fv -list}
+set fp [open flow/v2_pipeline/phase_p_formal/logs/csr_vcf_props.tsv w]
+file27
+puts $fp "property\tstatus"
+foreach_in_collection prop [get_props -usage assert] {
+    puts $fp "[get_attribute $prop name]\t[get_attribute $prop status]"
+}
+close $fp
+
+=======================================================
+Total Time(S)  :3.49
+CPU Time(S)    :1.57
+Peak Memory(MB):2226
+========================Formal=========================
+Engine Wall Time(S)    :1.44
+Engine Peak Memory(MB) :82
+=======================================================
+Session exit code is 3 (Abnormal termination - termination trapped by software)
+
+
+Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 225055 ..
+
+
+--- pstack for process 225055 is dumped to 
+
+#/lib64/libpthread.so.0 : ()+0x1298f
+#/lib64/libc.so.6 : gsignal()+0x10f
+#/lib64/libc.so.6 : abort()+0x126
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi() [0xd3f73ff]
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : __cxxabiv1::__terminate(void (*)())()+0x9
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : std::terminate()()+0x14
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : Monet::ClientMgr::stopProcessMonitor()()+0xa4
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : Monet::ClientMgr::exit(int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)()+0x637
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : Monet::ClientMgr::requestWaitingExit(int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)()+0x96
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : snps_boost_1_85_0::asio::detail::completion_handler<snps_boost_1_85_0::_bi::bind_t<snps_boost_1_85_0::_bi::unspecified, snps_boost_1_85_0::_mfi::mf<void (Monet::ClientMgr::*)(int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >), void, Monet::ClientMgr, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, snps_boost_1_85_0::_bi::list<snps_boost_1_85_0::_bi::value<Monet::ClientMgr*>, snps_boost_1_85_0::_bi::value<int>, snps_boost_1_85_0::_bi::value<char const*> > >, snps_boost_1_85_0::asio::io_context::basic_executor_type<std::allocator<void>, 0ul> >::do_complete(void*, snps_boost_1_85_0::asio::detail::scheduler_operation*, snps_boost_1_85_0::system::error_code const&, unsigned long)()+0x114
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : snps_boost_1_85_0::asio::detail::strand_service::do_complete(void*, snps_boost_1_85_0::asio::detail::scheduler_operation*, snps_boost_1_85_0::system::error_code const&, unsigned long)()+0x80
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : snps_boost_1_85_0::asio::detail::scheduler::do_run_one(snps_boost_1_85_0::asio::detail::conditionally_enabled_mutex::scoped_lock&, snps_boost_1_85_0::asio::detail::scheduler_thread_info&, snps_boost_1_85_0::system::error_code const&)()+0x287
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : snps_boost_1_85_0::asio::detail::scheduler::run(snps_boost_1_85_0::system::error_code&)()+0x24f
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : Monet::ClientMgr::ioServiceRun()()+0x30
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : Monet::ClientMgr::pExec()()+0xa2
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : main()+0x530
+#/lib64/libc.so.6 : __libc_start_main()+0xe4
+#/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi() [0x7f77028]=======================================================
+Total Time(S)  :3.5
+CPU Time(S)    :1.6
+Peak Memory(MB):1453
+Current RSS(MB):998
+=======================================================

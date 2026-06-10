@@ -1,0 +1,8 @@
+<Command name="schRTLInfo"  delimiter="."  >
+<RTLBlock >
+<RTLInfo   name="state_0"  type="2"  fileName="../../../IP/cpu_m1/rtl/div.v"  >
+    <Seg beginLine="64"  endLine="126"  />
+  </RTLInfo>
+ <Instance name="tb_directed_lockstep.dut.u_div"  />
+</RTLBlock>
+ </Command>

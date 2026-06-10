@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: csr</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_csr'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_csr')">csr</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s3 cl rt"> 30.39</td>
+<td class="s4 cl rt"><a href="mod7.html#Line" > 41.27</a></td>
+<td class="s3 cl rt"><a href="mod7.html#Cond" > 38.46</a></td>
+<td class="s1 cl rt"><a href="mod7.html#Toggle" > 15.50</a></td>
+<td class="wht cl rt"></td>
+<td class="s2 cl rt"><a href="mod7.html#Branch" > 26.32</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p18_core_bpras/../../../IP/cpu_m1/rtl/csr.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p18_core_bpras/../../../IP/cpu_m1/rtl/csr.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod7.html#inst_tag_7"  onclick="showContent('inst_tag_7')">tb_directed_lockstep.dut.u_csr</a></td>
+<td class="s3 cl rt"> 30.39</td>
+<td class="s4 cl rt"><a href="mod7.html#Line" > 41.27</a></td>
+<td class="s3 cl rt"><a href="mod7.html#Cond" > 38.46</a></td>
+<td class="s1 cl rt"><a href="mod7.html#Toggle" > 15.50</a></td>
+<td class="wht cl rt"></td>
+<td class="s2 cl rt"><a href="mod7.html#Branch" > 26.32</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_csr'>
+<hr>
+<a name="inst_tag_7"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_7" >tb_directed_lockstep.dut.u_csr</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s3 cl rt"> 30.39</td>
+<td class="s4 cl rt"><a href="mod7.html#Line" > 41.27</a></td>
+<td class="s3 cl rt"><a href="mod7.html#Cond" > 38.46</a></td>
+<td class="s1 cl rt"><a href="mod7.html#Toggle" > 15.50</a></td>
+<td class="wht cl rt"></td>
+<td class="s2 cl rt"><a href="mod7.html#Branch" > 26.32</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s3 cl rt"> 30.39</td>
+<td class="s4 cl rt"> 41.27</td>
+<td class="s3 cl rt"> 38.46</td>
+<td class="s1 cl rt"> 15.50</td>
+<td class="wht cl rt"></td>
+<td class="s2 cl rt"> 26.32</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td><td class="alfsrt">NAME</td></tr><tr>
+<td class="s6 cl rt"> 69.21</td>
+<td class="s9 cl rt"> 91.76</td>
+<td class="s5 cl rt"> 55.64</td>
+<td class="s6 cl rt"> 60.76</td>
+<td class="wht cl rt"></td>
+<td class="s6 cl rt"> 68.69</td>
+<td><a href="mod11.html#inst_tag_11" >dut</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td colspan=7>no children</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_csr'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod7.html" >csr</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s4"><td class="lf">TOTAL</td><td></td><td>63</td><td>26</td><td>41.27</td></tr>
+<tr class="s1"><td class="lf">ALWAYS</td><td>99</td><td>18</td><td>3</td><td>16.67</td></tr>
+<tr class="s6"><td class="lf">ALWAYS</td><td>133</td><td>5</td><td>3</td><td>60.00</td></tr>
+<tr class="s5"><td class="lf">ALWAYS</td><td>145</td><td>40</td><td>20</td><td>50.00</td></tr>
+</table>
+<pre class="code"><br clear=all>
+98                          always @* begin
+99         1/1                  case (csr_raddr)
+100        <font color = "red">0/1     ==>              `CSR_MSTATUS : csr_rdata = mstatus_val;</font>
+101        <font color = "red">0/1     ==>              `CSR_MIE     : csr_rdata = mie_val;</font>
+102        <font color = "red">0/1     ==>              `CSR_MTVEC   : csr_rdata = mtvec_val;</font>
+103        <font color = "red">0/1     ==>              `CSR_MSCRATCH: csr_rdata = mscratch;</font>
+104        <font color = "red">0/1     ==>              `CSR_MEPC    : csr_rdata = mepc_reg;</font>
+105        <font color = "red">0/1     ==>              `CSR_MCAUSE  : csr_rdata = mcause_reg;</font>
+106        <font color = "red">0/1     ==>              `CSR_MTVAL   : csr_rdata = mtval_val;</font>
+107        <font color = "red">0/1     ==>              `CSR_MIP     : csr_rdata = mip_val;</font>
+108        <font color = "red">0/1     ==>              `CSR_CYCLE   : csr_rdata = cycle_cnt[31:0];</font>
+109        <font color = "red">0/1     ==>              `CSR_CYCLEH  : csr_rdata = cycle_cnt[63:32];</font>
+110        <font color = "red">0/1     ==>              `CSR_INSTRET : csr_rdata = instret_cnt[31:0];</font>
+111        <font color = "red">0/1     ==>              `CSR_INSTRETH: csr_rdata = instret_cnt[63:32];</font>
+112        1/1                      default      : csr_rdata = 32'h0;
+113                             endcase
+114        1/1                  if (csr_we &amp;&amp; (csr_waddr == csr_raddr)) begin
+115        <font color = "red">0/1     ==>              case (csr_waddr)</font>
+116                                     `CSR_MSTATUS,
+117                                     `CSR_MIE,
+118                                     `CSR_MTVEC,
+119                                     `CSR_MSCRATCH,
+120                                     `CSR_MEPC,
+121                                     `CSR_MCAUSE,
+122        <font color = "red">0/1     ==>                  `CSR_MTVAL: csr_rdata = new_val;</font>
+123        <font color = "red">0/1     ==>                  default: ;</font>
+124                                 endcase
+125                             end
+                        MISSING_ELSE
+126                         end
+127                     
+128                         // -------------------------------------------------------------------------
+129                         // 3. Compute &quot;next value&quot; for whichever CSR is being written this cycle
+130                         //    (CSRRW/RS/RC 對任何 CSR 行為一致，只是 set/clear/swap 差異)
+131                         // -------------------------------------------------------------------------
+132                         always @* begin
+133        1/1                  case (csr_op)
+134        1/1                      `CSR_OP_W : new_val = csr_wdata;
+135        <font color = "red">0/1     ==>              `CSR_OP_S : new_val = csr_old_val | csr_wdata;</font>
+136        <font color = "red">0/1     ==>              `CSR_OP_C : new_val = csr_old_val &amp; ~csr_wdata;</font>
+137        1/1                      default   : new_val = csr_old_val;
+138                             endcase
+139                         end
+140                     
+141                         // -------------------------------------------------------------------------
+142                         // 4. Sync write logic (CSR* 指令、trap 進入/退出、counter increment)
+143                         // -------------------------------------------------------------------------
+144                         always @(posedge clk) begin
+145        1/1                  if (!resetn) begin
+146        1/1                      mie_meie     &lt;= 1'b0;
+147        1/1                      mstatus_mie  &lt;= 1'b0;          // 重置時 IRQ 關閉，要靠軟體開
+148        1/1                      mstatus_mpie &lt;= 1'b0;
+149        1/1                      mstatus_mpp  &lt;= 2'b11;
+150        1/1                      mtvec_base   &lt;= 30'b0;
+151        1/1                      mscratch     &lt;= 32'b0;
+152        1/1                      mepc_reg     &lt;= 32'b0;
+153        1/1                      mcause_reg   &lt;= 32'b0;
+154        1/1                      mtval_reg    &lt;= 32'b0;
+155        1/1                      ext_pending  &lt;= 1'b0;
+156        1/1                      cycle_cnt    &lt;= 64'b0;
+157        1/1                      instret_cnt  &lt;= 64'b0;
+158                             end else begin
+159                                 // 4.1 cycle 永遠 +1 (CSR write 不影響)
+160        1/1                      cycle_cnt &lt;= cycle_cnt + 1'b1;
+161                     
+162                                 // 4.2 instret 在每條完成 +1
+163        1/1                      if (instr_retired)
+164        1/1                          instret_cnt &lt;= instret_cnt + 1'b1;
+                        MISSING_ELSE
+165                     
+166                                 // 4.3 軟體 CSR 寫入 (CSR* 指令)
+167                                 //     只 patch 對應位址的 register；RO 位址寫入忽略
+168        1/1                      if (csr_we) begin
+169        <font color = "red">0/1     ==>                  case (csr_waddr)</font>
+170                                         `CSR_MSTATUS : begin
+171        <font color = "red">0/1     ==>                          mstatus_mie  &lt;= new_val[`MSTATUS_MIE_BIT];</font>
+172        <font color = "red">0/1     ==>                          mstatus_mpie &lt;= new_val[`MSTATUS_MPIE_BIT];</font>
+173        <font color = "red">0/1     ==>                          mstatus_mpp  &lt;= new_val[`MSTATUS_MPP_HI_BIT:`MSTATUS_MPP_LO_BIT];</font>
+174                                         end
+175        <font color = "red">0/1     ==>                      `CSR_MIE     : mie_meie    &lt;= new_val[`MIE_MEIE_BIT];</font>
+176        <font color = "red">0/1     ==>                      `CSR_MTVEC   : mtvec_base  &lt;= new_val[31:2];</font>
+177        <font color = "red">0/1     ==>                      `CSR_MSCRATCH: mscratch    &lt;= new_val;</font>
+178        <font color = "red">0/1     ==>                      `CSR_MEPC    : mepc_reg    &lt;= {new_val[31:1], 1'b0};</font>
+179        <font color = "red">0/1     ==>                      `CSR_MCAUSE  : mcause_reg  &lt;= new_val;</font>
+180        <font color = "red">0/1     ==>                      `CSR_MTVAL   : mtval_reg   &lt;= new_val;</font>
+181                                         // 其他 (MIP / counters / unknown) 忽略
+182        <font color = "red">0/1     ==>                      default      : ;</font>
+183                                     endcase
+184                                 end
+                        MISSING_ELSE
+185                     
+186                                 // 4.4 硬體 trap entry / exit
+187                                 //     core.v 保證 trap_enter / trap_exit / csr_we 三者互斥；
+188                                 //     不過 trap_enter 在源碼順序上放在 csr_we 後面，
+189                                 //     就算同 cycle 都 fire 也是 trap_enter 路徑的 NBA 寫贏。
+190        1/1                      if (trap_enter) begin
+191        <font color = "red">0/1     ==>                  mepc_reg     &lt;= trap_pc;</font>
+192        <font color = "red">0/1     ==>                  mcause_reg   &lt;= trap_cause;</font>
+193        <font color = "red">0/1     ==>                  mtval_reg    &lt;= trap_mtval;</font>
+194        <font color = "red">0/1     ==>                  mstatus_mpie &lt;= mstatus_mie;</font>
+195        <font color = "red">0/1     ==>                  mstatus_mie  &lt;= 1'b0;</font>
+196        <font color = "red">0/1     ==>                  mstatus_mpp  &lt;= 2'b11;</font>
+197        1/1                      end else if (trap_exit) begin
+198        <font color = "red">0/1     ==>                  mstatus_mie  &lt;= mstatus_mpie;</font>
+199        <font color = "red">0/1     ==>                  mstatus_mpie &lt;= 1'b1;            // spec: MPIE &lt;- 1 after mret</font>
+200        <font color = "red">0/1     ==>                  mstatus_mpp  &lt;= 2'b11;</font>
+201                                 end
+                        MISSING_ELSE
+202                     
+203                                 // 4.5 ext_pending 三優先級邏輯 (trap_enter &gt; pulse &gt; hold)
+204                                 //     - trap_enter → clear (hardware ack)
+205                                 //     - 新 pulse 進來且沒有同拍 trap_enter → set
+206                                 //     - 其他保持
+207                                 //     寫成一條 mux 而不是兩個 if，邏輯 + timing 都比較乾淨
+208        1/1                      ext_pending &lt;=
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod7.html" >csr</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s3"><td class="lf">Conditions</td><td>13</td><td>5</td><td>38.46</td></tr>
+<tr class="s3"><td class="lf">Logical</td><td>13</td><td>5</td><td>38.46</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       114
+ EXPRESSION (csr_we &amp;&amp; (csr_waddr == csr_raddr))
+             ---1--    ------------2-----------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       114
+ SUB-EXPRESSION (csr_waddr == csr_raddr)
+                ------------1-----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       208
+ EXPRESSION (trap_enter ? 1'b0 : (irq_external_pulse ? 1'b1 : ext_pending))
+             -----1----
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       208
+ SUB-EXPRESSION (irq_external_pulse ? 1'b1 : ext_pending)
+                 ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       220
+ EXPRESSION (ext_pending &amp; mie_meie &amp; mstatus_mie)
+             -----1-----   ----2---   -----3-----
+</pre>
+<table class="noborder">
+<col span="3" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod7.html" >csr</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s1">
+<td>Totals</td>
+<td class="rt">37</td>
+<td class="rt">5</td>
+<td class="rt">13.51 </td>
+</tr><tr class="s1">
+<td>Total Bits</td>
+<td class="rt">1548</td>
+<td class="rt">240</td>
+<td class="rt">15.50 </td>
+</tr><tr class="s1">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">774</td>
+<td class="rt">121</td>
+<td class="rt">15.63 </td>
+</tr><tr class="s1">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">774</td>
+<td class="rt">119</td>
+<td class="rt">15.37 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s2">
+<td>Ports</td>
+<td class="rt">19</td>
+<td class="rt">5</td>
+<td class="rt">26.32 </td>
+</tr><tr class="s3">
+<td>Port Bits</td>
+<td class="rt">580</td>
+<td class="rt">206</td>
+<td class="rt">35.52 </td>
+</tr><tr class="s3">
+<td nowrap>Port Bits 0->1</td>
+<td class="rt">290</td>
+<td class="rt">103</td>
+<td class="rt">35.52 </td>
+</tr><tr class="s3">
+<td nowrap>Port Bits 1->0</td>
+<td class="rt">290</td>
+<td class="rt">103</td>
+<td class="rt">35.52 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s0">
+<td>Signals</td>
+<td class="rt">18</td>
+<td class="rt">0</td>
+<td class="rt">0.00  </td>
+</tr><tr class="s0">
+<td>Signal Bits</td>
+<td class="rt">968</td>
+<td class="rt">34</td>
+<td class="rt">3.51  </td>
+</tr><tr class="s0">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">484</td>
+<td class="rt">18</td>
+<td class="rt">3.72  </td>
+</tr><tr class="s0">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">484</td>
+<td class="rt">16</td>
+<td class="rt">3.31  </td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Port Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td><td class="alfsrt">Direction</td></tr><tr>
+<td>clk</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>resetn</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>csr_raddr[11:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>csr_rdata[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>OUTPUT</td>
+</tr><tr>
+<td>csr_we</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>csr_waddr[11:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>csr_op[0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>csr_op[1]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>csr_wdata[7:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>csr_wdata[8]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>csr_wdata[22:9]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>csr_wdata[31:23]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>csr_old_val[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>instr_retired</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_enter</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_pc[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_pc[7:1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_pc[8]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_pc[21:9]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_pc[31:22]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_cause[2:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_cause[3]</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_cause[30:4]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_cause[31]</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_mtval[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>trap_exit</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>irq_external_pulse</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>mtvec_o[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>OUTPUT</td>
+</tr><tr>
+<td>mepc_o[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>OUTPUT</td>
+</tr><tr>
+<td>irq_pending</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>OUTPUT</td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>mie_meie</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mstatus_mie</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mstatus_mpie</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mstatus_mpp[1:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mtvec_base[31:2]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mscratch[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mepc_reg[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mcause_reg[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mtval_reg[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>ext_pending</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>cycle_cnt[6:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>cycle_cnt[7]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>cycle_cnt[63:8]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>instret_cnt[5:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>instret_cnt[6]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>instret_cnt[63:7]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>new_val[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>new_val[31:3]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mstatus_val[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mie_val[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mip_val[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mtvec_val[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>mtval_val[31:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod7.html" >csr</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s2">
+<td>Branches</td>
+<td></td>
+<td class="rt">38</td>
+<td class="rt">10</td>
+<td class="rt">26.32 </td>
+</tr><tr class="s0">
+<td>CASE</td>
+<td class="rt">99</td>
+<td class="rt">13</td>
+<td class="rt">1</td>
+<td class="rt">7.69  </td>
+</tr><tr class="s3">
+<td>IF</td>
+<td class="rt">114</td>
+<td class="rt">3</td>
+<td class="rt">1</td>
+<td class="rt">33.33 </td>
+</tr><tr class="s5">
+<td>CASE</td>
+<td class="rt">133</td>
+<td class="rt">4</td>
+<td class="rt">2</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s3">
+<td>IF</td>
+<td class="rt">145</td>
+<td class="rt">18</td>
+<td class="rt">6</td>
+<td class="rt">33.33 </td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+99                 case (csr_raddr)
+                   <font color = "red">-1-</font>  
+100                    `CSR_MSTATUS : csr_rdata = mstatus_val;
+           <font color = "red">            ==></font>
+101                    `CSR_MIE     : csr_rdata = mie_val;
+           <font color = "red">            ==></font>
+102                    `CSR_MTVEC   : csr_rdata = mtvec_val;
+           <font color = "red">            ==></font>
+103                    `CSR_MSCRATCH: csr_rdata = mscratch;
+           <font color = "red">            ==></font>
+104                    `CSR_MEPC    : csr_rdata = mepc_reg;
+           <font color = "red">            ==></font>
+105                    `CSR_MCAUSE  : csr_rdata = mcause_reg;
+           <font color = "red">            ==></font>
+106                    `CSR_MTVAL   : csr_rdata = mtval_val;
+           <font color = "red">            ==></font>
+107                    `CSR_MIP     : csr_rdata = mip_val;
+           <font color = "red">            ==></font>
+108                    `CSR_CYCLE   : csr_rdata = cycle_cnt[31:0];
+           <font color = "red">            ==></font>
+109                    `CSR_CYCLEH  : csr_rdata = cycle_cnt[63:32];
+           <font color = "red">            ==></font>
+110                    `CSR_INSTRET : csr_rdata = instret_cnt[31:0];
+           <font color = "red">            ==></font>
+111                    `CSR_INSTRETH: csr_rdata = instret_cnt[63:32];
+           <font color = "red">            ==></font>
+112                    default      : csr_rdata = 32'h0;
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>12'h300 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>12'h304 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>12'h305 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>12'h340 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>12'h341 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>12'h342 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>12'h343 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>12'h344 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>12'hc00 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>12'hc80 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>12'hc02 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>12'hc82 </td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+114                if (csr_we && (csr_waddr == csr_raddr)) begin
+                   <font color = "red">-1-</font>  
+115                    case (csr_waddr)
+                       <font color = "red">-2-</font>  
+116                        `CSR_MSTATUS,
+117                        `CSR_MIE,
+118                        `CSR_MTVEC,
+119                        `CSR_MSCRATCH,
+120                        `CSR_MEPC,
+121                        `CSR_MCAUSE,
+122                        `CSR_MTVAL: csr_rdata = new_val;
+           <font color = "red">                ==></font>
+123                        default: ;
+           <font color = "red">                ==></font>
+124                    endcase
+125                end
+                   MISSING_ELSE
+           <font color = "green">        ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>12'h300 12'h304 12'h305 12'h340 12'h341 12'h342 12'h343 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>default</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+133                case (csr_op)
+                   <font color = "red">-1-</font>  
+134                    `CSR_OP_W : new_val = csr_wdata;
+           <font color = "green">            ==></font>
+135                    `CSR_OP_S : new_val = csr_old_val | csr_wdata;
+           <font color = "red">            ==></font>
+136                    `CSR_OP_C : new_val = csr_old_val & ~csr_wdata;
+           <font color = "red">            ==></font>
+137                    default   : new_val = csr_old_val;
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>2'b10 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>2'b11 </td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+145                if (!resetn) begin
+                   <font color = "green">-1-</font>  
+146                    mie_meie     <= 1'b0;
+           <font color = "green">            ==></font>
+147                    mstatus_mie  <= 1'b0;          // 重置時 IRQ 關閉，要靠軟體開
+148                    mstatus_mpie <= 1'b0;
+149                    mstatus_mpp  <= 2'b11;
+150                    mtvec_base   <= 30'b0;
+151                    mscratch     <= 32'b0;
+152                    mepc_reg     <= 32'b0;
+153                    mcause_reg   <= 32'b0;
+154                    mtval_reg    <= 32'b0;
+155                    ext_pending  <= 1'b0;
+156                    cycle_cnt    <= 64'b0;
+157                    instret_cnt  <= 64'b0;
+158                end else begin
+159                    // 4.1 cycle 永遠 +1 (CSR write 不影響)
+160                    cycle_cnt <= cycle_cnt + 1'b1;
+161        
+162                    // 4.2 instret 在每條完成 +1
+163                    if (instr_retired)
+                       <font color = "green">-2-</font>  
+164                        instret_cnt <= instret_cnt + 1'b1;
+           <font color = "green">                ==></font>
+                           MISSING_ELSE
+           <font color = "green">                ==></font>
+165        
+166                    // 4.3 軟體 CSR 寫入 (CSR* 指令)
+167                    //     只 patch 對應位址的 register；RO 位址寫入忽略
+168                    if (csr_we) begin
+                       <font color = "red">-3-</font>  
+169                        case (csr_waddr)
+                           <font color = "red">-4-</font>  
+170                            `CSR_MSTATUS : begin
+171                                mstatus_mie  <= new_val[`MSTATUS_MIE_BIT];
+           <font color = "red">                        ==></font>
+172                                mstatus_mpie <= new_val[`MSTATUS_MPIE_BIT];
+173                                mstatus_mpp  <= new_val[`MSTATUS_MPP_HI_BIT:`MSTATUS_MPP_LO_BIT];
+174                            end
+175                            `CSR_MIE     : mie_meie    <= new_val[`MIE_MEIE_BIT];
+           <font color = "red">                    ==></font>
+176                            `CSR_MTVEC   : mtvec_base  <= new_val[31:2];
+           <font color = "red">                    ==></font>
+177                            `CSR_MSCRATCH: mscratch    <= new_val;
+           <font color = "red">                    ==></font>
+178                            `CSR_MEPC    : mepc_reg    <= {new_val[31:1], 1'b0};
+           <font color = "red">                    ==></font>
+179                            `CSR_MCAUSE  : mcause_reg  <= new_val;
+           <font color = "red">                    ==></font>
+180                            `CSR_MTVAL   : mtval_reg   <= new_val;
+           <font color = "red">                    ==></font>
+181                            // 其他 (MIP / counters / unknown) 忽略
+182                            default      : ;
+           <font color = "red">                    ==></font>
+183                        endcase
+184                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+185        
+186                    // 4.4 硬體 trap entry / exit
+187                    //     core.v 保證 trap_enter / trap_exit / csr_we 三者互斥；
+188                    //     不過 trap_enter 在源碼順序上放在 csr_we 後面，
+189                    //     就算同 cycle 都 fire 也是 trap_enter 路徑的 NBA 寫贏。
+190                    if (trap_enter) begin
+                       <font color = "red">-5-</font>  
+191                        mepc_reg     <= trap_pc;
+           <font color = "red">                ==></font>
+192                        mcause_reg   <= trap_cause;
+193                        mtval_reg    <= trap_mtval;
+194                        mstatus_mpie <= mstatus_mie;
+195                        mstatus_mie  <= 1'b0;
+196                        mstatus_mpp  <= 2'b11;
+197                    end else if (trap_exit) begin
+                                <font color = "red">-6-</font>  
+198                        mstatus_mie  <= mstatus_mpie;
+           <font color = "red">                ==></font>
+199                        mstatus_mpie <= 1'b1;            // spec: MPIE <- 1 after mret
+200                        mstatus_mpp  <= 2'b11;
+201                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+202        
+203                    // 4.5 ext_pending 三優先級邏輯 (trap_enter > pulse > hold)
+204                    //     - trap_enter → clear (hardware ack)
+205                    //     - 新 pulse 進來且沒有同拍 trap_enter → set
+206                    //     - 其他保持
+207                    //     寫成一條 mux 而不是兩個 if，邏輯 + timing 都比較乾淨
+208                    ext_pending <=
+                                     
+209                        trap_enter         ? 1'b0 :
+                                              <font color = "red">-7-</font>  
+                                              <font color = "red">==></font>  
+210                        irq_external_pulse ? 1'b1 :
+                                              <font color = "red">-8-</font>  
+                                              <font color = "red">==></font>  
+                                              <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>-5-</th><th nowrap width=80>-6-</th><th nowrap width=80>-7-</th><th nowrap width=80>-8-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>12'h300 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>12'h304 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>12'h305 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>12'h340 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>12'h341 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>12'h342 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>12'h343 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_7">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_csr">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

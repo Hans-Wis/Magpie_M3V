@@ -1,0 +1,9 @@
+Elaborated Name: 'axil_bridge_formal'
+Elaborated Name: 'axil_bridge'
+        I_IDLE = 2'b0
+        I_AR = 2'b1
+        I_R = 2'd2
+        D_IDLE = 2'b0
+        D_AR = 2'b1
+        D_R = 2'd2
+        D_AW = 2'd3

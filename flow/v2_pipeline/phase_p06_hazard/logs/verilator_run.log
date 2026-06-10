@@ -1,0 +1,5 @@
+PASS: hazard unit 1096/1096 vectors
+- ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/dv/tb/tb_hazard_unit.v:272: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 1us; walltime 0.001 s; speed 1.800 ms/s
+- Verilator: cpu 0.001 s on 1 threads; allocated 17 MB

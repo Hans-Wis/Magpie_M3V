@@ -1,0 +1,68 @@
+
+
+### configure_tag	Num_calls 2	Total_time 0.023485	Total_CpuTime 0.02	Total malloc-M 5
+1	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/merge_commands.tcl::0	Time:0.021915	CpuTime:0.02	 Malloc-MB:5
+2	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/merge_commands.tcl::0	Time:0.00157	CpuTime:0.00	 Malloc-MB:0
+
+### create_proc_command	Num_calls 247	Total_time 0.008957	Total_CpuTime 0	Total malloc-M 1
+
+### define_proc_attributes	Num_calls 319	Total_time 0.004389	Total_CpuTime 0	Total malloc-M 0
+
+### fv_update_command_consistency_flow	Num_calls 1	Total_time 0.00047	Total_CpuTime 0	Total malloc-M 0
+
+### get_app_var	Num_calls 2	Total_time 1.1e-05	Total_CpuTime 0	Total malloc-M 0
+
+### get_message_db_ptr	Num_calls 1	Total_time 5e-06	Total_CpuTime 0	Total malloc-M 0
+
+### get_report_db_ptr	Num_calls 1	Total_time 7e-06	Total_CpuTime 0	Total malloc-M 0
+
+### help	Num_calls 1	Total_time 0.000447	Total_CpuTime 0	Total malloc-M 0
+
+### rename	Num_calls 1	Total_time 3.7e-05	Total_CpuTime 0	Total malloc-M 0
+
+### restore_session	Num_calls 1	Total_time 7.8e-05	Total_CpuTime 0	Total malloc-M 0
+
+### set_app_var	Num_calls 1	Total_time 1.8e-05	Total_CpuTime 0	Total malloc-M 0
+
+### source	Num_calls 74	Total_time 0.129813	Total_CpuTime 0.12	Total malloc-M 24
+1	Shell:	Time:0.03799	CpuTime:0.04	 Malloc-MB:7
+2	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/lowpower.tcl::36	Time:0.026262	CpuTime:0.02	 Malloc-MB:6
+3	Shell:	Time:0.019722	CpuTime:0.02	 Malloc-MB:3
+4	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/fv.tcl::8	Time:0.008201	CpuTime:0.01	 Malloc-MB:1
+5	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/fv.tcl::8	Time:0.004494	CpuTime:0.00	 Malloc-MB:0
+6	Shell:	Time:0.002174	CpuTime:0.00	 Malloc-MB:0
+7	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/lowpower.tcl::34	Time:0.001802	CpuTime:0.00	 Malloc-MB:0
+8	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/lowpower.tcl::32	Time:0.001578	CpuTime:0.00	 Malloc-MB:0
+9	Shell:	Time:0.001519	CpuTime:0.00	 Malloc-MB:0
+10	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/fv.tcl::8	Time:0.001448	CpuTime:0.00	 Malloc-MB:0
+11	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/fv_command_consistency_helper.tcl::0	Time:0.001258	CpuTime:0.00	 Malloc-MB:0
+12	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/lowpower.tcl::13	Time:0.001168	CpuTime:0.00	 Malloc-MB:0
+13	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/cdc_scripts/cdc_default_settings.tcl::144	Time:0.001088	CpuTime:0.00	 Malloc-MB:0
+14	Shell:	Time:0.001059	CpuTime:0.00	 Malloc-MB:0
+15	Shell:	Time:0.001003	CpuTime:0.00	 Malloc-MB:0
+
+ ****************************Shell commands Recording************************
+restore_session -level default
+
+
+ ****************************ThreadTask Recording************************
+Thread: CommonMgr Time: 0(s) Mem: 0(KB) MaxSize: 0
+
+
+ ****************************ProcessTask Recording************************
+
+
+ **************************** Command Stats (without vnrstat) ************************
+### VnrEntry 2026-06-10 00:05:53
+	configure_tag	Num_calls 2	Total_time 0.023485	Total_CpuTime 0.02	Total malloc-M 5
+	create_proc_command	Num_calls 247	Total_time 0.008957	Total_CpuTime 0	Total malloc-M 1
+	define_proc_attributes	Num_calls 319	Total_time 0.004389	Total_CpuTime 0	Total malloc-M 0
+	fv_update_command_consistency_flow	Num_calls 1	Total_time 0.00047	Total_CpuTime 0	Total malloc-M 0
+	get_app_var	Num_calls 2	Total_time 1.1e-05	Total_CpuTime 0	Total malloc-M 0
+	get_message_db_ptr	Num_calls 1	Total_time 5e-06	Total_CpuTime 0	Total malloc-M 0
+	get_report_db_ptr	Num_calls 1	Total_time 7e-06	Total_CpuTime 0	Total malloc-M 0
+	help	Num_calls 1	Total_time 0.000447	Total_CpuTime 0	Total malloc-M 0
+	rename	Num_calls 1	Total_time 3.7e-05	Total_CpuTime 0	Total malloc-M 0
+	restore_session	Num_calls 1	Total_time 7.8e-05	Total_CpuTime 0	Total malloc-M 0
+	set_app_var	Num_calls 1	Total_time 1.8e-05	Total_CpuTime 0	Total malloc-M 0
+	source	Num_calls 74	Total_time 0.129813	Total_CpuTime 0.12	Total malloc-M 24

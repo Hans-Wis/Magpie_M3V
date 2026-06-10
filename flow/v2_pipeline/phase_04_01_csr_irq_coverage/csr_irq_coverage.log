@@ -1,0 +1,1 @@
+PASS: CSR/IRQ directed coverage merged; DUT line 1214/1432 (84.78%, +396); DUT toggle 10738/20252 (53.02%, +3238)

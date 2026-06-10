@@ -1,0 +1,3 @@
+IP/cpu_m1/dv/formal/alu_assert_bind.sv
+IP/cpu_m1/rtl/alu.v
+IP/cpu_m1/rtl/def.vh

@@ -1,0 +1,25 @@
+ROLE: Codex EXECUTOR (gpt-5.5), directed by Claude (PL). design_id=cpu_m1. Licensed EDA: run directly (you are NOT sandboxed; -s danger-full-access). report-faithfully: real URG numbers only, no faking.
+
+CONTEXT: Functional coverage was MEASURED at 55.56% (40/72 bins) in flow/v2_pipeline/phase_04_08_functional_coverage using ONLY the arithmetic random program. Two covergroups are 0% purely from STIMULUS GAP (not RTL): branch/BP/RAS = 0% and CSR/trap = 0%. The covergroups + bind module (cpu_m1_func_cov_bind.sv) already exist and are correct.
+
+GOAL J5: LIFT functional coverage to ~85%+ by adding/merging stimulus that exercises the uncovered groups. Do NOT change the covergroups to cheat; lift by real stimulus.
+
+DO:
+1. Add stimulus that hits the 0% groups:
+   - branch/BP/RAS: programs with taken/not-taken branches (beq/bne/blt/bge/bltu/bgeu), JAL, JALR, function call/return (RAS push/pop), loops (BP train hit/miss). You can write a new directed program AND/OR extend the random generator (gen_random_program.py) to emit branches/jumps/calls. Reuse existing directed phases where useful (phase_01_04 bp_ras, phase_02_00 trap, phase_03_01 trap_irq).
+   - CSR/trap: csrrw/csrrs/csrrc on mstatus/mie/mtvec/mepc/mcause/mscratch; ecall/ebreak/illegal -> trap; mret; external IRQ entry; misalign trap. (phase_02_00 / phase_02_02 / phase_03_01 already have such programs.)
+2. Run each stimulus under VCS with the func_cov bind, collect per-test vdb, MERGE all vdb with URG (urg -lca -flex_merge code_union if tops differ). Produce a merged functional coverage report.
+3. Report the new overall % + per-group %. Update tests/gates/gate_04_08_functional_coverage.py threshold to the achieved floor (blocking, advisory note). Triage any still-uncovered bins (reason + reachability + waiver-candidate).
+4. Verify full suite green: python3 -m pytest tests/gates/gate_*.py -q. Confirm gate_03_08 lockstep still PASS (no RTL semantic change).
+
+CONSTRAINTS: covergroup definitions unchanged (lift by stimulus only). No RTL semantic change. Explicit paths. Keep raw vdb/logs in the phase dir.
+
+OUTPUT (write <=40 lines) flow/v2_pipeline/phase_05_leader/J5_result.md:
+  ## summary (NEW overall % ; was 55.56%)
+  ## per_group (covergroup | OLD% | NEW% | remaining-uncovered)
+  ## stimulus_added (what programs/seeds)
+  ## files_added_or_changed
+  ## provenance (vcs/urg version, host, key commands, merge cmd)
+  ## gate_status (pytest pass count; gate_03_08 lockstep PASS?)
+  ## issues_or_waivers
+  ## tokens

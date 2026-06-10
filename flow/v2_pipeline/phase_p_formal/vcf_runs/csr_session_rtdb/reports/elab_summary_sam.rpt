@@ -1,0 +1,3 @@
+Elaborated Name: 'csr'
+        mstatus_mpp = 2'b11
+Elaborated Name: 'csr_assert_bind'

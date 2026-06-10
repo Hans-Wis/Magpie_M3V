@@ -1,0 +1,24 @@
+ROLE: Codex EXECUTOR (gpt-5.5), PL=Claude. design_id=cpu_m1 (RV32IMC_Zicsr_Zifencei, M-mode). -s danger-full-access. Spike GOLDEN. report-faithfully. This is roadmap P0.1 = lockstep SYNCHRONOUS-TRAP streams.
+
+PL DIAGNOSIS (verify, likely correct): the "Spike 1.1.1-dev halts at M-mode ecall" is NOT a Spike version bug. The harness flow/v2_pipeline/phase_03_09_riscvdv_lockstep/run_riscvdv_lockstep.py (~line 132-133) REWRITES in-stream `ecall` to `j write_tohost`, i.e. ecall is used as TEST-EXIT (tohost). So traps were never actually exercised; they were turned into program termination. To lockstep sync traps we must let ecall/ebreak/illegal/misaligned be REAL traps handled by an mtvec handler, with a SEPARATE end-of-test sentinel.
+
+GOAL J18: enable synchronous-trap STREAMS (ecall, ebreak, illegal, misaligned load/store) and lockstep them vs Spike per-commit INCLUDING trap-boundary architectural state. This also directly validates the J17 mepc fixes under random DV.
+
+DO:
+1. CONFIRM the root cause (ecall-as-tohost-exit rewrite, not Spike version). State evidence.
+2. Provide a proper M-mode trap handler: configure riscv-dv to GENERATE a trap handler at mtvec (riscv-dv supports handler generation) OR inject a fixed minimal M-mode handler (save context, read mcause/mepc, advance mepc past the faulting instr for ecall/ebreak as the spec requires, mret). Use a DISTINCT end-of-test mechanism (a final sentinel / specific tohost write) that is NOT the in-stream ecall, so in-stream ecall/ebreak TRAP instead of exit. Ensure DUT TB and Spike use the SAME handler + memory map.
+3. Spike side: run so it TAKES the traps and keeps logging through trap entry -> handler -> mret -> resume (no exit). If, after the handler fix, Spike STILL truncates, THEN (and only then) build the newer spike from /home/edauser/build/riscv-isa-sim (git pull + build) and use it; document why.
+4. Lockstep comparison must cover: faulting pc, mepc, mcause, mtval, mstatus (MIE/MPIE/MPP), the handler instruction stream, mret, and the resumed instruction. Keep timing CSRs excluded.
+5. Run several seeds with sync-trap streams enabled. For EACH divergence: classify real-DUT vs harness, root-cause, fix (RTL clean-room + ADR / harness without masking). Iterate until clean. (Now that mepc is precise from J17, confirm traps lockstep correctly; surface any remaining trap-path bug.)
+6. RE-VALIDATE: pytest full suite (>=183) green, gate_02_00/02_02/02_03 trap + gate_03_08 lockstep + gate_02_01 + gate_04_08 PASS, prior full-mix 100k still clean.
+
+CONSTRAINTS: clean-room RTL + ADR; no test relaxation; harness changes must not mask DUT bugs; explicit paths; keep async interrupts OFF (separate wave).
+
+OUTPUT (write <=38 lines) flow/v2_pipeline/phase_05_leader/J18_result.md:
+  ## root_cause (ecall-as-exit confirmed? evidence; did you need a newer Spike? why/why-not)
+  ## trap_handler (how mtvec handler + end-sentinel set up; DUT/Spike parity)
+  ## sync_trap_lockstep (seeds clean? matched commits incl. traps; mepc/mcause/mtval compared across trap boundary)
+  ## divergences (each: pc/instr + real-DUT or harness + fix + ADR)
+  ## revalidate (pytest pass count; key gates PASS?; full-mix still clean?)
+  ## regressions
+  ## tokens

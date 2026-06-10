@@ -1,0 +1,1138 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -nworst 5
+        -max_paths 20
+Design : cpu_m1_top
+Version: X-2025.06-SP2
+Date   : Tue Jun  9 23:21:20 2026
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: ssg0p81v0c   Library: tcbn28hpcplusbwp40p140ssg0p81v0c
+Wire Load Model Mode: segmented
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[17][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5030/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U818/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U819/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5157/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[17][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[17][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[17][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5030/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U818/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U819/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5157/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[17][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[17][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[19][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5026/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U822/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U823/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5120/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[19][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[19][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[19][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5026/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U822/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U823/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5120/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[19][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[19][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[22][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5020/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U831/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U832/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5093/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[22][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[22][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[22][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5020/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U831/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U832/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5093/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[22][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[22][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[23][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5018/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U829/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U830/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5279/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[23][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[23][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[23][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5018/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U829/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U830/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5279/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[23][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[23][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[24][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5016/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U827/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U828/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5298/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[24][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[24][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[24][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5016/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U827/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U828/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5298/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[24][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[24][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[26][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5012/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U825/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U826/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5330/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[26][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[26][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[26][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5012/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U825/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U826/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5330/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[26][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[26][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[27][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5010/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U67/ZN (CKND0BWP40P140)                     0.06       1.07 r
+  u_core/u_bp/U824/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5250/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[27][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[27][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[27][23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5010/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U67/ZN (CKND0BWP40P140)                     0.06       1.07 r
+  u_core/u_bp/U824/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5250/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[27][23]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[27][23]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[17][26]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5030/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U818/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U819/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5777/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[17][26]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[17][26]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[17][25]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5030/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U818/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U819/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5778/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[17][25]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[17][25]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[17][22]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5030/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U818/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U819/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5779/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[17][22]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[17][22]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[17][21]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5030/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U818/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U819/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5780/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[17][21]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[17][21]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[17][20]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5030/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U818/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U819/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5781/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[17][20]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[17][20]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_core/ex_mem_bp_upd_pc_r_reg[4]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_core/u_bp/target1_reg[17][16]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ssg0p81v0c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_core/ex_mem_bp_upd_pc_r_reg[4]/Q (DFQD1BWP40P140)     0.09       0.09 f
+  u_core/u_bp/upd_pc[4] (bp)                              0.00       0.09 f
+  u_core/u_bp/U519/ZN (NR2D0BWP40P140)                    0.04       0.13 r
+  u_core/u_bp/U387/ZN (ND2D0BWP40P140)                    0.05       0.18 f
+  u_core/u_bp/U25/ZN (NR2OPTIBD1BWP40P140)                0.20       0.38 r
+  u_core/u_bp/U4341/ZN (AOI22D0BWP40P140)                 0.05       0.43 f
+  u_core/u_bp/U4342/ZN (ND4D0BWP40P140)                   0.05       0.48 r
+  u_core/u_bp/U4351/ZN (NR4D0BWP40P140)                   0.03       0.50 f
+  u_core/u_bp/U134/ZN (AOI221D0BWP40P140)                 0.05       0.55 r
+  u_core/u_bp/U4352/ZN (OAI21OPTREPBD1BWP40P140)          0.03       0.58 f
+  u_core/u_bp/U4353/ZN (AOI211D1BWP40P140)                0.04       0.62 r
+  u_core/u_bp/U4376/ZN (OAI211D1BWP40P140)                0.04       0.67 f
+  u_core/u_bp/U66/ZN (AOI21D1BWP40P140)                   0.04       0.71 r
+  u_core/u_bp/U98/ZN (ND3D2BWP40P140)                     0.03       0.74 f
+  u_core/u_bp/U4377/ZN (NR3D1BWP40P140)                   0.04       0.78 r
+  u_core/u_bp/U21/ZN (OAI21OPTREPBD2BWP40P140)            0.03       0.81 f
+  u_core/u_bp/U4809/ZN (NR2OPTIBD4BWP40P140)              0.05       0.86 r
+  u_core/u_bp/U5030/ZN (NR2OPTPAD1BWP40P140)              0.15       1.01 f
+  u_core/u_bp/U818/ZN (CKND0BWP40P140)                    0.06       1.07 r
+  u_core/u_bp/U819/ZN (CKND0BWP40P140)                    0.16       1.23 f
+  u_core/u_bp/U5153/ZN (IAO22D0BWP40P140)                 0.10       1.33 r
+  u_core/u_bp/target1_reg[17][16]/D (DFQD1BWP40P140)      0.00       1.33 r
+  data arrival time                                                  1.33
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_core/u_bp/target1_reg[17][16]/CP (DFQD1BWP40P140)     0.00       1.38 r
+  library setup time                                     -0.05       1.33
+  data required time                                                 1.33
+  --------------------------------------------------------------------------
+  data required time                                                 1.33
+  data arrival time                                                 -1.33
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+1

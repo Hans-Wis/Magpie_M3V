@@ -1,0 +1,22 @@
+You are advising on the orchestration model for a 4-agent IC-design team. Critique the proposed load-balancing model below and return the BEST arrangement: agree/disagree per point, the strongest failure mode, and concrete improvements. Do NOT use tools; answer from expertise. Concise Markdown.
+
+THE 4 AGENTS:
+- Claude (integrator / Tech Lead / ONLY committer / verifier-of-record): MCP+repo+clean-room, careful edits, the single serialization point (only Claude commits + does final acceptance).
+- Codex (gpt-5.5): bug-hunter / single-module RTL+harness implementer. The current bottleneck.
+- Grok: DV architect / spec / roadmap / adversarial review (you).
+- Gemini: ~1M-context whole-corpus analysis (spec compliance, cross-file consistency, long-log triage).
+
+OBSERVED PROBLEM: work was serialized as a star with Codex as the bottleneck -- Claude/Grok/Gemini sat idle waiting on one long Codex job. Worse, Codex itself spends most wall-clock WAITING on slow riscv-dv generation + Verilator sim, not thinking.
+
+PROPOSED MODEL (critique this):
+1. Every agent keeps an independent work QUEUE so none is purely idle: Grok/Gemini always have 1-2 tasks that do NOT depend on the in-flight Codex job; Claude does prep (next fix draft, gates, ADRs, hands-on investigation) + integration.
+2. Parallelize Codex itself: run multiple `codex exec` concurrently on NON-COLLIDING files/areas (partition by file ownership).
+3. Parallelize the real bottleneck (riscv-dv gen + sim): pre-generate a seed POOL in parallel and run sims in parallel, so neither Codex nor Claude serially waits on generation.
+4. Event-driven integration: Claude integrates results as they land, not blocking on the longest job; the only hard serialization is commit.
+
+QUESTIONS:
+1. Is this the right model? What is the single biggest risk or failure mode (e.g. merge conflicts from parallel Codex, Claude becoming the bottleneck at the commit/verify step, queue starvation, wasted speculative work)?
+2. How should Claude AVOID becoming the new bottleneck at the integrate/verify/commit step (since only Claude commits)?
+3. What is the right granularity + dependency discipline for partitioning Codex work to avoid collisions WITHOUT excessive coordination overhead?
+4. For the riscv-dv throughput bottleneck specifically: concrete parallelization (process pool? seed sharding? caching generated ELFs? separate gen vs sim stages?) and the expected speedup vs effort.
+5. Any simpler/better topology than this (e.g. a producer-consumer queue, a token/WIP-limit scheme) that fits a 1-committer constraint?

@@ -1,0 +1,60 @@
+ 
+****************************************
+Report : power
+        -analysis_effort low
+Design : cpu_m1_top
+Version: X-2025.06-SP2
+Date   : Mon Jun  8 14:23:15 2026
+****************************************
+
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp40p140tt0p9v25c (File: /home/edauser/project/SOC/Magpie_X3/APR/ref/db/tcbn28hpcplusbwp40p140tt0p9v25c.db)
+
+
+Operating Conditions: tt0p9v25c   Library: tcbn28hpcplusbwp40p140tt0p9v25c
+Wire Load Model Mode: segmented
+
+Design        Wire Load Model            Library
+------------------------------------------------
+cpu_m1_top             ZeroWireload      tcbn28hpcplusbwp40p140tt0p9v25c
+bp                     ZeroWireload      tcbn28hpcplusbwp40p140tt0p9v25c
+rfu                    ZeroWireload      tcbn28hpcplusbwp40p140tt0p9v25c
+
+
+Global Operating Voltage = 0.9  
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1nW
+
+
+Attributes
+----------
+i - Including register clock pin internal power
+
+
+  Cell Internal Power  =  15.5295 mW   (98%)
+  Net Switching Power  = 302.0435 uW    (2%)
+                         ---------
+Total Dynamic Power    =  15.8315 mW  (100%)
+
+Cell Leakage Power     =  18.2730 uW
+
+
+                 Internal         Switching           Leakage            Total
+Power Group      Power            Power               Power              Power   (   %    )  Attrs
+--------------------------------------------------------------------------------------------------
+io_pad             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+memory             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+black_box          0.0000            0.0000            0.0000            0.0000  (   0.00%)
+clock_network     15.2721            0.0000            0.0000           15.2721  (  96.35%)  i
+register       5.1210e-02        2.0478e-02        9.2634e+03        8.0920e-02  (   0.51%)
+sequential         0.0000            0.0000            0.0000            0.0000  (   0.00%)
+combinational      0.2067            0.2816        9.0095e+03            0.4973  (   3.14%)
+--------------------------------------------------------------------------------------------------
+Total             15.5300 mW         0.3020 mW     1.8273e+04 nW        15.8503 mW
+1

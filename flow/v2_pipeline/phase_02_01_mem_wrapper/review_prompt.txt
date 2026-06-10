@@ -1,0 +1,24 @@
+ROLE: Codex INDEPENDENT REVIEWER (read-only) for Magpie_M1 Phase 2.1 mem_wrapper. You did NOT write this; Claude did. Find bugs. Do not edit files.
+
+CONTEXT: cpu_m1_top wraps the lab08e `core` with a Harvard single-outstanding ready-gated valid/ready bus, and adds a global `mem_stall` that FREEZES the pipeline during memory waits. Authority = ADR-0005 (docs/adr/0005-mem-valid-ready-wrapper.md).
+
+REVIEW THESE FILES:
+- IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/cpu_m1_top.v   (the wrapper: per-port fire/busy/rdata_q, mem_stall=(i_busy|d_busy|~primed)&resetn, boot-prime)
+- IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/core.v          (mem_stall input + freeze gating + misalign trap)
+- flow/v2_pipeline/phase_02_01_mem_wrapper/tb_equiv.v  (equivalence tb: cpu_m1_top vs bare core, wait modes)
+
+FOCUS / CHECK FOR:
+1. Freeze completeness: during mem_stall=1, is EVERY commit/architectural side-effect suppressed and EVERY pipeline reg held? Enumerate any state mutation NOT gated by !mem_stall (regfile, CSR incl. mcycle/minstret, mepc/mcause, trap_latched, PC/redirect, BP, RAS, cross-boundary residue/cross_assemble). Look especially for a missed one.
+2. mem_stall correctness: is it truly registered (no comb loop)? Can the issuing instruction be double-issued (esp. D store) or dropped when the OTHER port keeps the freeze? Re-derive single-outstanding.
+3. Boot-prime: does `i_boot` + `primed` correctly handle reset-vector fetch under wait states without an extra/dropped first instruction? Any X at time 0?
+4. Misalign: the fix is `(id_is_load||id_is_store) && ( ternary )`. Confirm LH/SH check addr[0], LW/SW check addr[1:0], byte LB/SB never trap. Confirm d_mem_valid gated by !misaligned so no misaligned bus request. mcause 4 (load) / 6 (store)?
+5. 0-wait equivalence: any reason cpu_m1_top at 0 wait is NOT bit-identical to bare core?
+6. tb_equiv soundness: does the test actually exercise loads/stores/branches/div/RVC under waits, or is it weak? Is the bare-core==Spike claim sound (it is re-validated separately at 81 commits)?
+
+OUTPUT (write file, <=40 lines, structured, NOT prose dump):
+flow/v2_pipeline/phase_02_01_mem_wrapper/codex_review.md with:
+  ## verdict (one line: LGTM | issues-found)
+  ## findings (table: id | severity P0/P1/P2 | file:line | issue | why-real)
+  ## not-covered (anything the tb/gate does NOT validate)
+  ## tokens (your tokens used)
+Keep it small.

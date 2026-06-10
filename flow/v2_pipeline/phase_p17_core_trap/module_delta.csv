@@ -1,0 +1,17 @@
+signal,covered_toggles,total_toggles,status,note
+id_mem_align_error,2,2,covered,
+id_mem_misaligned,2,2,covered,
+ex_mem_is_misaligned_r,2,2,covered,
+ex_mem_is_misaligned_store_r,2,2,covered,
+ex_wb_is_misaligned_r,2,2,covered,
+ex_wb_is_misaligned_store_r,2,2,covered,
+wb_take_data_trap,2,2,covered,
+wb_take_sync_trap,2,2,covered,
+wb_take_irq,2,2,covered,
+wb_trap_enter,2,2,covered,
+wb_trap_exit,2,2,covered,
+wb_trap_pc_for_mepc,18,64,reachable,
+wb_trap_cause,10,64,covered_structural_bits,bits outside supported cause constants are structural at IP/cpu_m1/rtl/core.v:993 (cause mux literals 0x0000000b/3/2/4/6/0x8000000b)
+wb_trap_mtval,64,64,covered,
+ex_wb_is_mret_r,2,2,covered,
+irq_pending,2,2,covered,

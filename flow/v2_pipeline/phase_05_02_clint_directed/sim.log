@@ -1,0 +1,14 @@
+expected corner mepc=000000f4
+expected corner branch=000000e0
+timer mcause=80000007
+timer mepc=00000066
+sw mcause=80000003
+sw mepc=000000a0
+[1840 ns] armed corner MTIP at branch mispredict mtime=179
+corner mcause=80000007
+corner mepc=000000f4
+PASS: CLINT directed basic_timer mcause=80000007 mepc=00000066; software mcause=80000003 mepc=000000a0; corner mcause=80000007 mepc=000000f4
+- tb_clint_directed.v:217: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 12us; walltime 0.002 s; speed 5.857 ms/s
+- Verilator: cpu 0.002 s on 1 threads; allocated 17 MB

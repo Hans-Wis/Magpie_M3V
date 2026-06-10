@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<File version="1">
+	<State>
+		<Pair vector="1'b0" name="csr_assert_i._SVAC_ended_reg_a" />
+		<Pair vector="1'b0" name="csr_assert_i._SVAC_ended_reg_9" />
+		<Pair vector="1'b1" name="_BM_CLKGEN_.CSR0_2" />
+		<Pair vector="64'b0" name="instret_cnt" />
+		<Pair vector="64'b0" name="cycle_cnt" />
+		<Pair vector="1'b0" name="ext_pending" />
+		<Pair vector="32'b0" name="mtval_reg" />
+		<Pair vector="32'b0" name="mcause_reg" />
+		<Pair vector="32'b0" name="mepc_reg" />
+		<Pair vector="32'b0" name="mscratch" />
+		<Pair vector="30'b0" name="mtvec_base" />
+		<Pair vector="1'b0" name="mie_meie" />
+		<Pair vector="1'b0" name="mstatus_mie" />
+		<Pair vector="1'b0" name="mstatus_mpie" />
+	</State>
+	<Input>
+		<Pair vector="1'bx" name="clk" />
+		<Pair vector="32'bx" name="csr_old_val" />
+		<Pair vector="2'bx" name="csr_op" />
+		<Pair vector="12'bx" name="csr_raddr" />
+		<Pair vector="12'bx" name="csr_waddr" />
+		<Pair vector="32'bx" name="csr_wdata" />
+		<Pair vector="1'bx" name="csr_we" />
+		<Pair vector="1'bx" name="instr_retired" />
+		<Pair vector="1'bx" name="irq_external_pulse" />
+		<Pair vector="1'b0" name="resetn" />
+		<Pair vector="32'bx" name="trap_cause" />
+		<Pair vector="1'bx" name="trap_enter" />
+		<Pair vector="1'bx" name="trap_exit" />
+		<Pair vector="32'bx" name="trap_mtval" />
+		<Pair vector="32'bx" name="trap_pc" />
+		<Pair vector="1'b1" name="_atZero" />
+	</Input>
+</File>

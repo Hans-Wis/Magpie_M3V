@@ -1,0 +1,38 @@
+{
+  "artifacts": [
+    "IP/cpu_m1/rtl/cpu_m1_top.v",
+    "IP/cpu_m1/rtl/core.v",
+    "docs/adr/0005-mem-valid-ready-wrapper.md",
+    "flow/v2_pipeline/phase_02_01_mem_wrapper/tb_equiv.v",
+    "flow/v2_pipeline/phase_02_01_mem_wrapper/codex_review.md",
+    "tests/gates/gate_02_01_mem_wrapper.py"
+  ],
+  "autonomy": "L2",
+  "data_quality": "full",
+  "design": "magpie_m1",
+  "gate": "gate_02_01_mem_wrapper",
+  "metrics": {
+    "active_gates_total": "158 pass",
+    "bug_fixed": "BUG-ALIGN-0001 misalign && vs ?: precedence (SLT spurious trap)",
+    "codex_review": "advisory: F1 false-positive(disproven), F2 spec-correct(mcycle free-run documented), F3 minor-accepted",
+    "development_stage": "2.1 mem_wrapper",
+    "equivalence_vs_bare_core": "10/10 wait configs, 81 commits; D-writes constant (no dup store)",
+    "functional_coverage": "not-run",
+    "lint_synth_ppa": "not-run",
+    "open_followups": "directed misalign test (mcause 4/6); MMIO/non-idempotent store coverage",
+    "phase_02_01_mem_wrapper_status": "pass",
+    "spike_lockstep_bare_core": "PASS 81 commits",
+    "transitive_spike_equivalence": "cpu_m1_top == bare_core == Spike under all memory latencies",
+    "wrapper_top": "cpu_m1_top"
+  },
+  "reviewed_by_codex": "advisory",
+  "run": {
+    "command": "codex exec -m gpt-5.5 (review); bash run_equiv.sh; pytest",
+    "ended": "2026-06-08T12:04:56",
+    "host": "eda",
+    "id": "run-gate_02_01_review-20260608",
+    "started": "2026-06-08T12:04:56"
+  },
+  "stage": "rtl",
+  "status": "pass"
+}

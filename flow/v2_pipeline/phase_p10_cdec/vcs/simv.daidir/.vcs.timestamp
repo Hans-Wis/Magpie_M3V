@@ -1,0 +1,208 @@
+2        
+0 def.vh
+0 /soft/synopsys/vcs/X-2025.06-SP1/etc/systemverilog/def.vh
+35
++incdir+../../../../IP/cpu_m1/rtl
+-Mamsrun=
+-Masflags=
+-Mcc=gcc
+-Mcfl= -pipe -fPIC -O -I/soft/synopsys/vcs/X-2025.06-SP1/include
+-Mcplusplus=g++
+-Mcrt0=
+-Mcrtn=
+-Mcsrc=
+-Mexternalobj=
+-Mldflags= -rdynamic
+-Mobjects= /soft/synopsys/vcs/X-2025.06-SP1/linux64/lib/libvirsim.so /soft/synopsys/vcs/X-2025.06-SP1/linux64/lib/liberrorinf.so /soft/synopsys/vcs/X-2025.06-SP1/linux64/lib/libsnpsmalloc.so /soft/synopsys/vcs/X-2025.06-SP1/linux64/lib/libvfs.so
+-Mout=simv
+-Msaverestoreobj=/soft/synopsys/vcs/X-2025.06-SP1/linux64/lib/vcs_save_restore_new.o
+-Msyslibs=-ldl
+-Mvcsaceobjs=
+-Mxcflags= -pipe -fPIC -I/soft/synopsys/vcs/X-2025.06-SP1/include
+-Mxllcflags=
+-Xhdlxmropt
+-cm
+-cm_dir
+-full64
+-gen_obj
+-o simv
+-picarchive
+-sverilog
+-timescale=1ns/1ps
+-top
+/soft/synopsys/vcs/X-2025.06-SP1/linux64/bin/vcs1fe
+line+cond+branch+tgl
+simv.vdb
+tb_cdec_unit
+simv
+../../../../IP/cpu_m1/rtl/cdec.v
+../../../../IP/cpu_m1/dv/tb/tb_cdec_unit.v
+153
+which_declare=declare -f
+host_alias=x86_64-conda-linux-gnu
+build_alias=x86_64-conda-linux-gnu
+_CONDA_ROOT=/home/edauser/miniforge3
+_CONDA_EXE=/home/edauser/miniforge3/bin/conda
+_CE_M=
+_CE_CONDA=
+XML_CATALOG_FILES=file:///home/edauser/miniforge3/envs/magpie_claude/etc/xml/catalog file:///etc/xml/catalog
+XDG_RUNTIME_DIR=/run/user/1000
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/home/edauser/.nix-profile/share:/nix/var/nix/profiles/default/share
+XCELIUM_HOME=/soft/cadence/XCELIUM2509
+WV_HOME=/soft/synopsys/wv/X-2025.06
+WT_SESSION=07325e17-f2ea-40a1-a653-1b2976357314
+WT_PROFILE_ID={61c54bbd-c2c6-5271-96e7-009a87ff44bf}
+WSL_INTEROP=/run/WSL/1245_interop
+WSL_DISTRO_NAME=AlmaLinux
+WSLENV=WT_SESSION:WT_PROFILE_ID:
+WSL2_GUI_APPS_ENABLED=1
+WAYLAND_DISPLAY=wayland-0
+W3264_NO_HOST_CHECK=1
+VMR_MODE_FLAG=64
+VIVADO_HOME=/tools/Xilinx/Vivado/2024.2
+VERILATOR_ROOT=/home/edauser/miniforge3/envs/magpie_claude/share/verilator
+VERDI_HOME=/soft/synopsys/verdi/X-2025.06-SP1-1
+VCS_TARGET_ARCH=amd64
+VCS_PYTHON3=/soft/synopsys/vcs/X-2025.06-SP1/linux64/bin/Python3/bin/python3
+VCS_PATHMAP_PRELOAD_DONE=1
+VCS_MX_HOME_INTERNAL=1
+VCS_MODE_FLAG=64
+VCS_INTERNAL_CONVERTEDLIBS=
+VCS_HOME=/soft/synopsys/vcs/X-2025.06-SP1
+VCS_EXEC_DONE=1
+VCS_DEPTH=0
+VCS_ARG_ADDED_FOR_TMP=1
+VCS_ARCH_OVERRIDE=linux
+VCS_ARCH=linux64
+UNAME=/bin/uname
+TOOL_HOME=/soft/synopsys/vcs/X-2025.06-SP1/linux64
+SYN_HOME=/soft/synopsys/syn/X-2025.06-SP2
+SYNOPSYS_LC_ROOT=/soft/synopsys/lc/X-2025.06-SP2
+STRIP=x86_64-conda-linux-gnu-strip
+STRINGS=/bin/strings
+STARRC_HOME=/soft/synopsys/starrc/X-2025.06-SP2
+SPYGLASS_HOME=/soft/synopsys/spyglass/X-2025.06-SP1
+SPECTRE_HOME=/soft/cadence/SPECTRE251
+SPECMAN_HOME=/soft/cadence/XCELIUM2509/components/sn
+SPECMAN_DIR=/soft/cadence/XCELIUM2509/components/sn
+SPDRAW_HOME=/home/edauser/project/lab/MyEDA/spdraw
+SNPS_VCS_PYTHON3=/soft/synopsys/vcs/X-2025.06-SP1/linux64/bin/Python3/bin/python3
+SNPS_VCS_CLANG_PATH=/soft/synopsys/vcs/X-2025.06-SP1/linux64/clang
+SNPS_INTERNAL_VCS_LINUX_OS=linux
+SIZE=x86_64-conda-linux-gnu-size
+SCRNAME=vcs
+SCRIPT_NAME=vcs
+SALT_LICENSE_SERVER=/soft/license/calibre.dat
+READELF=x86_64-conda-linux-gnu-readelf
+RANLIB=x86_64-conda-linux-gnu-ranlib
+QT_X11_NO_MITSHM=1
+PYO3_PYTHON=/home/edauser/miniforge3/envs/magpie_claude/bin/python
+PULSE_SERVER=unix:/mnt/wslg/PulseServer
+PT_HOME=/soft/synopsys/prime/X-2025.06-SP1
+OVA_UUM=0
+OBJDUMP=x86_64-conda-linux-gnu-objdump
+OBJCOPY=x86_64-conda-linux-gnu-objcopy
+NoDefaultCurrentDirectoryInExePath=1
+NO_COLOR=1
+NM=x86_64-conda-linux-gnu-nm
+NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
+NIX_PROFILES=/nix/var/nix/profiles/default /home/edauser/.nix-profile
+NAME=ROGAI
+MGLS_LICENSE_FILE=/soft/license/calibre.dat
+MGC_HOME=/soft/mentor/calibre_aok_2025.4_36.20/aok_cal_2025.4_36.20
+MFLAGS=
+MESON_ARGS=-Dbuildtype=release
+MAKELEVEL=1
+MAKEFLAGS=
+LIBGL_ALWAYS_INDIRECT=1
+LESSOPEN=||/usr/bin/lesspipe.sh %s
+LDFLAGS_LD=-O2 --sort-common --as-needed -z relro -z now --disable-new-dtags --gc-sections --allow-shlib-undefined -rpath /home/edauser/miniforge3/envs/magpie_claude/lib -rpath-link /home/edauser/miniforge3/envs/magpie_claude/lib -L/home/edauser/miniforge3/envs/magpie_claude/lib
+LD=x86_64-conda-linux-gnu-ld
+LC_HOME=/soft/synopsys/lc/X-2025.06-SP2
+LC_CTYPE=C.UTF-8
+LC_ALL=C.UTF-8
+J2D_NO_MITSHM=1
+ICC2_HOME=/soft/synopsys/icc2/X-2025.06-SP2
+HSP_HOME=/soft/synopsys/hspice/X-2025.06
+HOSTTYPE=x86_64
+HISTCONTROL=ignoreboth
+GXX=x86_64-conda-linux-gnu-g++
+GSETTINGS_SCHEMA_DIR_CONDA_BACKUP=
+GSETTINGS_SCHEMA_DIR=/home/edauser/miniforge3/envs/magpie_claude/share/glib-2.0/schemas
+GPROF=x86_64-conda-linux-gnu-gprof
+GIT_PAGER=cat
+GIT_EDITOR=true
+GH_PAGER=cat
+GCC_RANLIB=x86_64-conda-linux-gnu-gcc-ranlib
+GCC_NM=x86_64-conda-linux-gnu-gcc-nm
+GCC_AR=x86_64-conda-linux-gnu-gcc-ar
+GCC=x86_64-conda-linux-gnu-gcc
+FM_HOME=/soft/synopsys/fm/X-2025.06-SP2
+FC_HOME=/soft/synopsys/fusioncompiler/X-2025.06-SP1
+ELFEDIT=x86_64-conda-linux-gnu-elfedit
+DVE_HOME=/soft/synopsys/vcs/X-2025.06-SP1/gui/dve
+DEBUG_CXXFLAGS=-fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-all -fno-plt -Og -g -Wall -Wextra -fvar-tracking-assignments -ffunction-sections -pipe -isystem /home/edauser/miniforge3/envs/magpie_claude/include
+DEBUG_CPPFLAGS=-D_DEBUG -D_FORTIFY_SOURCE=2 -Og -isystem /home/edauser/miniforge3/envs/magpie_claude/include
+DEBUG_CFLAGS=-march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-all -fno-plt -Og -g -Wall -Wextra -fvar-tracking-assignments -ffunction-sections -pipe -isystem /home/edauser/miniforge3/envs/magpie_claude/include
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+CXX_FOR_BUILD=x86_64-conda-linux-gnu-c++
+CXXFILT=x86_64-conda-linux-gnu-c++filt
+CXX=x86_64-conda-linux-gnu-g++
+CUSTOM_HOME=/soft/synopsys/customcompiler/X-2025.06
+CPP_FOR_BUILD=x86_64-conda-linux-gnu-cpp
+CPP=x86_64-conda-linux-gnu-cpp
+COREPACK_ENABLE_AUTO_PIN=0
+CONDA_TOOLCHAIN_HOST=x86_64-conda-linux-gnu
+CONDA_TOOLCHAIN_BUILD=x86_64-conda-linux-gnu
+CONDA_SHLVL=1
+CONDA_PYTHON_EXE=/home/edauser/miniforge3/bin/python
+CONDA_PROMPT_MODIFIER=(conda_env) 
+CONDA_PREFIX=/home/edauser/miniforge3/envs/magpie_claude
+CONDA_EXE=/home/edauser/miniforge3/bin/conda
+CONDA_DEFAULT_ENV=magpie_claude
+CONDA_BUILD_SYSROOT=/home/edauser/miniforge3/envs/magpie_claude/x86_64-conda-linux-gnu/sysroot
+CONDA_BUILD_CROSS_COMPILATION=
+COLORTERM=
+CODEX_THREAD_ID=019eac98-bb9f-7601-b21c-b78b557305cf
+CODEX_MANAGED_PACKAGE_ROOT=/home/edauser/.npm-global/lib/node_modules/@openai/codex
+CODEX_MANAGED_BY_NPM=1
+CODEX_CI=1
+CMAKE_PREFIX_PATH=/home/edauser/miniforge3/envs/magpie_claude:/home/edauser/miniforge3/envs/magpie_claude/x86_64-conda-linux-gnu/sysroot/usr
+CMAKE_ARGS=-DCMAKE_AR=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-ar -DCMAKE_CXX_COMPILER_AR=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ar -DCMAKE_C_COMPILER_AR=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ar -DCMAKE_RANLIB=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-ranlib -DCMAKE_CXX_COMPILER_RANLIB=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ranlib -DCMAKE_C_COMPILER_RANLIB=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ranlib -DCMAKE_LINKER=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-ld -DCMAKE_STRIP=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-strip -DCMAKE_BUILD_TYPE=Release
+CLAUDE_EFFORT=high
+CLAUDE_CODE_SESSION_ID=bb93bc90-4eb6-4f3e-be5e-aa8d9c94185c
+CLAUDE_CODE_EXECPATH=/home/edauser/.local/share/claude/versions/2.1.169
+CLAUDE_CODE_ENTRYPOINT=cli
+CLAUDECODE=1
+CDS_ROOT=/soft/cadence/IC251
+CDS_Netlisting_Mode=Analog
+CDS_LOAD_ENV=CSF
+CDS_LIC_FILE=/soft/license/Cadence_license.lic
+CDS_INST_DIR=/soft/cadence/IC251
+CDS_AUTO_64BIT=ALL
+CDSHOME=/soft/cadence/IC251
+CC_FOR_BUILD=x86_64-conda-linux-gnu-cc
+CC=x86_64-conda-linux-gnu-cc
+CALIBRE_HOME=/soft/mentor/calibre_aok_2025.4_36.20/aok_cal_2025.4_36.20
+BUILD=x86_64-conda-linux-gnu
+BASH_FUNC_which%%=() {  ( alias;_ eval ${which_declare} ) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot $@_}
+AS=x86_64-conda-linux-gnu-as
+AR=x86_64-conda-linux-gnu-ar
+ANTHROPIC_MODEL=opus
+AI_AGENT=claude-code_2-1-169_agent
+ADDR2LINE=x86_64-conda-linux-gnu-addr2line
+0
+0
+5
+1780913533 ../../../../IP/cpu_m1/rtl/def.vh
+1756893921 /soft/synopsys/vcs/X-2025.06-SP1/linux64/packages/snps_msv_nettype_pkg/AN.DB
+1781012196 ../../../../IP/cpu_m1/dv/tb/tb_cdec_unit.v
+1781011585 ../../../../IP/cpu_m1/rtl/cdec.v
+1756869355 /soft/synopsys/vcs/X-2025.06-SP1/include/cm_vcsd.tab
+4
+1765663725 /soft/synopsys/vcs/X-2025.06-SP1/linux64/lib/libvirsim.so
+1765663697 /soft/synopsys/vcs/X-2025.06-SP1/linux64/lib/liberrorinf.so
+1765663771 /soft/synopsys/vcs/X-2025.06-SP1/linux64/lib/libsnpsmalloc.so
+1765663716 /soft/synopsys/vcs/X-2025.06-SP1/linux64/lib/libvfs.so
+1781012228 simv.daidir
+-1 partitionlib

@@ -1,0 +1,13 @@
+TRACE_A cyc=0 ref_term=0 top_term=0 ref_v=0 top_v=0 ref_count=0 top_count=0
+         if_pc=00000002 if_ex_valid=1 any_stall=0 at_cross=0 upcoming=0 warmup=0
+TRACE_A cyc=1 ref_term=0 top_term=0 ref_v=0 top_v=0 ref_count=0 top_count=0
+         if_pc=00000004 if_ex_valid=1 any_stall=0 at_cross=0 upcoming=0 warmup=0
+TRACE_A cyc=2 ref_term=1 top_term=1 ref_v=1 top_v=1 ref_count=0 top_count=0
+         if_pc=00000008 if_ex_valid=1 any_stall=0 at_cross=0 upcoming=0 warmup=0
+TRACE_A top commit[0] pc=00000000 instr=00004137
+ASSERT_A pass: zero-wait baseline equivalence with 1 commits
+TRACE_B(        I_WAIT_1) terminal at pc=00000000 is_illegal=1 commit=0
+ASSERT_B(        I_WAIT_1) fail: commit count mismatch ref=1 top=0
+[215] %Fatal: tb_mem_wrapper.v:435: Assertion failed in tb_mem_wrapper.run_backpressure
+%Error: tb_mem_wrapper.v:435: Verilog $stop
+Aborting...

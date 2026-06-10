@@ -1,0 +1,15 @@
+[options]
+mode prove
+depth 4
+
+[engines]
+smtbmc z3
+
+[script]
+read_verilog -formal -sv -I ../../rtl ../../rtl/rfu.v rfu_assert_bind.sv
+prep -top rfu
+
+[files]
+../../rtl/def.vh
+../../rtl/rfu.v
+rfu_assert_bind.sv

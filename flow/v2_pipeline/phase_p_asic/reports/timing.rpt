@@ -1,0 +1,1937 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -nworst 5
+        -max_paths 20
+Design : cpu_m1_asic_top
+Version: X-2025.06-SP2
+Date   : Wed Jun 10 12:24:10 2026
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: tt0p9v25c   Library: tcbn28hpcplusbwp40p140tt0p9v25c
+Wire Load Model Mode: segmented
+
+  Startpoint: u_cpu/u_cpu/u_core/if_ex_instr_reg[22]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/if_ex_instr_reg[22]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/if_ex_instr_reg[22]/Q (DFQD2BWP40P140)
+                                                          0.07       0.07 f
+  U8513/Z (BUFFD4BWP40P140)                               0.03       0.09 f
+  u_cpu/u_cpu/u_core/u_rfu/rs2_idx[2] (rfu)               0.00       0.09 f
+  u_cpu/u_cpu/u_core/u_rfu/U36/ZN (NR2D1BWP40P140)        0.02       0.11 r
+  u_cpu/u_cpu/u_core/u_rfu/U37/ZN (ND2D1BWP40P140)        0.02       0.13 f
+  u_cpu/u_cpu/u_core/u_rfu/U45/ZN (INR2D1BWP40P140)       0.10       0.24 r
+  u_cpu/u_cpu/u_core/u_rfu/U320/ZN (AOI22D1BWP40P140)     0.04       0.27 f
+  u_cpu/u_cpu/u_core/u_rfu/U321/ZN (ND4D0BWP40P140)       0.03       0.30 r
+  u_cpu/u_cpu/u_core/u_rfu/U337/Z (OR4D1BWP40P140)        0.03       0.33 r
+  u_cpu/u_cpu/u_core/u_rfu/rs2_data[0] (rfu)              0.00       0.33 r
+  U5650/ZN (AOI21OPTREPBD1BWP40P140)                      0.03       0.36 f
+  U6195/ZN (OAI21D1BWP40P140)                             0.05       0.41 r
+  U6196/Z (XOR2UD1BWP40P140)                              0.03       0.44 f
+  U6198/ZN (AOI21D1BWP40P140)                             0.02       0.46 r
+  U8617/ZN (OAI21D1BWP40P140)                             0.02       0.48 f
+  U8622/ZN (AOI21D1BWP40P140)                             0.02       0.50 r
+  U8626/ZN (OAI21D1BWP40P140)                             0.03       0.53 f
+  U8631/ZN (AOI21D2BWP40P140)                             0.02       0.55 r
+  U286/ZN (OAI21D1P5BWP40P140)                            0.02       0.56 f
+  U8640/ZN (AOI21D1P5BWP40P140)                           0.02       0.58 r
+  U8644/ZN (OAI21D1P5BWP40P140)                           0.02       0.60 f
+  U8649/ZN (AOI21D2BWP40P140)                             0.02       0.62 r
+  U8653/ZN (OAI21D1BWP40P140)                             0.02       0.64 f
+  U8658/ZN (AOI21D1BWP40P140)                             0.02       0.66 r
+  U8662/ZN (OAI21D1BWP40P140)                             0.02       0.68 f
+  U8667/ZN (AOI21D1BWP40P140)                             0.02       0.71 r
+  U8671/ZN (OAI21D1BWP40P140)                             0.02       0.73 f
+  U8676/ZN (AOI21D1BWP40P140)                             0.03       0.76 r
+  U8680/ZN (OAI21D2BWP40P140)                             0.02       0.78 f
+  U8685/ZN (AOI21D1BWP40P140)                             0.02       0.80 r
+  U8689/ZN (OAI21D2BWP40P140)                             0.02       0.82 f
+  U8694/ZN (AOI21D1BWP40P140)                             0.02       0.84 r
+  U8773/ZN (OAI21D2BWP40P140)                             0.02       0.86 f
+  U8778/ZN (AOI21D1BWP40P140)                             0.02       0.88 r
+  U8782/ZN (OAI21D2BWP40P140)                             0.02       0.90 f
+  U8787/ZN (AOI21D1BWP40P140)                             0.02       0.92 r
+  U8927/ZN (OAI21D1BWP40P140)                             0.03       0.95 f
+  U9071/CO (FA1OPTCD1BWP40P140)                           0.03       0.98 f
+  U9050/CO (FA1D1BWP40P140)                               0.04       1.01 f
+  U8956/CO (FA1OPTCD1BWP40P140)                           0.03       1.04 f
+  U9027/CO (FA1D1BWP40P140)                               0.04       1.08 f
+  U8984/CO (FA1OPTCD1BWP40P140)                           0.03       1.10 f
+  U9105/CO (FA1D1BWP40P140)                               0.04       1.14 f
+  U9085/CO (FA1OPTCD1BWP40P140)                           0.02       1.17 f
+  U9088/Z (XOR2UD1BWP40P140)                              0.01       1.18 r
+  U9103/ZN (AOI211D1BWP40P140)                            0.02       1.20 f
+  U9104/Z (XOR2UD1BWP40P140)                              0.03       1.23 f
+  U9120/ZN (NR4D0BWP40P140)                               0.02       1.25 r
+  U9415/ZN (ND3D0P7BWP40P140)                             0.02       1.27 f
+  U9416/ZN (OAI31D1BWP40P140)                             0.02       1.29 r
+  U404/ZN (OAI21D1BWP40P140)                              0.02       1.31 f
+  U9417/ZN (AOI21OPTREPBD1BWP40P140)                      0.01       1.32 r
+  U9418/ZN (OAI211D1BWP40P140)                            0.02       1.35 f
+  U9419/ZN (OAI211D1BWP40P140)                            0.02       1.36 r
+  U9420/ZN (IOA21D1BWP40P140)                             0.02       1.38 f
+  u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg/D (DFQD1BWP40P140)
+                                                          0.00       1.38 f
+  data arrival time                                                  1.38
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                      0.00       1.38
+  data required time                                                 1.38
+  --------------------------------------------------------------------------
+  data required time                                                 1.38
+  data arrival time                                                 -1.38
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/if_ex_instr_reg[22]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/if_ex_instr_reg[22]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/if_ex_instr_reg[22]/Q (DFQD2BWP40P140)
+                                                          0.07       0.07 f
+  U8513/Z (BUFFD4BWP40P140)                               0.03       0.09 f
+  u_cpu/u_cpu/u_core/u_rfu/rs2_idx[2] (rfu)               0.00       0.09 f
+  u_cpu/u_cpu/u_core/u_rfu/U36/ZN (NR2D1BWP40P140)        0.02       0.11 r
+  u_cpu/u_cpu/u_core/u_rfu/U37/ZN (ND2D1BWP40P140)        0.02       0.13 f
+  u_cpu/u_cpu/u_core/u_rfu/U45/ZN (INR2D1BWP40P140)       0.10       0.24 r
+  u_cpu/u_cpu/u_core/u_rfu/U320/ZN (AOI22D1BWP40P140)     0.04       0.27 f
+  u_cpu/u_cpu/u_core/u_rfu/U321/ZN (ND4D0BWP40P140)       0.03       0.30 r
+  u_cpu/u_cpu/u_core/u_rfu/U337/Z (OR4D1BWP40P140)        0.03       0.33 r
+  u_cpu/u_cpu/u_core/u_rfu/rs2_data[0] (rfu)              0.00       0.33 r
+  U5650/ZN (AOI21OPTREPBD1BWP40P140)                      0.03       0.36 f
+  U6195/ZN (OAI21D1BWP40P140)                             0.05       0.41 r
+  U6196/Z (XOR2UD1BWP40P140)                              0.03       0.44 f
+  U6198/ZN (AOI21D1BWP40P140)                             0.02       0.46 r
+  U8617/ZN (OAI21D1BWP40P140)                             0.02       0.48 f
+  U8622/ZN (AOI21D1BWP40P140)                             0.02       0.50 r
+  U8626/ZN (OAI21D1BWP40P140)                             0.03       0.53 f
+  U8631/ZN (AOI21D2BWP40P140)                             0.02       0.55 r
+  U286/ZN (OAI21D1P5BWP40P140)                            0.02       0.56 f
+  U8640/ZN (AOI21D1P5BWP40P140)                           0.02       0.58 r
+  U8644/ZN (OAI21D1P5BWP40P140)                           0.02       0.60 f
+  U8649/ZN (AOI21D2BWP40P140)                             0.02       0.62 r
+  U8653/ZN (OAI21D1BWP40P140)                             0.02       0.64 f
+  U8658/ZN (AOI21D1BWP40P140)                             0.02       0.66 r
+  U8662/ZN (OAI21D1BWP40P140)                             0.02       0.68 f
+  U8667/ZN (AOI21D1BWP40P140)                             0.02       0.71 r
+  U8671/ZN (OAI21D1BWP40P140)                             0.02       0.73 f
+  U8676/ZN (AOI21D1BWP40P140)                             0.03       0.76 r
+  U8680/ZN (OAI21D2BWP40P140)                             0.02       0.78 f
+  U8685/ZN (AOI21D1BWP40P140)                             0.02       0.80 r
+  U8689/ZN (OAI21D2BWP40P140)                             0.02       0.82 f
+  U8694/ZN (AOI21D1BWP40P140)                             0.02       0.84 r
+  U8773/ZN (OAI21D2BWP40P140)                             0.02       0.86 f
+  U8778/ZN (AOI21D1BWP40P140)                             0.02       0.88 r
+  U8782/ZN (OAI21D2BWP40P140)                             0.02       0.90 f
+  U8787/ZN (AOI21D1BWP40P140)                             0.02       0.92 r
+  U8927/ZN (OAI21D1BWP40P140)                             0.03       0.95 f
+  U9071/CO (FA1OPTCD1BWP40P140)                           0.03       0.98 f
+  U9050/CO (FA1D1BWP40P140)                               0.04       1.01 f
+  U8956/CO (FA1OPTCD1BWP40P140)                           0.03       1.04 f
+  U9027/CO (FA1D1BWP40P140)                               0.04       1.08 f
+  U8984/CO (FA1OPTCD1BWP40P140)                           0.03       1.10 f
+  U9105/CO (FA1D1BWP40P140)                               0.04       1.14 f
+  U9085/CO (FA1OPTCD1BWP40P140)                           0.02       1.17 f
+  U9088/Z (XOR2UD1BWP40P140)                              0.01       1.18 r
+  U9103/ZN (AOI211D1BWP40P140)                            0.02       1.20 f
+  U9104/Z (XOR2UD1BWP40P140)                              0.03       1.23 f
+  U9120/ZN (NR4D0BWP40P140)                               0.02       1.25 r
+  U9415/ZN (ND3D0P7BWP40P140)                             0.02       1.27 f
+  U9416/ZN (OAI31D1BWP40P140)                             0.02       1.29 r
+  U404/ZN (OAI21D1BWP40P140)                              0.02       1.31 f
+  U9417/ZN (AOI21OPTREPBD1BWP40P140)                      0.01       1.32 r
+  U9418/ZN (OAI211D1BWP40P140)                            0.02       1.35 f
+  U9419/ZN (OAI211D1BWP40P140)                            0.02       1.36 r
+  U9420/ZN (IOA21D1BWP40P140)                             0.02       1.38 f
+  u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg/D (DFQD1BWP40P140)
+                                                          0.00       1.38 f
+  data arrival time                                                  1.38
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                      0.00       1.38
+  data required time                                                 1.38
+  --------------------------------------------------------------------------
+  data required time                                                 1.38
+  data arrival time                                                 -1.38
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/if_ex_instr_reg[22]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/if_ex_instr_reg[22]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/if_ex_instr_reg[22]/Q (DFQD2BWP40P140)
+                                                          0.07       0.07 f
+  U8513/Z (BUFFD4BWP40P140)                               0.03       0.09 f
+  u_cpu/u_cpu/u_core/u_rfu/rs2_idx[2] (rfu)               0.00       0.09 f
+  u_cpu/u_cpu/u_core/u_rfu/U36/ZN (NR2D1BWP40P140)        0.02       0.11 r
+  u_cpu/u_cpu/u_core/u_rfu/U37/ZN (ND2D1BWP40P140)        0.02       0.13 f
+  u_cpu/u_cpu/u_core/u_rfu/U45/ZN (INR2D1BWP40P140)       0.10       0.24 r
+  u_cpu/u_cpu/u_core/u_rfu/U320/ZN (AOI22D1BWP40P140)     0.04       0.27 f
+  u_cpu/u_cpu/u_core/u_rfu/U321/ZN (ND4D0BWP40P140)       0.03       0.30 r
+  u_cpu/u_cpu/u_core/u_rfu/U337/Z (OR4D1BWP40P140)        0.03       0.33 r
+  u_cpu/u_cpu/u_core/u_rfu/rs2_data[0] (rfu)              0.00       0.33 r
+  U5650/ZN (AOI21OPTREPBD1BWP40P140)                      0.03       0.36 f
+  U6195/ZN (OAI21D1BWP40P140)                             0.05       0.41 r
+  U6196/Z (XOR2UD1BWP40P140)                              0.03       0.44 f
+  U6198/ZN (AOI21D1BWP40P140)                             0.02       0.46 r
+  U8617/ZN (OAI21D1BWP40P140)                             0.02       0.48 f
+  U8622/ZN (AOI21D1BWP40P140)                             0.02       0.50 r
+  U8626/ZN (OAI21D1BWP40P140)                             0.03       0.53 f
+  U8631/ZN (AOI21D2BWP40P140)                             0.02       0.55 r
+  U286/ZN (OAI21D1P5BWP40P140)                            0.02       0.56 f
+  U8640/ZN (AOI21D1P5BWP40P140)                           0.02       0.58 r
+  U8644/ZN (OAI21D1P5BWP40P140)                           0.02       0.60 f
+  U8649/ZN (AOI21D2BWP40P140)                             0.02       0.62 r
+  U8653/ZN (OAI21D1BWP40P140)                             0.02       0.64 f
+  U8658/ZN (AOI21D1BWP40P140)                             0.02       0.66 r
+  U8662/ZN (OAI21D1BWP40P140)                             0.02       0.68 f
+  U8667/ZN (AOI21D1BWP40P140)                             0.02       0.71 r
+  U8671/ZN (OAI21D1BWP40P140)                             0.02       0.73 f
+  U8676/ZN (AOI21D1BWP40P140)                             0.03       0.76 r
+  U8680/ZN (OAI21D2BWP40P140)                             0.02       0.78 f
+  U8685/ZN (AOI21D1BWP40P140)                             0.02       0.80 r
+  U8689/ZN (OAI21D2BWP40P140)                             0.02       0.82 f
+  U8694/ZN (AOI21D1BWP40P140)                             0.02       0.84 r
+  U8773/ZN (OAI21D2BWP40P140)                             0.02       0.86 f
+  U8778/ZN (AOI21D1BWP40P140)                             0.02       0.88 r
+  U8782/ZN (OAI21D2BWP40P140)                             0.02       0.90 f
+  U8787/ZN (AOI21D1BWP40P140)                             0.02       0.92 r
+  U8927/ZN (OAI21D1BWP40P140)                             0.03       0.95 f
+  U9071/CO (FA1OPTCD1BWP40P140)                           0.03       0.98 f
+  U9050/CO (FA1D1BWP40P140)                               0.04       1.01 f
+  U8956/CO (FA1OPTCD1BWP40P140)                           0.03       1.04 f
+  U9027/CO (FA1D1BWP40P140)                               0.04       1.08 f
+  U8984/CO (FA1OPTCD1BWP40P140)                           0.03       1.10 f
+  U9105/CO (FA1D1BWP40P140)                               0.04       1.14 f
+  U9085/CO (FA1OPTCD1BWP40P140)                           0.02       1.17 f
+  U9088/Z (XOR2UD1BWP40P140)                              0.01       1.18 r
+  U9103/ZN (AOI211D1BWP40P140)                            0.02       1.20 f
+  U9104/Z (XOR2UD1BWP40P140)                              0.03       1.23 f
+  U9120/ZN (NR4D0BWP40P140)                               0.02       1.25 r
+  U9415/ZN (ND3D0P7BWP40P140)                             0.02       1.27 f
+  U9416/ZN (OAI31D1BWP40P140)                             0.02       1.29 r
+  U404/ZN (OAI21D1BWP40P140)                              0.02       1.31 f
+  U9417/ZN (AOI21OPTREPBD1BWP40P140)                      0.01       1.32 r
+  U9418/ZN (OAI211D1BWP40P140)                            0.02       1.35 f
+  U9419/ZN (OAI211D1BWP40P140)                            0.02       1.36 r
+  U9420/ZN (IOA21D1BWP40P140)                             0.02       1.38 f
+  u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg/D (DFQD1BWP40P140)
+                                                          0.00       1.38 f
+  data arrival time                                                  1.38
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                      0.00       1.38
+  data required time                                                 1.38
+  --------------------------------------------------------------------------
+  data required time                                                 1.38
+  data arrival time                                                 -1.38
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/if_ex_instr_reg[22]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/if_ex_instr_reg[22]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/if_ex_instr_reg[22]/Q (DFQD2BWP40P140)
+                                                          0.07       0.07 f
+  U8513/Z (BUFFD4BWP40P140)                               0.03       0.09 f
+  u_cpu/u_cpu/u_core/u_rfu/rs2_idx[2] (rfu)               0.00       0.09 f
+  u_cpu/u_cpu/u_core/u_rfu/U36/ZN (NR2D1BWP40P140)        0.02       0.11 r
+  u_cpu/u_cpu/u_core/u_rfu/U37/ZN (ND2D1BWP40P140)        0.02       0.13 f
+  u_cpu/u_cpu/u_core/u_rfu/U45/ZN (INR2D1BWP40P140)       0.10       0.24 r
+  u_cpu/u_cpu/u_core/u_rfu/U320/ZN (AOI22D1BWP40P140)     0.04       0.27 f
+  u_cpu/u_cpu/u_core/u_rfu/U321/ZN (ND4D0BWP40P140)       0.03       0.30 r
+  u_cpu/u_cpu/u_core/u_rfu/U337/Z (OR4D1BWP40P140)        0.03       0.33 r
+  u_cpu/u_cpu/u_core/u_rfu/rs2_data[0] (rfu)              0.00       0.33 r
+  U5650/ZN (AOI21OPTREPBD1BWP40P140)                      0.03       0.36 f
+  U6195/ZN (OAI21D1BWP40P140)                             0.05       0.41 r
+  U6196/Z (XOR2UD1BWP40P140)                              0.03       0.44 f
+  U6198/ZN (AOI21D1BWP40P140)                             0.02       0.46 r
+  U8617/ZN (OAI21D1BWP40P140)                             0.02       0.48 f
+  U8622/ZN (AOI21D1BWP40P140)                             0.02       0.50 r
+  U8626/ZN (OAI21D1BWP40P140)                             0.03       0.53 f
+  U8631/ZN (AOI21D2BWP40P140)                             0.02       0.55 r
+  U286/ZN (OAI21D1P5BWP40P140)                            0.02       0.56 f
+  U8640/ZN (AOI21D1P5BWP40P140)                           0.02       0.58 r
+  U8644/ZN (OAI21D1P5BWP40P140)                           0.02       0.60 f
+  U8649/ZN (AOI21D2BWP40P140)                             0.02       0.62 r
+  U8653/ZN (OAI21D1BWP40P140)                             0.02       0.64 f
+  U8658/ZN (AOI21D1BWP40P140)                             0.02       0.66 r
+  U8662/ZN (OAI21D1BWP40P140)                             0.02       0.68 f
+  U8667/ZN (AOI21D1BWP40P140)                             0.02       0.71 r
+  U8671/ZN (OAI21D1BWP40P140)                             0.02       0.73 f
+  U8676/ZN (AOI21D1BWP40P140)                             0.03       0.76 r
+  U8680/ZN (OAI21D2BWP40P140)                             0.02       0.78 f
+  U8685/ZN (AOI21D1BWP40P140)                             0.02       0.80 r
+  U8689/ZN (OAI21D2BWP40P140)                             0.02       0.82 f
+  U8694/ZN (AOI21D1BWP40P140)                             0.02       0.84 r
+  U8773/ZN (OAI21D2BWP40P140)                             0.02       0.86 f
+  U8778/ZN (AOI21D1BWP40P140)                             0.02       0.88 r
+  U8782/ZN (OAI21D2BWP40P140)                             0.02       0.90 f
+  U8787/ZN (AOI21D1BWP40P140)                             0.02       0.92 r
+  U8927/ZN (OAI21D1BWP40P140)                             0.03       0.95 f
+  U9071/CO (FA1OPTCD1BWP40P140)                           0.03       0.98 f
+  U9050/CO (FA1D1BWP40P140)                               0.04       1.01 f
+  U8956/CO (FA1OPTCD1BWP40P140)                           0.03       1.04 f
+  U9027/CO (FA1D1BWP40P140)                               0.04       1.08 f
+  U8984/CO (FA1OPTCD1BWP40P140)                           0.03       1.10 f
+  U9105/CO (FA1D1BWP40P140)                               0.04       1.14 f
+  U9085/CO (FA1OPTCD1BWP40P140)                           0.02       1.17 f
+  U9088/Z (XOR2UD1BWP40P140)                              0.01       1.18 r
+  U9103/ZN (AOI211D1BWP40P140)                            0.02       1.20 f
+  U9104/Z (XOR2UD1BWP40P140)                              0.03       1.23 f
+  U9120/ZN (NR4D0BWP40P140)                               0.02       1.25 r
+  U9415/ZN (ND3D0P7BWP40P140)                             0.02       1.27 f
+  U9416/ZN (OAI31D1BWP40P140)                             0.02       1.29 r
+  U404/ZN (OAI21D1BWP40P140)                              0.02       1.31 f
+  U9417/ZN (AOI21OPTREPBD1BWP40P140)                      0.01       1.32 r
+  U9418/ZN (OAI211D1BWP40P140)                            0.02       1.35 f
+  U9419/ZN (OAI211D1BWP40P140)                            0.02       1.36 r
+  U9420/ZN (IOA21D1BWP40P140)                             0.02       1.38 f
+  u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg/D (DFQD1BWP40P140)
+                                                          0.00       1.38 f
+  data arrival time                                                  1.38
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                      0.00       1.38
+  data required time                                                 1.38
+  --------------------------------------------------------------------------
+  data required time                                                 1.38
+  data arrival time                                                 -1.38
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/if_ex_instr_reg[22]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/if_ex_instr_reg[22]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/if_ex_instr_reg[22]/Q (DFQD2BWP40P140)
+                                                          0.07       0.07 f
+  U8513/Z (BUFFD4BWP40P140)                               0.03       0.09 f
+  u_cpu/u_cpu/u_core/u_rfu/rs2_idx[2] (rfu)               0.00       0.09 f
+  u_cpu/u_cpu/u_core/u_rfu/U36/ZN (NR2D1BWP40P140)        0.02       0.11 r
+  u_cpu/u_cpu/u_core/u_rfu/U37/ZN (ND2D1BWP40P140)        0.02       0.13 f
+  u_cpu/u_cpu/u_core/u_rfu/U45/ZN (INR2D1BWP40P140)       0.10       0.24 r
+  u_cpu/u_cpu/u_core/u_rfu/U320/ZN (AOI22D1BWP40P140)     0.04       0.27 f
+  u_cpu/u_cpu/u_core/u_rfu/U321/ZN (ND4D0BWP40P140)       0.03       0.30 r
+  u_cpu/u_cpu/u_core/u_rfu/U337/Z (OR4D1BWP40P140)        0.03       0.33 r
+  u_cpu/u_cpu/u_core/u_rfu/rs2_data[0] (rfu)              0.00       0.33 r
+  U5650/ZN (AOI21OPTREPBD1BWP40P140)                      0.03       0.36 f
+  U6195/ZN (OAI21D1BWP40P140)                             0.05       0.41 r
+  U6196/Z (XOR2UD1BWP40P140)                              0.03       0.44 f
+  U6198/ZN (AOI21D1BWP40P140)                             0.02       0.46 r
+  U8617/ZN (OAI21D1BWP40P140)                             0.02       0.48 f
+  U8622/ZN (AOI21D1BWP40P140)                             0.02       0.50 r
+  U8626/ZN (OAI21D1BWP40P140)                             0.03       0.53 f
+  U8631/ZN (AOI21D2BWP40P140)                             0.02       0.55 r
+  U286/ZN (OAI21D1P5BWP40P140)                            0.02       0.56 f
+  U8640/ZN (AOI21D1P5BWP40P140)                           0.02       0.58 r
+  U8644/ZN (OAI21D1P5BWP40P140)                           0.02       0.60 f
+  U8649/ZN (AOI21D2BWP40P140)                             0.02       0.62 r
+  U8653/ZN (OAI21D1BWP40P140)                             0.02       0.64 f
+  U8658/ZN (AOI21D1BWP40P140)                             0.02       0.66 r
+  U8662/ZN (OAI21D1BWP40P140)                             0.02       0.68 f
+  U8667/ZN (AOI21D1BWP40P140)                             0.02       0.71 r
+  U8671/ZN (OAI21D1BWP40P140)                             0.02       0.73 f
+  U8676/ZN (AOI21D1BWP40P140)                             0.03       0.76 r
+  U8680/ZN (OAI21D2BWP40P140)                             0.02       0.78 f
+  U8685/ZN (AOI21D1BWP40P140)                             0.02       0.80 r
+  U8689/ZN (OAI21D2BWP40P140)                             0.02       0.82 f
+  U8694/ZN (AOI21D1BWP40P140)                             0.02       0.84 r
+  U8773/ZN (OAI21D2BWP40P140)                             0.02       0.86 f
+  U8778/ZN (AOI21D1BWP40P140)                             0.02       0.88 r
+  U8782/ZN (OAI21D2BWP40P140)                             0.02       0.90 f
+  U8787/ZN (AOI21D1BWP40P140)                             0.02       0.92 r
+  U8927/ZN (OAI21D1BWP40P140)                             0.03       0.95 f
+  U9071/CO (FA1OPTCD1BWP40P140)                           0.03       0.98 f
+  U9050/CO (FA1D1BWP40P140)                               0.04       1.01 f
+  U8956/CO (FA1OPTCD1BWP40P140)                           0.03       1.04 f
+  U9027/CO (FA1D1BWP40P140)                               0.04       1.08 f
+  U8984/CO (FA1OPTCD1BWP40P140)                           0.03       1.10 f
+  U9105/CO (FA1D1BWP40P140)                               0.04       1.14 f
+  U9085/CO (FA1OPTCD1BWP40P140)                           0.02       1.17 f
+  U9088/Z (XOR2UD1BWP40P140)                              0.01       1.18 r
+  U9103/ZN (AOI211D1BWP40P140)                            0.02       1.20 f
+  U9104/Z (XOR2UD1BWP40P140)                              0.03       1.23 f
+  U9120/ZN (NR4D0BWP40P140)                               0.02       1.25 r
+  U9415/ZN (ND3D0P7BWP40P140)                             0.02       1.27 f
+  U9416/ZN (OAI31D1BWP40P140)                             0.02       1.29 r
+  U404/ZN (OAI21D1BWP40P140)                              0.02       1.31 f
+  U9417/ZN (AOI21OPTREPBD1BWP40P140)                      0.01       1.32 r
+  U9418/ZN (OAI211D1BWP40P140)                            0.02       1.35 f
+  U9419/ZN (OAI211D1BWP40P140)                            0.02       1.36 r
+  U9420/ZN (IOA21D1BWP40P140)                             0.02       1.38 f
+  u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg/D (DFQD1BWP40P140)
+                                                          0.00       1.38 f
+  data arrival time                                                  1.38
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/ex_mem_mispredict_r_reg/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                      0.00       1.38
+  data required time                                                 1.38
+  --------------------------------------------------------------------------
+  data required time                                                 1.38
+  data arrival time                                                 -1.38
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[1]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[1]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[1]/Q (DFQD1BWP40P140)
+                                                          0.05       0.05 r
+  U4241/ZN (ND2D1BWP40P140)                               0.02       0.06 f
+  U4251/ZN (NR2D1BWP40P140)                               0.02       0.08 r
+  U4252/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.10 f
+  U4253/ZN (NR2D1BWP40P140)                               0.02       0.12 r
+  U4254/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.14 f
+  U4263/ZN (NR2D1BWP40P140)                               0.02       0.16 r
+  U4264/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.18 f
+  U4266/ZN (NR2D1BWP40P140)                               0.02       0.20 r
+  U4275/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.22 f
+  U416/ZN (NR2D1BWP40P140)                                0.02       0.24 r
+  U4277/ZN (ND2D1BWP40P140)                               0.02       0.26 f
+  U4287/ZN (NR2D1BWP40P140)                               0.02       0.28 r
+  U4297/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.29 f
+  U4299/ZN (NR2D1BWP40P140)                               0.02       0.31 r
+  U4300/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.33 f
+  U4302/ZN (NR2D1BWP40P140)                               0.02       0.35 r
+  U4303/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.37 f
+  U4305/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.39 r
+  U4306/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.41 f
+  U4308/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.42 r
+  U4309/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.44 f
+  U4311/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.45 r
+  U4312/ZN (ND2OPTPAD1BWP40P140)                          0.02       0.47 f
+  U4314/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.48 r
+  U4352/CO (HA1D4BWP40P140)                               0.02       0.51 r
+  U4315/ZN (INVD1BWP40P140)                               0.01       0.51 f
+  U4317/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.53 r
+  U4319/CO (HA1D4BWP40P140)                               0.02       0.55 r
+  U364/Z (CKAN2D1BWP40P140)                               0.02       0.57 r
+  U4361/CO (HA1D4BWP40P140)                               0.02       0.60 r
+  U4374/CO (HA1D4BWP40P140)                               0.02       0.62 r
+  U361/Z (CKAN2D1BWP40P140)                               0.02       0.64 r
+  U287/CO (HA1D2BWP40P140)                                0.03       0.67 r
+  U363/ZN (ND2OPTIBD1BWP40P140)                           0.02       0.68 f
+  U4321/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.70 r
+  U4376/CO (HA1D4BWP40P140)                               0.02       0.72 r
+  U4325/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.73 f
+  U4326/ZN (INVD2BWP40P140)                               0.01       0.74 r
+  U4336/CO (HA1D4BWP40P140)                               0.02       0.77 r
+  U360/Z (CKAN2D1BWP40P140)                               0.02       0.79 r
+  U284/CO (HA1D1BWP40P140)                                0.02       0.81 r
+  U332/Z (CKAN2D1BWP40P140)                               0.02       0.83 r
+  U337/Z (CKAN2D1BWP40P140)                               0.03       0.86 r
+  U6153/CO (HA1D4BWP40P140)                               0.02       0.88 r
+  U6705/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.90 f
+  U6706/ZN (INVD2BWP40P140)                               0.01       0.91 r
+  U308/CO (HA1D1BWP40P140)                                0.02       0.93 r
+  U6796/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.94 f
+  U6797/ZN (INVD2BWP40P140)                               0.01       0.95 r
+  U6834/CO (HA1D4BWP40P140)                               0.02       0.98 r
+  U6849/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.99 f
+  U6850/ZN (INVD2BWP40P140)                               0.01       1.00 r
+  U7020/CO (HA1D4BWP40P140)                               0.02       1.02 r
+  U7051/ZN (ND2OPTIBD1BWP40P140)                          0.01       1.03 f
+  U7052/ZN (INVD2BWP40P140)                               0.01       1.05 r
+  U7101/CO (HA1D4BWP40P140)                               0.02       1.07 r
+  U7188/CO (HA1D4BWP40P140)                               0.02       1.09 r
+  U7450/CO (HA1D4BWP40P140)                               0.02       1.11 r
+  U7461/CO (HA1D4BWP40P140)                               0.02       1.14 r
+  U7501/CO (HA1D4BWP40P140)                               0.02       1.16 r
+  U7524/CO (HA1D4BWP40P140)                               0.02       1.18 r
+  U7552/CO (HA1D4BWP40P140)                               0.02       1.20 r
+  U7576/ZN (ND2OPTIBD1BWP40P140)                          0.01       1.22 f
+  U7577/ZN (INVD2BWP40P140)                               0.01       1.23 r
+  U7587/CO (HA1D4BWP40P140)                               0.02       1.25 r
+  U7598/CO (HA1D4BWP40P140)                               0.02       1.27 r
+  U7602/CO (HA1D4BWP40P140)                               0.02       1.29 r
+  U7606/CO (HA1D4BWP40P140)                               0.02       1.32 r
+  U437/Z (XOR2UD1BWP40P140)                               0.01       1.33 r
+  U7607/Z (AO22D0BWP40P140)                               0.03       1.36 r
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]/D (DFQD1BWP40P140)
+                                                          0.00       1.36 r
+  data arrival time                                                  1.36
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.02       1.36
+  data required time                                                 1.36
+  --------------------------------------------------------------------------
+  data required time                                                 1.36
+  data arrival time                                                 -1.36
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[1]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[63]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[1]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[1]/Q (DFQD1BWP40P140)
+                                                          0.05       0.05 r
+  U2876/ZN (ND2D1BWP40P140)                               0.02       0.06 f
+  U2877/ZN (NR2D1BWP40P140)                               0.02       0.08 r
+  U2878/ZN (ND2D1BWP40P140)                               0.02       0.10 f
+  U2880/ZN (NR2D1BWP40P140)                               0.02       0.12 r
+  U2881/ZN (ND2D1BWP40P140)                               0.02       0.14 f
+  U2883/ZN (NR2D1BWP40P140)                               0.02       0.16 r
+  U2884/ZN (ND2D1BWP40P140)                               0.02       0.18 f
+  U2885/ZN (NR2D1BWP40P140)                               0.02       0.20 r
+  U2886/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.22 f
+  U2888/ZN (NR2D1BWP40P140)                               0.02       0.24 r
+  U2898/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.26 f
+  U2900/ZN (NR2OPTPAD1BWP40P140)                          0.02       0.28 r
+  U2901/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.30 f
+  U411/ZN (NR2D1BWP40P140)                                0.02       0.31 r
+  U2905/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.34 f
+  U2907/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.35 r
+  U2920/ZN (ND2OPTIBD2BWP40P140)                          0.01       0.36 f
+  U2930/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.38 r
+  U2934/ZN (ND2OPTIBD2BWP40P140)                          0.01       0.39 f
+  U2947/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.40 r
+  U2951/ZN (ND2OPTIBD2BWP40P140)                          0.01       0.42 f
+  U2955/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.43 r
+  U2958/ZN (ND2OPTIBD2BWP40P140)                          0.01       0.44 f
+  U2968/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.45 r
+  U305/CO (HA1D1BWP40P140)                                0.02       0.48 r
+  U327/Z (CKAN2D1BWP40P140)                               0.02       0.50 r
+  U430/CO (HA1D1BWP40P140)                                0.02       0.52 r
+  U318/Z (CKAN2D1BWP40P140)                               0.03       0.55 r
+  U3219/CO (HA1D4BWP40P140)                               0.02       0.58 r
+  U3243/CO (HA1D4BWP40P140)                               0.02       0.60 r
+  U345/ZN (ND2OPTIBD1BWP40P140)                           0.01       0.61 f
+  U302/ZN (NR2OPTPAD1BWP40P140)                           0.02       0.63 r
+  U285/CO (HA1D1BWP40P140)                                0.03       0.65 r
+  U331/Z (CKAN2D1BWP40P140)                               0.02       0.68 r
+  U283/CO (HA1D1BWP40P140)                                0.02       0.70 r
+  U328/Z (CKAN2D1BWP40P140)                               0.02       0.72 r
+  U306/CO (HA1D1BWP40P140)                                0.02       0.75 r
+  U321/Z (CKAN2D1BWP40P140)                               0.02       0.77 r
+  U325/Z (CKAN2D1BWP40P140)                               0.02       0.79 r
+  U282/CO (HA1D1BWP40P140)                                0.02       0.82 r
+  U320/Z (CKAN2D1BWP40P140)                               0.02       0.84 r
+  U431/CO (HA1D1BWP40P140)                                0.02       0.87 r
+  U322/Z (CKAN2D1BWP40P140)                               0.02       0.89 r
+  U281/CO (HA1D1BWP40P140)                                0.02       0.92 r
+  U329/Z (CKAN2D1BWP40P140)                               0.02       0.94 r
+  U280/CO (HA1D1BWP40P140)                                0.03       0.96 r
+  U341/ZN (ND2OPTIBD1BWP40P140)                           0.01       0.98 f
+  U414/ZN (NR2D1BWP40P140)                                0.02       1.00 r
+  U278/CO (HA1D1BWP40P140)                                0.03       1.02 r
+  U326/Z (CKAN2D1BWP40P140)                               0.02       1.05 r
+  U307/CO (HA1D1BWP40P140)                                0.03       1.07 r
+  U277/CO (HA1D2BWP40P140)                                0.03       1.10 r
+  U275/CO (HA1D2BWP40P140)                                0.03       1.12 r
+  U330/Z (CKAN2D1BWP40P140)                               0.02       1.15 r
+  U319/Z (CKAN2D1BWP40P140)                               0.03       1.17 r
+  U7567/CO (HA1D4BWP40P140)                               0.02       1.20 r
+  U432/CO (HA1D1BWP40P140)                                0.03       1.22 r
+  U7600/CO (HA1D4BWP40P140)                               0.02       1.25 r
+  U7604/CO (HA1D4BWP40P140)                               0.02       1.27 r
+  U7608/CO (HA1D4BWP40P140)                               0.02       1.29 r
+  U7610/CO (HA1D4BWP40P140)                               0.02       1.31 r
+  U7611/Z (XOR2UD1BWP40P140)                              0.01       1.33 r
+  U7612/ZN (INR2D1BWP40P140)                              0.02       1.35 r
+  u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[63]/D (DFQD1BWP40P140)
+                                                          0.00       1.35 r
+  data arrival time                                                  1.35
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[63]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.03       1.35
+  data required time                                                 1.35
+  --------------------------------------------------------------------------
+  data required time                                                 1.35
+  data arrival time                                                 -1.35
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[0]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[0]/Q (DFQD2BWP40P140)
+                                                          0.05       0.05 r
+  U4241/ZN (ND2D1BWP40P140)                               0.02       0.06 f
+  U4251/ZN (NR2D1BWP40P140)                               0.02       0.08 r
+  U4252/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.10 f
+  U4253/ZN (NR2D1BWP40P140)                               0.02       0.12 r
+  U4254/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.14 f
+  U4263/ZN (NR2D1BWP40P140)                               0.02       0.16 r
+  U4264/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.18 f
+  U4266/ZN (NR2D1BWP40P140)                               0.02       0.20 r
+  U4275/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.22 f
+  U416/ZN (NR2D1BWP40P140)                                0.02       0.24 r
+  U4277/ZN (ND2D1BWP40P140)                               0.02       0.26 f
+  U4287/ZN (NR2D1BWP40P140)                               0.02       0.28 r
+  U4297/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.29 f
+  U4299/ZN (NR2D1BWP40P140)                               0.02       0.31 r
+  U4300/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.33 f
+  U4302/ZN (NR2D1BWP40P140)                               0.02       0.35 r
+  U4303/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.37 f
+  U4305/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.39 r
+  U4306/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.41 f
+  U4308/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.42 r
+  U4309/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.44 f
+  U4311/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.45 r
+  U4312/ZN (ND2OPTPAD1BWP40P140)                          0.02       0.47 f
+  U4314/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.48 r
+  U4352/CO (HA1D4BWP40P140)                               0.02       0.51 r
+  U4315/ZN (INVD1BWP40P140)                               0.01       0.51 f
+  U4317/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.53 r
+  U4319/CO (HA1D4BWP40P140)                               0.02       0.55 r
+  U364/Z (CKAN2D1BWP40P140)                               0.02       0.57 r
+  U4361/CO (HA1D4BWP40P140)                               0.02       0.60 r
+  U4374/CO (HA1D4BWP40P140)                               0.02       0.62 r
+  U361/Z (CKAN2D1BWP40P140)                               0.02       0.64 r
+  U287/CO (HA1D2BWP40P140)                                0.03       0.67 r
+  U363/ZN (ND2OPTIBD1BWP40P140)                           0.02       0.68 f
+  U4321/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.70 r
+  U4376/CO (HA1D4BWP40P140)                               0.02       0.72 r
+  U4325/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.73 f
+  U4326/ZN (INVD2BWP40P140)                               0.01       0.74 r
+  U4336/CO (HA1D4BWP40P140)                               0.02       0.77 r
+  U360/Z (CKAN2D1BWP40P140)                               0.02       0.79 r
+  U284/CO (HA1D1BWP40P140)                                0.02       0.81 r
+  U332/Z (CKAN2D1BWP40P140)                               0.02       0.83 r
+  U337/Z (CKAN2D1BWP40P140)                               0.03       0.86 r
+  U6153/CO (HA1D4BWP40P140)                               0.02       0.88 r
+  U6705/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.90 f
+  U6706/ZN (INVD2BWP40P140)                               0.01       0.91 r
+  U308/CO (HA1D1BWP40P140)                                0.02       0.93 r
+  U6796/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.94 f
+  U6797/ZN (INVD2BWP40P140)                               0.01       0.95 r
+  U6834/CO (HA1D4BWP40P140)                               0.02       0.98 r
+  U6849/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.99 f
+  U6850/ZN (INVD2BWP40P140)                               0.01       1.00 r
+  U7020/CO (HA1D4BWP40P140)                               0.02       1.02 r
+  U7051/ZN (ND2OPTIBD1BWP40P140)                          0.01       1.03 f
+  U7052/ZN (INVD2BWP40P140)                               0.01       1.05 r
+  U7101/CO (HA1D4BWP40P140)                               0.02       1.07 r
+  U7188/CO (HA1D4BWP40P140)                               0.02       1.09 r
+  U7450/CO (HA1D4BWP40P140)                               0.02       1.11 r
+  U7461/CO (HA1D4BWP40P140)                               0.02       1.14 r
+  U7501/CO (HA1D4BWP40P140)                               0.02       1.16 r
+  U7524/CO (HA1D4BWP40P140)                               0.02       1.18 r
+  U7552/CO (HA1D4BWP40P140)                               0.02       1.20 r
+  U7576/ZN (ND2OPTIBD1BWP40P140)                          0.01       1.22 f
+  U7577/ZN (INVD2BWP40P140)                               0.01       1.23 r
+  U7587/CO (HA1D4BWP40P140)                               0.02       1.25 r
+  U7598/CO (HA1D4BWP40P140)                               0.02       1.27 r
+  U7602/CO (HA1D4BWP40P140)                               0.02       1.29 r
+  U7606/CO (HA1D4BWP40P140)                               0.02       1.32 r
+  U437/Z (XOR2UD1BWP40P140)                               0.01       1.33 r
+  U7607/Z (AO22D0BWP40P140)                               0.03       1.36 r
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]/D (DFQD1BWP40P140)
+                                                          0.00       1.36 r
+  data arrival time                                                  1.36
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.02       1.36
+  data required time                                                 1.36
+  --------------------------------------------------------------------------
+  data required time                                                 1.36
+  data arrival time                                                 -1.36
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[2]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[2]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[2]/Q (DFQD1BWP40P140)
+                                                          0.05       0.05 r
+  U4250/ZN (ND2D1BWP40P140)                               0.01       0.06 f
+  U4251/ZN (NR2D1BWP40P140)                               0.02       0.08 r
+  U4252/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.10 f
+  U4253/ZN (NR2D1BWP40P140)                               0.02       0.12 r
+  U4254/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.14 f
+  U4263/ZN (NR2D1BWP40P140)                               0.02       0.16 r
+  U4264/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.18 f
+  U4266/ZN (NR2D1BWP40P140)                               0.02       0.20 r
+  U4275/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.21 f
+  U416/ZN (NR2D1BWP40P140)                                0.02       0.23 r
+  U4277/ZN (ND2D1BWP40P140)                               0.02       0.25 f
+  U4287/ZN (NR2D1BWP40P140)                               0.02       0.27 r
+  U4297/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.29 f
+  U4299/ZN (NR2D1BWP40P140)                               0.02       0.31 r
+  U4300/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.33 f
+  U4302/ZN (NR2D1BWP40P140)                               0.02       0.35 r
+  U4303/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.37 f
+  U4305/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.39 r
+  U4306/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.41 f
+  U4308/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.42 r
+  U4309/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.44 f
+  U4311/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.45 r
+  U4312/ZN (ND2OPTPAD1BWP40P140)                          0.02       0.47 f
+  U4314/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.48 r
+  U4352/CO (HA1D4BWP40P140)                               0.02       0.50 r
+  U4315/ZN (INVD1BWP40P140)                               0.01       0.51 f
+  U4317/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.52 r
+  U4319/CO (HA1D4BWP40P140)                               0.02       0.55 r
+  U364/Z (CKAN2D1BWP40P140)                               0.02       0.57 r
+  U4361/CO (HA1D4BWP40P140)                               0.02       0.60 r
+  U4374/CO (HA1D4BWP40P140)                               0.02       0.62 r
+  U361/Z (CKAN2D1BWP40P140)                               0.02       0.64 r
+  U287/CO (HA1D2BWP40P140)                                0.03       0.67 r
+  U363/ZN (ND2OPTIBD1BWP40P140)                           0.02       0.68 f
+  U4321/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.70 r
+  U4376/CO (HA1D4BWP40P140)                               0.02       0.72 r
+  U4325/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.73 f
+  U4326/ZN (INVD2BWP40P140)                               0.01       0.74 r
+  U4336/CO (HA1D4BWP40P140)                               0.02       0.76 r
+  U360/Z (CKAN2D1BWP40P140)                               0.02       0.79 r
+  U284/CO (HA1D1BWP40P140)                                0.02       0.81 r
+  U332/Z (CKAN2D1BWP40P140)                               0.02       0.83 r
+  U337/Z (CKAN2D1BWP40P140)                               0.03       0.86 r
+  U6153/CO (HA1D4BWP40P140)                               0.02       0.88 r
+  U6705/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.90 f
+  U6706/ZN (INVD2BWP40P140)                               0.01       0.91 r
+  U308/CO (HA1D1BWP40P140)                                0.02       0.93 r
+  U6796/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.94 f
+  U6797/ZN (INVD2BWP40P140)                               0.01       0.95 r
+  U6834/CO (HA1D4BWP40P140)                               0.02       0.98 r
+  U6849/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.99 f
+  U6850/ZN (INVD2BWP40P140)                               0.01       1.00 r
+  U7020/CO (HA1D4BWP40P140)                               0.02       1.02 r
+  U7051/ZN (ND2OPTIBD1BWP40P140)                          0.01       1.03 f
+  U7052/ZN (INVD2BWP40P140)                               0.01       1.04 r
+  U7101/CO (HA1D4BWP40P140)                               0.02       1.07 r
+  U7188/CO (HA1D4BWP40P140)                               0.02       1.09 r
+  U7450/CO (HA1D4BWP40P140)                               0.02       1.11 r
+  U7461/CO (HA1D4BWP40P140)                               0.02       1.14 r
+  U7501/CO (HA1D4BWP40P140)                               0.02       1.16 r
+  U7524/CO (HA1D4BWP40P140)                               0.02       1.18 r
+  U7552/CO (HA1D4BWP40P140)                               0.02       1.20 r
+  U7576/ZN (ND2OPTIBD1BWP40P140)                          0.01       1.21 f
+  U7577/ZN (INVD2BWP40P140)                               0.01       1.23 r
+  U7587/CO (HA1D4BWP40P140)                               0.02       1.25 r
+  U7598/CO (HA1D4BWP40P140)                               0.02       1.27 r
+  U7602/CO (HA1D4BWP40P140)                               0.02       1.29 r
+  U7606/CO (HA1D4BWP40P140)                               0.02       1.31 r
+  U437/Z (XOR2UD1BWP40P140)                               0.01       1.33 r
+  U7607/Z (AO22D0BWP40P140)                               0.03       1.36 r
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]/D (DFQD1BWP40P140)
+                                                          0.00       1.36 r
+  data arrival time                                                  1.36
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.02       1.36
+  data required time                                                 1.36
+  --------------------------------------------------------------------------
+  data required time                                                 1.36
+  data arrival time                                                 -1.36
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_mul/result_reg[30]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]/Q (DFQD2BWP40P140)
+                                                          0.09       0.09 f
+  U798/ZN (XNR2UD0BWP40P140)                              0.04       0.13 f
+  U800/ZN (IND2D1BWP40P140)                               0.11       0.24 f
+  U1368/ZN (OAI21D0P7BWP40P140)                           0.05       0.28 r
+  U1369/Z (XOR2UD1BWP40P140)                              0.03       0.31 r
+  U1381/CO (HA1D0BWP40P140)                               0.04       0.35 r
+  U1376/CO (HA1D0BWP40P140)                               0.03       0.38 r
+  U1371/S (HA1D0BWP40P140)                                0.03       0.41 f
+  U1402/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.42 r
+  U1403/ZN (INVD1BWP40P140)                               0.01       0.43 f
+  U1404/Z (AO21D1BWP40P140)                               0.03       0.46 f
+  U1407/ZN (AOI21D1BWP40P140)                             0.02       0.48 r
+  U1418/ZN (OAI21D1BWP40P140)                             0.02       0.50 f
+  U1424/ZN (AOI21D1BWP40P140)                             0.02       0.52 r
+  U1426/ZN (OAI21D1BWP40P140)                             0.02       0.54 f
+  U1429/ZN (AOI21D1BWP40P140)                             0.02       0.56 r
+  U1435/ZN (OAI21D1BWP40P140)                             0.02       0.58 f
+  U1456/ZN (AOI21D1BWP40P140)                             0.02       0.60 r
+  U1461/ZN (OAI21D1BWP40P140)                             0.02       0.62 f
+  U1465/ZN (AOI21D1BWP40P140)                             0.02       0.64 r
+  U1526/ZN (OAI21D1BWP40P140)                             0.02       0.66 f
+  U1621/ZN (AOI21D1BWP40P140)                             0.02       0.68 r
+  U1681/ZN (OAI21D1BWP40P140)                             0.02       0.70 f
+  U1706/ZN (AOI21OPTREPBD1BWP40P140)                      0.02       0.72 r
+  U1713/ZN (OAI21D1BWP40P140)                             0.02       0.74 f
+  U1854/ZN (AOI21D2BWP40P140)                             0.02       0.76 r
+  U1897/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       0.78 f
+  U1940/ZN (AOI21D2BWP40P140)                             0.02       0.79 r
+  U1980/ZN (OAI21D1P5BWP40P140)                           0.02       0.81 f
+  U2020/ZN (AOI21D2BWP40P140)                             0.02       0.83 r
+  U2058/ZN (OAI21D2BWP40P140)                             0.01       0.84 f
+  U2095/ZN (AOI21D1BWP40P140)                             0.02       0.86 r
+  U2130/ZN (OAI21D1BWP40P140)                             0.03       0.89 f
+  U2165/ZN (AOI21D2BWP40P140)                             0.02       0.91 r
+  U2197/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       0.93 f
+  U2229/ZN (AOI21D1BWP40P140)                             0.02       0.95 r
+  U2259/ZN (OAI21D1P5BWP40P140)                           0.02       0.96 f
+  U407/ZN (AOI21D1BWP40P140)                              0.02       0.99 r
+  U2314/ZN (OAI21D1P5BWP40P140)                           0.02       1.01 f
+  U2341/ZN (AOI21D2BWP40P140)                             0.02       1.03 r
+  U2365/ZN (OAI21D2BWP40P140)                             0.01       1.04 f
+  U2389/ZN (AOI21D1BWP40P140)                             0.02       1.06 r
+  U2411/ZN (OAI21D2BWP40P140)                             0.02       1.08 f
+  U2432/ZN (AOI21D2BWP40P140)                             0.02       1.10 r
+  U2451/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       1.12 f
+  U2470/ZN (AOI21D2BWP40P140)                             0.02       1.13 r
+  U2486/ZN (OAI21D2BWP40P140)                             0.02       1.15 f
+  U2501/ZN (AOI21D2BWP40P140)                             0.02       1.17 r
+  U2507/ZN (OAI21D2BWP40P140)                             0.02       1.18 f
+  U2513/Z (AO21D1BWP40P140)                               0.03       1.21 f
+  U7617/CO (FA1OPTCD1BWP40P140)                           0.03       1.24 f
+  U303/CO (FA1OPTCD1BWP40P140)                            0.03       1.26 f
+  U425/S (FA1D1BWP40P140)                                 0.06       1.32 r
+  U2522/ZN (AOI222D1BWP40P140)                            0.02       1.34 f
+  U2523/ZN (INVD1BWP40P140)                               0.02       1.36 r
+  u_cpu/u_cpu/u_core/u_mul/result_reg[30]/D (DFQD1BWP40P140)
+                                                          0.00       1.36 r
+  data arrival time                                                  1.36
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_mul/result_reg[30]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.02       1.36
+  data required time                                                 1.36
+  --------------------------------------------------------------------------
+  data required time                                                 1.36
+  data arrival time                                                 -1.36
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_mul/result_reg[30]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]/Q (DFQD2BWP40P140)
+                                                          0.09       0.09 f
+  U798/ZN (XNR2UD0BWP40P140)                              0.04       0.13 f
+  U800/ZN (IND2D1BWP40P140)                               0.11       0.24 f
+  U1368/ZN (OAI21D0P7BWP40P140)                           0.05       0.28 r
+  U1369/Z (XOR2UD1BWP40P140)                              0.03       0.31 r
+  U1381/CO (HA1D0BWP40P140)                               0.04       0.35 r
+  U1376/CO (HA1D0BWP40P140)                               0.03       0.38 r
+  U1371/S (HA1D0BWP40P140)                                0.03       0.41 f
+  U1402/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.42 r
+  U1403/ZN (INVD1BWP40P140)                               0.01       0.43 f
+  U1404/Z (AO21D1BWP40P140)                               0.03       0.46 f
+  U1407/ZN (AOI21D1BWP40P140)                             0.02       0.48 r
+  U1418/ZN (OAI21D1BWP40P140)                             0.02       0.50 f
+  U1424/ZN (AOI21D1BWP40P140)                             0.02       0.52 r
+  U1426/ZN (OAI21D1BWP40P140)                             0.02       0.54 f
+  U1429/ZN (AOI21D1BWP40P140)                             0.02       0.56 r
+  U1435/ZN (OAI21D1BWP40P140)                             0.02       0.58 f
+  U1456/ZN (AOI21D1BWP40P140)                             0.02       0.60 r
+  U1461/ZN (OAI21D1BWP40P140)                             0.02       0.62 f
+  U1465/ZN (AOI21D1BWP40P140)                             0.02       0.64 r
+  U1526/ZN (OAI21D1BWP40P140)                             0.02       0.66 f
+  U1621/ZN (AOI21D1BWP40P140)                             0.02       0.68 r
+  U1681/ZN (OAI21D1BWP40P140)                             0.02       0.70 f
+  U1706/ZN (AOI21OPTREPBD1BWP40P140)                      0.02       0.72 r
+  U1713/ZN (OAI21D1BWP40P140)                             0.02       0.74 f
+  U1854/ZN (AOI21D2BWP40P140)                             0.02       0.76 r
+  U1897/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       0.78 f
+  U1940/ZN (AOI21D2BWP40P140)                             0.02       0.79 r
+  U1980/ZN (OAI21D1P5BWP40P140)                           0.02       0.81 f
+  U2020/ZN (AOI21D2BWP40P140)                             0.02       0.83 r
+  U2058/ZN (OAI21D2BWP40P140)                             0.01       0.84 f
+  U2095/ZN (AOI21D1BWP40P140)                             0.02       0.86 r
+  U2130/ZN (OAI21D1BWP40P140)                             0.03       0.89 f
+  U2165/ZN (AOI21D2BWP40P140)                             0.02       0.91 r
+  U2197/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       0.93 f
+  U2229/ZN (AOI21D1BWP40P140)                             0.02       0.95 r
+  U2259/ZN (OAI21D1P5BWP40P140)                           0.02       0.96 f
+  U407/ZN (AOI21D1BWP40P140)                              0.02       0.99 r
+  U2314/ZN (OAI21D1P5BWP40P140)                           0.02       1.01 f
+  U2341/ZN (AOI21D2BWP40P140)                             0.02       1.03 r
+  U2365/ZN (OAI21D2BWP40P140)                             0.01       1.04 f
+  U2389/ZN (AOI21D1BWP40P140)                             0.02       1.06 r
+  U2411/ZN (OAI21D2BWP40P140)                             0.02       1.08 f
+  U2432/ZN (AOI21D2BWP40P140)                             0.02       1.10 r
+  U2451/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       1.12 f
+  U2470/ZN (AOI21D2BWP40P140)                             0.02       1.13 r
+  U2486/ZN (OAI21D2BWP40P140)                             0.02       1.15 f
+  U2501/ZN (AOI21D2BWP40P140)                             0.02       1.17 r
+  U2507/ZN (OAI21D2BWP40P140)                             0.02       1.18 f
+  U2513/Z (AO21D1BWP40P140)                               0.03       1.21 f
+  U7617/CO (FA1OPTCD1BWP40P140)                           0.03       1.24 f
+  U303/CO (FA1OPTCD1BWP40P140)                            0.03       1.26 f
+  U425/S (FA1D1BWP40P140)                                 0.06       1.32 r
+  U2522/ZN (AOI222D1BWP40P140)                            0.02       1.34 f
+  U2523/ZN (INVD1BWP40P140)                               0.02       1.36 r
+  u_cpu/u_cpu/u_core/u_mul/result_reg[30]/D (DFQD1BWP40P140)
+                                                          0.00       1.36 r
+  data arrival time                                                  1.36
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_mul/result_reg[30]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.02       1.36
+  data required time                                                 1.36
+  --------------------------------------------------------------------------
+  data required time                                                 1.36
+  data arrival time                                                 -1.36
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_mul/result_reg[30]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]/Q (DFQD2BWP40P140)
+                                                          0.09       0.09 f
+  U798/ZN (XNR2UD0BWP40P140)                              0.04       0.13 f
+  U800/ZN (IND2D1BWP40P140)                               0.11       0.24 f
+  U1368/ZN (OAI21D0P7BWP40P140)                           0.05       0.28 r
+  U1369/Z (XOR2UD1BWP40P140)                              0.03       0.31 r
+  U1381/CO (HA1D0BWP40P140)                               0.04       0.35 r
+  U1376/CO (HA1D0BWP40P140)                               0.03       0.38 r
+  U1371/S (HA1D0BWP40P140)                                0.03       0.41 f
+  U1402/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.42 r
+  U1403/ZN (INVD1BWP40P140)                               0.01       0.43 f
+  U1404/Z (AO21D1BWP40P140)                               0.03       0.46 f
+  U1407/ZN (AOI21D1BWP40P140)                             0.02       0.48 r
+  U1418/ZN (OAI21D1BWP40P140)                             0.02       0.50 f
+  U1424/ZN (AOI21D1BWP40P140)                             0.02       0.52 r
+  U1426/ZN (OAI21D1BWP40P140)                             0.02       0.54 f
+  U1429/ZN (AOI21D1BWP40P140)                             0.02       0.56 r
+  U1435/ZN (OAI21D1BWP40P140)                             0.02       0.58 f
+  U1456/ZN (AOI21D1BWP40P140)                             0.02       0.60 r
+  U1461/ZN (OAI21D1BWP40P140)                             0.02       0.62 f
+  U1465/ZN (AOI21D1BWP40P140)                             0.02       0.64 r
+  U1526/ZN (OAI21D1BWP40P140)                             0.02       0.66 f
+  U1621/ZN (AOI21D1BWP40P140)                             0.02       0.68 r
+  U1681/ZN (OAI21D1BWP40P140)                             0.02       0.70 f
+  U1706/ZN (AOI21OPTREPBD1BWP40P140)                      0.02       0.72 r
+  U1713/ZN (OAI21D1BWP40P140)                             0.02       0.74 f
+  U1854/ZN (AOI21D2BWP40P140)                             0.02       0.76 r
+  U1897/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       0.78 f
+  U1940/ZN (AOI21D2BWP40P140)                             0.02       0.79 r
+  U1980/ZN (OAI21D1P5BWP40P140)                           0.02       0.81 f
+  U2020/ZN (AOI21D2BWP40P140)                             0.02       0.83 r
+  U2058/ZN (OAI21D2BWP40P140)                             0.01       0.84 f
+  U2095/ZN (AOI21D1BWP40P140)                             0.02       0.86 r
+  U2130/ZN (OAI21D1BWP40P140)                             0.03       0.89 f
+  U2165/ZN (AOI21D2BWP40P140)                             0.02       0.91 r
+  U2197/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       0.93 f
+  U2229/ZN (AOI21D1BWP40P140)                             0.02       0.95 r
+  U2259/ZN (OAI21D1P5BWP40P140)                           0.02       0.96 f
+  U407/ZN (AOI21D1BWP40P140)                              0.02       0.99 r
+  U2314/ZN (OAI21D1P5BWP40P140)                           0.02       1.01 f
+  U2341/ZN (AOI21D2BWP40P140)                             0.02       1.03 r
+  U2365/ZN (OAI21D2BWP40P140)                             0.01       1.04 f
+  U2389/ZN (AOI21D1BWP40P140)                             0.02       1.06 r
+  U2411/ZN (OAI21D2BWP40P140)                             0.02       1.08 f
+  U2432/ZN (AOI21D2BWP40P140)                             0.02       1.10 r
+  U2451/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       1.12 f
+  U2470/ZN (AOI21D2BWP40P140)                             0.02       1.13 r
+  U2486/ZN (OAI21D2BWP40P140)                             0.02       1.15 f
+  U2501/ZN (AOI21D2BWP40P140)                             0.02       1.17 r
+  U2507/ZN (OAI21D2BWP40P140)                             0.02       1.18 f
+  U2513/Z (AO21D1BWP40P140)                               0.03       1.21 f
+  U7617/CO (FA1OPTCD1BWP40P140)                           0.03       1.23 f
+  U303/CO (FA1OPTCD1BWP40P140)                            0.03       1.26 f
+  U425/S (FA1D1BWP40P140)                                 0.06       1.32 r
+  U2522/ZN (AOI222D1BWP40P140)                            0.02       1.34 f
+  U2523/ZN (INVD1BWP40P140)                               0.02       1.36 r
+  u_cpu/u_cpu/u_core/u_mul/result_reg[30]/D (DFQD1BWP40P140)
+                                                          0.00       1.36 r
+  data arrival time                                                  1.36
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_mul/result_reg[30]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.02       1.36
+  data required time                                                 1.36
+  --------------------------------------------------------------------------
+  data required time                                                 1.36
+  data arrival time                                                 -1.36
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_mul/result_reg[30]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]/Q (DFQD2BWP40P140)
+                                                          0.09       0.09 f
+  U798/ZN (XNR2UD0BWP40P140)                              0.04       0.13 f
+  U800/ZN (IND2D1BWP40P140)                               0.11       0.24 f
+  U1368/ZN (OAI21D0P7BWP40P140)                           0.05       0.28 r
+  U1369/Z (XOR2UD1BWP40P140)                              0.03       0.31 r
+  U1381/CO (HA1D0BWP40P140)                               0.04       0.35 r
+  U1376/CO (HA1D0BWP40P140)                               0.03       0.38 r
+  U1371/S (HA1D0BWP40P140)                                0.03       0.41 f
+  U1402/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.42 r
+  U1403/ZN (INVD1BWP40P140)                               0.01       0.43 f
+  U1404/Z (AO21D1BWP40P140)                               0.03       0.46 f
+  U1407/ZN (AOI21D1BWP40P140)                             0.02       0.48 r
+  U1418/ZN (OAI21D1BWP40P140)                             0.02       0.50 f
+  U1424/ZN (AOI21D1BWP40P140)                             0.02       0.52 r
+  U1426/ZN (OAI21D1BWP40P140)                             0.02       0.54 f
+  U1429/ZN (AOI21D1BWP40P140)                             0.02       0.56 r
+  U1435/ZN (OAI21D1BWP40P140)                             0.02       0.58 f
+  U1456/ZN (AOI21D1BWP40P140)                             0.02       0.60 r
+  U1461/ZN (OAI21D1BWP40P140)                             0.02       0.62 f
+  U1465/ZN (AOI21D1BWP40P140)                             0.02       0.64 r
+  U1526/ZN (OAI21D1BWP40P140)                             0.02       0.66 f
+  U1621/ZN (AOI21D1BWP40P140)                             0.02       0.68 r
+  U1681/ZN (OAI21D1BWP40P140)                             0.02       0.70 f
+  U1706/ZN (AOI21OPTREPBD1BWP40P140)                      0.02       0.72 r
+  U1713/ZN (OAI21D1BWP40P140)                             0.02       0.74 f
+  U1854/ZN (AOI21D2BWP40P140)                             0.02       0.76 r
+  U1897/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       0.78 f
+  U1940/ZN (AOI21D2BWP40P140)                             0.02       0.79 r
+  U1980/ZN (OAI21D1P5BWP40P140)                           0.02       0.81 f
+  U2020/ZN (AOI21D2BWP40P140)                             0.02       0.83 r
+  U2058/ZN (OAI21D2BWP40P140)                             0.01       0.84 f
+  U2095/ZN (AOI21D1BWP40P140)                             0.02       0.86 r
+  U2130/ZN (OAI21D1BWP40P140)                             0.03       0.89 f
+  U2165/ZN (AOI21D2BWP40P140)                             0.02       0.91 r
+  U2197/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       0.93 f
+  U2229/ZN (AOI21D1BWP40P140)                             0.02       0.95 r
+  U2259/ZN (OAI21D1P5BWP40P140)                           0.02       0.96 f
+  U407/ZN (AOI21D1BWP40P140)                              0.02       0.99 r
+  U2314/ZN (OAI21D1P5BWP40P140)                           0.02       1.01 f
+  U2341/ZN (AOI21D2BWP40P140)                             0.02       1.03 r
+  U2365/ZN (OAI21D2BWP40P140)                             0.01       1.04 f
+  U2389/ZN (AOI21D1BWP40P140)                             0.02       1.06 r
+  U2411/ZN (OAI21D2BWP40P140)                             0.02       1.08 f
+  U2432/ZN (AOI21D2BWP40P140)                             0.02       1.10 r
+  U2451/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       1.12 f
+  U2470/ZN (AOI21D2BWP40P140)                             0.02       1.13 r
+  U2486/ZN (OAI21D2BWP40P140)                             0.02       1.15 f
+  U2501/ZN (AOI21D2BWP40P140)                             0.02       1.17 r
+  U2507/ZN (OAI21D2BWP40P140)                             0.02       1.18 f
+  U2513/Z (AO21D1BWP40P140)                               0.03       1.21 f
+  U7617/CO (FA1OPTCD1BWP40P140)                           0.03       1.24 f
+  U303/CO (FA1OPTCD1BWP40P140)                            0.03       1.26 f
+  U425/S (FA1D1BWP40P140)                                 0.06       1.32 r
+  U2522/ZN (AOI222D1BWP40P140)                            0.02       1.34 f
+  U2523/ZN (INVD1BWP40P140)                               0.02       1.36 r
+  u_cpu/u_cpu/u_core/u_mul/result_reg[30]/D (DFQD1BWP40P140)
+                                                          0.00       1.36 r
+  data arrival time                                                  1.36
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_mul/result_reg[30]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.02       1.36
+  data required time                                                 1.36
+  --------------------------------------------------------------------------
+  data required time                                                 1.36
+  data arrival time                                                 -1.36
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_mul/result_reg[30]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_mul/opa_r_reg[2]/Q (DFQD2BWP40P140)
+                                                          0.09       0.09 f
+  U798/ZN (XNR2UD0BWP40P140)                              0.04       0.13 f
+  U800/ZN (IND2D1BWP40P140)                               0.11       0.24 f
+  U1368/ZN (OAI21D0P7BWP40P140)                           0.05       0.28 r
+  U1369/Z (XOR2UD1BWP40P140)                              0.03       0.31 r
+  U1381/CO (HA1D0BWP40P140)                               0.04       0.35 r
+  U1376/CO (HA1D0BWP40P140)                               0.03       0.38 r
+  U1371/S (HA1D0BWP40P140)                                0.03       0.41 f
+  U1402/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.42 r
+  U1403/ZN (INVD1BWP40P140)                               0.01       0.43 f
+  U1404/Z (AO21D1BWP40P140)                               0.03       0.46 f
+  U1407/ZN (AOI21D1BWP40P140)                             0.02       0.48 r
+  U1418/ZN (OAI21D1BWP40P140)                             0.02       0.50 f
+  U1424/ZN (AOI21D1BWP40P140)                             0.02       0.52 r
+  U1426/ZN (OAI21D1BWP40P140)                             0.02       0.54 f
+  U1429/ZN (AOI21D1BWP40P140)                             0.02       0.56 r
+  U1435/ZN (OAI21D1BWP40P140)                             0.02       0.58 f
+  U1456/ZN (AOI21D1BWP40P140)                             0.02       0.60 r
+  U1461/ZN (OAI21D1BWP40P140)                             0.02       0.62 f
+  U1465/ZN (AOI21D1BWP40P140)                             0.02       0.64 r
+  U1526/ZN (OAI21D1BWP40P140)                             0.02       0.66 f
+  U1621/ZN (AOI21D1BWP40P140)                             0.02       0.68 r
+  U1681/ZN (OAI21D1BWP40P140)                             0.02       0.70 f
+  U1706/ZN (AOI21OPTREPBD1BWP40P140)                      0.02       0.72 r
+  U1713/ZN (OAI21D1BWP40P140)                             0.02       0.74 f
+  U1854/ZN (AOI21D2BWP40P140)                             0.02       0.76 r
+  U1897/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       0.78 f
+  U1940/ZN (AOI21D2BWP40P140)                             0.02       0.79 r
+  U1980/ZN (OAI21D1P5BWP40P140)                           0.02       0.81 f
+  U2020/ZN (AOI21D2BWP40P140)                             0.02       0.83 r
+  U2058/ZN (OAI21D2BWP40P140)                             0.01       0.84 f
+  U2095/ZN (AOI21D1BWP40P140)                             0.02       0.86 r
+  U2130/ZN (OAI21D1BWP40P140)                             0.03       0.89 f
+  U2165/ZN (AOI21D2BWP40P140)                             0.02       0.91 r
+  U2197/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       0.93 f
+  U2229/ZN (AOI21D1BWP40P140)                             0.02       0.95 r
+  U2259/ZN (OAI21D1P5BWP40P140)                           0.02       0.96 f
+  U407/ZN (AOI21D1BWP40P140)                              0.02       0.99 r
+  U2314/ZN (OAI21D1P5BWP40P140)                           0.02       1.01 f
+  U2341/ZN (AOI21D2BWP40P140)                             0.02       1.03 r
+  U2365/ZN (OAI21D2BWP40P140)                             0.01       1.04 f
+  U2389/ZN (AOI21D1BWP40P140)                             0.02       1.06 r
+  U2411/ZN (OAI21D2BWP40P140)                             0.02       1.08 f
+  U2432/ZN (AOI21D2BWP40P140)                             0.02       1.10 r
+  U2451/ZN (OAI21OPTREPBD2BWP40P140)                      0.01       1.12 f
+  U2470/ZN (AOI21D2BWP40P140)                             0.02       1.13 r
+  U2486/ZN (OAI21D2BWP40P140)                             0.02       1.15 f
+  U2501/ZN (AOI21D2BWP40P140)                             0.02       1.17 r
+  U2507/ZN (OAI21D2BWP40P140)                             0.02       1.18 f
+  U2513/Z (AO21D1BWP40P140)                               0.03       1.21 f
+  U7617/CO (FA1OPTCD1BWP40P140)                           0.03       1.23 f
+  U303/CO (FA1OPTCD1BWP40P140)                            0.03       1.26 f
+  U425/S (FA1D1BWP40P140)                                 0.06       1.32 r
+  U2522/ZN (AOI222D1BWP40P140)                            0.02       1.34 f
+  U2523/ZN (INVD1BWP40P140)                               0.02       1.36 r
+  u_cpu/u_cpu/u_core/u_mul/result_reg[30]/D (DFQD1BWP40P140)
+                                                          0.00       1.36 r
+  data arrival time                                                  1.36
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_mul/result_reg[30]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.02       1.36
+  data required time                                                 1.36
+  --------------------------------------------------------------------------
+  data required time                                                 1.36
+  data arrival time                                                 -1.36
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[63]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[0]/CP (DFQD2BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[0]/Q (DFQD2BWP40P140)
+                                                          0.05       0.05 r
+  U2876/ZN (ND2D1BWP40P140)                               0.02       0.06 f
+  U2877/ZN (NR2D1BWP40P140)                               0.02       0.08 r
+  U2878/ZN (ND2D1BWP40P140)                               0.02       0.10 f
+  U2880/ZN (NR2D1BWP40P140)                               0.02       0.12 r
+  U2881/ZN (ND2D1BWP40P140)                               0.02       0.14 f
+  U2883/ZN (NR2D1BWP40P140)                               0.02       0.16 r
+  U2884/ZN (ND2D1BWP40P140)                               0.02       0.18 f
+  U2885/ZN (NR2D1BWP40P140)                               0.02       0.20 r
+  U2886/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.22 f
+  U2888/ZN (NR2D1BWP40P140)                               0.02       0.24 r
+  U2898/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.26 f
+  U2900/ZN (NR2OPTPAD1BWP40P140)                          0.02       0.28 r
+  U2901/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.29 f
+  U411/ZN (NR2D1BWP40P140)                                0.02       0.31 r
+  U2905/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.33 f
+  U2907/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.35 r
+  U2920/ZN (ND2OPTIBD2BWP40P140)                          0.01       0.36 f
+  U2930/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.37 r
+  U2934/ZN (ND2OPTIBD2BWP40P140)                          0.01       0.39 f
+  U2947/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.40 r
+  U2951/ZN (ND2OPTIBD2BWP40P140)                          0.01       0.41 f
+  U2955/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.43 r
+  U2958/ZN (ND2OPTIBD2BWP40P140)                          0.01       0.44 f
+  U2968/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.45 r
+  U305/CO (HA1D1BWP40P140)                                0.02       0.47 r
+  U327/Z (CKAN2D1BWP40P140)                               0.02       0.50 r
+  U430/CO (HA1D1BWP40P140)                                0.02       0.52 r
+  U318/Z (CKAN2D1BWP40P140)                               0.03       0.55 r
+  U3219/CO (HA1D4BWP40P140)                               0.02       0.57 r
+  U3243/CO (HA1D4BWP40P140)                               0.02       0.60 r
+  U345/ZN (ND2OPTIBD1BWP40P140)                           0.01       0.61 f
+  U302/ZN (NR2OPTPAD1BWP40P140)                           0.02       0.62 r
+  U285/CO (HA1D1BWP40P140)                                0.03       0.65 r
+  U331/Z (CKAN2D1BWP40P140)                               0.02       0.67 r
+  U283/CO (HA1D1BWP40P140)                                0.02       0.70 r
+  U328/Z (CKAN2D1BWP40P140)                               0.02       0.72 r
+  U306/CO (HA1D1BWP40P140)                                0.02       0.75 r
+  U321/Z (CKAN2D1BWP40P140)                               0.02       0.77 r
+  U325/Z (CKAN2D1BWP40P140)                               0.02       0.79 r
+  U282/CO (HA1D1BWP40P140)                                0.02       0.82 r
+  U320/Z (CKAN2D1BWP40P140)                               0.02       0.84 r
+  U431/CO (HA1D1BWP40P140)                                0.02       0.87 r
+  U322/Z (CKAN2D1BWP40P140)                               0.02       0.89 r
+  U281/CO (HA1D1BWP40P140)                                0.02       0.91 r
+  U329/Z (CKAN2D1BWP40P140)                               0.02       0.94 r
+  U280/CO (HA1D1BWP40P140)                                0.03       0.96 r
+  U341/ZN (ND2OPTIBD1BWP40P140)                           0.01       0.98 f
+  U414/ZN (NR2D1BWP40P140)                                0.02       1.00 r
+  U278/CO (HA1D1BWP40P140)                                0.03       1.02 r
+  U326/Z (CKAN2D1BWP40P140)                               0.02       1.05 r
+  U307/CO (HA1D1BWP40P140)                                0.03       1.07 r
+  U277/CO (HA1D2BWP40P140)                                0.03       1.10 r
+  U275/CO (HA1D2BWP40P140)                                0.03       1.12 r
+  U330/Z (CKAN2D1BWP40P140)                               0.02       1.15 r
+  U319/Z (CKAN2D1BWP40P140)                               0.03       1.17 r
+  U7567/CO (HA1D4BWP40P140)                               0.02       1.20 r
+  U432/CO (HA1D1BWP40P140)                                0.03       1.22 r
+  U7600/CO (HA1D4BWP40P140)                               0.02       1.25 r
+  U7604/CO (HA1D4BWP40P140)                               0.02       1.27 r
+  U7608/CO (HA1D4BWP40P140)                               0.02       1.29 r
+  U7610/CO (HA1D4BWP40P140)                               0.02       1.31 r
+  U7611/Z (XOR2UD1BWP40P140)                              0.01       1.33 r
+  U7612/ZN (INR2D1BWP40P140)                              0.02       1.35 r
+  u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[63]/D (DFQD1BWP40P140)
+                                                          0.00       1.35 r
+  data arrival time                                                  1.35
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[63]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.03       1.35
+  data required time                                                 1.35
+  --------------------------------------------------------------------------
+  data required time                                                 1.35
+  data arrival time                                                 -1.35
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[1]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[1]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[1]/Q (DFQD1BWP40P140)
+                                                          0.05       0.05 r
+  U4241/ZN (ND2D1BWP40P140)                               0.02       0.06 f
+  U4251/ZN (NR2D1BWP40P140)                               0.02       0.08 r
+  U4252/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.10 f
+  U4253/ZN (NR2D1BWP40P140)                               0.02       0.12 r
+  U4254/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.14 f
+  U4263/ZN (NR2D1BWP40P140)                               0.02       0.16 r
+  U4264/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.18 f
+  U4266/ZN (NR2D1BWP40P140)                               0.02       0.20 r
+  U4275/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.22 f
+  U416/ZN (NR2D1BWP40P140)                                0.02       0.24 r
+  U4277/ZN (ND2D1BWP40P140)                               0.02       0.26 f
+  U4287/ZN (NR2D1BWP40P140)                               0.02       0.28 r
+  U4297/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.29 f
+  U4299/ZN (NR2D1BWP40P140)                               0.02       0.31 r
+  U4300/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.33 f
+  U4302/ZN (NR2D1BWP40P140)                               0.02       0.35 r
+  U4303/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.37 f
+  U4305/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.39 r
+  U4306/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.41 f
+  U4308/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.42 r
+  U4309/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.44 f
+  U4311/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.45 r
+  U4312/ZN (ND2OPTPAD1BWP40P140)                          0.02       0.47 f
+  U4314/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.48 r
+  U4352/CO (HA1D4BWP40P140)                               0.02       0.51 r
+  U4315/ZN (INVD1BWP40P140)                               0.01       0.51 f
+  U4317/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.53 r
+  U4319/CO (HA1D4BWP40P140)                               0.02       0.55 r
+  U364/Z (CKAN2D1BWP40P140)                               0.02       0.57 r
+  U4361/CO (HA1D4BWP40P140)                               0.02       0.60 r
+  U4374/CO (HA1D4BWP40P140)                               0.02       0.62 r
+  U361/Z (CKAN2D1BWP40P140)                               0.02       0.64 r
+  U287/CO (HA1D2BWP40P140)                                0.03       0.67 r
+  U363/ZN (ND2OPTIBD1BWP40P140)                           0.02       0.68 f
+  U4321/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.70 r
+  U4376/CO (HA1D4BWP40P140)                               0.02       0.72 r
+  U4325/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.73 f
+  U4326/ZN (INVD2BWP40P140)                               0.01       0.74 r
+  U4336/CO (HA1D4BWP40P140)                               0.02       0.77 r
+  U360/Z (CKAN2D1BWP40P140)                               0.02       0.79 r
+  U284/CO (HA1D1BWP40P140)                                0.02       0.81 r
+  U332/Z (CKAN2D1BWP40P140)                               0.02       0.83 r
+  U337/Z (CKAN2D1BWP40P140)                               0.03       0.86 r
+  U6153/CO (HA1D4BWP40P140)                               0.02       0.88 r
+  U6705/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.90 f
+  U6706/ZN (INVD2BWP40P140)                               0.01       0.91 r
+  U308/CO (HA1D1BWP40P140)                                0.02       0.93 r
+  U6796/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.94 f
+  U6797/ZN (INVD2BWP40P140)                               0.01       0.95 r
+  U6834/CO (HA1D4BWP40P140)                               0.02       0.98 r
+  U6849/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.99 f
+  U6850/ZN (INVD2BWP40P140)                               0.01       1.00 r
+  U7020/CO (HA1D4BWP40P140)                               0.02       1.02 r
+  U7051/ZN (ND2OPTIBD1BWP40P140)                          0.01       1.03 f
+  U7052/ZN (INVD2BWP40P140)                               0.01       1.05 r
+  U7101/CO (HA1D4BWP40P140)                               0.02       1.07 r
+  U7188/CO (HA1D4BWP40P140)                               0.02       1.09 r
+  U7450/CO (HA1D4BWP40P140)                               0.02       1.11 r
+  U7461/CO (HA1D4BWP40P140)                               0.02       1.14 r
+  U7501/CO (HA1D4BWP40P140)                               0.02       1.16 r
+  U7524/CO (HA1D4BWP40P140)                               0.02       1.18 r
+  U7552/CO (HA1D4BWP40P140)                               0.02       1.20 r
+  U7576/ZN (ND2OPTIBD1BWP40P140)                          0.01       1.22 f
+  U7577/ZN (INVD2BWP40P140)                               0.01       1.23 r
+  U7587/CO (HA1D4BWP40P140)                               0.02       1.25 r
+  U7598/CO (HA1D4BWP40P140)                               0.02       1.27 r
+  U7602/CO (HA1D4BWP40P140)                               0.02       1.29 r
+  U7606/CO (HA1D4BWP40P140)                               0.02       1.32 r
+  U437/Z (XOR2UD1BWP40P140)                               0.01       1.33 r
+  U7607/Z (AO22D0BWP40P140)                               0.03       1.36 r
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]/D (DFQD1BWP40P140)
+                                                          0.00       1.36 r
+  data arrival time                                                  1.36
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.02       1.36
+  data required time                                                 1.36
+  --------------------------------------------------------------------------
+  data required time                                                 1.36
+  data arrival time                                                 -1.36
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[1]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[1]/CP (DFQD1BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[1]/Q (DFQD1BWP40P140)
+                                                          0.05       0.05 r
+  U4241/ZN (ND2D1BWP40P140)                               0.02       0.06 f
+  U4251/ZN (NR2D1BWP40P140)                               0.02       0.08 r
+  U4252/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.10 f
+  U4253/ZN (NR2D1BWP40P140)                               0.02       0.12 r
+  U4254/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.14 f
+  U4263/ZN (NR2D1BWP40P140)                               0.02       0.16 r
+  U4264/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.18 f
+  U4266/ZN (NR2D1BWP40P140)                               0.02       0.20 r
+  U4275/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.22 f
+  U416/ZN (NR2D1BWP40P140)                                0.02       0.24 r
+  U4277/ZN (ND2D1BWP40P140)                               0.02       0.26 f
+  U4287/ZN (NR2D1BWP40P140)                               0.02       0.28 r
+  U4297/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.29 f
+  U4299/ZN (NR2D1BWP40P140)                               0.02       0.31 r
+  U4300/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.33 f
+  U4302/ZN (NR2D1BWP40P140)                               0.02       0.35 r
+  U4303/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.37 f
+  U4305/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.39 r
+  U4306/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.41 f
+  U4308/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.42 r
+  U4309/ZN (ND2OPTIBD1BWP40P140)                          0.02       0.44 f
+  U4311/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.45 r
+  U4312/ZN (ND2OPTPAD1BWP40P140)                          0.02       0.47 f
+  U4314/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.48 r
+  U4352/CO (HA1D4BWP40P140)                               0.02       0.51 r
+  U4315/ZN (INVD1BWP40P140)                               0.01       0.51 f
+  U4317/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.53 r
+  U4319/CO (HA1D4BWP40P140)                               0.02       0.55 r
+  U364/Z (CKAN2D1BWP40P140)                               0.02       0.57 r
+  U4361/CO (HA1D4BWP40P140)                               0.02       0.60 r
+  U4374/CO (HA1D4BWP40P140)                               0.02       0.62 r
+  U361/Z (CKAN2D1BWP40P140)                               0.02       0.64 r
+  U287/CO (HA1D2BWP40P140)                                0.03       0.67 r
+  U363/ZN (ND2OPTIBD1BWP40P140)                           0.02       0.68 f
+  U4321/ZN (NR2OPTPAD2BWP40P140)                          0.01       0.70 r
+  U4376/CO (HA1D4BWP40P140)                               0.02       0.72 r
+  U4325/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.73 f
+  U4326/ZN (INVD2BWP40P140)                               0.01       0.74 r
+  U4336/CO (HA1D4BWP40P140)                               0.02       0.77 r
+  U360/Z (CKAN2D1BWP40P140)                               0.02       0.79 r
+  U284/CO (HA1D1BWP40P140)                                0.02       0.81 r
+  U332/Z (CKAN2D1BWP40P140)                               0.02       0.83 r
+  U337/Z (CKAN2D1BWP40P140)                               0.03       0.86 r
+  U6153/CO (HA1D4BWP40P140)                               0.02       0.88 r
+  U6705/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.90 f
+  U6706/ZN (INVD2BWP40P140)                               0.01       0.91 r
+  U308/CO (HA1D1BWP40P140)                                0.02       0.93 r
+  U6796/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.94 f
+  U6797/ZN (INVD2BWP40P140)                               0.01       0.95 r
+  U6834/CO (HA1D4BWP40P140)                               0.02       0.98 r
+  U6849/ZN (ND2OPTIBD1BWP40P140)                          0.01       0.99 f
+  U6850/ZN (INVD2BWP40P140)                               0.01       1.00 r
+  U7020/CO (HA1D4BWP40P140)                               0.02       1.02 r
+  U7051/ZN (ND2OPTIBD1BWP40P140)                          0.01       1.03 f
+  U7052/ZN (INVD2BWP40P140)                               0.01       1.05 r
+  U7101/CO (HA1D4BWP40P140)                               0.02       1.07 r
+  U7188/CO (HA1D4BWP40P140)                               0.02       1.09 r
+  U7450/CO (HA1D4BWP40P140)                               0.02       1.11 r
+  U7461/CO (HA1D4BWP40P140)                               0.02       1.14 r
+  U7501/CO (HA1D4BWP40P140)                               0.02       1.16 r
+  U7524/CO (HA1D4BWP40P140)                               0.02       1.18 r
+  U7552/CO (HA1D4BWP40P140)                               0.02       1.20 r
+  U7576/ZN (ND2OPTIBD1BWP40P140)                          0.01       1.22 f
+  U7577/ZN (INVD2BWP40P140)                               0.01       1.23 r
+  U7587/CO (HA1D4BWP40P140)                               0.02       1.25 r
+  U7598/CO (HA1D4BWP40P140)                               0.02       1.27 r
+  U7602/CO (HA1D4BWP40P140)                               0.02       1.29 r
+  U7606/CO (HA1D4BWP40P140)                               0.02       1.32 r
+  U437/Z (XOR2UD1BWP40P140)                               0.01       1.33 r
+  U7607/Z (AO22D0BWP40P140)                               0.03       1.36 r
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]/D (DFQD1BWP40P140)
+                                                          0.00       1.36 r
+  data arrival time                                                  1.36
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[63]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.02       1.36
+  data required time                                                 1.36
+  --------------------------------------------------------------------------
+  data required time                                                 1.36
+  data arrival time                                                 -1.36
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_div/divisor_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_div/remainder_reg[4]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_div/divisor_reg[0]/CP (DFQD4BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_div/divisor_reg[0]/Q (DFQD4BWP40P140)
+                                                          0.05       0.05 f
+  U2539/ZN (INVD1BWP40P140)                               0.01       0.06 r
+  U2540/ZN (NR2D1BWP40P140)                               0.01       0.07 f
+  U2541/ZN (MAOI222D1BWP40P140)                           0.03       0.10 r
+  U2542/ZN (INVD2BWP40P140)                               0.01       0.11 f
+  U2545/ZN (OAI22D2BWP40P140)                             0.02       0.13 r
+  U2546/ZN (MAOI222D2BWP40P140)                           0.04       0.16 f
+  U2548/ZN (MAOI222D4BWP40P140)                           0.03       0.20 r
+  U2549/ZN (MAOI222D4BWP40P140)                           0.03       0.23 f
+  U2551/ZN (MAOI222D2BWP40P140)                           0.03       0.26 r
+  U2552/ZN (MAOI222D1BWP40P140)                           0.04       0.31 f
+  U2554/ZN (MAOI222D2BWP40P140)                           0.04       0.34 r
+  U2555/ZN (MAOI222D2BWP40P140)                           0.04       0.38 f
+  U2557/ZN (MAOI222D2BWP40P140)                           0.04       0.42 r
+  U2558/ZN (MAOI222D2BWP40P140)                           0.04       0.46 f
+  U2560/ZN (MAOI222D2BWP40P140)                           0.03       0.49 r
+  U2561/ZN (MAOI222D1BWP40P140)                           0.05       0.54 f
+  U2563/ZN (MAOI222D2BWP40P140)                           0.04       0.58 r
+  U2564/ZN (MAOI222D2BWP40P140)                           0.04       0.62 f
+  U2566/ZN (MAOI222D2BWP40P140)                           0.04       0.65 r
+  U2567/ZN (MAOI222D2BWP40P140)                           0.04       0.69 f
+  U2569/ZN (MAOI222D2BWP40P140)                           0.03       0.72 r
+  U2570/ZN (MAOI222D1BWP40P140)                           0.05       0.77 f
+  U2572/ZN (MAOI222D2BWP40P140)                           0.04       0.81 r
+  U2573/ZN (MAOI222D2BWP40P140)                           0.04       0.85 f
+  U2575/ZN (MAOI222D2BWP40P140)                           0.03       0.88 r
+  U2576/ZN (MAOI222D1BWP40P140)                           0.05       0.93 f
+  U2578/ZN (MAOI222D2BWP40P140)                           0.04       0.96 r
+  U2579/ZN (MAOI222D2BWP40P140)                           0.04       1.00 f
+  U2581/ZN (MAOI222D2BWP40P140)                           0.03       1.04 r
+  U2582/ZN (MAOI222D1BWP40P140)                           0.04       1.08 f
+  U2584/ZN (MAOI222D1BWP40P140)                           0.04       1.12 r
+  U2585/ZN (MAOI222D1BWP40P140)                           0.04       1.16 f
+  U2586/ZN (INVD2BWP40P140)                               0.02       1.17 r
+  U2589/ZN (MAOI222D2BWP40P140)                           0.03       1.20 f
+  U2591/ZN (MAOI222D1BWP40P140)                           0.03       1.23 r
+  U419/ZN (MUX2NUD1BWP40P140)                             0.03       1.25 r
+  U2592/ZN (INVD2BWP40P140)                               0.02       1.27 f
+  U2710/ZN (CKND1BWP40P140)                               0.02       1.29 r
+  U2716/ZN (AOI221D1BWP40P140)                            0.02       1.31 f
+  U2717/ZN (MUX2NUD1BWP40P140)                            0.03       1.33 f
+  U316/ZN (OAI22D0BWP40P140)                              0.02       1.35 r
+  u_cpu/u_cpu/u_core/u_div/remainder_reg[4]/D (DFQD1BWP40P140)
+                                                          0.00       1.35 r
+  data arrival time                                                  1.35
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_div/remainder_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.03       1.35
+  data required time                                                 1.35
+  --------------------------------------------------------------------------
+  data required time                                                 1.35
+  data arrival time                                                 -1.35
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_div/divisor_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_div/remainder_reg[4]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_div/divisor_reg[0]/CP (DFQD4BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_div/divisor_reg[0]/Q (DFQD4BWP40P140)
+                                                          0.05       0.05 f
+  U2539/ZN (INVD1BWP40P140)                               0.01       0.06 r
+  U2540/ZN (NR2D1BWP40P140)                               0.01       0.07 f
+  U2541/ZN (MAOI222D1BWP40P140)                           0.03       0.10 r
+  U2542/ZN (INVD2BWP40P140)                               0.01       0.11 f
+  U2545/ZN (OAI22D2BWP40P140)                             0.02       0.13 r
+  U2546/ZN (MAOI222D2BWP40P140)                           0.04       0.16 f
+  U2548/ZN (MAOI222D4BWP40P140)                           0.03       0.20 r
+  U2549/ZN (MAOI222D4BWP40P140)                           0.03       0.23 f
+  U2551/ZN (MAOI222D2BWP40P140)                           0.03       0.26 r
+  U2552/ZN (MAOI222D1BWP40P140)                           0.04       0.31 f
+  U2554/ZN (MAOI222D2BWP40P140)                           0.04       0.34 r
+  U2555/ZN (MAOI222D2BWP40P140)                           0.04       0.38 f
+  U2557/ZN (MAOI222D2BWP40P140)                           0.04       0.42 r
+  U2558/ZN (MAOI222D2BWP40P140)                           0.04       0.46 f
+  U2560/ZN (MAOI222D2BWP40P140)                           0.03       0.49 r
+  U2561/ZN (MAOI222D1BWP40P140)                           0.05       0.54 f
+  U2563/ZN (MAOI222D2BWP40P140)                           0.04       0.58 r
+  U2564/ZN (MAOI222D2BWP40P140)                           0.04       0.62 f
+  U2566/ZN (MAOI222D2BWP40P140)                           0.04       0.65 r
+  U2567/ZN (MAOI222D2BWP40P140)                           0.04       0.69 f
+  U2569/ZN (MAOI222D2BWP40P140)                           0.03       0.72 r
+  U2570/ZN (MAOI222D1BWP40P140)                           0.05       0.77 f
+  U2572/ZN (MAOI222D2BWP40P140)                           0.04       0.81 r
+  U2573/ZN (MAOI222D2BWP40P140)                           0.04       0.85 f
+  U2575/ZN (MAOI222D2BWP40P140)                           0.03       0.88 r
+  U2576/ZN (MAOI222D1BWP40P140)                           0.05       0.93 f
+  U2578/ZN (MAOI222D2BWP40P140)                           0.04       0.96 r
+  U2579/ZN (MAOI222D2BWP40P140)                           0.04       1.00 f
+  U2581/ZN (MAOI222D2BWP40P140)                           0.03       1.04 r
+  U2582/ZN (MAOI222D1BWP40P140)                           0.04       1.08 f
+  U2584/ZN (MAOI222D1BWP40P140)                           0.04       1.12 r
+  U2585/ZN (MAOI222D1BWP40P140)                           0.04       1.16 f
+  U2586/ZN (INVD2BWP40P140)                               0.02       1.17 r
+  U2589/ZN (MAOI222D2BWP40P140)                           0.03       1.20 f
+  U2591/ZN (MAOI222D1BWP40P140)                           0.03       1.23 r
+  U419/ZN (MUX2NUD1BWP40P140)                             0.03       1.25 r
+  U2592/ZN (INVD2BWP40P140)                               0.02       1.27 f
+  U2710/ZN (CKND1BWP40P140)                               0.02       1.29 r
+  U2716/ZN (AOI221D1BWP40P140)                            0.02       1.31 f
+  U2717/ZN (MUX2NUD1BWP40P140)                            0.03       1.33 f
+  U316/ZN (OAI22D0BWP40P140)                              0.02       1.35 r
+  u_cpu/u_cpu/u_core/u_div/remainder_reg[4]/D (DFQD1BWP40P140)
+                                                          0.00       1.35 r
+  data arrival time                                                  1.35
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_div/remainder_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.03       1.35
+  data required time                                                 1.35
+  --------------------------------------------------------------------------
+  data required time                                                 1.35
+  data arrival time                                                 -1.35
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+  Startpoint: u_cpu/u_cpu/u_core/u_div/divisor_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_cpu/u_cpu/u_core/u_div/remainder_reg[4]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  rfu                ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+  cpu_m1_asic_top    ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_cpu/u_cpu/u_core/u_div/divisor_reg[0]/CP (DFQD4BWP40P140)
+                                                          0.00 #     0.00 r
+  u_cpu/u_cpu/u_core/u_div/divisor_reg[0]/Q (DFQD4BWP40P140)
+                                                          0.05       0.05 f
+  U2539/ZN (INVD1BWP40P140)                               0.01       0.06 r
+  U2540/ZN (NR2D1BWP40P140)                               0.01       0.07 f
+  U2541/ZN (MAOI222D1BWP40P140)                           0.03       0.10 r
+  U2542/ZN (INVD2BWP40P140)                               0.01       0.11 f
+  U2545/ZN (OAI22D2BWP40P140)                             0.02       0.13 r
+  U2546/ZN (MAOI222D2BWP40P140)                           0.04       0.16 f
+  U2548/ZN (MAOI222D4BWP40P140)                           0.03       0.20 r
+  U2549/ZN (MAOI222D4BWP40P140)                           0.03       0.23 f
+  U2551/ZN (MAOI222D2BWP40P140)                           0.03       0.26 r
+  U2552/ZN (MAOI222D1BWP40P140)                           0.04       0.31 f
+  U2554/ZN (MAOI222D2BWP40P140)                           0.04       0.34 r
+  U2555/ZN (MAOI222D2BWP40P140)                           0.04       0.38 f
+  U2557/ZN (MAOI222D2BWP40P140)                           0.04       0.42 r
+  U2558/ZN (MAOI222D2BWP40P140)                           0.04       0.46 f
+  U2560/ZN (MAOI222D2BWP40P140)                           0.03       0.49 r
+  U2561/ZN (MAOI222D1BWP40P140)                           0.05       0.54 f
+  U2563/ZN (MAOI222D2BWP40P140)                           0.04       0.58 r
+  U2564/ZN (MAOI222D2BWP40P140)                           0.04       0.62 f
+  U2566/ZN (MAOI222D2BWP40P140)                           0.04       0.65 r
+  U2567/ZN (MAOI222D2BWP40P140)                           0.04       0.69 f
+  U2569/ZN (MAOI222D2BWP40P140)                           0.03       0.72 r
+  U2570/ZN (MAOI222D1BWP40P140)                           0.05       0.77 f
+  U2572/ZN (MAOI222D2BWP40P140)                           0.04       0.81 r
+  U2573/ZN (MAOI222D2BWP40P140)                           0.04       0.85 f
+  U2575/ZN (MAOI222D2BWP40P140)                           0.03       0.88 r
+  U2576/ZN (MAOI222D1BWP40P140)                           0.05       0.93 f
+  U2578/ZN (MAOI222D2BWP40P140)                           0.04       0.96 r
+  U2579/ZN (MAOI222D2BWP40P140)                           0.04       1.00 f
+  U2581/ZN (MAOI222D2BWP40P140)                           0.03       1.04 r
+  U2582/ZN (MAOI222D1BWP40P140)                           0.04       1.08 f
+  U2584/ZN (MAOI222D1BWP40P140)                           0.04       1.12 r
+  U2585/ZN (MAOI222D1BWP40P140)                           0.04       1.16 f
+  U2586/ZN (INVD2BWP40P140)                               0.02       1.17 r
+  U2589/ZN (MAOI222D2BWP40P140)                           0.03       1.20 f
+  U2591/ZN (MAOI222D1BWP40P140)                           0.03       1.23 r
+  U419/ZN (MUX2NUD1BWP40P140)                             0.03       1.25 r
+  U2592/ZN (INVD2BWP40P140)                               0.02       1.27 f
+  U2710/ZN (CKND1BWP40P140)                               0.02       1.29 r
+  U2716/ZN (AOI221D1BWP40P140)                            0.02       1.31 f
+  U2717/ZN (MUX2NUD1BWP40P140)                            0.03       1.33 f
+  U316/ZN (OAI22D0BWP40P140)                              0.02       1.35 r
+  u_cpu/u_cpu/u_core/u_div/remainder_reg[4]/D (DFQD1BWP40P140)
+                                                          0.00       1.35 r
+  data arrival time                                                  1.35
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  u_cpu/u_cpu/u_core/u_div/remainder_reg[4]/CP (DFQD1BWP40P140)
+                                                          0.00       1.38 r
+  library setup time                                     -0.03       1.35
+  data required time                                                 1.35
+  --------------------------------------------------------------------------
+  data required time                                                 1.35
+  data arrival time                                                 -1.35
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+1

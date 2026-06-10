@@ -1,0 +1,28 @@
+
+  Summary Results
+   Property Summary: FPV
+   -----------------
+   > Assertion
+     - # found        : 4
+     - # proven       : 4
+
+   > Constraint
+     - # found        : 1
+
+
+  List Results
+   Property List:
+   --------------
+   > Assertion
+     # Assertion: 4
+     [  0] proven                                  -  rfu.rfu_assert_i.unnamed$$_0
+     [  1] proven                                  -  rfu.rfu_assert_i.unnamed$$_1
+     [  2] proven                                  -  rfu.rfu_assert_i.unnamed$$_2
+     [  3] proven                                  -  rfu.rfu_assert_i.unnamed$$_3
+
+   > Constraint
+     # Constraint: 1
+     [  4] constrained                             -  constant_4 - resetn==1
+
+
+

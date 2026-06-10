@@ -1,0 +1,12 @@
+core   0: >>>>  
+core   0: 0x80000000 (0x00004405) c.li    s0, 1
+core   0: 3 0x80000000 (0x4405) x8  0x00000001
+core   0: 0x80000002 (0x0000a011) c.j     pc + 4
+core   0: 3 0x80000002 (0xa011)
+core   0: 0x80000006 (0x00500493) li      s1, 5
+core   0: 3 0x80000006 (0x00500493) x9  0x00000005
+core   0: 0x8000000a (0x00700913) li      s2, 7
+core   0: 3 0x8000000a (0x00700913) x18 0x00000007
+core   0: 0x8000000e (0x00009002) c.ebreak
+core   0: exception trap_breakpoint, epc 0x8000000e
+core   0:           tval 0x8000000e

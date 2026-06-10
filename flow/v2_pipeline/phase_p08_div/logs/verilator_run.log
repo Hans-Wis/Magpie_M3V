@@ -1,0 +1,25 @@
+FSM_STATE IDLE  covered=6512
+FSM_STATE WORK  covered=104001
+FSM_STATE FIXUP covered=3249
+FSM_STATE DONE  covered=3249
+FSM_ARC A0  IDLE->WORK normal_or_zero_div=3251
+FSM_ARC A1  IDLE->ZERODIV structural_no_such_state=0
+FSM_ARC A2  IDLE->IDLE idle_soak=3263
+FSM_ARC A3  WORK->WORK loop=100750
+FSM_ARC A4  WORK->FIXUP loop_complete=3249
+FSM_ARC A5  divisor_one_no_earlyout_work_to_fixup=349
+FSM_ARC A6  dividend_zero_no_earlyout_work_to_fixup=177
+FSM_ARC A7  dividend_le_divisor_no_earlyout_work_to_fixup=3249
+FSM_ARC A8  signed_overflow_no_earlyout_work_to_fixup=12
+FSM_ARC A9  DONE->IDLE auto_clear=3249
+FSM_ARC A10 DONE->WORK direct structural_start_ignored_in_DONE=0
+FSM_ARC A11 FIXUP->DONE zero_div_and_all_results=3249
+FSM_ARC A12 ZERODIV->IDLE structural_no_such_state maps_DONE_IDLE=3249
+FSM_ARC A13 IDLE->WORK signed_unsigned_mux=3251
+FSM_ARC A14 WORK->WORK signed_restore_internal=100750
+FSM_ARC A15 WORK->WORK unsigned_borrow_internal=100750
+PASS: div unit 3249/3249 vectors
+- ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/dv/tb/tb_div_unit.v:446: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 1ms; walltime 0.044 s; speed 26.568 ms/s
+- Verilator: cpu 0.044 s on 1 threads; allocated 18 MB

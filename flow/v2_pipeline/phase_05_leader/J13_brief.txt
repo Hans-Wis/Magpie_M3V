@@ -1,0 +1,22 @@
+ROLE: Codex EXECUTOR (gpt-5.5), PL=Claude. design_id=cpu_m1 (RV32IMC_Zicsr). OSS+riscv-none-elf-gcc; -s danger-full-access. Spike GOLDEN. report-faithfully: classify every divergence (real-DUT vs harness) with evidence; never hide.
+
+CONTEXT: J12 enabled load/store + branch/jump and they run clean (RV32IC, 3 seeds). Enabling M (mul/div, part of rv32imc) surfaced an OPEN divergence: `rem s10,s8,gp` @pc=0x1478 -> DUT x26=0x472816d0 vs Spike x26=0x0. The M-unit (mul/div/rem/remu/divu) result is wrong/mis-associated. (Earlier ADR-0004 / BUG-MD-0001 was a related M-unit DIV writeback latch issue — check if same class.) Harness: flow/v2_pipeline/phase_03_09_riscvdv_lockstep/. Comparator: flow/v2_pipeline/lib/spike_commit.py.
+
+GOAL J13: root-cause + fix the M-unit divergence(s), then make riscv-dv with load/store + branch/jump + M (full RV32IMC, CSR still off) run CLEAN on several seeds.
+
+DO:
+1. CONFIRM root cause of the rem@0x1478 divergence: reproduce; dump DUT internals at that commit (mul/div unit result, busy/done timing, ex_mem/ex_wb md_result, writeback association, hazard stall). Determine: real-DUT bug (M-unit result/timing) or harness. Write evidence. (rem result-association across back-to-back muldiv or load-use interplay is the prime suspect.)
+2. If REAL-DUT: FIX clean-room + ADR (docs/adr/000N-*.md). If harness: fix correctly without masking DUT bugs.
+3. Re-run riscv-dv with load/store + branch/jump + M enabled (CSR off) across several seeds; root-cause+fix EACH new divergence the same way until the seeds run clean. Keep going through the chain for THIS scope (mem + ctrlflow + M).
+4. RE-VALIDATE after each fix — ALL stay green: pytest full suite (>=180), gate_03_08 lockstep, gate_02_01 mem_wrapper (equivalence), gate_04_08 coverage 100%, and the arith 100k path still clean.
+5. Do NOT enable CSR yet; do NOT launch full 100k. Goal = full-RV32IMC(no CSR) seeds clean.
+
+CONSTRAINTS: clean-room RTL fixes + ADR each; harness fixes must not mask DUT bugs; explicit paths; big logs stay in phase dir.
+
+OUTPUT (write <=40 lines) flow/v2_pipeline/phase_05_leader/J13_result.md:
+  ## summary (full-RV32IMC-noCSR seeds clean? count + matched commits)
+  ## divergences (each: pc/instr/dut-vs-spike + REAL-DUT or HARNESS + root cause + fix + ADR if RTL)
+  ## revalidate (pytest pass count; gate_03_08/02_01/04_08 PASS?; arith path clean?)
+  ## regressions
+  ## open (any remaining divergence in this scope)
+  ## tokens

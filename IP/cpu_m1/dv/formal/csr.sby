@@ -1,0 +1,15 @@
+[options]
+mode bmc
+depth 8
+
+[engines]
+smtbmc z3
+
+[script]
+read_verilog -formal -sv -I ../../rtl ../../rtl/csr.v csr_assert_bind.sv
+prep -top csr
+
+[files]
+../../rtl/def.vh
+../../rtl/csr.v
+csr_assert_bind.sv

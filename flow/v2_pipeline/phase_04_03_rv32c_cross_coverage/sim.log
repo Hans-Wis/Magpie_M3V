@@ -1,0 +1,9 @@
+[545 ns] mmio[00000014] <= 00000606 pc=00000098 instr=00008067
+[615 ns] mmio[00000018] <= 00000707 pc=00000064 instr=00000013
+[665 ns] mmio[0000001c] <= 00000808 pc=00000076 instr=00000013
+[765 ns] mmio[00000020] <= 00000909 pc=0000008a instr=0000006f
+PASS: directed RV32C/cross-boundary coverage completed
+- tb_rv32c_cross_coverage.v:157: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 12us; walltime 0.029 s; speed 418.456 us/s
+- Verilator: cpu 0.029 s on 1 threads; allocated 28 MB

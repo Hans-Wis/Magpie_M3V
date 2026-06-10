@@ -1,0 +1,15 @@
+ROLE: Codex EXECUTOR (gpt-5.5), PL=Claude. design_id=cpu_m1. OSS+riscv-none-elf-gcc; -s danger-full-access. Spike GOLDEN. report-faithfully: a REAL divergence = surface it (repro+detail), never hide.
+CONTEXT: After J9 (BUG-XBOUND-0001 real fix) + J10 (comparator base-norm fix), seed 2026060801 runs CLEAN for 981 commits vs Spike. Harness = flow/v2_pipeline/phase_03_09_riscvdv_lockstep/run_riscvdv_lockstep.py.
+TASK J11: run the MULTI-SEED riscv-dv lockstep to accumulate >= 100,000 total matched commits vs Spike.
+DO:
+1. Run many seeds (e.g. --start-seed 2026060801 --seeds 50+ with a high --instr-cnt and high --max-cycles) until total matched commits >= 100000. Log running total per seed.
+2. For ANY seed that diverges: STOP that seed, save the divergence (idx/pc/instr/dut-vs-spike + last ~20 commits + repro path) and CLASSIFY your best guess (real DUT bug vs comparator/harness) WITH evidence, but KEEP RUNNING other seeds to accumulate commits; report all divergences at the end. Do NOT silently skip.
+3. Update tests/gates/gate_03_09_riscvdv_lockstep.py: PASS iff total matched commits >= 100000 AND no UNRESOLVED real-DUT divergence. Keep full suite green.
+CONSTRAINTS: no RTL semantic change in this job (this is a run, not a fix). If a real DUT bug appears, document it for a follow-up fix (do not fix RTL here). Explicit paths. Long-running is expected.
+OUTPUT (write <=35 lines) flow/v2_pipeline/phase_05_leader/J11_result.md:
+  ## summary (TOTAL matched commits ; #seeds run ; PASS(>=100k) or INCOMPLETE/DIVERGENCE)
+  ## divergences (none, OR list: seed/idx/pc/instr/dut-vs-spike/your-classification real-or-harness/evidence)
+  ## throughput (commits/sec; sim Verilator/VCS; wall-clock)
+  ## gate_status (pytest pass count; gate_03_09 verdict)
+  ## provenance (seeds, instr-cnt, key command)
+  ## tokens

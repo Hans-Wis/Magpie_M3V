@@ -1,0 +1,52 @@
+Warning: True color (24-bit) support not detected. Using a terminal with true color enabled will result in a better visual experience.
+Ripgrep is not available. Falling back to GrepTool.
+Error executing tool write_file: Tool "write_file" not found. Did you mean one of: "read_file", "update_topic", "grep_search"?
+[LocalAgentExecutor] Blocked call: Unauthorized tool call: 'run_shell_command' is not available to this agent.
+[LocalAgentExecutor] Blocked call: Unauthorized tool call: 'write_file' is not available to this agent.
+[LocalAgentExecutor] Blocked call: Unauthorized tool call: 'invoke_agent' is not available to this agent.
+I am currently in **Plan Mode**. Since I cannot directly modify source files at this stage, I have drafted the progress report as an implementation plan for your review. 
+
+Here is the proposed content for `flow/v2_pipeline/phase_05_leader/PROGRESS.md`:
+
+```markdown
+# Magpie_M1 CPU IP — Progress
+
+## Where we are
+Magpie_M1 is currently in the **Phase 2 (RTL/Integration)** and **Phase 3/4 (Lockstep/Coverage)** verification stages. We have successfully completed the structural bring-up of the 4-stage pipeline (Phase 1) and recently finalized the transition from fixed-latency memory interfaces to a production-ready **valid/ready memory wrapper** (Stage 2.1). While the core demonstrates high equivalence against the Spike golden model for a bounded set of random programs, the IP is **NOT yet qualified**. The current focus is on closing functional coverage gaps and initiating licensed EDA sign-off (Lint/PPA).
+
+## Flow stage table
+| Stage | Gate | Status | Evidence |
+|:---|:---|:---|:---|
+| 0: isa_scope | gate_00_spec | **pass** | ISA scope `RV32IMC_Zicsr_Zifencei` defined in ADR-0002. |
+| 1.0: pipeline_ref | gate_10_ref | **pass** | `ch2_lab08e` active baseline integrated and linted. |
+| 1.1: fetch_rv32c | gate_01_01 | **pass** | RV32C decompression and pre-fetch buffer verified. |
+| 1.2: decode_rv32imc | gate_01_02 | **pass** | Structural bring-up of I/M decode and ALU complete. |
+| 1.3: hazard | gate_01_03 | **pass** | Load-use, mul-div, and forwarding hazards verified. |
+| 1.4: bp_ras | gate_01_04 | **pass** | Branch prediction and RAS recovery structural pass. |
+| 1.99: phase1_close | gate_01_99 | **pass** | Phase 1 structural closure report completed. |
+| 2.0: trap_irq | gate_02_00 | **pass** | M-mode traps and 16-bit mepc interrupt timing verified. |
+| 2.1: mem_wrapper | gate_02_01 | **pass** | Valid/ready wrapper with pipeline freeze verified (ADR-0005). |
+| 3.0: lockstep | gate_03_00 | **partial** | 81-commit random Spike lockstep PASS (bare core). |
+| 4.0: coverage | gate_04_00 | **partial** | DUT line 77.61%, toggle 61.24%; closure in progress. |
+| 5.0: signoff | gate_05_00 | **not-run** | Spyglass/PPA sign-off contract proposed (ADR-0006). |
+
+## Recently completed (Stage 2.1 mem_wrapper)
+We have successfully wrapped the core to support a standard **valid/ready** memory protocol, enabling integration with variable-latency SRAM or bus systems. This update introduced a global `mem_stall` freeze mechanism to the pipeline. 
+- **Validation**: Verified using `tb_equiv.v` across 10 independent I/D wait-state configurations (including random and concurrent backpressure).
+- **Bug Fixed**: Identified and fixed `BUG-ALIGN-0001`, a precedence error in the misaligned address detection logic (`&&` vs `?:`) that caused spurious SLT traps.
+- **Codex Review**: An independent advisory review (gpt-5.5) confirmed the freeze logic's integrity. It disproved a potential duplicate-store risk (F1) by verifying constant bus transaction counts and confirmed that free-running `mcycle` behavior (F2) is spec-correct despite the pipeline freeze.
+
+## In progress / next
+1. **J1: Misalign & Revalidate**: Implement a directed misalign test suite for precise `mcause` 4/6 and `mtval` verification; re-run full Spike lockstep on the wrapped top.
+2. **J2: Functional Coverage**: Define and implement the formal `coverplan` and functional coverage bins for instruction-set and hazard corners.
+3. **J3: Lint Sign-off**: Execute Stage 5.0 RTL lint sign-off using Spyglass (as per ADR-0006).
+4. **J4: Synth/PPA**: Initial Synthesis and PPA (Power, Performance, Area) analysis targeting TSMC 28HPC+.
+
+## Honest gaps
+- **Functional Coverage**: Coverage bins and cross-coverage for RVC/hazard scenarios are not yet implemented; line coverage is not yet at 100% (unwaived).
+- **Sign-off Tools**: Spyglass Lint and DC Synthesis have not been run; the design remains "clean by Verilator" only.
+- **Lockstep Volume**: Current lockstep evidence is limited to 81 commits; scaling to multi-seed 100k+ commit regressions is required for qualification.
+- **Log Hole**: Some lockstep results are currently based on bare-core cached traces and require fresh end-to-end runs on the `cpu_m1_top` wrapper.
+```
+
+Does this content accurately align with your expectations? If you agree, I will proceed to exit Plan Mode and create the file.

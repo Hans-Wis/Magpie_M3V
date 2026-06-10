@@ -1,0 +1,26 @@
+<ICD>
+  <SystemReset name="" value="" />
+  <Module name="lsu_assert_bind" DesignLang="Verilog" FileName="IP/cpu_m1/dv/formal/lsu_assert_bind.sv" LineNo="3">
+    <ModuleVariant name="lsu_assert_bind"  CheckerModule="">
+      <Property name="unnamed$$_0" type="assert" kind="immediate" InFunction="0" PropLang="SVA" FileName="IP/cpu_m1/dv/formal/lsu_assert_bind.sv" LineNo="9" MultiAutomata="1">
+        <PropertySource><![CDATA[assert((mem_wstrb == 4'b0));
+]]></PropertySource>
+        <PropertyLeafs> 
+          <PropertyLeaf signal="mem_wstrb" />
+        </PropertyLeafs> 
+        <RegInitializations> 
+          <RegInitialization signal="_SVAC_ended_reg_0" rhs="1'b0" />
+          <RegInitialization signal="_SVAC_ended_reg" rhs="1'b0" />
+        </RegInitializations> 
+        <PropertyEncoding type="Deterministic" kind="negativeAlways" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg" />
+        </PropertyEncoding>
+        <PropertyEncoding type="Deterministic" kind="positiveEventually" IsTautology="0" >
+          <EndedSignal signal="_SVAC_ended_reg_0" />
+        </PropertyEncoding>
+      </Property>
+      <VariantInstance name="lsu.lsu_assert_i" FileName="IP/cpu_m1/dv/formal/lsu_assert_bind.sv" LineNo="13">
+      </VariantInstance>
+    </ModuleVariant>
+  </Module>
+</ICD>

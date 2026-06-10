@@ -1,0 +1,36 @@
+####################################################################################################
+# Magpie_M1 SpyGlass lint waivers for phase_p_lint_current.
+# Scope waivers by rule, source file, and diagnostic text. Prefer -regexp message matching
+# over source line numbers for reviewed warnings that are sensitive to nearby RTL edits.
+####################################################################################################
+
+waive -rules {SYNTH_5143} -file_line {../../../IP/cpu_m1/rtl/rfu.v} 36 -msg {rfu -> Initial block is ignored for synthesis} -comment {rfu.regs simulation-only register-file initialization; synthesis ignores this initialization by construction.}
+
+waive -rules {STARC05-2.11.3.1} -file_line {../../../IP/cpu_m1/rtl/div.v} 69 -msg {Combinational and sequential parts of an FSM 'div.state' described in same always block} -comment {div.state intentionally uses a single always block to keep divider state and next-state updates local.}
+
+waive -rules {STARC05-2.2.3.3} -file_line {../../../IP/cpu_m1/rtl/cpu_m1_top.v} 114 -msg {Flipflop 'primed' is assigned over the same signal in an always construct for sequential circuits (at line '103')} -comment {primed uses explicit boot-prime sequential priority; later assignment intentionally overrides the reset/default path.}
+waive -rules {W415a} -file_line {../../../IP/cpu_m1/rtl/cpu_m1_top.v} 114 -msg {Signal primed is being assigned multiple times*} -regexp -comment {primed boot-prime priority is intentional last-write-wins sequential logic.}
+
+waive -rules {STARC05-2.2.3.3} -file_line {../../../IP/cpu_m1/rtl/csr.v} 190 -msg {Flipflop 'mepc_reg' is assigned over the same signal in an always construct for sequential circuits (at line '177')} -comment {mepc_reg trap update intentionally has priority over CSR write in the sequential CSR block.}
+waive -rules {STARC05-2.2.3.3} -file_line {../../../IP/cpu_m1/rtl/csr.v} 191 -msg {Flipflop 'mcause_reg' is assigned over the same signal in an always construct for sequential circuits (at line '178')} -comment {mcause_reg trap update intentionally has priority over CSR write in the sequential CSR block.}
+waive -rules {STARC05-2.2.3.3} -file_line {../../../IP/cpu_m1/rtl/csr.v} 192 -msg {Flipflop 'mtval_reg' is assigned over the same signal in an always construct for sequential circuits (at line '179')} -comment {mtval_reg trap update intentionally has priority over CSR write in the sequential CSR block.}
+waive -rules {STARC05-2.2.3.3} -file_line {../../../IP/cpu_m1/rtl/csr.v} 193 -msg {Flipflop 'mstatus_mpie' is assigned over the same signal in an always construct for sequential circuits (at line '171')} -comment {mstatus_mpie trap/return sequencing intentionally uses ordered last-write-wins CSR priority.}
+waive -rules {STARC05-2.2.3.3} -file_line {../../../IP/cpu_m1/rtl/csr.v} 194 -msg {Flipflop 'mstatus_mie' is assigned over the same signal in an always construct for sequential circuits (at line '170')} -comment {mstatus_mie trap/return sequencing intentionally uses ordered last-write-wins CSR priority.}
+waive -rules {STARC05-2.2.3.3} -file_line {../../../IP/cpu_m1/rtl/csr.v} 196 -msg {Flipflop 'mstatus_mie' is assigned over the same signal in an always construct for sequential circuits (at line '170')} -comment {mstatus_mie mret restore intentionally overrides the default CSR sequential value.}
+waive -rules {STARC05-2.2.3.3} -file_line {../../../IP/cpu_m1/rtl/csr.v} 197 -msg {Flipflop 'mstatus_mpie' is assigned over the same signal in an always construct for sequential circuits (at line '171')} -comment {mstatus_mpie mret restore intentionally overrides the default CSR sequential value.}
+
+waive -rules {W415a} -file_line {../../../IP/cpu_m1/rtl/csr.v} 122 -msg {Signal csr_rdata is being assigned multiple times*} -regexp -comment {csr_rdata is an intentional combinational read mux with default assignment followed by CSR-specific override.}
+waive -rules {W415a} -file_line {../../../IP/cpu_m1/rtl/csr.v} 190 -msg {Signal mepc_reg is being assigned multiple times*} -regexp -comment {mepc_reg trap-over-CSR sequential priority is intentional last-write-wins behavior.}
+waive -rules {W415a} -file_line {../../../IP/cpu_m1/rtl/csr.v} 191 -msg {Signal mcause_reg is being assigned multiple times*} -regexp -comment {mcause_reg trap-over-CSR sequential priority is intentional last-write-wins behavior.}
+waive -rules {W415a} -file_line {../../../IP/cpu_m1/rtl/csr.v} 192 -msg {Signal mtval_reg is being assigned multiple times*} -regexp -comment {mtval_reg trap-over-CSR sequential priority is intentional last-write-wins behavior.}
+
+waive -rules {W287b} -file {../../../IP/cpu_m1/rtl/core.v} -msg {Instance output port 'ld_result' is not connected} -regexp -comment {ID-stage dual-use LSU instance intentionally leaves ld_result unconnected because only address-side decode is used there.}
+waive -rules {W287b} -file {../../../IP/cpu_m1/rtl/core.v} -msg {Instance output port 'mem_wdata' is not connected} -regexp -comment {WB-stage dual-use LSU instance intentionally leaves store data output unconnected because only load result behavior is used there.}
+waive -rules {W287b} -file {../../../IP/cpu_m1/rtl/core.v} -msg {Instance output port 'mem_wstrb' is not connected} -regexp -comment {WB-stage dual-use LSU instance intentionally leaves store strobe output unconnected because only load result behavior is used there.}
+
+waive -rules {W528} -file {../../../IP/cpu_m1/rtl/cdec.v} -msg {Variable 'rs1_q0_3\[2:0\]' set but not read.*} -regexp -comment {rs1_q0_3 is a dead intermediate compressed-decode wire retained for decode structure readability.}
+waive -rules {W528} -file {../../../IP/cpu_m1/rtl/cdec.v} -msg {Variable 'rd_q0_3\[2:0\]' set but not read.*} -regexp -comment {rd_q0_3 is a dead intermediate compressed-decode wire retained for decode structure readability.}
+waive -rules {W528} -file {../../../IP/cpu_m1/rtl/core.v} -msg {Variable 'cdec_illegal' set but not read.*} -regexp -comment {cdec.illegal is a verification/diagnostic output checked by the unit TB + a sim-only invariant assertion (ADR-0016); reserved detection is via idu (expanded=0); not a synthesis trap signal.}
+waive -rules {W528} -file {../../../IP/cpu_m1/rtl/core.v} -msg {Variable 'ex_wb_is_store_r' set but not read.*} -regexp -comment {ex_wb_is_store_r is an unused pipeline register left from symmetric EX/WB control staging.}
+waive -rules {W528} -file_line {../../../IP/cpu_m1/rtl/forward.v} 60 -msg {Variable '_unused_wb_is_load' set but not read.*} -regexp -comment {_unused_wb_is_load follows the Verilator unused-signal convention; SpyGlass does not infer that convention.}
+waive -rules {W528} -file_line {../../../IP/cpu_m1/rtl/hazard.v} 51 -msg {Variable '_unused_wb_signals' set but not read.*} -regexp -comment {_unused_wb_signals follows the Verilator unused-signal convention; SpyGlass does not infer that convention.}

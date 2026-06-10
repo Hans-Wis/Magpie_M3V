@@ -1,0 +1,1949 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: cdec</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_cdec'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_cdec')">cdec</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 93.41</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 98.36</a></td>
+<td class="s10 cl rt"><a href="mod1.html#Cond" >100.00</a></td>
+<td class="s8 cl rt"><a href="mod1.html#Toggle" > 84.79</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Branch" > 90.48</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p10_cdec/vcs/../../../../IP/cpu_m1/rtl/cdec.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p10_cdec/vcs/../../../../IP/cpu_m1/rtl/cdec.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod1.html#inst_tag_1"  onclick="showContent('inst_tag_1')">tb_cdec_unit.dut</a></td>
+<td class="s9 cl rt"> 93.41</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 98.36</a></td>
+<td class="s10 cl rt"><a href="mod1.html#Cond" >100.00</a></td>
+<td class="s8 cl rt"><a href="mod1.html#Toggle" > 84.79</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Branch" > 90.48</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_cdec'>
+<hr>
+<a name="inst_tag_1"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_1" >tb_cdec_unit.dut</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 93.41</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 98.36</a></td>
+<td class="s10 cl rt"><a href="mod1.html#Cond" >100.00</a></td>
+<td class="s8 cl rt"><a href="mod1.html#Toggle" > 84.79</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Branch" > 90.48</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 93.41</td>
+<td class="s9 cl rt"> 98.36</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s8 cl rt"> 84.79</td>
+<td class="s9 cl rt"> 90.48</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td><td class="alfsrt">NAME</td></tr><tr>
+<td class="s9 cl rt"> 92.73</td>
+<td class="s9 cl rt"> 95.11</td>
+<td class="s9 cl rt"> 94.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s8 cl rt"> 81.82</td>
+<td><a href="mod0.html#inst_tag_0" >tb_cdec_unit</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td colspan=6>no children</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_cdec'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod1.html" >cdec</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">TOTAL</td><td></td><td>61</td><td>60</td><td>98.36</td></tr>
+<tr class="s9"><td class="lf">ALWAYS</td><td>92</td><td>61</td><td>60</td><td>98.36</td></tr>
+</table>
+<pre class="code"><br clear=all>
+91                          always @* begin
+92         1/1                  expanded = 32'h0;
+93         1/1                  illegal  = 1'b0;
+94                      
+95         1/1                  case (op)
+96                              // =====================================================================
+97                              // Quadrant 0 (op=00)
+98                              // =====================================================================
+99         1/1                  2'b00: case (funct3)
+100                                 3'b000: begin
+101                                     // C.ADDI4SPN: addi rd', x2, imm
+102        2/2                          if (cinstr[12:5] == 8'h0) illegal = 1'b1;    // imm=0 reserved
+103        1/1                          else expanded = {imm_addi4spn, 5'd2, 3'b000, rs2_p, `OPC_OP_IMM};
+104                                 end
+105                                 3'b010: begin
+106                                     // C.LW: lw rd', imm(rs1')
+107        1/1                          expanded = {imm_lwsw, rd_rs1_p, 3'b010, rs2_p, `OPC_LOAD};
+108                                 end
+109                                 3'b110: begin
+110                                     // C.SW: sw rs2', imm(rs1')
+111        1/1                          expanded = {imm_lwsw[11:5], rs2_p, rd_rs1_p, 3'b010, imm_lwsw[4:0], `OPC_STORE};
+112                                 end
+113        1/1                      default: illegal = 1'b1;        // C.FLD/FSD/etc 浮點/RV64-only → skip
+114                             endcase
+115                     
+116                             // =====================================================================
+117                             // Quadrant 1 (op=01)
+118                             // =====================================================================
+119        1/1                  2'b01: case (funct3)
+120                                 3'b000: begin
+121                                     // C.NOP (rd=0,imm=0) → addi x0,x0,0; C.ADDI (rd!=0): addi rd,rd,imm
+122        1/1                          expanded = {imm_addi, rd_rs1_5, 3'b000, rd_rs1_5, `OPC_OP_IMM};
+123                                 end
+124                                 3'b001: begin
+125                                     // C.JAL (RV32 only): jal x1, imm
+126        1/1                          expanded = {imm_cj[20], imm_cj[10:1], imm_cj[11], imm_cj[19:12], 5'd1, `OPC_JAL};
+127                                 end
+128                                 3'b010: begin
+129                                     // C.LI: addi rd, x0, imm. rd=0 is a HINT -&gt; addi x0,x0,imm (NOP), not illegal (ADR-0016)
+130        1/1                          expanded = {imm_addi, 5'd0, 3'b000, rd_rs1_5, `OPC_OP_IMM};
+131                                 end
+132                                 3'b011: begin
+133        1/1                          if (rd_rs1_5 == 5'd2) begin
+134                                         // C.ADDI16SP: addi x2, x2, imm
+135        2/2                              if (cinstr[12] == 1'b0 &amp;&amp; cinstr[6:2] == 5'b0) illegal = 1'b1;
+136        1/1                              else expanded = {imm_addi16sp, 5'd2, 3'b000, 5'd2, `OPC_OP_IMM};
+137                                     end else begin
+138                                         // C.LUI: lui rd, imm[17:12]
+139        2/2                              if (rd_rs1_5 == 5'd0) illegal = 1'b1;
+140        2/2                              else if (cinstr[12] == 1'b0 &amp;&amp; cinstr[6:2] == 5'b0) illegal = 1'b1;
+141        1/1                              else expanded = {imm_lui, rd_rs1_5, `OPC_LUI};
+142                                     end
+143                                 end
+144                                 3'b100: begin
+145                                     // 多種 sub-encoding by cinstr[11:10]
+146        1/1                          case (cinstr[11:10])
+147                                         2'b00: begin
+148                                             // C.SRLI: srli rd', rd', shamt
+149        2/2                                  if (cinstr[12]) illegal = 1'b1;    // RV32 不允許 shamt&gt;=32
+150        1/1                                  else expanded = {7'b0, shamt, rd_rs1_p, 3'b101, rd_rs1_p, `OPC_OP_IMM};
+151                                         end
+152                                         2'b01: begin
+153                                             // C.SRAI: srai rd', rd', shamt
+154        2/2                                  if (cinstr[12]) illegal = 1'b1;
+155        1/1                                  else expanded = {7'b0100000, shamt, rd_rs1_p, 3'b101, rd_rs1_p, `OPC_OP_IMM};
+156                                         end
+157                                         2'b10: begin
+158                                             // C.ANDI: andi rd', rd', imm
+159        1/1                                  expanded = {imm_addi, rd_rs1_p, 3'b111, rd_rs1_p, `OPC_OP_IMM};
+160                                         end
+161                                         2'b11: begin
+162                                             // C.SUB/XOR/OR/AND/SUBW/ADDW
+163        1/1                                  case ({cinstr[12], cinstr[6:5]})
+164        1/1                                      3'b000: expanded = {7'b0100000, rs2_p, rd_rs1_p, 3'b000, rd_rs1_p, `OPC_OP};  // SUB
+165        1/1                                      3'b001: expanded = {7'b0000000, rs2_p, rd_rs1_p, 3'b100, rd_rs1_p, `OPC_OP};  // XOR
+166        1/1                                      3'b010: expanded = {7'b0000000, rs2_p, rd_rs1_p, 3'b110, rd_rs1_p, `OPC_OP};  // OR
+167        1/1                                      3'b011: expanded = {7'b0000000, rs2_p, rd_rs1_p, 3'b111, rd_rs1_p, `OPC_OP};  // AND
+168        <font color = "red">0/1     ==>                              default: illegal = 1'b1;     // RV64-only (SUBW/ADDW)</font>
+169                                             endcase
+170                                         end
+                   <font color = "red">==>  MISSING_DEFAULT</font>
+171                                     endcase
+172                                 end
+173                                 3'b101: begin
+174                                     // C.J: jal x0, imm
+175        1/1                          expanded = {imm_cj[20], imm_cj[10:1], imm_cj[11], imm_cj[19:12], 5'd0, `OPC_JAL};
+176                                 end
+177                                 3'b110: begin
+178                                     // C.BEQZ: beq rs1', x0, imm
+179        1/1                          expanded = {imm_cb[12], imm_cb[10:5], 5'd0, rd_rs1_p, 3'b000,
+180                                                 imm_cb[4:1], imm_cb[11], `OPC_BRANCH};
+181                                 end
+182                                 3'b111: begin
+183                                     // C.BNEZ: bne rs1', x0, imm
+184        1/1                          expanded = {imm_cb[12], imm_cb[10:5], 5'd0, rd_rs1_p, 3'b001,
+185                                                 imm_cb[4:1], imm_cb[11], `OPC_BRANCH};
+186                                 end
+                   <font color = "red">==>  MISSING_DEFAULT</font>
+187                             endcase
+188                     
+189                             // =====================================================================
+190                             // Quadrant 2 (op=10)
+191                             // =====================================================================
+192        1/1                  2'b10: case (funct3)
+193                                 3'b000: begin
+194                                     // C.SLLI: slli rd, rd, shamt
+195        2/2                          if (cinstr[12]) illegal = 1'b1;     // RV32 shamt&gt;=32 reserved -&gt; trap
+196                                     // rd=0 is a HINT -&gt; slli x0,x0,shamt (NOP), not illegal (ADR-0016)
+197        1/1                          else expanded = {7'b0, shamt, rd_rs1_5, 3'b001, rd_rs1_5, `OPC_OP_IMM};
+198                                 end
+199                                 3'b010: begin
+200                                     // C.LWSP: lw rd, imm(x2)
+201        2/2                          if (rd_rs1_5 == 5'd0) illegal = 1'b1;
+202        1/1                          else expanded = {imm_lwsp, 5'd2, 3'b010, rd_rs1_5, `OPC_LOAD};
+203                                 end
+204                                 3'b100: begin
+205                                     // 多種 sub-encoding by cinstr[12] + rs2 zero
+206        1/1                          if (cinstr[12] == 1'b0) begin
+207        1/1                              if (rs2_5 == 5'd0) begin
+208                                             // C.JR: jalr x0, rs1, 0
+209        2/2                                  if (rd_rs1_5 == 5'd0) illegal = 1'b1;     // reserved
+210        1/1                                  else expanded = {12'b0, rd_rs1_5, 3'b000, 5'd0, `OPC_JALR};
+211                                         end else begin
+212                                             // C.MV: add rd, x0, rs2. rd=0 is a HINT -&gt; add x0,x0,rs2 (NOP) (ADR-0016)
+213        1/1                                  expanded = {7'b0, rs2_5, 5'd0, 3'b000, rd_rs1_5, `OPC_OP};
+214                                         end
+215                                     end else begin    // cinstr[12]==1
+216        1/1                              if (rs2_5 == 5'd0) begin
+217        1/1                                  if (rd_rs1_5 == 5'd0) begin
+218                                                 // C.EBREAK
+219        1/1                                      expanded = 32'h0010_0073;
+220                                             end else begin
+221                                                 // C.JALR: jalr x1, rs1, 0
+222        1/1                                      expanded = {12'b0, rd_rs1_5, 3'b000, 5'd1, `OPC_JALR};
+223                                             end
+224                                         end else begin
+225                                             // C.ADD: add rd, rd, rs2. rd=0 is a HINT -&gt; add x0,x0,rs2 (NOP) (ADR-0016)
+226        1/1                                  expanded = {7'b0, rs2_5, rd_rs1_5, 3'b000, rd_rs1_5, `OPC_OP};
+227                                         end
+228                                     end
+229                                 end
+230                                 3'b110: begin
+231                                     // C.SWSP: sw rs2, imm(x2)
+232        1/1                          expanded = {imm_swsp[11:5], rs2_5, 5'd2, 3'b010, imm_swsp[4:0], `OPC_STORE};
+233                                 end
+234        1/1                      default: illegal = 1'b1;        // 浮點 / RV64-only
+235                             endcase
+236                     
+237                             // Q3 (op=11) 不該進 cdec — caller 必須保證 cinstr[1:0] != 11
+238        1/1                  2'b11: illegal = 1'b1;
+                   <font color = "red">==>  MISSING_DEFAULT</font>
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod1.html" >cdec</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s10"><td class="lf">Conditions</td><td>32</td><td>32</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">Logical</td><td>32</td><td>32</td><td>100.00</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       102
+ EXPRESSION (cinstr[12:5] == 8'b0)
+            -----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       133
+ EXPRESSION (rd_rs1_5 == 5'd2)
+            ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       135
+ EXPRESSION ((cinstr[12] == 1'b0) &amp;&amp; (cinstr[6:2] == 5'b0))
+             ----------1---------    ----------2----------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       135
+ SUB-EXPRESSION (cinstr[12] == 1'b0)
+                ----------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       135
+ SUB-EXPRESSION (cinstr[6:2] == 5'b0)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       139
+ EXPRESSION (rd_rs1_5 == 5'b0)
+            ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       140
+ EXPRESSION ((cinstr[12] == 1'b0) &amp;&amp; (cinstr[6:2] == 5'b0))
+             ----------1---------    ----------2----------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       140
+ SUB-EXPRESSION (cinstr[12] == 1'b0)
+                ----------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       140
+ SUB-EXPRESSION (cinstr[6:2] == 5'b0)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       201
+ EXPRESSION (rd_rs1_5 == 5'b0)
+            ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       206
+ EXPRESSION (cinstr[12] == 1'b0)
+            ----------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       207
+ EXPRESSION (rs2_5 == 5'b0)
+            -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       209
+ EXPRESSION (rd_rs1_5 == 5'b0)
+            ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       216
+ EXPRESSION (rs2_5 == 5'b0)
+            -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       217
+ EXPRESSION (rd_rs1_5 == 5'b0)
+            ---------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod1.html" >cdec</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s6">
+<td>Totals</td>
+<td class="rt">23</td>
+<td class="rt">14</td>
+<td class="rt">60.87 </td>
+</tr><tr class="s8">
+<td>Total Bits</td>
+<td class="rt">434</td>
+<td class="rt">368</td>
+<td class="rt">84.79 </td>
+</tr><tr class="s8">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">217</td>
+<td class="rt">184</td>
+<td class="rt">84.79 </td>
+</tr><tr class="s8">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">217</td>
+<td class="rt">184</td>
+<td class="rt">84.79 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s10">
+<td>Ports</td>
+<td class="rt">3</td>
+<td class="rt">3</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>Port Bits</td>
+<td class="rt">98</td>
+<td class="rt">98</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Port Bits 0->1</td>
+<td class="rt">49</td>
+<td class="rt">49</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Port Bits 1->0</td>
+<td class="rt">49</td>
+<td class="rt">49</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s5">
+<td>Signals</td>
+<td class="rt">20</td>
+<td class="rt">11</td>
+<td class="rt">55.00 </td>
+</tr><tr class="s8">
+<td>Signal Bits</td>
+<td class="rt">336</td>
+<td class="rt">270</td>
+<td class="rt">80.36 </td>
+</tr><tr class="s8">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">168</td>
+<td class="rt">135</td>
+<td class="rt">80.36 </td>
+</tr><tr class="s8">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">168</td>
+<td class="rt">135</td>
+<td class="rt">80.36 </td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Port Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td><td class="alfsrt">Direction</td></tr><tr>
+<td>cinstr[15:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>expanded[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>OUTPUT</td>
+</tr><tr>
+<td>illegal</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>OUTPUT</td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>op[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>funct3[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rd_rs1_5[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rs2_5[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rd_rs1_3[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rs2_3[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rs1_q0_3[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rd_q0_3[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rd_rs1_p[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rd_rs1_p[4:3]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>rs2_p[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rs2_p[4:3]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>imm_addi4spn[1:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>imm_addi4spn[9:2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>imm_addi4spn[11:10]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>imm_lwsw[1:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>imm_lwsw[6:2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>imm_lwsw[11:7]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>imm_addi[11:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>imm_lui[19:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>imm_addi16sp[3:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>imm_addi16sp[11:4]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>shamt[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>imm_cj[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>imm_cj[20:1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>imm_cb[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>imm_cb[12:1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>imm_lwsp[1:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>imm_lwsp[7:2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>imm_lwsp[11:8]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>imm_swsp[1:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>imm_swsp[7:2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>imm_swsp[11:8]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod1.html" >cdec</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s9">
+<td>Branches</td>
+<td></td>
+<td class="rt">42</td>
+<td class="rt">38</td>
+<td class="rt">90.48 </td>
+</tr><tr class="s9">
+<td>CASE</td>
+<td class="rt">95</td>
+<td class="rt">42</td>
+<td class="rt">38</td>
+<td class="rt">90.48 </td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+95                 case (op)
+                   <font color = "red">-1-</font>  
+96                 // =====================================================================
+97                 // Quadrant 0 (op=00)
+98                 // =====================================================================
+99                 2'b00: case (funct3)
+                          <font color = "green">-2-</font>  
+100                    3'b000: begin
+101                        // C.ADDI4SPN: addi rd', x2, imm
+102                        if (cinstr[12:5] == 8'h0) illegal = 1'b1;    // imm=0 reserved
+                           <font color = "green">-3-</font>  
+           <font color = "green">                ==></font>
+103                        else expanded = {imm_addi4spn, 5'd2, 3'b000, rs2_p, `OPC_OP_IMM};
+           <font color = "green">                ==></font>
+104                    end
+105                    3'b010: begin
+106                        // C.LW: lw rd', imm(rs1')
+107                        expanded = {imm_lwsw, rd_rs1_p, 3'b010, rs2_p, `OPC_LOAD};
+           <font color = "green">                ==></font>
+108                    end
+109                    3'b110: begin
+110                        // C.SW: sw rs2', imm(rs1')
+111                        expanded = {imm_lwsw[11:5], rs2_p, rd_rs1_p, 3'b010, imm_lwsw[4:0], `OPC_STORE};
+           <font color = "green">                ==></font>
+112                    end
+113                    default: illegal = 1'b1;        // C.FLD/FSD/etc 浮點/RV64-only → skip
+           <font color = "green">            ==></font>
+114                endcase
+115        
+116                // =====================================================================
+117                // Quadrant 1 (op=01)
+118                // =====================================================================
+119                2'b01: case (funct3)
+                          <font color = "red">-4-</font>  
+120                    3'b000: begin
+121                        // C.NOP (rd=0,imm=0) → addi x0,x0,0; C.ADDI (rd!=0): addi rd,rd,imm
+122                        expanded = {imm_addi, rd_rs1_5, 3'b000, rd_rs1_5, `OPC_OP_IMM};
+           <font color = "green">                ==></font>
+123                    end
+124                    3'b001: begin
+125                        // C.JAL (RV32 only): jal x1, imm
+126                        expanded = {imm_cj[20], imm_cj[10:1], imm_cj[11], imm_cj[19:12], 5'd1, `OPC_JAL};
+           <font color = "green">                ==></font>
+127                    end
+128                    3'b010: begin
+129                        // C.LI: addi rd, x0, imm. rd=0 is a HINT -> addi x0,x0,imm (NOP), not illegal (ADR-0016)
+130                        expanded = {imm_addi, 5'd0, 3'b000, rd_rs1_5, `OPC_OP_IMM};
+           <font color = "green">                ==></font>
+131                    end
+132                    3'b011: begin
+133                        if (rd_rs1_5 == 5'd2) begin
+                           <font color = "green">-5-</font>  
+134                            // C.ADDI16SP: addi x2, x2, imm
+135                            if (cinstr[12] == 1'b0 && cinstr[6:2] == 5'b0) illegal = 1'b1;
+                               <font color = "green">-6-</font>  
+           <font color = "green">                    ==></font>
+136                            else expanded = {imm_addi16sp, 5'd2, 3'b000, 5'd2, `OPC_OP_IMM};
+           <font color = "green">                    ==></font>
+137                        end else begin
+138                            // C.LUI: lui rd, imm[17:12]
+139                            if (rd_rs1_5 == 5'd0) illegal = 1'b1;
+                               <font color = "green">-7-</font>  
+           <font color = "green">                    ==></font>
+140                            else if (cinstr[12] == 1'b0 && cinstr[6:2] == 5'b0) illegal = 1'b1;
+                                    <font color = "green">-8-</font>  
+           <font color = "green">                    ==></font>
+141                            else expanded = {imm_lui, rd_rs1_5, `OPC_LUI};
+           <font color = "green">                    ==></font>
+142                        end
+143                    end
+144                    3'b100: begin
+145                        // 多種 sub-encoding by cinstr[11:10]
+146                        case (cinstr[11:10])
+                           <font color = "red">-9-</font>  
+147                            2'b00: begin
+148                                // C.SRLI: srli rd', rd', shamt
+149                                if (cinstr[12]) illegal = 1'b1;    // RV32 不允許 shamt>=32
+                                   <font color = "green">-10-</font>  
+           <font color = "green">                        ==></font>
+150                                else expanded = {7'b0, shamt, rd_rs1_p, 3'b101, rd_rs1_p, `OPC_OP_IMM};
+           <font color = "green">                        ==></font>
+151                            end
+152                            2'b01: begin
+153                                // C.SRAI: srai rd', rd', shamt
+154                                if (cinstr[12]) illegal = 1'b1;
+                                   <font color = "green">-11-</font>  
+           <font color = "green">                        ==></font>
+155                                else expanded = {7'b0100000, shamt, rd_rs1_p, 3'b101, rd_rs1_p, `OPC_OP_IMM};
+           <font color = "green">                        ==></font>
+156                            end
+157                            2'b10: begin
+158                                // C.ANDI: andi rd', rd', imm
+159                                expanded = {imm_addi, rd_rs1_p, 3'b111, rd_rs1_p, `OPC_OP_IMM};
+           <font color = "green">                        ==></font>
+160                            end
+161                            2'b11: begin
+162                                // C.SUB/XOR/OR/AND/SUBW/ADDW
+163                                case ({cinstr[12], cinstr[6:5]})
+                                   <font color = "red">-12-</font>  
+164                                    3'b000: expanded = {7'b0100000, rs2_p, rd_rs1_p, 3'b000, rd_rs1_p, `OPC_OP};  // SUB
+           <font color = "green">                            ==></font>
+165                                    3'b001: expanded = {7'b0000000, rs2_p, rd_rs1_p, 3'b100, rd_rs1_p, `OPC_OP};  // XOR
+           <font color = "green">                            ==></font>
+166                                    3'b010: expanded = {7'b0000000, rs2_p, rd_rs1_p, 3'b110, rd_rs1_p, `OPC_OP};  // OR
+           <font color = "green">                            ==></font>
+167                                    3'b011: expanded = {7'b0000000, rs2_p, rd_rs1_p, 3'b111, rd_rs1_p, `OPC_OP};  // AND
+           <font color = "green">                            ==></font>
+168                                    default: illegal = 1'b1;     // RV64-only (SUBW/ADDW)
+           <font color = "red">                            ==></font>
+169                                endcase
+170                            end
+                               MISSING_DEFAULT
+           <font color = "red">                    ==></font>
+171                        endcase
+172                    end
+173                    3'b101: begin
+174                        // C.J: jal x0, imm
+175                        expanded = {imm_cj[20], imm_cj[10:1], imm_cj[11], imm_cj[19:12], 5'd0, `OPC_JAL};
+           <font color = "green">                ==></font>
+176                    end
+177                    3'b110: begin
+178                        // C.BEQZ: beq rs1', x0, imm
+179                        expanded = {imm_cb[12], imm_cb[10:5], 5'd0, rd_rs1_p, 3'b000,
+           <font color = "green">                ==></font>
+180                                    imm_cb[4:1], imm_cb[11], `OPC_BRANCH};
+181                    end
+182                    3'b111: begin
+183                        // C.BNEZ: bne rs1', x0, imm
+184                        expanded = {imm_cb[12], imm_cb[10:5], 5'd0, rd_rs1_p, 3'b001,
+           <font color = "green">                ==></font>
+185                                    imm_cb[4:1], imm_cb[11], `OPC_BRANCH};
+186                    end
+                       MISSING_DEFAULT
+           <font color = "red">            ==></font>
+187                endcase
+188        
+189                // =====================================================================
+190                // Quadrant 2 (op=10)
+191                // =====================================================================
+192                2'b10: case (funct3)
+                          <font color = "green">-13-</font>  
+193                    3'b000: begin
+194                        // C.SLLI: slli rd, rd, shamt
+195                        if (cinstr[12]) illegal = 1'b1;     // RV32 shamt>=32 reserved -> trap
+                           <font color = "green">-14-</font>  
+           <font color = "green">                ==></font>
+196                        // rd=0 is a HINT -> slli x0,x0,shamt (NOP), not illegal (ADR-0016)
+197                        else expanded = {7'b0, shamt, rd_rs1_5, 3'b001, rd_rs1_5, `OPC_OP_IMM};
+           <font color = "green">                ==></font>
+198                    end
+199                    3'b010: begin
+200                        // C.LWSP: lw rd, imm(x2)
+201                        if (rd_rs1_5 == 5'd0) illegal = 1'b1;
+                           <font color = "green">-15-</font>  
+           <font color = "green">                ==></font>
+202                        else expanded = {imm_lwsp, 5'd2, 3'b010, rd_rs1_5, `OPC_LOAD};
+           <font color = "green">                ==></font>
+203                    end
+204                    3'b100: begin
+205                        // 多種 sub-encoding by cinstr[12] + rs2 zero
+206                        if (cinstr[12] == 1'b0) begin
+                           <font color = "green">-16-</font>  
+207                            if (rs2_5 == 5'd0) begin
+                               <font color = "green">-17-</font>  
+208                                // C.JR: jalr x0, rs1, 0
+209                                if (rd_rs1_5 == 5'd0) illegal = 1'b1;     // reserved
+                                   <font color = "green">-18-</font>  
+           <font color = "green">                        ==></font>
+210                                else expanded = {12'b0, rd_rs1_5, 3'b000, 5'd0, `OPC_JALR};
+           <font color = "green">                        ==></font>
+211                            end else begin
+212                                // C.MV: add rd, x0, rs2. rd=0 is a HINT -> add x0,x0,rs2 (NOP) (ADR-0016)
+213                                expanded = {7'b0, rs2_5, 5'd0, 3'b000, rd_rs1_5, `OPC_OP};
+           <font color = "green">                        ==></font>
+214                            end
+215                        end else begin    // cinstr[12]==1
+216                            if (rs2_5 == 5'd0) begin
+                               <font color = "green">-19-</font>  
+217                                if (rd_rs1_5 == 5'd0) begin
+                                   <font color = "green">-20-</font>  
+218                                    // C.EBREAK
+219                                    expanded = 32'h0010_0073;
+           <font color = "green">                            ==></font>
+220                                end else begin
+221                                    // C.JALR: jalr x1, rs1, 0
+222                                    expanded = {12'b0, rd_rs1_5, 3'b000, 5'd1, `OPC_JALR};
+           <font color = "green">                            ==></font>
+223                                end
+224                            end else begin
+225                                // C.ADD: add rd, rd, rs2. rd=0 is a HINT -> add x0,x0,rs2 (NOP) (ADR-0016)
+226                                expanded = {7'b0, rs2_5, rd_rs1_5, 3'b000, rd_rs1_5, `OPC_OP};
+           <font color = "green">                        ==></font>
+227                            end
+228                        end
+229                    end
+230                    3'b110: begin
+231                        // C.SWSP: sw rs2, imm(x2)
+232                        expanded = {imm_swsp[11:5], rs2_5, 5'd2, 3'b010, imm_swsp[4:0], `OPC_STORE};
+           <font color = "green">                ==></font>
+233                    end
+234                    default: illegal = 1'b1;        // 浮點 / RV64-only
+           <font color = "green">            ==></font>
+235                endcase
+236        
+237                // Q3 (op=11) 不該進 cdec — caller 必須保證 cinstr[1:0] != 11
+238                2'b11: illegal = 1'b1;
+           <font color = "green">        ==></font>
+                   MISSING_DEFAULT
+           <font color = "red">        ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>-5-</th><th nowrap width=80>-6-</th><th nowrap width=80>-7-</th><th nowrap width=80>-8-</th><th nowrap width=80>-9-</th><th nowrap width=80>-10-</th><th nowrap width=80>-11-</th><th nowrap width=80>-12-</th><th nowrap width=80>-13-</th><th nowrap width=80>-14-</th><th nowrap width=80>-15-</th><th nowrap width=80>-16-</th><th nowrap width=80>-17-</th><th nowrap width=80>-18-</th><th nowrap width=80>-19-</th><th nowrap width=80>-20-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>2'b00 </td>
+<td align=center>3'b000 </td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b00 </td>
+<td align=center>3'b000 </td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b00 </td>
+<td align=center>3'b010 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b00 </td>
+<td align=center>3'b110 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b00 </td>
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b000 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b001 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b010 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b011 </td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b011 </td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b011 </td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b011 </td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b011 </td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>2'b00 </td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>2'b00 </td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>2'b11 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b000 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>2'b11 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b001 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>2'b11 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b010 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>2'b11 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b011 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>2'b11 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>MISSING_DEFAULT</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b101 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b110 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b111 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>2'b01 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>MISSING_DEFAULT</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b000 </td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b000 </td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b010 </td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b010 </td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b100 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>3'b110 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b10 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>2'b11 </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>MISSING_DEFAULT</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_1">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_cdec">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

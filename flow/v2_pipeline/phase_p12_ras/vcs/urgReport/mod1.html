@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: tb_ras_unit</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_tb_ras_unit'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_tb_ras_unit')">tb_ras_unit</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 90.97</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 96.58</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Cond" > 92.31</a></td>
+<td class="s10 cl rt"><a href="mod1.html#Toggle" >100.00</a></td>
+<td class="wht cl rt"></td>
+<td class="s7 cl rt"><a href="mod1.html#Branch" > 75.00</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p12_ras/vcs/../../../../IP/cpu_m1/dv/tb/tb_ras_unit.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p12_ras/vcs/../../../../IP/cpu_m1/dv/tb/tb_ras_unit.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod1.html#inst_tag_1"  onclick="showContent('inst_tag_1')">tb_ras_unit</a></td>
+<td class="s9 cl rt"> 90.97</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 96.58</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Cond" > 92.31</a></td>
+<td class="s10 cl rt"><a href="mod1.html#Toggle" >100.00</a></td>
+<td class="wht cl rt"></td>
+<td class="s7 cl rt"><a href="mod1.html#Branch" > 75.00</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_tb_ras_unit'>
+<hr>
+<a name="inst_tag_1"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_1" >tb_ras_unit</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 90.97</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 96.58</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Cond" > 92.31</a></td>
+<td class="s10 cl rt"><a href="mod1.html#Toggle" >100.00</a></td>
+<td class="wht cl rt"></td>
+<td class="s7 cl rt"><a href="mod1.html#Branch" > 75.00</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 94.62</td>
+<td class="s9 cl rt"> 96.95</td>
+<td class="s9 cl rt"> 95.83</td>
+<td class="s10 cl rt">100.00</td>
+<td class="wht cl rt"></td>
+<td class="s8 cl rt"> 85.71</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<span class=inst>none</span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod0.html#inst_tag_0" id="tag_urg_inst_0">dut</a></td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="wht cl rt"></td>
+<td class="s10 cl rt">100.00</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_tb_ras_unit'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod1.html" >tb_ras_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">TOTAL</td><td></td><td>117</td><td>113</td><td>96.58</td></tr>
+<tr class="s10"><td class="lf">INITIAL</td><td>31</td><td>4</td><td>4</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>37</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s5"><td class="lf">ROUTINE</td><td>44</td><td>4</td><td>2</td><td>50.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>59</td><td>11</td><td>11</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>83</td><td>13</td><td>13</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>98</td><td>23</td><td>23</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">INITIAL</td><td>119</td><td>61</td><td>59</td><td>96.72</td></tr>
+</table>
+<pre class="code"><br clear=all>
+30                          initial begin
+31         1/1                  clk = 1'b0;
+32         3/3                  forever #5 clk = ~clk;
+33                          end
+34                      
+35                          function [31:0] golden_top;
+36                              begin
+37         1/1                      golden_top = (g_ptr == 3'd0) ? 32'h0000_0000 : g_stack[g_ptr - 3'd1];
+38                              end
+39                          endfunction
+40                      
+41                          task check_top;
+42                              input [8*80-1:0] tag;
+43                              begin
+44         1/1                      vectors = vectors + 1;
+45         1/1                      if (ras_top !== golden_top()) begin
+46         <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+47         <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s ras_top got=%h exp=%h ptr=%0d&quot;,</font>
+48                                             vectors, tag, ras_top, golden_top(), g_ptr);
+49                                  end
+                        MISSING_ELSE
+50                              end
+51                          endtask
+52                      
+53                          task model_step;
+54                              input        do_push;
+55                              input [31:0] val;
+56                              input        do_pop;
+57                              reg [2:0] top_idx;
+58                              begin
+59         1/1                      top_idx = g_ptr - 3'd1;
+60         1/1                      if (do_push &amp;&amp; do_pop) begin
+61         1/1                          if (g_ptr != 3'd0) begin
+62         1/1                              g_stack[top_idx] = val;
+63                                      end else begin
+64         1/1                              g_stack[0] = val;
+65                                      end
+66         1/1                      end else if (do_push) begin
+67         1/1                          g_stack[g_ptr] = val;
+68         1/1                          g_ptr = g_ptr + 3'd1;
+69         1/1                      end else if (do_pop) begin
+70         1/1                          if (g_ptr != 3'd0) begin
+71         1/1                              g_ptr = g_ptr - 3'd1;
+72                                      end
+                        MISSING_ELSE
+73                                  end
+                   <font color = "red">==>  MISSING_ELSE</font>
+74                              end
+75                          endtask
+76                      
+77                          task drive_cycle;
+78                              input        do_push;
+79                              input [31:0] val;
+80                              input        do_pop;
+81                              input [8*80-1:0] tag;
+82                              begin
+83         2/2                      @(negedge clk);
+84         1/1                      push     = do_push;
+85         1/1                      push_val = val;
+86         1/1                      pop      = do_pop;
+87         1/1                      model_step(do_push, val, do_pop);
+88         2/2                      @(posedge clk);
+89         2/2                      #1;
+90         1/1                      push = 1'b0;
+91         1/1                      pop  = 1'b0;
+92         1/1                      check_top(tag);
+93                              end
+94                          endtask
+95                      
+96                          task reset_dut;
+97                              begin
+98         2/2                      @(negedge clk);
+99         1/1                      resetn   = 1'b0;
+100        1/1                      push     = 1'b0;
+101        1/1                      push_val = 32'h0000_0000;
+102        1/1                      pop      = 1'b0;
+103        1/1                      g_ptr    = 3'd0;
+104        1/1                      for (i = 0; i &lt; 8; i = i + 1) begin
+105        1/1                          g_stack[i] = 32'h0000_0000;
+106                                 end
+107        3/3                      repeat (2) @(posedge clk);
+                        REPEAT_FALSE
+108        2/2                      #1;
+109        1/1                      check_top(&quot;reset top is zero&quot;);
+110        2/2                      @(negedge clk);
+111        1/1                      resetn = 1'b1;
+112        2/2                      @(posedge clk);
+113        2/2                      #1;
+114        1/1                      check_top(&quot;post reset top is zero&quot;);
+115                             end
+116                         endtask
+117                     
+118                         initial begin
+119        1/1                  vectors = 0;
+120        1/1                  errors  = 0;
+121        1/1                  resetn  = 1'b1;
+122        1/1                  push    = 1'b0;
+123        1/1                  pop     = 1'b0;
+124        1/1                  push_val = 32'h0000_0000;
+125                     
+126        1/1                  addr_memmap[0]  = 32'h0000_0004;
+127        1/1                  addr_memmap[1]  = 32'h0000_0018;
+128        1/1                  addr_memmap[2]  = 32'h0000_003C;
+129        1/1                  addr_memmap[3]  = 32'h0000_00F0;
+130        1/1                  addr_memmap[4]  = 32'h0000_0554;
+131        1/1                  addr_memmap[5]  = 32'h0000_0AA8;
+132        1/1                  addr_memmap[6]  = 32'h0000_155C;
+133        1/1                  addr_memmap[7]  = 32'h0000_2AB0;
+134        1/1                  addr_memmap[8]  = 32'h0000_3FFC;
+135        1/1                  addr_memmap[9]  = 32'h0000_0008;
+136        1/1                  addr_memmap[10] = 32'h0000_0014;
+137        1/1                  addr_memmap[11] = 32'h0000_0028;
+138        1/1                  addr_memmap[12] = 32'h0000_007C;
+139        1/1                  addr_memmap[13] = 32'h0000_01F4;
+140        1/1                  addr_memmap[14] = 32'h0000_0FEC;
+141        1/1                  addr_memmap[15] = 32'h0000_3550;
+142                     
+143        1/1                  full_range_patterns[0] = 32'hFFFF_FFFC;
+144        1/1                  full_range_patterns[1] = 32'hDEAD_BEEF;
+145        1/1                  full_range_patterns[2] = 32'hAAAA_AAAA;
+146        1/1                  full_range_patterns[3] = 32'h5555_5555;
+147        1/1                  full_range_patterns[4] = 32'h8000_0000;
+148        1/1                  full_range_patterns[5] = 32'h7FFF_FFFC;
+149                     
+150        1/1                  for (i = 0; i &lt; 8; i = i + 1) begin
+151        1/1                      g_stack[i] = 32'h0000_0000;
+152                             end
+153        1/1                  g_ptr = 3'd0;
+154                     
+155        1/1                  reset_dut();
+156                     
+157                             // Unit-level push_val is unconstrained: drive all 32 address bits into
+158                             // every physical slot and onto ras_top before behavioral sweeps.
+159        1/1                  for (i = 0; i &lt; 8; i = i + 1) begin
+160        1/1                      drive_cycle(1'b1, 32'hFFFF_FFFF, 1'b0,
+161                                             &quot;full-width all-ones payload per slot&quot;);
+162                             end
+163        1/1                  for (i = 0; i &lt; 8; i = i + 1) begin
+164        1/1                      drive_cycle(1'b1, 32'h0000_0000, 1'b0,
+165                                             &quot;full-width all-zeroes payload per slot&quot;);
+166                             end
+167        1/1                  for (i = 0; i &lt; 32; i = i + 1) begin
+168        1/1                      drive_cycle(1'b1, (32'h0000_0001 &lt;&lt; i), 1'b0,
+169                                             &quot;walking-1 full-width push payload&quot;);
+170                             end
+171        1/1                  for (i = 0; i &lt; 32; i = i + 1) begin
+172        1/1                      drive_cycle(1'b1, ~((32'h0000_0001 &lt;&lt; i)), 1'b0,
+173                                             &quot;walking-1 complement full-width push payload&quot;);
+174                             end
+175        1/1                  for (i = 0; i &lt; 6; i = i + 1) begin
+176        1/1                      drive_cycle(1'b1, full_range_patterns[i], 1'b0,
+177                                             &quot;fixed full-range push payload&quot;);
+178                             end
+179                     
+180                             // Fill all eight storage slots. The implemented 3-bit pointer wraps to
+181                             // zero on the eighth push, so ras_top reflects the RTL's empty encoding.
+182        1/1                  for (i = 0; i &lt; 8; i = i + 1) begin
+183        1/1                      drive_cycle(1'b1, addr_memmap[i], 1'b0, &quot;depth-8 fill / pointer wrap&quot;);
+184                             end
+185                     
+186                             // Empty pop is a no-op and keeps ras_top at zero.
+187        1/1                  drive_cycle(1'b0, 32'h0000_0000, 1'b1, &quot;empty pop no-op after wrap&quot;);
+188                     
+189                             // Push and pop seven visible entries to verify LIFO behavior while ptr
+190                             // is non-zero, covering every non-empty top index.
+191        1/1                  for (i = 0; i &lt; 7; i = i + 1) begin
+192        1/1                      drive_cycle(1'b1, addr_memmap[8 + i], 1'b0, &quot;visible push for LIFO sweep&quot;);
+193                             end
+194        1/1                  for (i = 0; i &lt; 7; i = i + 1) begin
+195        1/1                      drive_cycle(1'b0, 32'h0000_0000, 1'b1, &quot;visible pop for LIFO sweep&quot;);
+196                             end
+197                     
+198                             // Wrap/overwrite: push through slot 7 and then back to slot 0/1.
+199        1/1                  for (i = 0; i &lt; 10; i = i + 1) begin
+200        1/1                      drive_cycle(1'b1, addr_memmap[(i * 3) &amp; 4'hf], 1'b0,
+201                                             &quot;push 9-10 circular overwrite sweep&quot;);
+202                             end
+203                     
+204                             // Same-cycle push+pop replaces the current top when non-empty.
+205        1/1                  drive_cycle(1'b1, 32'h0000_2A54, 1'b1, &quot;same-cycle replace non-empty top&quot;);
+206                     
+207                             // Pop back to zero, then same-cycle push+pop from empty covers slot 0
+208                             // write with ptr unchanged and visible top still zero.
+209        1/1                  for (i = 0; i &lt; 2; i = i + 1) begin
+210        1/1                      drive_cycle(1'b0, 32'h0000_0000, 1'b1, &quot;pop toward empty before empty both&quot;);
+211                             end
+212        1/1                  drive_cycle(1'b1, 32'h0000_15A8, 1'b1, &quot;same-cycle push-pop empty&quot;);
+213        1/1                  drive_cycle(1'b0, 32'h0000_0000, 1'b1, &quot;empty pop final&quot;);
+214                     
+215        1/1                  if (errors == 0) begin
+216        1/1                      $display(&quot;PASS: ras unit %0d/%0d vectors&quot;, vectors, vectors);
+217                             end else begin
+218        <font color = "red">0/1     ==>              $display(&quot;FAIL: ras unit %0d errors in %0d vectors&quot;, errors, vectors);</font>
+219        <font color = "red">0/1     ==>              $fatal(1);</font>
+220                             end
+221        1/1                  $finish;
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod1.html" >tb_ras_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">Conditions</td><td>13</td><td>12</td><td>92.31</td></tr>
+<tr class="s9"><td class="lf">Logical</td><td>13</td><td>12</td><td>92.31</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       37
+ EXPRESSION ((g_ptr == 3'b0) ? 32'b0 : g_stack[(g_ptr - 3'b1)])
+             -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       37
+ SUB-EXPRESSION (g_ptr == 3'b0)
+                -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       60
+ EXPRESSION (do_push &amp;&amp; do_pop)
+             ---1---    ---2--
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       61
+ EXPRESSION (g_ptr != 3'b0)
+            -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       70
+ EXPRESSION (g_ptr != 3'b0)
+            -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       215
+ EXPRESSION (errors == 0)
+            ------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod1.html" >tb_ras_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s10">
+<td>Totals</td>
+<td class="rt">7</td>
+<td class="rt">7</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>Total Bits</td>
+<td class="rt">142</td>
+<td class="rt">142</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">71</td>
+<td class="rt">71</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">71</td>
+<td class="rt">71</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s10">
+<td>Signals</td>
+<td class="rt">7</td>
+<td class="rt">7</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>Signal Bits</td>
+<td class="rt">142</td>
+<td class="rt">142</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">71</td>
+<td class="rt">71</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">71</td>
+<td class="rt">71</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>clk</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>resetn</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>ras_top[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>push</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>push_val[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>pop</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_ptr[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod1.html" >tb_ras_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s7">
+<td>Branches</td>
+<td></td>
+<td class="rt">12</td>
+<td class="rt">9</td>
+<td class="rt">75.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">215</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">45</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s8">
+<td>IF</td>
+<td class="rt">60</td>
+<td class="rt">6</td>
+<td class="rt">5</td>
+<td class="rt">83.33 </td>
+</tr><tr class="s10">
+<td>TERNARY</td>
+<td class="rt">37</td>
+<td class="rt">2</td>
+<td class="rt">2</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+215                if (errors == 0) begin
+                   <font color = "red">-1-</font>  
+216                    $display("PASS: ras unit %0d/%0d vectors", vectors, vectors);
+           <font color = "green">            ==></font>
+217                end else begin
+218                    $display("FAIL: ras unit %0d errors in %0d vectors", errors, vectors);
+           <font color = "red">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+45                     if (ras_top !== golden_top()) begin
+                       <font color = "red">-1-</font>  
+46                         errors = errors + 1;
+           <font color = "red">                ==></font>
+47                         $error("FAIL[%0d] %0s ras_top got=%h exp=%h ptr=%0d",
+48                                vectors, tag, ras_top, golden_top(), g_ptr);
+49                     end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+60                     if (do_push && do_pop) begin
+                       <font color = "green">-1-</font>  
+61                         if (g_ptr != 3'd0) begin
+                           <font color = "green">-2-</font>  
+62                             g_stack[top_idx] = val;
+           <font color = "green">                    ==></font>
+63                         end else begin
+64                             g_stack[0] = val;
+           <font color = "green">                    ==></font>
+65                         end
+66                     end else if (do_push) begin
+                                <font color = "green">-3-</font>  
+67                         g_stack[g_ptr] = val;
+           <font color = "green">                ==></font>
+68                         g_ptr = g_ptr + 3'd1;
+69                     end else if (do_pop) begin
+                                <font color = "red">-4-</font>  
+70                         if (g_ptr != 3'd0) begin
+                           <font color = "green">-5-</font>  
+71                             g_ptr = g_ptr - 3'd1;
+           <font color = "green">                    ==></font>
+72                         end
+                           MISSING_ELSE
+           <font color = "green">                ==></font>
+73                     end
+                       MISSING_ELSE
+           <font color = "red">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>-5-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+37                     golden_top = (g_ptr == 3'd0) ? 32'h0000_0000 : g_stack[g_ptr - 3'd1];
+                                                    <font color = "green">-1-</font>  
+                                                    <font color = "green">==></font>  
+                                                    <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_1">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_tb_ras_unit">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

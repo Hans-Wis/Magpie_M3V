@@ -1,0 +1,2 @@
+PASS: P17 trap-delta report written; gate status intentionally not green
+INFO: reachable owned signals still missing full toggle closure: wb_trap_pc_for_mepc

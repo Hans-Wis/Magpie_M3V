@@ -1,0 +1,21 @@
+rc file Version 1.0
+
+[Design]
+COMPILE_PATH=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_04_08_functional_coverage
+VCS_HOME=/soft/synopsys/vcs/X-2025.06-SP1
+VERDI_HOME=/soft/synopsys/verdi/X-2025.06-SP1-1
+SystemC=FALSE
+UUM=FALSE
+KDB=FALSE
+USE_NOVAS_HOME=FALSE
+COSIM=FALSE
+TOP=tb_wrapper_func_cov 
+OPTION=-ssv -ssy 
+ELAB_OPTION=-ssv -ssy 
+
+[Value]
+WREALX=ffff534e50535f58
+WREALZ=ffff534e50535f5a
+
+[CompInfo]
+FLOW_OPTS=-ssv -ssy 

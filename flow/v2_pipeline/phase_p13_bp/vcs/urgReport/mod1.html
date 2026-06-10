@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: tb_bp_unit</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_tb_bp_unit'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_tb_bp_unit')">tb_bp_unit</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 96.36</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 97.28</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Cond" > 98.15</a></td>
+<td class="s10 cl rt"><a href="mod1.html#Toggle" >100.00</a></td>
+<td class="wht cl rt"></td>
+<td class="s9 cl rt"><a href="mod1.html#Branch" > 90.00</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p13_bp/vcs/../../../../IP/cpu_m1/dv/tb/tb_bp_unit.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p13_bp/vcs/../../../../IP/cpu_m1/dv/tb/tb_bp_unit.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod1.html#inst_tag_1"  onclick="showContent('inst_tag_1')">tb_bp_unit</a></td>
+<td class="s9 cl rt"> 96.36</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 97.28</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Cond" > 98.15</a></td>
+<td class="s10 cl rt"><a href="mod1.html#Toggle" >100.00</a></td>
+<td class="wht cl rt"></td>
+<td class="s9 cl rt"><a href="mod1.html#Branch" > 90.00</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_tb_bp_unit'>
+<hr>
+<a name="inst_tag_1"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_1" >tb_bp_unit</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 96.36</td>
+<td class="s9 cl rt"><a href="mod1.html#Line" > 97.28</a></td>
+<td class="s9 cl rt"><a href="mod1.html#Cond" > 98.15</a></td>
+<td class="s10 cl rt"><a href="mod1.html#Toggle" >100.00</a></td>
+<td class="wht cl rt"></td>
+<td class="s9 cl rt"><a href="mod1.html#Branch" > 90.00</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 97.90</td>
+<td class="s9 cl rt"> 97.63</td>
+<td class="s9 cl rt"> 99.09</td>
+<td class="s10 cl rt">100.00</td>
+<td class="wht cl rt"></td>
+<td class="s9 cl rt"> 94.87</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<span class=inst>none</span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod0.html#inst_tag_0" id="tag_urg_inst_0">dut</a></td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="wht cl rt"></td>
+<td class="s10 cl rt">100.00</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_tb_bp_unit'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod1.html" >tb_bp_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">TOTAL</td><td></td><td>147</td><td>143</td><td>97.28</td></tr>
+<tr class="s10"><td class="lf">INITIAL</td><td>50</td><td>4</td><td>4</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>58</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>65</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>72</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>80</td><td>3</td><td>3</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>91</td><td>10</td><td>10</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>118</td><td>18</td><td>18</td><td>100.00</td></tr>
+<tr class="s8"><td class="lf">ROUTINE</td><td>152</td><td>13</td><td>11</td><td>84.62</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>178</td><td>13</td><td>13</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>194</td><td>24</td><td>24</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>219</td><td>7</td><td>7</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">INITIAL</td><td>230</td><td>52</td><td>50</td><td>96.15</td></tr>
+</table>
+<pre class="code"><br clear=all>
+49                          initial begin
+50         1/1                  clk = 1'b0;
+51         3/3                  forever #5 clk = ~clk;
+52                          end
+53                      
+54                          function [31:0] make_pc;
+55                              input [4:0] idx;
+56                              input [TAG_BITS-1:0] tag;
+57                              begin
+58         1/1                      make_pc = {tag, idx, 1'b0};
+59                              end
+60                          endfunction
+61                      
+62                          function [4:0] pc_idx;
+63                              input [31:0] pc;
+64                              begin
+65         1/1                      pc_idx = pc[IDX_LSB +: IDX_BITS];
+66                              end
+67                          endfunction
+68                      
+69                          function [TAG_BITS-1:0] pc_tag;
+70                              input [31:0] pc;
+71                              begin
+72         1/1                      pc_tag = pc[31 -: TAG_BITS];
+73                              end
+74                          endfunction
+75                      
+76                          function [1:0] sat_next;
+77                              input [1:0] cur;
+78                              input       taken;
+79                              begin
+80         1/1                      if (taken) begin
+81         1/1                          sat_next = (cur == 2'b11) ? 2'b11 : cur + 2'd1;
+82                                  end else begin
+83         1/1                          sat_next = (cur == 2'b00) ? 2'b00 : cur - 2'd1;
+84                                  end
+85                              end
+86                          endfunction
+87                      
+88                          task model_reset;
+89                              integer j;
+90                              begin
+91         1/1                      for (j = 0; j &lt; N_SETS; j = j + 1) begin
+92         1/1                          g_valid0[j]  = 1'b0;
+93         1/1                          g_valid1[j]  = 1'b0;
+94         1/1                          g_tag0[j]    = {TAG_BITS{1'b0}};
+95         1/1                          g_tag1[j]    = {TAG_BITS{1'b0}};
+96         1/1                          g_target0[j] = 32'h0000_0000;
+97         1/1                          g_target1[j] = 32'h0000_0000;
+98         1/1                          g_count0[j]  = 2'b01;
+99         1/1                          g_count1[j]  = 2'b01;
+100        1/1                          g_lru[j]     = 1'b0;
+101                                 end
+102                             end
+103                         endtask
+104                     
+105                         task model_update;
+106                             input [31:0] pc;
+107                             input        taken;
+108                             input [31:0] target;
+109                             reg [4:0] idx;
+110                             reg [TAG_BITS-1:0] tag;
+111                             reg hit0;
+112                             reg hit1;
+113                             reg way;
+114                             reg hit;
+115                             reg [1:0] cur;
+116                             reg [1:0] nxt;
+117                             begin
+118        1/1                      idx = pc_idx(pc);
+119        1/1                      tag = pc_tag(pc);
+120        1/1                      hit0 = g_valid0[idx] &amp;&amp; (g_tag0[idx] == tag);
+121        1/1                      hit1 = g_valid1[idx] &amp;&amp; (g_tag1[idx] == tag);
+122        1/1                      way = hit1 ? 1'b1 : hit0 ? 1'b0 : g_lru[idx];
+123        1/1                      hit = hit0 | hit1;
+124        1/1                      cur = way ? g_count1[idx] : g_count0[idx];
+125        1/1                      nxt = hit ? sat_next(cur, taken) : (taken ? 2'b10 : 2'b01);
+126                     
+127        1/1                      if (way) begin
+128        1/1                          g_valid1[idx]  = 1'b1;
+129        1/1                          g_tag1[idx]    = tag;
+130        1/1                          g_target1[idx] = target;
+131        1/1                          g_count1[idx]  = nxt;
+132                                 end else begin
+133        1/1                          g_valid0[idx]  = 1'b1;
+134        1/1                          g_tag0[idx]    = tag;
+135        1/1                          g_target0[idx] = target;
+136        1/1                          g_count0[idx]  = nxt;
+137                                 end
+138        1/1                      g_lru[idx] = ~way;
+139                             end
+140                         endtask
+141                     
+142                         task check_predict;
+143                             input [31:0] pc;
+144                             input [8*96-1:0] tag_text;
+145                             reg [4:0] idx;
+146                             reg [TAG_BITS-1:0] tag;
+147                             reg hit0;
+148                             reg hit1;
+149                             reg exp_taken;
+150                             reg [31:0] exp_target;
+151                             begin
+152        1/1                      idx = pc_idx(pc);
+153        1/1                      tag = pc_tag(pc);
+154        1/1                      hit0 = g_valid0[idx] &amp;&amp; (g_tag0[idx] == tag);
+155        1/1                      hit1 = g_valid1[idx] &amp;&amp; (g_tag1[idx] == tag);
+156        1/1                      exp_taken = (hit0 &amp;&amp; g_count0[idx][1]) | (hit1 &amp;&amp; g_count1[idx][1]);
+157        1/1                      exp_target = hit1 ? g_target1[idx] : g_target0[idx];
+158                     
+159        1/1                      if_pc = pc;
+160        2/2                      #1;
+161        1/1                      vectors = vectors + 1;
+162        1/1                      if ((bp_predict_taken !== exp_taken) ||
+163                                     (bp_predict_target !== exp_target)) begin
+164        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+165        <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s pc=%h idx=%0d got taken=%b target=%h exp taken=%b target=%h&quot;,</font>
+166                                            vectors, tag_text, pc, idx, bp_predict_taken,
+167                                            bp_predict_target, exp_taken, exp_target);
+168                                 end
+                        MISSING_ELSE
+169                             end
+170                         endtask
+171                     
+172                         task drive_update;
+173                             input [31:0] pc;
+174                             input        taken;
+175                             input [31:0] target;
+176                             input [8*96-1:0] tag_text;
+177                             begin
+178        2/2                      @(negedge clk);
+179        1/1                      upd_valid  = 1'b1;
+180        1/1                      upd_pc     = pc;
+181        1/1                      upd_taken  = taken;
+182        1/1                      upd_target = target;
+183        2/2                      @(posedge clk);
+184        2/2                      #1;
+185        1/1                      model_update(pc, taken, target);
+186        1/1                      upd_valid = 1'b0;
+187        1/1                      check_predict(pc, tag_text);
+188                             end
+189                         endtask
+190                     
+191                         task reset_dut;
+192                             integer j;
+193                             begin
+194        2/2                      @(negedge clk);
+195        1/1                      resetn     = 1'b0;
+196        1/1                      if_pc      = 32'h0000_0000;
+197        1/1                      upd_valid  = 1'b0;
+198        1/1                      upd_pc     = 32'h0000_0000;
+199        1/1                      upd_taken  = 1'b0;
+200        1/1                      upd_target = 32'h0000_0000;
+201        1/1                      model_reset();
+202        3/3                      repeat (2) @(posedge clk);
+                        REPEAT_FALSE
+203        2/2                      #1;
+204        1/1                      for (j = 0; j &lt; N_SETS; j = j + 1) begin
+205        1/1                          check_predict(make_pc(j[4:0], {TAG_BITS{1'b0}}), &quot;reset valid-clear miss&quot;);
+206                                 end
+207        2/2                      @(negedge clk);
+208        1/1                      resetn = 1'b1;
+209        2/2                      @(posedge clk);
+210        2/2                      #1;
+211        1/1                      check_predict(make_pc(5'd0, {TAG_BITS{1'b0}}), &quot;post-reset miss&quot;);
+212                             end
+213                         endtask
+214                     
+215                         task train_counter_all_states;
+216                             input [31:0] pc;
+217                             input [31:0] target_base;
+218                             begin
+219        1/1                      drive_update(pc, 1'b0, target_base ^ 32'h0000_0001, &quot;counter weak-not to strong-not&quot;);
+220        1/1                      drive_update(pc, 1'b0, target_base ^ 32'h0000_0002, &quot;counter strong-not saturate&quot;);
+221        1/1                      drive_update(pc, 1'b1, target_base ^ 32'h0000_0004, &quot;counter strong-not to weak-not&quot;);
+222        1/1                      drive_update(pc, 1'b1, target_base ^ 32'h0000_0008, &quot;counter weak-not to weak-taken&quot;);
+223        1/1                      drive_update(pc, 1'b1, target_base ^ 32'h0000_0010, &quot;counter weak-taken to strong-taken&quot;);
+224        1/1                      drive_update(pc, 1'b1, target_base ^ 32'h0000_0020, &quot;counter strong-taken saturate&quot;);
+225        1/1                      drive_update(pc, 1'b0, target_base ^ 32'h0000_0040, &quot;counter strong-taken to weak-taken&quot;);
+226                             end
+227                         endtask
+228                     
+229                         initial begin
+230        1/1                  vectors = 0;
+231        1/1                  errors = 0;
+232        1/1                  resetn = 1'b1;
+233        1/1                  if_pc = 32'h0000_0000;
+234        1/1                  upd_valid = 1'b0;
+235        1/1                  upd_pc = 32'h0000_0000;
+236        1/1                  upd_taken = 1'b0;
+237        1/1                  upd_target = 32'h0000_0000;
+238                     
+239        1/1                  tag_patterns[0] = {TAG_BITS{1'b0}};
+240        1/1                  tag_patterns[1] = {TAG_BITS{1'b1}};
+241        1/1                  tag_patterns[2] = {{(TAG_BITS-1){1'b0}}, 1'b1};
+242        1/1                  tag_patterns[3] = {1'b1, {(TAG_BITS-1){1'b0}}};
+243        1/1                  tag_patterns[4] = 26'h2AAAAAA;
+244        1/1                  tag_patterns[5] = 26'h1555555;
+245        1/1                  tag_patterns[6] = 26'h3FFFFFC;
+246        1/1                  tag_patterns[7] = 26'h37AB6FB;
+247                     
+248        1/1                  target_patterns[0]  = 32'h0000_0000;
+249        1/1                  target_patterns[1]  = 32'hFFFF_FFFC;
+250        1/1                  target_patterns[2]  = 32'hDEAD_BEEF;
+251        1/1                  target_patterns[3]  = 32'hAAAA_AAAA;
+252        1/1                  target_patterns[4]  = 32'h5555_5555;
+253        1/1                  target_patterns[5]  = 32'h8000_0000;
+254        1/1                  target_patterns[6]  = 32'h7FFF_FFFC;
+255        1/1                  target_patterns[7]  = 32'h0000_0001;
+256        1/1                  target_patterns[8]  = 32'h0000_0002;
+257        1/1                  target_patterns[9]  = 32'h0000_0004;
+258        1/1                  target_patterns[10] = 32'h0000_0008;
+259        1/1                  target_patterns[11] = 32'h0000_0010;
+260        1/1                  target_patterns[12] = 32'h0000_0020;
+261        1/1                  target_patterns[13] = 32'hFFFF_FFFB;
+262                     
+263        1/1                  model_reset();
+264        1/1                  reset_dut();
+265                     
+266        1/1                  for (set_i = 0; set_i &lt; N_SETS; set_i = set_i + 1) begin
+267        1/1                      drive_update(make_pc(set_i[4:0], tag_patterns[0] ^ set_i[TAG_BITS-1:0]),
+268                                              1'b1, 32'h1000_0000 ^ set_i, &quot;cold miss fills way0 taken&quot;);
+269        1/1                      drive_update(make_pc(set_i[4:0], tag_patterns[1] ^ set_i[TAG_BITS-1:0]),
+270                                              1'b0, 32'h2000_0000 ^ (set_i &lt;&lt; 8), &quot;cold miss fills way1 not-taken&quot;);
+271                     
+272        1/1                      train_counter_all_states(make_pc(set_i[4:0], tag_patterns[0] ^ set_i[TAG_BITS-1:0]),
+273                                                          32'h3000_0000 ^ (set_i &lt;&lt; 4));
+274        1/1                      train_counter_all_states(make_pc(set_i[4:0], tag_patterns[1] ^ set_i[TAG_BITS-1:0]),
+275                                                          32'h4000_0000 ^ (set_i &lt;&lt; 4));
+276                     
+277        1/1                      for (pat_i = 0; pat_i &lt; 8; pat_i = pat_i + 1) begin
+278        1/1                          drive_update(make_pc(set_i[4:0], tag_patterns[pat_i] ^ {21'h0, set_i[4:0]}),
+279                                                  pat_i[0],
+280                                                  target_patterns[pat_i] ^ {set_i[15:0], set_i[15:0]},
+281                                                  &quot;alternate LRU miss writes full tag/target&quot;);
+282                                 end
+283                     
+284        1/1                      for (pat_i = 0; pat_i &lt; 14; pat_i = pat_i + 1) begin
+285        1/1                          drive_update(make_pc(set_i[4:0], tag_patterns[7] ^ {21'h0, set_i[4:0]}),
+286                                                  pat_i[0],
+287                                                  target_patterns[pat_i],
+288                                                  &quot;hit update walks full target bits&quot;);
+289                                 end
+290                     
+291        1/1                      check_predict(make_pc(set_i[4:0], 26'h0123456),
+292                                               &quot;same-set tag miss returns way0 target&quot;);
+293                             end
+294                     
+295                             // Bit 0 is ignored by the implemented index/tag slices, but it is a
+296                             // real unit input port. Toggle it through legal predictor operations.
+297        1/1                  drive_update(make_pc(5'd0, 26'h00FACE0) | 32'h0000_0001,
+298                                          1'b1, 32'hCAF0_0001, &quot;ignored update pc bit0 high&quot;);
+299        1/1                  drive_update(make_pc(5'd0, 26'h00FACE0),
+300                                          1'b0, 32'hCAF0_0000, &quot;ignored update pc bit0 low&quot;);
+301        1/1                  check_predict(make_pc(5'd1, 26'h00BAD00) | 32'h0000_0001,
+302                                           &quot;ignored predict pc bit0 high&quot;);
+303        1/1                  check_predict(make_pc(5'd1, 26'h00BAD00),
+304                                           &quot;ignored predict pc bit0 low&quot;);
+305                     
+306                             // A final reset is the only RTL path that clears valid bits after set.
+307        1/1                  reset_dut();
+308                     
+309        1/1                  if (errors == 0) begin
+310        1/1                      $display(&quot;PASS: bp unit %0d/%0d vectors&quot;, vectors, vectors);
+311                             end else begin
+312        <font color = "red">0/1     ==>              $display(&quot;FAIL: bp unit %0d errors in %0d vectors&quot;, errors, vectors);</font>
+313        <font color = "red">0/1     ==>              $fatal(1);</font>
+314                             end
+315        1/1                  $finish;
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod1.html" >tb_bp_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">Conditions</td><td>54</td><td>53</td><td>98.15</td></tr>
+<tr class="s9"><td class="lf">Logical</td><td>54</td><td>53</td><td>98.15</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       81
+ EXPRESSION ((cur == 2'b11) ? 2'b11 : ((cur + 2'b1)))
+             -------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       81
+ SUB-EXPRESSION (cur == 2'b11)
+                -------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       83
+ EXPRESSION ((cur == 2'b0) ? 2'b0 : ((cur - 2'b1)))
+             ------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       83
+ SUB-EXPRESSION (cur == 2'b0)
+                ------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       120
+ EXPRESSION (g_valid0[idx] &amp;&amp; (g_tag0[idx] == tag))
+             ------1------    ----------2---------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       120
+ SUB-EXPRESSION (g_tag0[idx] == tag)
+                ----------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       121
+ EXPRESSION (g_valid1[idx] &amp;&amp; (g_tag1[idx] == tag))
+             ------1------    ----------2---------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       121
+ SUB-EXPRESSION (g_tag1[idx] == tag)
+                ----------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       122
+ EXPRESSION (hit1 ? 1'b1 : (hit0 ? 1'b0 : g_lru[idx]))
+             --1-
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       122
+ SUB-EXPRESSION (hit0 ? 1'b0 : g_lru[idx])
+                 --1-
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       123
+ EXPRESSION (hit0 | hit1)
+             --1-   --2-
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       124
+ EXPRESSION (way ? g_count1[idx] : g_count0[idx])
+             -1-
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       125
+ EXPRESSION (hit ? sat_next(cur, taken) : (taken ? 2'b10 : 2'b1))
+             -1-
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       125
+ SUB-EXPRESSION (taken ? 2'b10 : 2'b1)
+                 --1--
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       154
+ EXPRESSION (g_valid0[idx] &amp;&amp; (g_tag0[idx] == tag))
+             ------1------    ----------2---------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       154
+ SUB-EXPRESSION (g_tag0[idx] == tag)
+                ----------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       155
+ EXPRESSION (g_valid1[idx] &amp;&amp; (g_tag1[idx] == tag))
+             ------1------    ----------2---------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       155
+ SUB-EXPRESSION (g_tag1[idx] == tag)
+                ----------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       156
+ EXPRESSION ((hit0 &amp;&amp; g_count0[idx][1]) | (hit1 &amp;&amp; g_count1[idx][1]))
+             -------------1------------   -------------2------------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       156
+ SUB-EXPRESSION (hit0 &amp;&amp; g_count0[idx][1])
+                 --1-    --------2-------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       156
+ SUB-EXPRESSION (hit1 &amp;&amp; g_count1[idx][1])
+                 --1-    --------2-------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       157
+ EXPRESSION (hit1 ? g_target1[idx] : g_target0[idx])
+             --1-
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       309
+ EXPRESSION (errors == 0)
+            ------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod1.html" >tb_bp_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s10">
+<td>Totals</td>
+<td class="rt">9</td>
+<td class="rt">9</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>Total Bits</td>
+<td class="rt">266</td>
+<td class="rt">266</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">133</td>
+<td class="rt">133</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">133</td>
+<td class="rt">133</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s10">
+<td>Signals</td>
+<td class="rt">9</td>
+<td class="rt">9</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>Signal Bits</td>
+<td class="rt">266</td>
+<td class="rt">266</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">133</td>
+<td class="rt">133</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">133</td>
+<td class="rt">133</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>clk</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>resetn</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>if_pc[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>bp_predict_taken</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>bp_predict_target[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>upd_valid</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>upd_pc[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>upd_taken</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>upd_target[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod1.html" >tb_bp_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s9">
+<td>Branches</td>
+<td></td>
+<td class="rt">20</td>
+<td class="rt">18</td>
+<td class="rt">90.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">309</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s10">
+<td>TERNARY</td>
+<td class="rt">122</td>
+<td class="rt">3</td>
+<td class="rt">3</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>TERNARY</td>
+<td class="rt">124</td>
+<td class="rt">2</td>
+<td class="rt">2</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>TERNARY</td>
+<td class="rt">125</td>
+<td class="rt">3</td>
+<td class="rt">3</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>IF</td>
+<td class="rt">127</td>
+<td class="rt">2</td>
+<td class="rt">2</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>TERNARY</td>
+<td class="rt">157</td>
+<td class="rt">2</td>
+<td class="rt">2</td>
+<td class="rt">100.00</td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">162</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s10">
+<td>IF</td>
+<td class="rt">80</td>
+<td class="rt">4</td>
+<td class="rt">4</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+309                if (errors == 0) begin
+                   <font color = "red">-1-</font>  
+310                    $display("PASS: bp unit %0d/%0d vectors", vectors, vectors);
+           <font color = "green">            ==></font>
+311                end else begin
+312                    $display("FAIL: bp unit %0d errors in %0d vectors", errors, vectors);
+           <font color = "red">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+122                    way = hit1 ? 1'b1 : hit0 ? 1'b0 : g_lru[idx];
+                                  <font color = "green">-1-</font>           <font color = "green">-2-</font>   
+                                  <font color = "green">==></font>           <font color = "green">==></font>   
+                                                <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+124                    cur = way ? g_count1[idx] : g_count0[idx];
+                                 <font color = "green">-1-</font>  
+                                 <font color = "green">==></font>  
+                                 <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+125                    nxt = hit ? sat_next(cur, taken) : (taken ? 2'b10 : 2'b01);
+                                 <font color = "green">-1-</font>                             <font color = "green">-2-</font>   
+                                 <font color = "green">==></font>                             <font color = "green">==></font>   
+                                                                 <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+127                    if (way) begin
+                       <font color = "green">-1-</font>  
+128                        g_valid1[idx]  = 1'b1;
+           <font color = "green">                ==></font>
+129                        g_tag1[idx]    = tag;
+130                        g_target1[idx] = target;
+131                        g_count1[idx]  = nxt;
+132                    end else begin
+133                        g_valid0[idx]  = 1'b1;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+157                    exp_target = hit1 ? g_target1[idx] : g_target0[idx];
+                                         <font color = "green">-1-</font>  
+                                         <font color = "green">==></font>  
+                                         <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+162                    if ((bp_predict_taken !== exp_taken) ||
+                       <font color = "red">-1-</font>  
+163                        (bp_predict_target !== exp_target)) begin
+164                        errors = errors + 1;
+           <font color = "red">                ==></font>
+165                        $error("FAIL[%0d] %0s pc=%h idx=%0d got taken=%b target=%h exp taken=%b target=%h",
+166                               vectors, tag_text, pc, idx, bp_predict_taken,
+167                               bp_predict_target, exp_taken, exp_target);
+168                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+80                     if (taken) begin
+                       <font color = "green">-1-</font>  
+81                         sat_next = (cur == 2'b11) ? 2'b11 : cur + 2'd1;
+                                                     <font color = "green">-2-</font>  
+                                                     <font color = "green">==></font>  
+                                                     <font color = "green">==></font>  
+82                     end else begin
+83                         sat_next = (cur == 2'b00) ? 2'b00 : cur - 2'd1;
+                                                     <font color = "green">-3-</font>  
+                                                     <font color = "green">==></font>  
+                                                     <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_1">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_tb_bp_unit">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

@@ -1,0 +1,1 @@
+REPORT: P18 BP/RAS report generated; lockstep=PASS: P18 BP/RAS lockstep matched 92 commits; core.v toggle 4185/5426 (77.13%) -> 4268/5426 (78.66%), P18 roster covered +13, remaining 171; gate not marked green

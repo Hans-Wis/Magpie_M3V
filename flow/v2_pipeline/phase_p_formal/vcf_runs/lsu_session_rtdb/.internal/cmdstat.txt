@@ -1,0 +1,104 @@
+
+
+### check_fv	Num_calls 1	Total_time 1.41854	Total_CpuTime 0.65	Total malloc-M 3
+1	File:flow/v2_pipeline/phase_p_formal/vcf_runs/lsu_vcf.tcl::4	Time:1.41854	CpuTime:0.65	 Malloc-MB:3
+
+### configure_tag	Num_calls 1	Total_time 0.018443	Total_CpuTime 0.01	Total malloc-M 5
+1	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/merge_commands.tcl::0	Time:0.018443	CpuTime:0.01	 Malloc-MB:5
+
+### create_proc_command	Num_calls 247	Total_time 0.007728	Total_CpuTime 0	Total malloc-M 1
+
+### define_proc_attributes	Num_calls 319	Total_time 0.003945	Total_CpuTime 0	Total malloc-M 1
+
+### foreach_in_collection	Num_calls 1	Total_time 5.7e-05	Total_CpuTime 0	Total malloc-M 0
+
+### fv_app	Num_calls 2	Total_time 0.000653	Total_CpuTime 0	Total malloc-M 0
+
+### fv_update_command_consistency_flow	Num_calls 1	Total_time 0.000458	Total_CpuTime 0	Total malloc-M 0
+
+### get_app_var	Num_calls 2	Total_time 1.1e-05	Total_CpuTime 0	Total malloc-M 0
+
+### get_attribute	Num_calls 2	Total_time 2.6e-05	Total_CpuTime 0	Total malloc-M 0
+
+### get_message_db_ptr	Num_calls 1	Total_time 4e-06	Total_CpuTime 0	Total malloc-M 0
+
+### get_props	Num_calls 1	Total_time 3e-05	Total_CpuTime 0	Total malloc-M 0
+
+### get_report_db_ptr	Num_calls 1	Total_time 4e-06	Total_CpuTime 0	Total malloc-M 0
+
+### read_file	Num_calls 1	Total_time 0.831345	Total_CpuTime 0.34	Total malloc-M 31
+1	File:flow/v2_pipeline/phase_p_formal/vcf_runs/lsu_vcf.tcl::3	Time:0.831345	CpuTime:0.34	 Malloc-MB:31
+
+### redirect	Num_calls 3	Total_time 0.001167	Total_CpuTime 0	Total malloc-M 0
+
+### rename	Num_calls 1	Total_time 3.7e-05	Total_CpuTime 0	Total malloc-M 0
+
+### report_fv	Num_calls 3	Total_time 0.000975	Total_CpuTime 0	Total malloc-M 0
+
+### restore_session	Num_calls 1	Total_time 5.7e-05	Total_CpuTime 0	Total malloc-M 0
+
+### set_app_var	Num_calls 17	Total_time 0.000794	Total_CpuTime 0	Total malloc-M 0
+
+### source	Num_calls 75	Total_time 2.35939	Total_CpuTime 1.09	Total malloc-M 59
+1	Shell:	Time:2.25211	CpuTime:0.99	 Malloc-MB:34
+2	Shell:	Time:0.030706	CpuTime:0.03	 Malloc-MB:8
+3	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/lowpower.tcl::36	Time:0.02089	CpuTime:0.02	 Malloc-MB:6
+4	Shell:	Time:0.017364	CpuTime:0.02	 Malloc-MB:3
+5	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/fv.tcl::8	Time:0.00706	CpuTime:0.01	 Malloc-MB:1
+6	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/fv.tcl::8	Time:0.004151	CpuTime:0.00	 Malloc-MB:0
+7	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/lowpower.tcl::34	Time:0.001544	CpuTime:0.00	 Malloc-MB:0
+8	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/lowpower.tcl::32	Time:0.001503	CpuTime:0.01	 Malloc-MB:0
+9	Shell:	Time:0.001326	CpuTime:0.00	 Malloc-MB:0
+10	Shell:	Time:0.001268	CpuTime:0.00	 Malloc-MB:0
+11	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/fv_command_consistency_helper.tcl::0	Time:0.001145	CpuTime:0.00	 Malloc-MB:0
+12	File:/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/monet/tcl/fv.tcl::8	Time:0.00105	CpuTime:0.00	 Malloc-MB:0
+
+ ****************************Shell commands Recording************************
+restore_session -level none
+
+
+ ****************************ThreadTask Recording************************
+Thread: CommonMgr Time: 0(s) Mem: 0(KB) MaxSize: 0
+Thread: ReportDb Time: 0.012217(s) Mem: 14008(KB) MaxSize: 3
+Thread: watchdog Time: 2.40803e-05(s) Mem: 0(KB) MaxSize: 1
+
+
+ ****************************ProcessTask Recording************************
+
+ Task : VCS Reader Task
+ args: sh,-c,$VCS_HOME/bin/vcs /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/lsu_session_rtdb/.internal/design/undef_vcs.v -file /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/lsu_session_rtdb/.internal/design/vcsCmd -Xvcstatic_extns=0x100  +warn=noSM_CCE  -error=IRRIPS  -kdb=common_elab  -Xufe=parallel:incrdump  -kdb=incopt  +warn=noKDB-ELAB-E  +warn=noELW_UNBOUND  -Xverdi_elab_opts=-saveLevel  -verdi_opts "-logdir /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/lsu_session_rtdb/verdi/elabcomLog " -Xvd_opts=-silent,-ssy,-ssv,-ssz,+disable_message+C00373, -full64
+ file: flow/v2_pipeline/phase_p_formal/vcf_runs/lsu_vcf.tcl line: 3
+ Start Time: 2026-06-09 22:54:19, CpuTime: 0.52
+ End Time: 2026-06-09 22:54:19, CpuTime: 0.84
+
+ Task : TW_0
+ args: tw_master_csc,-log,/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/lsu_session_rtdb/.internal/formal/fpId0/tw/tw.log,-interactive,-workDir,/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/lsu_session_rtdb/.internal/formal/fpId0/tw,-worker,4,-encryptLogs,-time,12
+ file: flow/v2_pipeline/phase_p_formal/vcf_runs/lsu_vcf.tcl line: 4
+ Start Time: 2026-06-09 22:54:19, CpuTime: 0.87
+ End Time: 2026-06-09 22:54:21, CpuTime: 1.51
+
+
+ **************************** Command Stats (without vnrstat) ************************
+### VnrEntry 2026-06-09 22:54:18
+	configure_tag	Num_calls 1	Total_time 0.018443	Total_CpuTime 0.01	Total malloc-M 5
+	create_proc_command	Num_calls 247	Total_time 0.007728	Total_CpuTime 0	Total malloc-M 1
+	define_proc_attributes	Num_calls 319	Total_time 0.003945	Total_CpuTime 0	Total malloc-M 1
+	fv_app	Num_calls 2	Total_time 0.000653	Total_CpuTime 0	Total malloc-M 0
+	fv_update_command_consistency_flow	Num_calls 1	Total_time 0.000458	Total_CpuTime 0	Total malloc-M 0
+	get_app_var	Num_calls 2	Total_time 1.1e-05	Total_CpuTime 0	Total malloc-M 0
+	get_message_db_ptr	Num_calls 1	Total_time 4e-06	Total_CpuTime 0	Total malloc-M 0
+	get_report_db_ptr	Num_calls 1	Total_time 4e-06	Total_CpuTime 0	Total malloc-M 0
+	rename	Num_calls 1	Total_time 3.7e-05	Total_CpuTime 0	Total malloc-M 0
+	restore_session	Num_calls 1	Total_time 5.7e-05	Total_CpuTime 0	Total malloc-M 0
+	set_app_var	Num_calls 17	Total_time 0.000794	Total_CpuTime 0	Total malloc-M 0
+	source	Num_calls 74	Total_time 0.107273	Total_CpuTime 0.1	Total malloc-M 24
+### VnrEntry 2026-06-09 22:54:19
+	read_file	Num_calls 1	Total_time 0.831345	Total_CpuTime 0.34	Total malloc-M 31
+### VnrEntry 2026-06-09 22:54:21
+	check_fv	Num_calls 1	Total_time 1.41854	Total_CpuTime 0.65	Total malloc-M 3
+	foreach_in_collection	Num_calls 1	Total_time 5.7e-05	Total_CpuTime 0	Total malloc-M 0
+	get_attribute	Num_calls 2	Total_time 2.6e-05	Total_CpuTime 0	Total malloc-M 0
+	get_props	Num_calls 1	Total_time 3e-05	Total_CpuTime 0	Total malloc-M 0
+	redirect	Num_calls 3	Total_time 0.001167	Total_CpuTime 0	Total malloc-M 0
+	report_fv	Num_calls 3	Total_time 0.000975	Total_CpuTime 0	Total malloc-M 0
+	source	Num_calls 1	Total_time 2.25211	Total_CpuTime 0.99	Total malloc-M 34

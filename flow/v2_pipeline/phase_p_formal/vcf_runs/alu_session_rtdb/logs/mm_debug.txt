@@ -1,0 +1,34 @@
+2026-06-09 22:54:02 1781016842.924178 | INFO  | Process Limits
+	 Virual Memory -> no limit
+	 Time Limit -> no limit
+	 Stack Size -> no limit
+	 Data Segment -> no limit
+	 File Size -> no limit
+	 Lock Limit -> no limit
+	 CPU Time Limit -> no limit
+	 RSS  -> no limit
+	 Threads  -> 386184 
+Available Cores : 24
+SystemInfo : totalram=96556 freeram=89597.7 sharedram=4.87109 bufferram=1528.05 totalswap=24576 freeswap=23474.2 procs= 722
+Executable Args: /soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi,-batch,-fmode,FPV,-no_init,-no_restore,-session,flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session,-file,flow/v2_pipeline/phase_p_formal/vcf_runs/alu_vcf.tcl,-output_log_file,flow/v2_pipeline/phase_p_formal/logs/alu_vcf.log,-mode64,-new_verdi_comm,-x,,-y,,-pathmap,/tmp/specify_pathmap.txt221050eda
+
+2026-06-09 22:54:02 1781016842.936762 | INFO  | Share License key => -8510561214280273022 for master run  Old Key => -8510561214280273022
+2026-06-09 22:54:02 1781016842.971442 | INFO  | checkForHostInfo :: /vcwrapmasterhost hostInfoExists: 0
+2026-06-09 22:54:02 1781016842.971471 | INFO  |  hostInfoFile not found
+2026-06-09 22:54:02 1781016842.971479 | INFO  | checkForMmFlow 
+2026-06-09 22:54:03 1781016843.32912 | INFO  | registerSyncPoint: check_cdc cmdPtr: 0x188c6000
+2026-06-09 22:54:03 1781016843.32932 | INFO  | registerSyncPoint: check_glitch cmdPtr: 0x188c8000
+2026-06-09 22:54:03 1781016843.32934 | INFO  | registerSyncPoint: check_hazard cmdPtr: 0x188c8550
+2026-06-09 22:54:03 1781016843.32937 | INFO  | registerSyncPoint: check_rdc cmdPtr: 0x188c7000
+2026-06-09 22:54:03 1781016843.32939 | INFO  | registerSyncPoint: finish_distributed_run cmdPtr: 0x340c2920
+2026-06-09 22:54:03 1781016843.32941 | INFO  | registerSyncPoint: sync_active_scenarios cmdPtr: 0x35010660
+2026-06-09 22:54:03 1781016843.32943 | INFO  | registerSyncPoint: write_abstract_model cmdPtr: 0x34e1f000
+2026-06-09 22:54:03 1781016843.32945 | INFO  | registerSyncPoint: write_constr_abstract_model cmdPtr: 0x188d2000
+2026-06-09 22:54:03 1781016843.32948 | INFO  | Trigger point for reading scenarioSpecific/common files: check_rdc
+2026-06-09 22:54:03 1781016843.32949 | INFO  | Trigger point for reading scenarioSpecific/common files: check_hazard
+2026-06-09 22:54:03 1781016843.32951 | INFO  | Trigger point for reading scenarioSpecific/common files: check_glitch
+2026-06-09 22:54:03 1781016843.32952 | INFO  | Trigger point for reading scenarioSpecific/common files: check_cdc
+2026-06-09 22:54:03 1781016843.45191 | INFO  | restoreDesignForChildModes child: 0  designShare: 0 isDesignReadProcess: 0 designExists:0
+2026-06-09 22:54:03 1781016843.45199 | INFO  | .. don't restore design
+2026-06-09 22:54:04 1781016844.451155 | INFO  | saveDesignForChildModes: MM not enabled
+2026-06-09 22:54:05 1781016845.966354 | INFO  | exitChilds

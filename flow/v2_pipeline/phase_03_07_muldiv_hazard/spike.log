@@ -1,0 +1,94 @@
+core   0: >>>>  $xrv32i2p1_m2p0_c2p0_zicsr2p0_zifencei2p0_zmmul1p0
+core   0: 0x80000000 (0x00004137) lui     sp, 0x4
+core   0: 3 0x80000000 (0x00004137) x2  0x00004000
+core   0: 0x80000004 (0x00010113) mv      sp, sp
+core   0: 3 0x80000004 (0x00010113) x2  0x00004000
+core   0: 0x80000008 (0x00000417) auipc   s0, 0x0
+core   0: 3 0x80000008 (0x00000417) x8  0x80000008
+core   0: 0x8000000c (0x0a440413) addi    s0, s0, 164
+core   0: 3 0x8000000c (0x0a440413) x8  0x800000ac
+core   0: 0x80000010 (0x02500493) li      s1, 37
+core   0: 3 0x80000010 (0x02500493) x9  0x00000025
+core   0: 0x80000014 (0x00004915) c.li    s2, 5
+core   0: 3 0x80000014 (0x4915) x18 0x00000005
+core   0: 0x80000016 (0x000059f5) c.li    s3, -3
+core   0: 3 0x80000016 (0x59f5) x19 0xfffffffd
+core   0: 0x80000018 (0x00005a7d) c.li    s4, -1
+core   0: 3 0x80000018 (0x5a7d) x20 0xffffffff
+core   0: 0x8000001a (0x80000ab7) lui     s5, 0x80000
+core   0: 3 0x8000001a (0x80000ab7) x21 0x80000000
+core   0: 0x8000001e (0x032482b3) mul     t0, s1, s2
+core   0: 3 0x8000001e (0x032482b3) x5  0x000000b9
+core   0: 0x80000022 (0x0322c333) div     t1, t0, s2
+core   0: 3 0x80000022 (0x0322c333) x6  0x00000025
+core   0: 0x80000026 (0x0322e3b3) rem     t2, t0, s2
+core   0: 3 0x80000026 (0x0322e3b3) x7  0x00000000
+core   0: 0x8000002a (0x00730e33) add     t3, t1, t2
+core   0: 3 0x8000002a (0x00730e33) x28 0x00000025
+core   0: 0x8000002e (0x069e1c63) bne     t3, s1, pc + 120
+core   0: 3 0x8000002e (0x069e1c63)
+core   0: 0x80000032 (0x03298eb3) mul     t4, s3, s2
+core   0: 3 0x80000032 (0x03298eb3) x29 0xfffffff1
+core   0: 0x80000036 (0x033ecf33) div     t5, t4, s3
+core   0: 3 0x80000036 (0x033ecf33) x30 0x00000005
+core   0: 0x8000003a (0x033eefb3) rem     t6, t4, s3
+core   0: 3 0x8000003a (0x033eefb3) x31 0x00000000
+core   0: 0x8000003e (0x01ff0533) add     a0, t5, t6
+core   0: 3 0x8000003e (0x01ff0533) x10 0x00000005
+core   0: 0x80000042 (0x07251263) bne     a0, s2, pc + 100
+core   0: 3 0x80000042 (0x07251263)
+core   0: 0x80000046 (0x00642023) sw      t1, 0(s0)
+core   0: 3 0x80000046 (0x00642023) mem 0x800000ac 0x00000025
+core   0: 0x8000004a (0x0000400c) c.lw    a1, 0(s0)
+core   0: 3 0x8000004a (0x400c) x11 0x00000025 mem 0x800000ac
+core   0: 0x8000004c (0x00158613) addi    a2, a1, 1
+core   0: 3 0x8000004c (0x00158613) x12 0x00000026
+core   0: 0x80000050 (0x02600693) li      a3, 38
+core   0: 3 0x80000050 (0x02600693) x13 0x00000026
+core   0: 0x80000054 (0x04d61963) bne     a2, a3, pc + 82
+core   0: 3 0x80000054 (0x04d61963)
+core   0: 0x80000058 (0x00004711) c.li    a4, 4
+core   0: 3 0x80000058 (0x4711) x14 0x00000004
+core   0: 0x8000005a (0x032707b3) mul     a5, a4, s2
+core   0: 3 0x8000005a (0x032707b3) x15 0x00000014
+core   0: 0x8000005e (0x00f40833) add     a6, s0, a5
+core   0: 3 0x8000005e (0x00f40833) x16 0x800000c0
+core   0: 0x80000062 (0x00c82023) sw      a2, 0(a6)
+core   0: 3 0x80000062 (0x00c82023) mem 0x800000c0 0x00000026
+core   0: 0x80000066 (0x00082883) lw      a7, 0(a6)
+core   0: 3 0x80000066 (0x00082883) x17 0x00000026 mem 0x800000c0
+core   0: 0x8000006a (0x02c89e63) bne     a7, a2, pc + 60
+core   0: 3 0x8000006a (0x02c89e63)
+core   0: 0x8000006e (0x0204cb33) div     s6, s1, zero
+core   0: 3 0x8000006e (0x0204cb33) x22 0xffffffff
+core   0: 0x80000072 (0x00005bfd) c.li    s7, -1
+core   0: 3 0x80000072 (0x5bfd) x23 0xffffffff
+core   0: 0x80000074 (0x037b1963) bne     s6, s7, pc + 50
+core   0: 3 0x80000074 (0x037b1963)
+core   0: 0x80000078 (0x0204ec33) rem     s8, s1, zero
+core   0: 3 0x80000078 (0x0204ec33) x24 0x00000025
+core   0: 0x8000007c (0x029c1563) bne     s8, s1, pc + 42
+core   0: 3 0x8000007c (0x029c1563)
+core   0: 0x80000080 (0x034accb3) div     s9, s5, s4
+core   0: 3 0x80000080 (0x034accb3) x25 0x80000000
+core   0: 0x80000084 (0x035c9163) bne     s9, s5, pc + 34
+core   0: 3 0x80000084 (0x035c9163)
+core   0: 0x80000088 (0x034aed33) rem     s10, s5, s4
+core   0: 3 0x80000088 (0x034aed33) x26 0x00000000
+core   0: 0x8000008c (0x000d1d63) bnez    s10, pc + 26
+core   0: 3 0x8000008c (0x000d1d63)
+core   0: 0x80000090 (0x0322ddb3) divu    s11, t0, s2
+core   0: 3 0x80000090 (0x0322ddb3) x27 0x00000025
+core   0: 0x80000094 (0x0322f2b3) remu    t0, t0, s2
+core   0: 3 0x80000094 (0x0322f2b3) x5  0x00000000
+core   0: 0x80000098 (0x005d8333) add     t1, s11, t0
+core   0: 3 0x80000098 (0x005d8333) x6  0x00000025
+core   0: 0x8000009c (0x00931563) bne     t1, s1, pc + 10
+core   0: 3 0x8000009c (0x00931563)
+core   0: 0x800000a0 (0x00000305) c.addi  t1, 1
+core   0: 3 0x800000a0 (0x0305) x6  0x00000026
+core   0: 0x800000a2 (0x0000137d) c.addi  t1, -1
+core   0: 3 0x800000a2 (0x137d) x6  0x00000025
+core   0: 0x800000a4 (0x00009002) c.ebreak
+core   0: exception trap_breakpoint, epc 0x800000a4
+core   0:           tval 0x800000a4

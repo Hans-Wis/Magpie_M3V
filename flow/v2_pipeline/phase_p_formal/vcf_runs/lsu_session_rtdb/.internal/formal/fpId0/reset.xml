@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<File version="1">
+	<State />
+	<Input>
+		<Pair vector="2'bx" name="addr_lo" />
+		<Pair vector="32'bx" name="wdata_raw" />
+		<Pair vector="3'bx" name="funct3" />
+		<Pair vector="1'bx" name="is_store" />
+		<Pair vector="32'bx" name="mem_rdata" />
+		<Pair vector="1'b1" name="_atZero" />
+	</Input>
+</File>

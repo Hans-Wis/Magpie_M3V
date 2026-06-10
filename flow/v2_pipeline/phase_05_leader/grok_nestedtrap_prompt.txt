@@ -1,0 +1,16 @@
+You are a RISC-V privileged-architecture expert advising on a real DV divergence in the Magpie_M1 CPU (RV32IMC_Zicsr_Zifencei, M-mode only, single hart, 4-stage in-order pipeline). Do NOT use any tools; answer purely from the context and your spec knowledge. Be concrete and concise.
+
+SITUATION: riscv-dv random-instruction Spike lockstep was just unblocked for synchronous traps. 2/5 seeds pass cleanly (6 sync-traps each, all commits match). 3/5 seeds diverge in a NESTED-TRAP scenario. Evidence for one failing seed (per-commit DUT vs Spike both matched for the first 516 commits, then diverge):
+- Both commit `mret` at pc=0x1f0e (instr 0x30200073) as commit #515 -- MATCH.
+- After that mret: the DUT's NEXT commit is pc=0x1d9c (csrrw t3,mscratch -- i.e. it RE-ENTERS a trap handler). The Spike golden does NOT go there; Spike stops/exits (its commit stream ends at the mret).
+- So the DUT's `mret` resumes to a different PC than Spike's `mret`. The implication is mepc held a different value in the DUT vs Spike at this mret.
+- This only happens with NESTED traps (a synchronous exception occurs while already inside the trap handler -- the riscv-dv handler itself executes loads/stores/CSR ops that can fault, e.g. a misaligned store, causing a trap-within-the-handler).
+- Earlier we found+fixed (J17) that mepc was being saved off-by-4 on every sync trap; that is fixed for single (non-nested) traps. mepc[0] masking was also fixed.
+- The DUT trap entry hardware writes mepc on every trap (including nested), and the handler does csrrw mscratch (context save) but its mepc save/restore for NESTED traps may be the issue.
+
+QUESTIONS (answer each):
+1. Per the RISC-V Privileged spec, when a synchronous exception occurs WHILE executing the trap handler (M-mode, mstatus.MIE irrelevant for synchronous exceptions), what EXACTLY must hardware do to mepc/mcause/mstatus (MPP/MPIE/MIE)? What is the correct nested-trap behavior?
+2. Given a SIMPLE handler that does NOT save/restore mepc/mcause across a nested trap, what is the architecturally-correct outcome (does the original mepc get clobbered -> is divergence from Spike EXPECTED, i.e. a handler-design artifact, or is it a real DUT hardware bug)?
+3. Is the DUT's behavior (mret resuming into a handler at 0x1d9c) consistent with "hardware correctly overwrote mepc on the nested trap" or does it indicate a DUT bug (e.g. mepc updated on a trap that should not have trapped, or wrong mepc on nested entry, or mstatus.MPP/MPIE stack mishandled with only 1 level)?
+4. Recommended root-cause checklist + fix strategy: what 3-5 specific things should we check in the DUT RTL (csr.v trap-entry mepc/mcause/mstatus update, mret restore, and any interaction with the precise-mepc fix), and what is the most likely real bug vs a test-harness handler-nesting artifact that should instead be excluded from lockstep?
+5. For the DV harness: should nested synchronous traps even be in scope for instruction-stream lockstep, or is the standard practice to make the handler nesting-safe / disable faulting ops inside the handler? Cite what riscv-dv normally does.

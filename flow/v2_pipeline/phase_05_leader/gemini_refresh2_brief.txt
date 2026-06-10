@@ -1,0 +1,9 @@
+Overwrite SOC/Magpie_M1/flow/v2_pipeline/phase_05_leader/PROGRESS.md with an updated progress report. Write the file directly (do not ask).
+Read for ground truth: SOC/Magpie_M1/flow/state/magpie_m1.rtl_signoff.state.json, magpie_m1.dv.state.json, magpie_m1.rtl.state.json; SOC/Magpie_M1/flow/v2_pipeline/phase_05_leader/J2b_J3_result.md; SOC/Magpie_M1/CLAUDE.md §2.
+Latest facts (use them, do not invent):
+- Stage 5.0 LINT: Spyglass lint_rtl 0 error/0 fatal/24 warn, STARC 0 error -> PASS (ADR-0006). DONE.
+- Functional coverage MEASURED real = 55.56% (40/72 bins) but PARTIAL: load/store 92%, ALU/M 81%, opcode 69%, branch/BP/RAS = 0%, CSR/trap = 0% (random-only stimulus; directed trap/bp not merged). NOT a closure.
+- Root cause that had blocked licensed EDA: Codex sandbox (-s workspace-write) unshares network -> no license; fixed by -s danger-full-access. All licensed tools (VCS/URG/Spyglass) then worked.
+- 172 gates pass. RTL integrity confirmed (gate_03_08 re-validating lockstep PASS).
+- J4 = DC synth/PPA trial (TSMC28HPC+) IN PROGRESS.
+Structure: Where we are / Flow stage table 0..5.0 (mark 5.0 lint=pass, 5.0 synth=running; 4.0 coverage=partial 55.56%) / Recently completed / In progress(J4) / Honest gaps (coverage 55% partial branch+CSR 0%, synth/PPA running, lockstep volume only 81 commits). Honesty taxonomy; IP NOT qualified. Concise.

@@ -1,0 +1,20 @@
+ROLE: Codex EXECUTOR (gpt-5.5), PL=Claude. design_id=cpu_m1 (RV32IMC_Zicsr_Zifencei). -s danger-full-access. Spike GOLDEN. report-faithfully: real per-commit only; any divergence = surface (repro+detail+classification), never hide/mask.
+
+CONTEXT: All instruction classes are now clean individually on riscv-dv lockstep: arith+RVC (114k), load/store+branch/jump+M (J13), CSR instructions (J15, 6261 commits). Timing CSRs are EXCLUDED-not-faked in the comparator. DOCUMENTED OUT OF SCOPE for now: random sync-trap STREAMS (Spike 1.1.1-dev halts at M-mode ecall entry) and async INTERRUPTS. Harness flow/v2_pipeline/phase_03_09_riscvdv_lockstep/; comparator flow/v2_pipeline/lib/spike_commit.py.
+
+GOAL J16: run the FULL-MIX (arith+RVC+load/store+branch/jump+M+CSR; keep sync-trap-streams minimal/off and interrupts off per scope) and accumulate >= 100,000 matched commits vs Spike across many seeds, ZERO divergence.
+
+DO:
+1. Configure the gen for the full supported instruction mix (everything that is individually clean). Use a sensible per-seed instr_cnt and enough seeds to exceed 100k matched commits.
+2. Run. For ANY divergence: STOP that seed, save idx/pc/instr/dut-vs-spike + last ~20 commits + repro, CLASSIFY real-DUT vs harness WITH evidence, but keep running other seeds to accumulate; report all at end. Do NOT silently skip or relax.
+3. Update tests/gates/gate_03_09_riscvdv_lockstep.py: PASS iff total matched >= 100000 AND no unresolved real-DUT divergence AND the honest scope (excluded classes) is documented in the result. Keep full suite green (180+).
+4. Do NOT fix RTL in this job (this is a scaled RUN); if a real DUT bug appears, document it for a follow-up.
+CONSTRAINTS: no RTL change; no test relaxation; explicit paths; big logs in phase dir. Long-running expected.
+
+OUTPUT (write <=35 lines) flow/v2_pipeline/phase_05_leader/J16_result.md:
+  ## summary (TOTAL matched commits ; #seeds ; PASS>=100k or INCOMPLETE/DIVERGENCE)
+  ## scope (instruction classes included; documented excluded: sync-trap-stream, interrupts)
+  ## divergences (none, OR each: seed/idx/pc/instr/dut-vs-spike/real-or-harness/evidence)
+  ## throughput (commits/sec; wall-clock)
+  ## gate_status (pytest pass count; gate_03_09 verdict)
+  ## tokens

@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: tb_forward_unit</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_tb_forward_unit'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_tb_forward_unit')">tb_forward_unit</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 90.62</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 95.35</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 96.15</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Toggle" > 99.56</a></td>
+<td class="s7 cl rt"><a href="mod0.html#Branch" > 71.43</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p05_forward/vcs/../../../../IP/cpu_m1/dv/tb/tb_forward_unit.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p05_forward/vcs/../../../../IP/cpu_m1/dv/tb/tb_forward_unit.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod0.html#inst_tag_0"  onclick="showContent('inst_tag_0')">tb_forward_unit</a></td>
+<td class="s9 cl rt"> 90.62</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 95.35</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 96.15</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Toggle" > 99.56</a></td>
+<td class="s7 cl rt"><a href="mod0.html#Branch" > 71.43</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_tb_forward_unit'>
+<hr>
+<a name="inst_tag_0"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_0" >tb_forward_unit</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 90.62</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 95.35</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 96.15</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Toggle" > 99.56</a></td>
+<td class="s7 cl rt"><a href="mod0.html#Branch" > 71.43</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="s9 cl rt"> 94.57</td>
+<td class="s9 cl rt"> 95.35</td>
+<td class="s9 cl rt"> 98.55</td>
+<td class="s9 cl rt"> 99.78</td>
+<td class="s8 cl rt"> 84.62</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<span class=inst>none</span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod1.html#inst_tag_1" id="tag_urg_inst_1">dut</a></td>
+<td class="s10 cl rt">100.00</td>
+<td class="wht cl rt"></td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_tb_forward_unit'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod0.html" >tb_forward_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">TOTAL</td><td></td><td>86</td><td>82</td><td>95.35</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>67</td><td>9</td><td>9</td><td>100.00</td></tr>
+<tr class="s7"><td class="lf">ROUTINE</td><td>86</td><td>8</td><td>6</td><td>75.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>122</td><td>15</td><td>15</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>144</td><td>7</td><td>7</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>172</td><td>7</td><td>7</td><td>100.00</td></tr>
+<tr class="s9"><td class="lf">INITIAL</td><td>197</td><td>40</td><td>38</td><td>95.00</td></tr>
+</table>
+<pre class="code"><br clear=all>
+66                              begin
+67         1/1                      em_can_forward = f_em_valid &amp;&amp; f_em_rd_we &amp;&amp; !f_em_is_load &amp;&amp; (f_em_rd_idx != 5'd0);
+68         1/1                      em_match       = em_can_forward &amp;&amp; (rs_idx == f_em_rd_idx);
+69         1/1                      wb_can_forward = f_wb_valid &amp;&amp; f_wb_rd_we &amp;&amp; (f_wb_rd_idx != 5'd0);
+70         1/1                      wb_match       = wb_can_forward &amp;&amp; !em_match &amp;&amp; (rs_idx == f_wb_rd_idx);
+71                      
+72         1/1                      if (em_match)
+73         1/1                          golden_operand = f_em_fwd_val;
+74         1/1                      else if (wb_match)
+75         1/1                          golden_operand = f_wb_data;
+76                                  else
+77         1/1                          golden_operand = rfu_data;
+78                              end
+79                          endfunction
+80                      
+81                          task check_outputs;
+82                              input [8*40-1:0] tag;
+83                              reg [31:0] exp_rs1;
+84                              reg [31:0] exp_rs2;
+85                              begin
+86         2/2                      #1;
+87         1/1                      exp_rs1 = golden_operand(id_rs1_idx, rfu_rs1_data,
+88                                                           em_valid, em_rd_we, em_rd_idx, em_fwd_val, em_is_load,
+89                                                           wb_valid, wb_rd_we, wb_rd_idx, wb_data);
+90         1/1                      exp_rs2 = golden_operand(id_rs2_idx, rfu_rs2_data,
+91                                                           em_valid, em_rd_we, em_rd_idx, em_fwd_val, em_is_load,
+92                                                           wb_valid, wb_rd_we, wb_rd_idx, wb_data);
+93         1/1                      vectors = vectors + 1;
+94         1/1                      if (rs1_val !== exp_rs1 || rs2_val !== exp_rs2) begin
+95         <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+96         <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s rs1_idx=%0d rs2_idx=%0d em_v/we/rd/load=%b/%b/%0d/%b wb_v/we/rd/load=%b/%b/%0d/%b rs1=%h exp_rs1=%h rs2=%h exp_rs2=%h&quot;,</font>
+97                                             vectors, tag, id_rs1_idx, id_rs2_idx,
+98                                             em_valid, em_rd_we, em_rd_idx, em_is_load,
+99                                             wb_valid, wb_rd_we, wb_rd_idx, wb_is_load,
+100                                            rs1_val, exp_rs1, rs2_val, exp_rs2);
+101                                 end
+                        MISSING_ELSE
+102                             end
+103                         endtask
+104                     
+105                         task drive_case;
+106                             input [4:0]  t_rs1_idx;
+107                             input [4:0]  t_rs2_idx;
+108                             input [31:0] t_rfu_rs1_data;
+109                             input [31:0] t_rfu_rs2_data;
+110                             input        t_em_valid;
+111                             input        t_em_rd_we;
+112                             input [4:0]  t_em_rd_idx;
+113                             input [31:0] t_em_fwd_val;
+114                             input        t_em_is_load;
+115                             input        t_wb_valid;
+116                             input        t_wb_rd_we;
+117                             input [4:0]  t_wb_rd_idx;
+118                             input [31:0] t_wb_data;
+119                             input        t_wb_is_load;
+120                             input [8*40-1:0] tag;
+121                             begin
+122        1/1                      id_rs1_idx   = t_rs1_idx;
+123        1/1                      id_rs2_idx   = t_rs2_idx;
+124        1/1                      rfu_rs1_data = t_rfu_rs1_data;
+125        1/1                      rfu_rs2_data = t_rfu_rs2_data;
+126        1/1                      em_valid     = t_em_valid;
+127        1/1                      em_rd_we     = t_em_rd_we;
+128        1/1                      em_rd_idx    = t_em_rd_idx;
+129        1/1                      em_fwd_val   = t_em_fwd_val;
+130        1/1                      em_is_load   = t_em_is_load;
+131        1/1                      wb_valid     = t_wb_valid;
+132        1/1                      wb_rd_we     = t_wb_rd_we;
+133        1/1                      wb_rd_idx    = t_wb_rd_idx;
+134        1/1                      wb_data      = t_wb_data;
+135        1/1                      wb_is_load   = t_wb_is_load;
+136        1/1                      check_outputs(tag);
+137                             end
+138                         endtask
+139                     
+140                         task run_truth_table_for_rs1;
+141                             input [4:0]  target_idx;
+142                             input [31:0] base_pattern;
+143                             begin
+144        1/1                      drive_case(target_idx, 5'd22, base_pattern ^ 32'h1111_0001, base_pattern ^ 32'h2222_0002,
+145                                            1'b1, 1'b1, 5'd9,  base_pattern ^ 32'he0e0_e0e0, 1'b0,
+146                                            1'b1, 1'b1, 5'd10, base_pattern ^ 32'h0b0b_0b0b, 1'b0, &quot;RS1_NO_MATCH&quot;);
+147        1/1                      drive_case(target_idx, 5'd22, base_pattern ^ 32'h1111_0003, base_pattern ^ 32'h2222_0004,
+148                                            1'b1, 1'b1, target_idx, base_pattern ^ 32'he1e1_e1e1, 1'b0,
+149                                            1'b1, 1'b1, 5'd10,      base_pattern ^ 32'h0b0b_0b0c, 1'b1, &quot;RS1_EX_MEM_MATCH&quot;);
+150        1/1                      drive_case(target_idx, 5'd22, base_pattern ^ 32'h1111_0005, base_pattern ^ 32'h2222_0006,
+151                                            1'b1, 1'b1, 5'd9,       base_pattern ^ 32'he2e2_e2e2, 1'b0,
+152                                            1'b1, 1'b1, target_idx, base_pattern ^ 32'h0b0b_0b0d, 1'b0, &quot;RS1_EX_WB_MATCH&quot;);
+153        1/1                      drive_case(target_idx, 5'd22, base_pattern ^ 32'h1111_0007, base_pattern ^ 32'h2222_0008,
+154                                            1'b1, 1'b1, target_idx, base_pattern ^ 32'he3e3_e3e3, 1'b0,
+155                                            1'b1, 1'b1, target_idx, base_pattern ^ 32'h0b0b_0b0e, 1'b1, &quot;RS1_BOTH_EM_PRIORITY&quot;);
+156        1/1                      drive_case(target_idx, 5'd22, base_pattern ^ 32'h1111_0009, base_pattern ^ 32'h2222_000a,
+157                                            1'b1, 1'b0, target_idx, base_pattern ^ 32'he4e4_e4e4, 1'b0,
+158                                            1'b0, 1'b1, target_idx, base_pattern ^ 32'h0b0b_0b0f, 1'b0, &quot;RS1_MATCH_WE0_NO_FWD&quot;);
+159        1/1                      drive_case(5'd0, 5'd22, base_pattern ^ 32'h1111_000b, base_pattern ^ 32'h2222_000c,
+160                                            1'b1, 1'b1, 5'd0, base_pattern ^ 32'he5e5_e5e5, 1'b0,
+161                                            1'b1, 1'b1, 5'd0, base_pattern ^ 32'h0b0b_0b10, 1'b1, &quot;RS1_MATCH_X0_NO_FWD&quot;);
+162        1/1                      drive_case(target_idx, 5'd22, base_pattern ^ 32'h1111_000d, base_pattern ^ 32'h2222_000e,
+163                                            1'b1, 1'b1, target_idx, base_pattern ^ 32'he6e6_e6e6, 1'b1,
+164                                            1'b0, 1'b1, target_idx, base_pattern ^ 32'h0b0b_0b11, 1'b0, &quot;RS1_EM_LOAD_NO_FWD&quot;);
+165                             end
+166                         endtask
+167                     
+168                         task run_truth_table_for_rs2;
+169                             input [4:0]  target_idx;
+170                             input [31:0] base_pattern;
+171                             begin
+172        1/1                      drive_case(5'd21, target_idx, base_pattern ^ 32'h3333_0001, base_pattern ^ 32'h4444_0002,
+173                                            1'b1, 1'b1, 5'd9,  base_pattern ^ 32'he7e7_e7e7, 1'b0,
+174                                            1'b1, 1'b1, 5'd10, base_pattern ^ 32'h0c0c_0c0c, 1'b0, &quot;RS2_NO_MATCH&quot;);
+175        1/1                      drive_case(5'd21, target_idx, base_pattern ^ 32'h3333_0003, base_pattern ^ 32'h4444_0004,
+176                                            1'b1, 1'b1, target_idx, base_pattern ^ 32'he8e8_e8e8, 1'b0,
+177                                            1'b1, 1'b1, 5'd10,      base_pattern ^ 32'h0c0c_0c0d, 1'b1, &quot;RS2_EX_MEM_MATCH&quot;);
+178        1/1                      drive_case(5'd21, target_idx, base_pattern ^ 32'h3333_0005, base_pattern ^ 32'h4444_0006,
+179                                            1'b1, 1'b1, 5'd9,       base_pattern ^ 32'he9e9_e9e9, 1'b0,
+180                                            1'b1, 1'b1, target_idx, base_pattern ^ 32'h0c0c_0c0e, 1'b0, &quot;RS2_EX_WB_MATCH&quot;);
+181        1/1                      drive_case(5'd21, target_idx, base_pattern ^ 32'h3333_0007, base_pattern ^ 32'h4444_0008,
+182                                            1'b1, 1'b1, target_idx, base_pattern ^ 32'heaea_eaea, 1'b0,
+183                                            1'b1, 1'b1, target_idx, base_pattern ^ 32'h0c0c_0c0f, 1'b1, &quot;RS2_BOTH_EM_PRIORITY&quot;);
+184        1/1                      drive_case(5'd21, target_idx, base_pattern ^ 32'h3333_0009, base_pattern ^ 32'h4444_000a,
+185                                            1'b1, 1'b0, target_idx, base_pattern ^ 32'hebeb_ebeb, 1'b0,
+186                                            1'b0, 1'b1, target_idx, base_pattern ^ 32'h0c0c_0c10, 1'b0, &quot;RS2_MATCH_WE0_NO_FWD&quot;);
+187        1/1                      drive_case(5'd21, 5'd0, base_pattern ^ 32'h3333_000b, base_pattern ^ 32'h4444_000c,
+188                                            1'b1, 1'b1, 5'd0, base_pattern ^ 32'hecec_ecec, 1'b0,
+189                                            1'b1, 1'b1, 5'd0, base_pattern ^ 32'h0c0c_0c11, 1'b1, &quot;RS2_MATCH_X0_NO_FWD&quot;);
+190        1/1                      drive_case(5'd21, target_idx, base_pattern ^ 32'h3333_000d, base_pattern ^ 32'h4444_000e,
+191                                            1'b1, 1'b1, target_idx, base_pattern ^ 32'heded_eded, 1'b1,
+192                                            1'b0, 1'b1, target_idx, base_pattern ^ 32'h0c0c_0c12, 1'b0, &quot;RS2_EM_LOAD_NO_FWD&quot;);
+193                             end
+194                         endtask
+195                     
+196                         initial begin
+197        1/1                  patterns[0] = 32'h0000_0000;
+198        1/1                  patterns[1] = 32'hffff_ffff;
+199        1/1                  patterns[2] = 32'haaaa_aaaa;
+200        1/1                  patterns[3] = 32'h5555_5555;
+201        1/1                  for (pidx = 0; pidx &lt; 32; pidx = pidx + 1) begin
+202        1/1                      patterns[4 + pidx]  = 32'h0000_0001 &lt;&lt; pidx;
+203        1/1                      patterns[36 + pidx] = ~(32'h0000_0001 &lt;&lt; pidx);
+204                             end
+205                     
+206        1/1                  vectors      = 0;
+207        1/1                  errors       = 0;
+208        1/1                  id_rs1_idx   = 5'd0;
+209        1/1                  id_rs2_idx   = 5'd0;
+210        1/1                  rfu_rs1_data = 32'h0000_0000;
+211        1/1                  rfu_rs2_data = 32'h0000_0000;
+212        1/1                  em_valid     = 1'b0;
+213        1/1                  em_rd_we     = 1'b0;
+214        1/1                  em_rd_idx    = 5'd0;
+215        1/1                  em_fwd_val   = 32'h0000_0000;
+216        1/1                  em_is_load   = 1'b0;
+217        1/1                  wb_valid     = 1'b0;
+218        1/1                  wb_rd_we     = 1'b0;
+219        1/1                  wb_rd_idx    = 5'd0;
+220        1/1                  wb_data      = 32'h0000_0000;
+221        1/1                  wb_is_load   = 1'b0;
+222                     
+223        1/1                  check_outputs(&quot;RESET_NO_FORWARD&quot;);
+224                     
+225        1/1                  for (ridx = 0; ridx &lt; 32; ridx = ridx + 1) begin
+226        1/1                      run_truth_table_for_rs1(ridx[4:0], patterns[(ridx * 7) % 68]);
+227        1/1                      ridx_idx = ridx[4:0];
+228        1/1                      rs2_target_idx = ~ridx_idx;
+229        1/1                      run_truth_table_for_rs2(rs2_target_idx, patterns[(ridx * 11) % 68]);
+230                             end
+231                     
+232        1/1                  for (pidx = 0; pidx &lt; 68; pidx = pidx + 1) begin
+233        1/1                      run_truth_table_for_rs1(5'd13, patterns[pidx]);
+234        1/1                      run_truth_table_for_rs2(5'd17, ~patterns[pidx]);
+235                             end
+236                     
+237        1/1                  drive_case(5'd12, 5'd14, 32'h1200_1200, 32'h1400_1400,
+238                                        1'b0, 1'b1, 5'd12, 32'heeee_1212, 1'b0,
+239                                        1'b0, 1'b1, 5'd14, 32'hbbbb_1414, 1'b0, &quot;EM_VALID0_OTHER_PREDICATES_TRUE&quot;);
+240        1/1                  drive_case(5'd15, 5'd16, 32'h1500_1500, 32'h1600_1600,
+241                                        1'b0, 1'b1, 5'd20, 32'heeee_1515, 1'b0,
+242                                        1'b1, 1'b0, 5'd15, 32'hbbbb_1515, 1'b1, &quot;WB_WE0_OTHER_PREDICATES_TRUE&quot;);
+243        1/1                  drive_case(5'd31, 5'd30, 32'hffff_ffff, 32'h0000_0000,
+244                                        1'b0, 1'b0, 5'd31, 32'h5555_5555, 1'b1,
+245                                        1'b0, 1'b0, 5'd30, 32'haaaa_aaaa, 1'b1, &quot;ALL_ENABLES_LOW&quot;);
+246                     
+247        1/1                  if (errors == 0) begin
+248        1/1                      $display(&quot;PASS: forward unit %0d/%0d vectors&quot;, vectors, vectors);
+249        1/1                      $finish;
+250                             end else begin
+251        <font color = "red">0/1     ==>              $display(&quot;FAIL: forward unit %0d/%0d vectors failed&quot;, errors, vectors);</font>
+252        <font color = "red">0/1     ==>              $fatal(1);</font>
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod0.html" >tb_forward_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">Conditions</td><td>26</td><td>25</td><td>96.15</td></tr>
+<tr class="s9"><td class="lf">Logical</td><td>26</td><td>25</td><td>96.15</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       67
+ EXPRESSION (f_em_valid &amp;&amp; f_em_rd_we &amp;&amp; ((!f_em_is_load)) &amp;&amp; (f_em_rd_idx != 5'b0))
+             -----1----    -----2----    --------3--------    ----------4----------
+</pre>
+<table class="noborder">
+<col span="4" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>-4-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       67
+ SUB-EXPRESSION (f_em_rd_idx != 5'b0)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       68
+ EXPRESSION (em_can_forward &amp;&amp; (rs_idx == f_em_rd_idx))
+             -------1------    -----------2-----------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       68
+ SUB-EXPRESSION (rs_idx == f_em_rd_idx)
+                -----------1-----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       69
+ EXPRESSION (f_wb_valid &amp;&amp; f_wb_rd_we &amp;&amp; (f_wb_rd_idx != 5'b0))
+             -----1----    -----2----    ----------3----------
+</pre>
+<table class="noborder">
+<col span="3" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       69
+ SUB-EXPRESSION (f_wb_rd_idx != 5'b0)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       70
+ EXPRESSION (wb_can_forward &amp;&amp; ((!em_match)) &amp;&amp; (rs_idx == f_wb_rd_idx))
+             -------1------    ------2------    -----------3-----------
+</pre>
+<table class="noborder">
+<col span="3" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       70
+ SUB-EXPRESSION (rs_idx == f_wb_rd_idx)
+                -----------1-----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       247
+ EXPRESSION (errors == 0)
+            ------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod0.html" >tb_forward_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s8">
+<td>Totals</td>
+<td class="rt">18</td>
+<td class="rt">16</td>
+<td class="rt">88.89 </td>
+</tr><tr class="s9">
+<td>Total Bits</td>
+<td class="rt">456</td>
+<td class="rt">454</td>
+<td class="rt">99.56 </td>
+</tr><tr class="s9">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">228</td>
+<td class="rt">227</td>
+<td class="rt">99.56 </td>
+</tr><tr class="s9">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">228</td>
+<td class="rt">227</td>
+<td class="rt">99.56 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s8">
+<td>Signals</td>
+<td class="rt">18</td>
+<td class="rt">16</td>
+<td class="rt">88.89 </td>
+</tr><tr class="s9">
+<td>Signal Bits</td>
+<td class="rt">456</td>
+<td class="rt">454</td>
+<td class="rt">99.56 </td>
+</tr><tr class="s9">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">228</td>
+<td class="rt">227</td>
+<td class="rt">99.56 </td>
+</tr><tr class="s9">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">228</td>
+<td class="rt">227</td>
+<td class="rt">99.56 </td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>id_rs1_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>id_rs2_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rfu_rs1_data[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rfu_rs2_data[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>em_valid</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>em_rd_we</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>em_rd_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>em_fwd_val[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>em_is_load</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_valid</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_rd_we</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_rd_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_data[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_is_load</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rs1_val[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rs2_val[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rs2_target_idx[3:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>rs2_target_idx[4]</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>ridx_idx[3:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>ridx_idx[4]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod0.html" >tb_forward_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s7">
+<td>Branches</td>
+<td></td>
+<td class="rt">7</td>
+<td class="rt">5</td>
+<td class="rt">71.43 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">247</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">94</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s10">
+<td>IF</td>
+<td class="rt">72</td>
+<td class="rt">3</td>
+<td class="rt">3</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+247                if (errors == 0) begin
+                   <font color = "red">-1-</font>  
+248                    $display("PASS: forward unit %0d/%0d vectors", vectors, vectors);
+           <font color = "green">            ==></font>
+249                    $finish;
+250                end else begin
+251                    $display("FAIL: forward unit %0d/%0d vectors failed", errors, vectors);
+           <font color = "red">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+94                     if (rs1_val !== exp_rs1 || rs2_val !== exp_rs2) begin
+                       <font color = "red">-1-</font>  
+95                         errors = errors + 1;
+           <font color = "red">                ==></font>
+96                         $error("FAIL[%0d] %0s rs1_idx=%0d rs2_idx=%0d em_v/we/rd/load=%b/%b/%0d/%b wb_v/we/rd/load=%b/%b/%0d/%b rs1=%h exp_rs1=%h rs2=%h exp_rs2=%h",
+97                                vectors, tag, id_rs1_idx, id_rs2_idx,
+98                                em_valid, em_rd_we, em_rd_idx, em_is_load,
+99                                wb_valid, wb_rd_we, wb_rd_idx, wb_is_load,
+100                               rs1_val, exp_rs1, rs2_val, exp_rs2);
+101                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+72                     if (em_match)
+                       <font color = "green">-1-</font>  
+73                         golden_operand = f_em_fwd_val;
+           <font color = "green">                ==></font>
+74                     else if (wb_match)
+                            <font color = "green">-2-</font>  
+75                         golden_operand = f_wb_data;
+           <font color = "green">                ==></font>
+76                     else
+77                         golden_operand = rfu_data;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_0">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_tb_forward_unit">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+;; Tanglewood started at Tue Jun  9 22:54:24 2026 with pid 225851.
+;; version QSCT 6185366 Mon Aug 18 15:33:13 2025
+;; mode client
+;; using cdpl T-2022.03-SP3-6 
+;; using csc 4.13.0
+;; using MG_HOME /soft/synopsys/vcs/X-2025.06-SP1/vcfca
+;; using GL_HOME /soft/synopsys/vcs/X-2025.06-SP1/vcfca
+(tw-option-set! skip-lower-depth-msg-ext 3)
+(tw-option-set! upfront-worker-timeout 1)
+(tw-option-set! sss-mode 0)
+(tw-option-set! oct-mode 1977)
+(tw-option-set! oct-point 9)
+(tw-option-set! startup-optimization 6)
+(tw-option-set! seqaig-compression #t)
+(tw-option-set! tr-init-batch-size 10)
+(tw-option-set! tw-bh-random-workers 0)
+(tw-option-set! tw-bh-mode 0)
+(tw-option-set! tw-bh-randomize #f)
+(define max-mem-eng 8)
+(define llk-enable 0)
+(define fast-mode? #f)
+(define glconflict-opts "-depth 4 -minimal 1 -reason 1")
+(tw-option-set! exe-dir "/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/ctg/bin")
+(tw-option-set! orc-strategy "default")
+(tw-option-set! app-name "fpv")
+(tw-option-set! engine-score-file "/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/csr_session_rtdb/.internal/formal/fpId0/fv_eng_score")
+(tw-option-set! cdpl-log-filter #f)
+(tw-option-set! cdpl-log-compress #t)
+(tw-option-set! grid-prefetch-pct 0)
+(tw-option-set! grid-prefetch-timeout 3600)
+(tw-option-set! replay-hints #t)
+(tw-option-set! all-results #t)
+(tw-option-set! debug #f)
+(tw-option-set! peakmem-messages #t)
+(tw-option-set! crash-messages #t)
+(tw-option-set! task-rusage-messages #t)
+(tw-option-set! task-rusage-messages-interval 300)
+(define gl-deadend-opts "-resetcycles 100 -maxcycles 1000  -ignoreOutputFail -lookahead 1")
+(define gl-deadend-debug-opts "-minimal 1 -reason 1 -depth 1")
+(tw-option-set! trace-compression #t)
+(tw-option-set! max-workers-per-property -1)
+(tw-option-set! global-chain-db #f)
+(tw-option-set! global-chain-merge-freq 30)
+(tw-option-set! worker-script-version 2)
+(tw-option-set! tw-tool-version "2025.06")
+(define fta-om-flow #f)
+(tw-option-set! gridmem-acquisition-policy 1)
+(tw-option-set! gridmem-replacement-policy 1)
+(tw-option-set! fast-exit-on-timeout #f)
+(tw-option-set! interactive-mode #t)
+(tw-option-set! full-interactive-mode #t)
+(tw:log-load-bfse "ENGINE-DB" "/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/ctg/tcl/tw_eng_db.enc")
+(tw:log-load-bfse "SCORE-FILE" "/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/csr_session_rtdb/.internal/formal/fpId0/fv_eng_score")
+(tw-option-set! coverage-as-vac #t)
+(acquire-dfg-vp 0 "/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/csr_session_rtdb/.internal/formal/fpId0" '())
+(tw-option-set! rma-extended-mode 17)
+(tw:log-load-bfse "RECIPE" "/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/ctg/orc/fv_pv_default_v7.scme")
+(tw-option-set! edb-dbase-id 50000)
+(tw-play)
+;; XF-PASS:1
+;; 
+;; SMS
+;; -------------------------
+;; ID    CNT        TM        
+;; -------------------------
+;; 0     6          0         
+;; 9     2          0         
+;; 12    4          0         
+;; 13    4          0         
+;; 15    4          0         
+;; 16    1          0         
+;; 33    15         0         
+;; 34    1          0         
+;; 
+;; PMS
+;; -------------------------
+;; ID    CNT        TM        
+;; -------------------------
+;; 19    13         0         
+;; 50    2          0         
+;; 
+(tw-quit)
+;; Tanglewood stopped at Tue Jun  9 22:54:25 2026 after 1.472s (0.488  0.125)

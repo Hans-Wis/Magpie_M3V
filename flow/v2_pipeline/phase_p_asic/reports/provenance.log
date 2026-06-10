@@ -1,0 +1,10 @@
+timestamp=2026-06-10T12:21:20+0800
+host=eda
+dc_shell_version=X-2025.06-SP2
+tool_path=/soft/synopsys/syn/X-2025.06-SP2/linux64/syn/bin/common_shell_exec
+top=cpu_m1_asic_top
+target_period_ns=1.43
+stdcell_db=/home/edauser/project/SOC/Magpie_X3/APR/ref/db/tcbn28hpcplusbwp40p140tt0p9v25c.db
+sram_db=/home/edauser/project/SOC/Magpie_X3/APR/ref/db/tsdn28hpcpa512x32m4mwaso_130a_tt0p9v25c.db
+rtl_filelist=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_asic/files.f
+constraints=mirrors phase_05_01_synth_ppa/run_dc.tcl

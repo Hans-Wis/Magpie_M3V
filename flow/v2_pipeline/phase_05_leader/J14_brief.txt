@@ -1,0 +1,27 @@
+ROLE: Codex EXECUTOR (gpt-5.5), PL=Claude. design_id=cpu_m1 (RV32IMC_Zicsr_Zifencei, M-mode). OSS+riscv-none-elf-gcc; -s danger-full-access. Spike GOLDEN. report-faithfully: classify each divergence (real-DUT vs harness) with evidence; never hide; never mask a real DUT bug via the comparator.
+
+CONTEXT: After J9-J13, full RV32IMC (load/store + branch/jump + M) runs CLEAN on riscv-dv lockstep (5 seeds, CSR still OFF). Harness flow/v2_pipeline/phase_03_09_riscvdv_lockstep/; comparator flow/v2_pipeline/lib/spike_commit.py.
+
+GOAL J14: ENABLE CSR instructions + synchronous traps, get the lockstep clean. Scope = the M1's SUPPORTED Zicsr CSRs + M-mode trap path. EXPLICITLY keep async INTERRUPTS OFF for now (timing injection won't match Spike — separate later wave).
+
+KEY CSR-lockstep rules (do these right, do NOT fake):
+1. TIMING CSRs are fundamentally DUT!=Spike (mcycle/mcycleh, minstret/minstreth, time/cycle): the DUT counts real wait/stall cycles, Spike does not. So a `csrr` of a timing CSR legitimately differs. Handle by EXCLUDING timing-CSR read results from the wdata comparison (mark them as do-not-compare), NOT by faking equality. Document which CSRs are excluded and WHY. Non-timing CSR reads/writes (mstatus/mie/mtvec/mepc/mcause/mscratch/mip etc.) MUST still be compared exactly.
+2. Constrain riscv-dv to only generate accesses to CSRs the M1 actually implements (no unsupported CSRs unless both DUT and Spike trap identically). Synchronous traps (illegal instr, ecall, ebreak) + mret should be enabled and lockstepped (mepc/mcause/mtval + resume).
+3. mtval / mepc / mcause on traps must match (modulo the known base-address normalization already in the comparator).
+
+DO:
+1. Edit riscv-dv gen config: enable CSR instr (remove --no_csr_instr) constrained to supported CSRs; enable ebreak/illegal-trap streams; keep interrupts OFF. Configure Spike + DUT identically for trap behavior.
+2. Run several seeds. For EACH divergence: root-cause + classify (real-DUT bug -> clean-room fix + ADR; harness/timing-CSR -> correct handling that does NOT mask real DUT bugs). Iterate until clean.
+3. RE-VALIDATE after each fix: pytest >=180, gate_03_08 lockstep, gate_02_01 mem_wrapper, gate_04_08 coverage 100%, and prior arith + RV32IMC-noCSR paths still clean.
+4. Do NOT launch full 100k yet. Goal = full RV32IMC_Zicsr (CSR + sync traps, no async IRQ) seeds clean.
+
+CONSTRAINTS: clean-room RTL + ADR each; comparator changes must EXCLUDE-not-FAKE timing CSRs and must not mask real DUT bugs; explicit paths.
+
+OUTPUT (write <=40 lines) flow/v2_pipeline/phase_05_leader/J14_result.md:
+  ## summary (CSR+sync-trap enabled? seeds clean? matched commits)
+  ## timing_csr_handling (which CSRs excluded from compare + why; proof it does not mask non-timing bugs)
+  ## divergences (each: pc/instr/dut-vs-spike + REAL-DUT or HARNESS + root cause + fix + ADR if RTL)
+  ## revalidate (pytest pass count; gate_03_08/02_01/04_08 PASS?; prior paths clean?)
+  ## regressions
+  ## open (remaining divergence in scope)
+  ## tokens

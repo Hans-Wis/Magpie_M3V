@@ -1,0 +1,84 @@
+
+  Verbose Results
+   Property Verbose List:
+   ----------------------
+   > Assertion
+     # Assertion: 6
+     > ID: [0] proven 
+      - name          : csr.csr_assert_i.unnamed$$_0
+      - language      : SVA
+      - type          : assert
+      - usage         : assert
+      - update_time   : 22:54:25 - Jun 09
+      - elapsed_time  : 00:00:00
+      - converge_time : 00:00:00
+      - location      : IP/cpu_m1/dv/formal/csr_assert_bind.sv:10
+      - engine        : t1
+
+     > ID: [1] proven 
+      - name          : csr.csr_assert_i.unnamed$$_1
+      - language      : SVA
+      - type          : assert
+      - usage         : assert
+      - update_time   : 22:54:25 - Jun 09
+      - elapsed_time  : 00:00:00
+      - converge_time : 00:00:00
+      - location      : IP/cpu_m1/dv/formal/csr_assert_bind.sv:11
+      - engine        : t1
+
+     > ID: [2] proven 
+      - name          : csr.csr_assert_i.unnamed$$_2
+      - language      : SVA
+      - type          : assert
+      - usage         : assert
+      - update_time   : 22:54:25 - Jun 09
+      - elapsed_time  : 00:00:00
+      - converge_time : 00:00:00
+      - location      : IP/cpu_m1/dv/formal/csr_assert_bind.sv:12
+      - engine        : t1
+
+     > ID: [3] proven 
+      - name          : csr.csr_assert_i.unnamed$$_3
+      - language      : SVA
+      - type          : assert
+      - usage         : assert
+      - update_time   : 22:54:25 - Jun 09
+      - elapsed_time  : 00:00:00
+      - converge_time : 00:00:00
+      - location      : IP/cpu_m1/dv/formal/csr_assert_bind.sv:13
+      - engine        : t1
+
+     > ID: [4] proven 
+      - name          : csr.csr_assert_i.unnamed$$_4
+      - language      : SVA
+      - type          : assert
+      - usage         : assert
+      - update_time   : 22:54:25 - Jun 09
+      - elapsed_time  : 00:00:00
+      - converge_time : 00:00:00
+      - location      : IP/cpu_m1/dv/formal/csr_assert_bind.sv:14
+      - engine        : t1
+
+     > ID: [5] proven 
+      - name          : csr.csr_assert_i.unnamed$$_5
+      - language      : SVA
+      - type          : assert
+      - usage         : assert
+      - update_time   : 22:54:25 - Jun 09
+      - elapsed_time  : 00:00:00
+      - converge_time : 00:00:00
+      - location      : IP/cpu_m1/dv/formal/csr_assert_bind.sv:20
+      - engine        : t1
+
+
+   > Constraint
+     # Constraint: 1
+     > ID: [6] constrained 
+      - name          : constant_6
+      - type          : constconstraint
+      - expression    : resetn==1
+      - usage         : assume
+
+
+
+

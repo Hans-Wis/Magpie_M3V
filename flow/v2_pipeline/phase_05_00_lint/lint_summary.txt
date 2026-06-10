@@ -1,0 +1,15 @@
+status=pass
+top=cpu_m1_top
+goal=lint/lint_rtl
+starc_goal=covered_by_lint_rtl_policies_starc_and_starc2005
+reported_fatals=0
+reported_errors=0
+reported_warnings=24
+starc_errors=0
+starc_warnings=9
+morelint_status=advisory
+waived_errors=0
+waived_warnings=0
+verdict=PASS: no unwaived fatal/error in base lint or STARC; warnings are advisory per ADR-0006
+plural_safe_regex=\b\d+\s+error(s)?\b
+note=lint/lint_turbo is not available in rtl_handoff; raw log records "goal `lint/lint_turbo' not found" from exploratory run.

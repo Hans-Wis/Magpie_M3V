@@ -1,0 +1,6 @@
+[230 ns] inject IRQ on 16-bit target pc=00000080 instr=00140413
+PASS: trap/IRQ lockstep trace captured prefix commits and CSR events
+- tb_trap_irq_lockstep.v:209: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 455ns; walltime 0.001 s; speed 583.146 us/s
+- Verilator: cpu 0.001 s on 1 threads; allocated 17 MB

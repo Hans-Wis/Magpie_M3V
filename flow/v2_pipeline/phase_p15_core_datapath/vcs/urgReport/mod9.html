@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: tb_directed_lockstep</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_tb_directed_lockstep'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_tb_directed_lockstep')">tb_directed_lockstep</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s7 cl rt"> 76.59</td>
+<td class="s7 cl rt"><a href="mod9.html#Line" > 77.78</a></td>
+<td class="s8 cl rt"><a href="mod9.html#Cond" > 82.35</a></td>
+<td class="s8 cl rt"><a href="mod9.html#Toggle" > 86.98</a></td>
+<td class="wht cl rt"></td>
+<td class="s5 cl rt"><a href="mod9.html#Branch" > 59.26</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p15_core_datapath/tb_directed_lockstep.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p15_core_datapath/tb_directed_lockstep.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod9.html#inst_tag_9"  onclick="showContent('inst_tag_9')">tb_directed_lockstep</a></td>
+<td class="s7 cl rt"> 76.59</td>
+<td class="s7 cl rt"><a href="mod9.html#Line" > 77.78</a></td>
+<td class="s8 cl rt"><a href="mod9.html#Cond" > 82.35</a></td>
+<td class="s8 cl rt"><a href="mod9.html#Toggle" > 86.98</a></td>
+<td class="wht cl rt"></td>
+<td class="s5 cl rt"><a href="mod9.html#Branch" > 59.26</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_tb_directed_lockstep'>
+<hr>
+<a name="inst_tag_9"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_9" >tb_directed_lockstep</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s7 cl rt"> 76.59</td>
+<td class="s7 cl rt"><a href="mod9.html#Line" > 77.78</a></td>
+<td class="s8 cl rt"><a href="mod9.html#Cond" > 82.35</a></td>
+<td class="s8 cl rt"><a href="mod9.html#Toggle" > 86.98</a></td>
+<td class="wht cl rt"></td>
+<td class="s5 cl rt"><a href="mod9.html#Branch" > 59.26</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s6 cl rt"> 66.96</td>
+<td class="s7 cl rt"> 76.37</td>
+<td class="s6 cl rt"> 65.02</td>
+<td class="s6 cl rt"> 66.60</td>
+<td class="s6 cl rt"> 66.67</td>
+<td class="s6 cl rt"> 60.16</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<span class=inst>none</span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod11.html#inst_tag_11" id="tag_urg_inst_11">dut</a></td>
+<td class="s6 cl rt"> 66.67</td>
+<td class="s7 cl rt"> 76.22</td>
+<td class="s6 cl rt"> 64.66</td>
+<td class="s6 cl rt"> 65.59</td>
+<td class="s6 cl rt"> 66.67</td>
+<td class="s6 cl rt"> 60.23</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_tb_directed_lockstep'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod9.html" >tb_directed_lockstep</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s7"><td class="lf">TOTAL</td><td></td><td>63</td><td>49</td><td>77.78</td></tr>
+<tr class="s10"><td class="lf">INITIAL</td><td>21</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ALWAYS</td><td>48</td><td>2</td><td>2</td><td>100.00</td></tr>
+<tr class="s6"><td class="lf">ALWAYS</td><td>51</td><td>20</td><td>12</td><td>60.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>85</td><td>11</td><td>11</td><td>100.00</td></tr>
+<tr class="s7"><td class="lf">INITIAL</td><td>105</td><td>7</td><td>5</td><td>71.43</td></tr>
+<tr class="s7"><td class="lf">ALWAYS</td><td>116</td><td>16</td><td>12</td><td>75.00</td></tr>
+<tr class="s10"><td class="lf">INITIAL</td><td>147</td><td>6</td><td>6</td><td>100.00</td></tr>
+</table>
+<pre class="code"><br clear=all>
+20                          reg [31:0] memory [0:MEM_SIZE-1];
+21         1/1              initial $readmemh(&quot;firmware.hex&quot;, memory);
+22                      
+23                          reg         mem_stall_q = 1'b0;
+24                          reg  [1:0] mem_wait_budget = 2'd2;
+25                      
+26                          wire [19:0] i_word_idx = i_mem_addr[21:2];
+27                          wire [19:0] d_word_idx = d_mem_addr[21:2];
+28                      
+29                          core dut (
+30                              .clk                (clk),
+31                              .resetn             (resetn),
+32                              .trap               (trap),
+33                              .mem_stall          (mem_stall_q),
+34                              .i_mem_addr         (i_mem_addr),
+35                              .i_mem_en           (i_mem_en),
+36                              .i_mem_rdata        (i_mem_rdata),
+37                              .d_mem_valid        (d_mem_valid),
+38                              .d_mem_addr         (d_mem_addr),
+39                              .d_mem_wdata        (d_mem_wdata),
+40                              .d_mem_wstrb        (d_mem_wstrb),
+41                              .d_mem_rdata        (d_mem_rdata),
+42                              .irq_external_pulse (1'b0),
+43                              .dbg_pc             (dbg_pc),
+44                              .dbg_instr          (dbg_instr),
+45                              .dbg_state          (dbg_state)
+46                          );
+47                      
+48         2/2              always #5 clk = ~clk;
+49                      
+50                          always @(posedge clk) begin
+51         1/1                  if (!resetn) begin
+52         1/1                      mem_stall_q &lt;= 1'b0;
+53         1/1                      mem_wait_budget &lt;= 2'd2;
+54         1/1                  end else if (d_mem_valid &amp;&amp; mem_wait_budget != 2'd0) begin
+55         1/1                      mem_stall_q &lt;= 1'b1;
+56         1/1                      mem_wait_budget &lt;= mem_wait_budget - 2'd1;
+57                              end else begin
+58         1/1                      mem_stall_q &lt;= 1'b0;
+59                              end
+60                      
+61         2/2                  if (i_mem_en) i_mem_rdata &lt;= memory[i_word_idx];
+                        MISSING_ELSE
+62                      
+63         1/1                  if (d_mem_valid) begin
+64         1/1                      d_mem_rdata &lt;= memory[d_word_idx];
+65         1/1                      if (|d_mem_wstrb) begin
+66         <font color = "red">0/2     ==>                  if (d_mem_wstrb[0]) memory[d_word_idx][ 7: 0] &lt;= d_mem_wdata[ 7: 0];</font>
+                   <font color = "red">==>  MISSING_ELSE</font>
+67         <font color = "red">0/2     ==>                  if (d_mem_wstrb[1]) memory[d_word_idx][15: 8] &lt;= d_mem_wdata[15: 8];</font>
+                   <font color = "red">==>  MISSING_ELSE</font>
+68         <font color = "red">0/2     ==>                  if (d_mem_wstrb[2]) memory[d_word_idx][23:16] &lt;= d_mem_wdata[23:16];</font>
+                   <font color = "red">==>  MISSING_ELSE</font>
+69         <font color = "red">0/2     ==>                  if (d_mem_wstrb[3]) memory[d_word_idx][31:24] &lt;= d_mem_wdata[31:24];</font>
+                   <font color = "red">==>  MISSING_ELSE</font>
+70                                  end
+                        MISSING_ELSE
+71                              end
+                        MISSING_ELSE
+72                          end
+73                      
+74                          integer trace_fd;
+75                          integer commit_count;
+76                          integer watchdog;
+77                          reg [31:0] commit_instr;
+78                      
+79                          function [31:0] instr_at_pc;
+80                              input [31:0] pc;
+81                              reg [31:0] word0;
+82                              reg [31:0] word1;
+83                              reg [15:0] half0;
+84                              begin
+85         1/1                      word0 = memory[pc[21:2]];
+86         1/1                      if (pc[1]) begin
+87         1/1                          half0 = word0[31:16];
+88         1/1                          if (half0[1:0] == 2'b11) begin
+89         1/1                              word1 = memory[pc[21:2] + 20'd1];
+90         1/1                              instr_at_pc = {word1[15:0], half0};
+91                                      end else begin
+92         1/1                              instr_at_pc = {16'h0, half0};
+93                                      end
+94                                  end else begin
+95         1/1                          half0 = word0[15:0];
+96         1/1                          if (half0[1:0] == 2'b11)
+97         1/1                              instr_at_pc = word0;
+98                                      else
+99         1/1                              instr_at_pc = {16'h0, half0};
+100                                 end
+101                             end
+102                         endfunction
+103                     
+104                         initial begin
+105        1/1                  trace_fd = $fopen(&quot;dut_commit.trace&quot;, &quot;w&quot;);
+106        1/1                  if (trace_fd == 0) begin
+107        <font color = "red">0/1     ==>              $display(&quot;FAIL: could not open dut_commit.trace&quot;);</font>
+108        <font color = "red">0/1     ==>              $fatal(1);</font>
+109                             end
+                        MISSING_ELSE
+110        1/1                  $fdisplay(trace_fd, &quot;idx,pc,instr,rd,wdata&quot;);
+111        1/1                  commit_count = 0;
+112        1/1                  watchdog = 0;
+113                         end
+114                     
+115                         always @(posedge clk) begin
+116        1/1                  watchdog &lt;= watchdog + 1;
+117        1/1                  if (watchdog &gt; 2000) begin
+118        <font color = "red">0/1     ==>              $display(&quot;FAIL: watchdog timeout&quot;);</font>
+119        <font color = "red">0/1     ==>              $fatal(1);</font>
+120                             end
+                        MISSING_ELSE
+121                     
+122        1/1                  if (dut.ex_wb_valid_r &amp;&amp; dut.ex_wb_illegal_r) begin
+123        1/1                      $display(&quot;[%0t ns] stop on illegal/ebreak pc=%08x commits=%0d&quot;,
+124                                          $time, dut.ex_wb_pc_r, commit_count);
+125        1/1                      if (commit_count &lt; 32) begin
+126        <font color = "red">0/1     ==>                  $display(&quot;FAIL: too few commits before ebreak&quot;);</font>
+127        <font color = "red">0/1     ==>                  $fatal(1);</font>
+128                                 end
+                        MISSING_ELSE
+129        1/1                      $fclose(trace_fd);
+130        1/1                      $display(&quot;PASS: P15 datapath DUT trace wrote %0d commits before ebreak&quot;, commit_count);
+131        1/1                      $finish;
+132        1/1                  end else if (dut.wb_instr_retired &amp;&amp; !dut.ex_wb_illegal_r) begin
+133                                 /* verilator lint_off BLKSEQ */
+134        1/1                      commit_instr = instr_at_pc(dut.ex_wb_pc_r);
+135                                 /* verilator lint_on BLKSEQ */
+136        1/1                      $fdisplay(trace_fd, &quot;%0d,%08x,%08x,%0d,%08x&quot;,
+137                                           commit_count,
+138                                           dut.ex_wb_pc_r,
+139                                           (commit_instr[1:0] != 2'b11) ? {16'h0, commit_instr[15:0]} : commit_instr,
+140                                           (dut.rfu_we &amp;&amp; dut.rfu_wr_idx != 5'd0) ? dut.rfu_wr_idx : 5'd0,
+141                                           (dut.rfu_we &amp;&amp; dut.rfu_wr_idx != 5'd0) ? dut.rfu_wr_data : 32'h0);
+142        1/1                      commit_count &lt;= commit_count + 1;
+143                             end
+                        MISSING_ELSE
+144                         end
+145                     
+146                         initial begin
+147        1/1                  $dumpfile(&quot;wave.vcd&quot;);
+148        1/1                  $dumpvars(0, clk, resetn, trap, commit_count,
+149                                          mem_stall_q, i_mem_addr, i_mem_en, i_mem_rdata,
+150                                          d_mem_valid, d_mem_addr, d_mem_wdata, d_mem_wstrb,
+151                                          dbg_pc, dbg_instr, dbg_state);
+152                     
+153        3/3                  repeat (6) @(posedge clk);
+                        REPEAT_FALSE
+154        1/1                  resetn = 1'b1;
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod9.html" >tb_directed_lockstep</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s8"><td class="lf">Conditions</td><td>17</td><td>14</td><td>82.35</td></tr>
+<tr class="s8"><td class="lf">Logical</td><td>17</td><td>14</td><td>82.35</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       54
+ EXPRESSION (d_mem_valid &amp;&amp; (mem_wait_budget != 2'b0))
+             -----1-----    ------------2------------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       54
+ SUB-EXPRESSION (mem_wait_budget != 2'b0)
+                ------------1------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       88
+ EXPRESSION (half0[1:0] == 2'b11)
+            ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       96
+ EXPRESSION (half0[1:0] == 2'b11)
+            ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       106
+ EXPRESSION (trace_fd == 0)
+            -------1-------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       122
+ EXPRESSION (tb_directed_lockstep.dut.ex_wb_valid_r &amp;&amp; tb_directed_lockstep.dut.ex_wb_illegal_r)
+             -------------------1------------------    --------------------2-------------------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       132
+ EXPRESSION (tb_directed_lockstep.dut.wb_instr_retired &amp;&amp; ((!tb_directed_lockstep.dut.ex_wb_illegal_r)))
+             --------------------1--------------------    ----------------------2----------------------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod9.html" >tb_directed_lockstep</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s5">
+<td>Totals</td>
+<td class="rt">19</td>
+<td class="rt">11</td>
+<td class="rt">57.89 </td>
+</tr><tr class="s8">
+<td>Total Bits</td>
+<td class="rt">622</td>
+<td class="rt">541</td>
+<td class="rt">86.98 </td>
+</tr><tr class="s8">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">311</td>
+<td class="rt">270</td>
+<td class="rt">86.82 </td>
+</tr><tr class="s8">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">311</td>
+<td class="rt">271</td>
+<td class="rt">87.14 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s5">
+<td>Signals</td>
+<td class="rt">19</td>
+<td class="rt">11</td>
+<td class="rt">57.89 </td>
+</tr><tr class="s8">
+<td>Signal Bits</td>
+<td class="rt">622</td>
+<td class="rt">541</td>
+<td class="rt">86.98 </td>
+</tr><tr class="s8">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">311</td>
+<td class="rt">270</td>
+<td class="rt">86.82 </td>
+</tr><tr class="s8">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">311</td>
+<td class="rt">271</td>
+<td class="rt">87.14 </td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>clk</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>resetn</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>trap</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>i_mem_addr[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>i_mem_addr[21:1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>i_mem_addr[31:22]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>i_mem_en</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>i_mem_rdata[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>d_mem_valid</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>d_mem_addr[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>d_mem_wdata[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>d_mem_wstrb[3:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>d_mem_rdata[6:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>d_mem_rdata[7]</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>d_mem_rdata[10:8]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>d_mem_rdata[14:11]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>d_mem_rdata[15]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>d_mem_rdata[31:16]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>dbg_pc[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>dbg_pc[21:1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>dbg_pc[31:22]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>dbg_instr[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>dbg_state[0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>dbg_state[1]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>dbg_state[2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>mem_stall_q</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>mem_wait_budget[0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>mem_wait_budget[1]</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>i_word_idx[19:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>d_word_idx[19:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>commit_instr[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod9.html" >tb_directed_lockstep</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s5">
+<td>Branches</td>
+<td></td>
+<td class="rt">27</td>
+<td class="rt">16</td>
+<td class="rt">59.26 </td>
+</tr><tr class="s10">
+<td>IF</td>
+<td class="rt">51</td>
+<td class="rt">3</td>
+<td class="rt">3</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>IF</td>
+<td class="rt">61</td>
+<td class="rt">2</td>
+<td class="rt">2</td>
+<td class="rt">100.00</td>
+</tr><tr class="s2">
+<td>IF</td>
+<td class="rt">63</td>
+<td class="rt">10</td>
+<td class="rt">2</td>
+<td class="rt">20.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">106</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">117</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s7">
+<td>IF</td>
+<td class="rt">122</td>
+<td class="rt">4</td>
+<td class="rt">3</td>
+<td class="rt">75.00 </td>
+</tr><tr class="s10">
+<td>IF</td>
+<td class="rt">86</td>
+<td class="rt">4</td>
+<td class="rt">4</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+51                 if (!resetn) begin
+                   <font color = "green">-1-</font>  
+52                     mem_stall_q <= 1'b0;
+           <font color = "green">            ==></font>
+53                     mem_wait_budget <= 2'd2;
+54                 end else if (d_mem_valid && mem_wait_budget != 2'd0) begin
+                            <font color = "green">-2-</font>  
+55                     mem_stall_q <= 1'b1;
+           <font color = "green">            ==></font>
+56                     mem_wait_budget <= mem_wait_budget - 2'd1;
+57                 end else begin
+58                     mem_stall_q <= 1'b0;
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+61                 if (i_mem_en) i_mem_rdata <= memory[i_word_idx];
+                   <font color = "green">-1-</font>  
+           <font color = "green">        ==></font>
+                   MISSING_ELSE
+           <font color = "green">        ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+63                 if (d_mem_valid) begin
+                   <font color = "green">-1-</font>  
+64                     d_mem_rdata <= memory[d_word_idx];
+65                     if (|d_mem_wstrb) begin
+                       <font color = "red">-2-</font>  
+66                         if (d_mem_wstrb[0]) memory[d_word_idx][ 7: 0] <= d_mem_wdata[ 7: 0];
+                           <font color = "red">-3-</font>  
+           <font color = "red">                ==></font>
+                           MISSING_ELSE
+           <font color = "red">                ==></font>
+67                         if (d_mem_wstrb[1]) memory[d_word_idx][15: 8] <= d_mem_wdata[15: 8];
+                           <font color = "red">-4-</font>  
+           <font color = "red">                ==></font>
+                           MISSING_ELSE
+           <font color = "red">                ==></font>
+68                         if (d_mem_wstrb[2]) memory[d_word_idx][23:16] <= d_mem_wdata[23:16];
+                           <font color = "red">-5-</font>  
+           <font color = "red">                ==></font>
+                           MISSING_ELSE
+           <font color = "red">                ==></font>
+69                         if (d_mem_wstrb[3]) memory[d_word_idx][31:24] <= d_mem_wdata[31:24];
+                           <font color = "red">-6-</font>  
+           <font color = "red">                ==></font>
+                           MISSING_ELSE
+           <font color = "red">                ==></font>
+70                     end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+71                 end
+                   MISSING_ELSE
+           <font color = "green">        ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>-5-</th><th nowrap width=80>-6-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+106                if (trace_fd == 0) begin
+                   <font color = "red">-1-</font>  
+107                    $display("FAIL: could not open dut_commit.trace");
+           <font color = "red">            ==></font>
+108                    $fatal(1);
+109                end
+                   MISSING_ELSE
+           <font color = "green">        ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+117                if (watchdog > 2000) begin
+                   <font color = "red">-1-</font>  
+118                    $display("FAIL: watchdog timeout");
+           <font color = "red">            ==></font>
+119                    $fatal(1);
+120                end
+                   MISSING_ELSE
+           <font color = "green">        ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+122                if (dut.ex_wb_valid_r && dut.ex_wb_illegal_r) begin
+                   <font color = "green">-1-</font>  
+123                    $display("[%0t ns] stop on illegal/ebreak pc=%08x commits=%0d",
+124                             $time, dut.ex_wb_pc_r, commit_count);
+125                    if (commit_count < 32) begin
+                       <font color = "red">-2-</font>  
+126                        $display("FAIL: too few commits before ebreak");
+           <font color = "red">                ==></font>
+127                        $fatal(1);
+128                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+129                    $fclose(trace_fd);
+130                    $display("PASS: P15 datapath DUT trace wrote %0d commits before ebreak", commit_count);
+131                    $finish;
+132                end else if (dut.wb_instr_retired && !dut.ex_wb_illegal_r) begin
+                            <font color = "green">-3-</font>  
+133                    /* verilator lint_off BLKSEQ */
+134                    commit_instr = instr_at_pc(dut.ex_wb_pc_r);
+           <font color = "green">            ==></font>
+135                    /* verilator lint_on BLKSEQ */
+136                    $fdisplay(trace_fd, "%0d,%08x,%08x,%0d,%08x",
+137                              commit_count,
+138                              dut.ex_wb_pc_r,
+139                              (commit_instr[1:0] != 2'b11) ? {16'h0, commit_instr[15:0]} : commit_instr,
+140                              (dut.rfu_we && dut.rfu_wr_idx != 5'd0) ? dut.rfu_wr_idx : 5'd0,
+141                              (dut.rfu_we && dut.rfu_wr_idx != 5'd0) ? dut.rfu_wr_data : 32'h0);
+142                    commit_count <= commit_count + 1;
+143                end
+                   MISSING_ELSE
+           <font color = "green">        ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+86                     if (pc[1]) begin
+                       <font color = "green">-1-</font>  
+87                         half0 = word0[31:16];
+88                         if (half0[1:0] == 2'b11) begin
+                           <font color = "green">-2-</font>  
+89                             word1 = memory[pc[21:2] + 20'd1];
+           <font color = "green">                    ==></font>
+90                             instr_at_pc = {word1[15:0], half0};
+91                         end else begin
+92                             instr_at_pc = {16'h0, half0};
+           <font color = "green">                    ==></font>
+93                         end
+94                     end else begin
+95                         half0 = word0[15:0];
+96                         if (half0[1:0] == 2'b11)
+                           <font color = "green">-3-</font>  
+97                             instr_at_pc = word0;
+           <font color = "green">                    ==></font>
+98                         else
+99                             instr_at_pc = {16'h0, half0};
+           <font color = "green">                    ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_9">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_tb_directed_lockstep">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

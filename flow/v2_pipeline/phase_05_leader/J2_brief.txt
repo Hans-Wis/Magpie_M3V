@@ -1,0 +1,26 @@
+ROLE: Codex EXECUTOR (gpt-5.5) for Magpie_M1, directed by Claude (PL). design_id=cpu_m1, RV32IMC_Zicsr_Zifencei. You MAY use VCS+URG (licensed, available) and Verilator/Spike. Record provenance (tool version/host/command) for every run.
+
+GOAL J2: close STAGE 4 with FUNCTIONAL coverage bins (currently functional coverage = 0; only line/toggle exist).
+
+DO:
+1. Author a functional coverplan + SystemVerilog covergroups for cpu_m1 (RV32IMC_Zicsr_Zifencei). Cover at minimum:
+   - opcode/instruction class (I/M, RVC compressed vs 32-bit), funct3/funct7 of ALU + M-unit ops
+   - load/store width {b,h,w} x sign {s,u} x address-alignment-low-bits
+   - branch taken/not-taken x direction, JAL/JALR, RAS push/pop, BP hit/miss
+   - hazard: load-use stall, mul/div busy stall, flush/redirect
+   - CSR ops {RW,RS,RC} + trap entry (illegal/ecall/ebreak/IRQ/misalign) + mret
+   Put covergroups in a bind/observer module so RTL semantics are untouched.
+2. Drive coverage with the EXISTING stimulus (reuse phase_03_05 random program + phase_02_* directed tests; add a few more random seeds if needed). Run under VCS with coverage; merge with URG (use -lca -flex_merge code_union if instance/top differs, per prior lesson).
+3. Produce a functional coverage report (per-covergroup hit %) under flow/v2_pipeline/phase_04_08_functional_coverage/. Every uncovered bin needs reason + reachability + waiver-candidate-or-none. Do NOT fake numbers; if VCS/license absent for any step, mark that step waived/unavailable.
+4. Gate: tests/gates/gate_04_08_functional_coverage.py — assert covergroups exist, report present, and overall functional coverage >= a threshold you compute and state (set it to the achieved value rounded down, blocking; note it is advisory stimulus coverage on Spike-golden, not a CI truth assertion). Keep full suite green.
+
+CONSTRAINTS: no RTL semantic change (covergroups via bind only). No git add -A; explicit paths. Keep raw logs/URG db in the phase dir, not in the result file. Verify `python3 -m pytest tests/gates/gate_*.py -q` stays green incl the new gate.
+
+OUTPUT (write <=40 lines) flow/v2_pipeline/phase_05_leader/J2_result.md:
+  ## summary (functional coverage overall % + #covergroups)
+  ## per_group (table: covergroup | hit% | notable uncovered bins)
+  ## files_added
+  ## provenance (vcs/urg version, host, key commands)
+  ## gate_status (pytest pass count)
+  ## issues_or_waivers
+  ## tokens

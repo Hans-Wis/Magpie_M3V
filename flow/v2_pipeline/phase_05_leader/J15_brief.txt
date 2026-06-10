@@ -1,0 +1,28 @@
+ROLE: Codex EXECUTOR (gpt-5.5), PL=Claude. design_id=cpu_m1. -s danger-full-access. report-faithfully. Spike GOLDEN.
+
+SITUATION: J14 enabled CSR and found+fixed 2 real CSR DUT bugs (mstatus MPP M-only, mscratch CSR forwarding; csr.v + ADR-0010) and added correct timing-CSR exclusion. BUT it left the tree BROKEN: 16 pytest gates fail and sync-trap lockstep is incomplete. UNACCEPTABLE. J15 = clean it to ZERO failures WITHOUT masking anything.
+
+THE 16 FAILURES, two categories:
+A) REAL BEHAVIORAL REGRESSION (priority): gate_02_02_misalign_trap (4 tests: rebuild_run_and_spike_compare, artifacts_and_firmware_intent, observed_mcause_mtval_and_no_bad_dbus, spike_was_trap_on_misaligned). J14's CSR/trap-path changes broke the misalign-trap behavior. ROOT-CAUSE and FIX so misalign trap (mcause 4/6, mtval, no bad dbus) works AGAIN. This must be a genuine fix, not a test relaxation.
+B) STALE STRING-MATCH ASSERTIONS (~10): gate_01_03 (2), gate_01_04 (1), gate_02_00 (5), gate_02_01 (1), gate_03_09 (isa_scope_is_m1_safe). These string-match OLD csr.v/core.v lines that J14 legitimately changed. For EACH: FIRST verify the new RTL line is CORRECT (the change is a real fix), THEN update the gate assertion to the new line. Do NOT update a gate assertion to match RTL you cannot justify as correct.
+
+ALSO:
+- sync-trap lockstep: Spike 1.1.1-dev reportedly stops logging after a trap. Either make trap lockstep work (correct Spike invocation / commit-log continuation across traps), OR if genuinely unsupported by this Spike build, SCOPE IT HONESTLY (document the limitation, keep CSR-instruction lockstep which DOES work, mark async interrupts + full sync-trap-stream as a documented gap) — do NOT fake.
+- Verify the 2 CSR DUT-bug fixes (mstatus MPP, mscratch forwarding) are correct (they likely are; mscratch CSR read-after-write forwarding is a real bug).
+
+REQUIRED END STATE (all must hold, report each):
+- python3 -m pytest tests/gates/gate_*.py -q  => 0 failed (back to all-green, count >=180)
+- gate_02_02 misalign PASS (real fix), gate_03_08 lockstep PASS, gate_02_01 mem_wrapper PASS, gate_04_08 coverage 100%
+- arith 100k + RV32IMC-noCSR paths still clean
+- CSR-instruction lockstep clean (the 1922-commit result); sync-trap either clean or honestly scoped
+
+CONSTRAINTS: clean-room RTL + ADR; NO masking/relaxing tests to hide real failures; explicit paths.
+
+OUTPUT (write <=40 lines) flow/v2_pipeline/phase_05_leader/J15_result.md:
+  ## misalign_regression (root cause + fix; gate_02_02 PASS?)
+  ## stale_assertions_reconciled (which gates, old->new line, why new RTL is correct)
+  ## sync_trap_status (working OR honestly-scoped-gap with reason)
+  ## csr_bug_fixes_verified (mstatus MPP, mscratch forwarding correct?)
+  ## final_pytest (pass/fail count — MUST be 0 failed)
+  ## regressions_remaining (must be none)
+  ## tokens

@@ -1,0 +1,9 @@
+{"vcs1":{"timestamp_begin":1781008755.292609153, "rt":0.51, "ut":0.37, "st":0.04}}
+{"vcselab":{"timestamp_begin":1781008755.859991936, "rt":0.21, "ut":0.09, "st":0.03}}
+{"link":{"timestamp_begin":1781008756.110804796, "rt":0.18, "ut":0.04, "st":0.02}}
+{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1781008754.909283511}
+{"VCS_COMP_START_TIME": 1781008754.909283511}
+{"VCS_COMP_END_TIME": 1781008756.338282914}
+{"VCS_USER_OPTIONS": "-full64 -sverilog -timescale=1ns/1ns -cm line+cond+branch+fsm+tgl -cm_dir vcs/simv.vdb +incdir+../../../IP/cpu_m1/rtl +define+P17_IRQ_ALU_PC=3145828 +define+P17_IRQ_LOADUSE_PC=3145836 +define+P17_DONE_ADDR=3145948 ../../../IP/cpu_m1/rtl/alu.v ../../../IP/cpu_m1/rtl/bp.v ../../../IP/cpu_m1/rtl/cdec.v ../../../IP/cpu_m1/rtl/core.v ../../../IP/cpu_m1/rtl/cpu_m1_top.v ../../../IP/cpu_m1/rtl/csr.v ../../../IP/cpu_m1/rtl/div.v ../../../IP/cpu_m1/rtl/forward.v ../../../IP/cpu_m1/rtl/hazard.v ../../../IP/cpu_m1/rtl/idu.v ../../../IP/cpu_m1/rtl/ifu.v ../../../IP/cpu_m1/rtl/lsu.v ../../../IP/cpu_m1/rtl/mul.v ../../../IP/cpu_m1/rtl/ras.v ../../../IP/cpu_m1/rtl/rfu.v tb_directed_lockstep.v -top tb_directed_lockstep -o vcs/simv"}
+{"vcs1": {"peak_mem": 413440}}
+{"vcselab": {"peak_mem": 261548}}

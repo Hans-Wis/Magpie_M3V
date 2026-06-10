@@ -1,0 +1,10 @@
+You are a RISC-V Privileged-spec compliance verifier with full-context capacity. Produce a CSR/trap compliance matrix for Magpie_M1 and write it directly to docs/reports/csr_compliance/matrix.md (write the file, do not ask).
+
+INGEST (read fully): SOC/Magpie_M1/IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/csr.v, def.vh, and the trap/CSR portions of core.v (wb_trap_*, mepc/mcause/mtval, mret, csr read/write/forwarding); SOC/Magpie_M1/IP/cpu_m1/docs/spec.md; SOC/Magpie_M1/docs/adr/0003*.md and 0010*.md. Use your knowledge of the RISC-V Privileged spec (M-mode) as the ground truth.
+
+PRODUCE a Markdown compliance matrix:
+1. Table of M-mode CSRs the spec requires/allows for RV32IMC_Zicsr_Zifencei (mstatus, misa, mie, mtvec, mscratch, mepc, mcause, mtval, mip, mhartid, mvendorid, marchid, mimpid, mcycle/h, minstret/h, mcounteren if applicable, etc.): for each -> Implemented in csr.v? (yes/partial/no) | WARL/field behavior correct per spec? | notes.
+2. Field-level checks on the implemented ones: mstatus (MIE/MPIE/MPP must be M=2'b11 since M-only, other fields WPRI=0), mcause (interrupt bit + exception codes), mtvec (mode bits, direct/vectored), mepc (low bits zero / IALIGN), mtval (what each exception writes).
+3. Trap semantics: on trap mepc/mcause/mstatus update; on mret restore; exception priority; misaligned (mcause 4/6) — confirm csr.v + core.v match the spec.
+4. A FINDINGS section: list any NON-COMPLIANCE or SUSPICIOUS behavior as candidate bugs to verify (these are leads, not facts — mark each as "verify"). This is the high-value output: proactively flag spec deviations BEFORE DV finds them.
+Be precise, cite the CSR/field, keep it scannable.

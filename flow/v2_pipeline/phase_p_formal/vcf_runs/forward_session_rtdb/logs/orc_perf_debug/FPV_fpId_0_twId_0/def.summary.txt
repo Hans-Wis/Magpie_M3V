@@ -1,0 +1,56 @@
+*************************** Configuration Details ***************************
+max_time: 12H
+max_mem:  8GB
+effort:   default
+FPV flow ver: v7
+*************************** Summary Report at elapsed time(sec):3  ***************************
+***** report_fv *****
+
+  Summary Results
+   Property Summary: FPV
+   -----------------
+   > Assertion
+     - # found        : 8
+     - # proven       : 8
+
+
+***** report_fml_jobs -profile *****
+Solver jobs summary for verification task FPV (11 solver jobs)
+    #scheduled     :     0 
+    #running       :     0 
+    #completed     :    11 
+        #normal        :     8 
+        #timeout       :     0 
+        #memout        :     0 
+        #orc_killed    :     3 
+        #sig_killed    :     0 
+        #crash         :     0 
+        #start_fail    :     0 
+        #misc_error    :     0 
+Completed jobs profile for verification problem vp0 (id=0) in verification task FPV
+
+Memory/time profile by engine
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Engine |   MinMem(MB) |   MaxMem(MB) |  NumJobs | NumStoppedJobs |  Time(secs) | NumSolvedGoals | NumSuccessGoals |  NumFailedGoals | NumBestDepthGoals | 
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+   INIT |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     b6 |          103 |          103 |        1 |              0 |           1 |              0 |               0 |               0 |                 0 | 
+     b8 |          165 |          165 |        1 |              0 |           1 |              0 |               0 |               0 |                 0 | 
+     cc |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     e1 |           82 |           82 |        2 |              0 |           0 |              2 |               2 |               0 |                 0 | 
+     f5 |           71 |           72 |        2 |              0 |           1 |              0 |               0 |               0 |                 0 | 
+     s1 |          142 |          142 |        1 |              0 |           1 |              0 |               0 |               0 |                 0 | 
+     t0 |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     t1 |           82 |           82 |        1 |              0 |           0 |              6 |               6 |               0 |                 0 | 
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Memory distribution
+---------------------------------
+           Range |      NumJobs | 
+---------------------------------
+       0GB - 8GB |           11 | 
+---------------------------------
+Avg. Memory among completed jobs : 92 MB 
+Max. Memory among completed jobs : 165 MB 
+
+

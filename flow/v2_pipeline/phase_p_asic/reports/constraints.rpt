@@ -1,0 +1,193 @@
+ 
+****************************************
+Report : constraint
+        -all_violators
+Design : cpu_m1_asic_top
+Version: X-2025.06-SP2
+Date   : Wed Jun 10 12:24:10 2026
+****************************************
+
+
+   min_delay/hold ('clk' group)
+
+                             Required        Actual
+   Endpoint                 Path Delay     Path Delay        Slack
+   -----------------------------------------------------------------
+   u_sram/u_sram/u_macro/AB[3]
+                                0.11           0.05 r        -0.06  (VIOLATED)
+   u_sram/u_sram/u_macro/AB[4]
+                                0.11           0.05 r        -0.06  (VIOLATED)
+   u_sram/u_sram/u_macro/AB[5]
+                                0.11           0.05 r        -0.06  (VIOLATED)
+   u_sram/u_sram/u_macro/AB[6]
+                                0.11           0.05 r        -0.06  (VIOLATED)
+   u_sram/u_sram/u_macro/AB[7]
+                                0.11           0.05 r        -0.06  (VIOLATED)
+   u_sram/u_sram/u_macro/AB[8]
+                                0.11           0.05 r        -0.06  (VIOLATED)
+   u_sram/u_sram/u_macro/AB[1]
+                                0.11           0.05 r        -0.06  (VIOLATED)
+   u_sram/u_sram/u_macro/AB[2]
+                                0.10           0.05 r        -0.06  (VIOLATED)
+   u_sram/u_sram/u_macro/AB[0]
+                                0.10           0.05 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[0]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[1]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[2]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[3]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[4]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[5]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[6]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[7]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[8]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[9]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[10]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[11]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[12]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[13]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[14]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[15]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[16]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[17]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[18]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[19]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[20]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[21]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[22]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[23]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[24]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[25]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[26]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[27]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[28]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[29]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[30]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/DA[31]
+                                0.13           0.07 r        -0.05  (VIOLATED)
+   u_sram/u_sram/u_macro/AA[0]
+                                0.10           0.08 r        -0.03  (VIOLATED)
+   u_sram/u_sram/u_macro/AA[1]
+                                0.10           0.08 r        -0.03  (VIOLATED)
+   u_sram/u_sram/u_macro/AA[2]
+                                0.10           0.08 r        -0.03  (VIOLATED)
+   u_sram/u_sram/u_macro/AA[3]
+                                0.10           0.08 r        -0.03  (VIOLATED)
+   u_sram/u_sram/u_macro/AA[4]
+                                0.10           0.08 r        -0.03  (VIOLATED)
+   u_sram/u_sram/u_macro/AA[5]
+                                0.10           0.08 r        -0.03  (VIOLATED)
+   u_sram/u_sram/u_macro/AA[6]
+                                0.10           0.08 r        -0.03  (VIOLATED)
+   u_sram/u_sram/u_macro/AA[7]
+                                0.10           0.08 r        -0.03  (VIOLATED)
+   u_sram/u_sram/u_macro/AA[8]
+                                0.10           0.08 r        -0.03  (VIOLATED)
+   u_sram/u_sram/u_macro/WEBA
+                                0.10           0.08 f        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[0]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[1]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[2]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[3]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[4]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[5]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[6]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[7]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[8]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[9]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[10]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[11]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[12]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[13]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[14]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[15]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[16]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[17]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[18]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[19]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[20]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[21]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[22]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[23]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[24]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[25]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[26]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[27]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[28]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[29]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[30]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/BWEBA[31]
+                                0.12           0.11 r        -0.01  (VIOLATED)
+   u_cpu/u_cpu/u_core/u_csr/cycle_cnt_reg[0]/D
+                                0.06           0.05 f        -0.01  (VIOLATED)
+   u_sram/u_sram/u_macro/CEBA
+                                0.07           0.07 r         0.00  (VIOLATED: increase significant digits)
+   u_cpu/u_cpu/u_core/u_csr/instret_cnt_reg[0]/D
+                                0.06           0.06 f         0.00  (VIOLATED: increase significant digits)
+   u_cpu/u_cpu/primed_reg/D     0.06           0.06 f         0.00  (VIOLATED: increase significant digits)
+   u_sram/u_sram/u_macro/CEBB
+                                0.07           0.07 r         0.00  (VIOLATED: increase significant digits)
+
+
+1

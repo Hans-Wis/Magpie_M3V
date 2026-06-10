@@ -1,0 +1,15 @@
+FSM_STATE CSR_IDLE       covered=732
+FSM_STATE CSR_TRAP_ENTER covered=35
+FSM_STATE CSR_IN_HANDLER covered=70
+FSM_STATE CSR_MRET       covered=35
+FSM_ARC CSR_IDLE->CSR_IDLE             covered=729
+FSM_ARC CSR_IDLE->CSR_TRAP_ENTER       covered=2
+FSM_ARC CSR_TRAP_ENTER->CSR_IN_HANDLER covered=35
+FSM_ARC CSR_IN_HANDLER->CSR_IN_HANDLER covered=35
+FSM_ARC CSR_IN_HANDLER->CSR_MRET       covered=34
+FSM_ARC CSR_MRET->CSR_IDLE             covered=2
+PASS: csr unit 936/936 vectors
+- ../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/dv/tb/tb_csr_unit.v:597: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 9us; walltime 0.014 s; speed 634.949 us/s
+- Verilator: cpu 0.014 s on 1 threads; allocated 19 MB

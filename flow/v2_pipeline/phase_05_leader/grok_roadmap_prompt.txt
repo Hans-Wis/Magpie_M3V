@@ -1,0 +1,10 @@
+You are the DV architect for the Magpie_M1 RISC-V CPU IP (RV32IMC_Zicsr_Zifencei, M-mode only). Write a prioritized DV roadmap toward a CREDIBLE, customer-defensible "passes Google riscv-dv" claim. Output clean Markdown (this will be saved as docs/reports/dv_roadmap/roadmap.md).
+
+CURRENT STATE (facts): riscv-dv pyflow -> cpu_m1 (Verilator) -> Spike lockstep is stood up. Individually CLEAN now: arithmetic+RVC (114k commits), load/store + branch/jump + M (mul/div), and CSR instructions (6.2k commits, timing CSRs cycle/instret correctly EXCLUDED from compare). ~6 real DUT bugs were found+fixed along the way (cross-boundary fetch, branch-target latch, M-unit done-race, wrong-path M-start, mstatus.MPP, mscratch forwarding). A full-mix >=100k run (J16) is in progress now.
+KNOWN GAPS/limitations: (a) random sync-trap STREAMS not lockstepped because the installed Spike 1.1.1-dev halts logging at M-mode ecall entry; (b) async INTERRUPTS not exercised; (c) scale per-wave was only a few thousand commits; (d) only a single riscv-dv test category (instr stream), not the standard library; (e) functional coverage (100% on a separate covergroup harness) is not yet tied to the DV regression; (f) Verilator only, no VCS signoff sim.
+
+WRITE: 
+1. A short "what 'passes riscv-dv' should mean" definition (industry-grade: which test categories, how many instructions/seeds, coverage closure, ISS lockstep).
+2. A prioritized, phased roadmap (P0..Pn) to close the gaps above, each item with: goal, concrete steps, which agent should do it (Claude=integrate/commit, Codex=implement/fix, Gemini=whole-corpus analysis, Grok=plan/spec), risk, and a done-criterion.
+3. Specifically address: resolving the Spike sync-trap limitation (e.g. newer Spike build / --log-commits behavior across traps), enabling interrupts in lockstep, the riscv-dv standard test categories appropriate for RV32IMC_Zicsr (name them), tying functional coverage to the DV regression, and the scale target.
+If useful, note any recent riscv-dv / Spike facts. Be concrete and concise.

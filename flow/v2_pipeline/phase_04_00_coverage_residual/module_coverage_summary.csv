@@ -1,0 +1,16 @@
+module,source,signoff_scope,hit_lines,total_lines,uncovered_lines,line_percent,toggle_hit,toggle_total,toggle_percent
+alu.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/alu.v,dut,29,31,2,93.55,536,542,98.89
+bp.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/bp.v,dut,34,59,25,57.63,197,872,22.59
+cdec.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/cdec.v,dut,63,106,43,59.43,359,434,82.72
+core.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/core.v,dut,349,422,73,82.70,3332,4878,68.31
+csr.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/csr.v,dut,43,91,48,47.25,208,1288,16.15
+div.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/div.v,dut,62,71,9,87.32,488,686,71.14
+forward.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/forward.v,dut,28,28,0,100.00,448,448,100.00
+hazard.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/hazard.v,dut,16,17,1,94.12,63,66,95.45
+idu.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/idu.v,dut,74,91,17,81.32,583,678,85.99
+ifu.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/ifu.v,dut,16,22,6,72.73,56,462,12.12
+lsu.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/lsu.v,dut,43,43,0,100.00,396,396,100.00
+mul.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/mul.v,dut,33,33,0,100.00,587,610,96.23
+ras.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/ras.v,dut,12,24,12,50.00,21,660,3.18
+rfu.v,../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/rfu.v,dut,16,16,0,100.00,226,226,100.00
+tb_random_lockstep.v,tb_random_lockstep.v,testbench,76,76,0,100.00,471,584,80.65

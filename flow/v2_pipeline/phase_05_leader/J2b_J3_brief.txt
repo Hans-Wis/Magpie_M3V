@@ -1,0 +1,22 @@
+ROLE: Codex EXECUTOR (gpt-5.5), directed by Claude (PL). design_id=cpu_m1. Licensed EDA available but CONTENDED — base VCS sim works, but a functional-coverage VCS run produced an empty 20K vdb (URG fails). report-faithfully: if a license feature is unavailable, prove it and waive — NEVER fake coverage/lint numbers.
+
+TASK A — COMPLETE or HONESTLY-WAIVE functional coverage (phase_04_08_functional_coverage):
+ 1. Diagnose why coverage/vcs_func_cov.vdb is empty: check sim.log — did simv actually run the stimulus? Is the coverage license (VCS-COV) being denied while base sim works? Make the simv run the random program to completion and SAMPLE the covergroups (ensure -cm line+cond+fsm+tgl+branch+assert AND SystemVerilog covergroup sampling; the bind module cpu_m1_func_cov_bind.sv must be compiled+bound).
+ 2. If it runs: produce urgReport + a real per-covergroup hit%; set gate_04_08 threshold to the achieved floor (blocking). 
+ 3. If the coverage license is genuinely unavailable: capture the exact denial line, mark functional coverage waived/unavailable in the gate + report, and record provenance. Do not block the suite on an unavailable tool.
+
+TASK B — STAGE 5.0 LINT (Spyglass), per ADR-0006:
+ 1. Run sg_shell/spyglass on top=cpu_m1_top with the full ch2_lab08e filelist + cpu_m1_top.v. Goals: lint/lint_rtl + STARC. Put everything under flow/v2_pipeline/phase_05_00_lint/.
+ 2. Parse PLURAL-SAFELY (\b\d+\s+error(s)?\b) — prior bug matched singular only. Blocking = unwaived error/fatal in base lint or STARC; warnings + morelint = advisory. If Spyglass license unavailable, waive with the exact denial line (no fake "clean").
+ 3. Gate tests/gates/gate_05_00_lint.py: assert artifacts+provenance exist, parse errors plural-safely, verdict per ADR-0006. Keep full pytest suite green.
+
+CONSTRAINTS: no RTL semantic change. Explicit file paths (no git add -A). Keep raw logs/vdb in phase dirs. Verify `python3 -m pytest tests/gates/gate_*.py -q` green.
+
+OUTPUT (write <=45 lines) flow/v2_pipeline/phase_05_leader/J2b_J3_result.md:
+  ## funccov (overall % OR waived+exact-denial-line; threshold)
+  ## lint (error/warn counts OR waived+exact-denial-line; verdict)
+  ## files_added
+  ## provenance (tool versions, host, key commands, license outcomes)
+  ## gate_status (pytest pass count)
+  ## issues_or_waivers
+  ## tokens

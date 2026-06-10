@@ -1,0 +1,26 @@
+{
+  "artifacts": [
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/campaigns/synctrap_100k/summary.json"
+  ],
+  "autonomy": "L2",
+  "data_quality": "full",
+  "design": "magpie_m1",
+  "gate": "gate_03_09_riscvdv_lockstep",
+  "metrics": {
+    "farm_synctrap_100k": "PASS 120/120, 0 fail, 0 waived, 104729 commits, ZERO divergence",
+    "jobs": 6,
+    "milestone": ">=100k sync-trap lockstep via parallel farm",
+    "provenance": "rev 3860f24 cksum de1b876f6905",
+    "sync_traps": "113/120 seeds exercised synchronous traps"
+  },
+  "reviewed_by_codex": "none",
+  "run": {
+    "command": "dv_farm.py --seeds 120 --jobs 6",
+    "ended": "2026-06-08T23:24:08",
+    "host": "eda",
+    "id": "run-farm-100k-20260608",
+    "started": "2026-06-08T23:24:08"
+  },
+  "stage": "dv",
+  "status": "pass"
+}

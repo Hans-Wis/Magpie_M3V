@@ -1,0 +1,15 @@
+Warning: True color (24-bit) support not detected. Using a terminal with true color enabled will result in a better visual experience.
+YOLO mode is enabled. All tool calls will be automatically approved.
+YOLO mode is enabled. All tool calls will be automatically approved.
+Ripgrep is not available. Falling back to GrepTool.
+The M-mode interrupt compliance matrix for Magpie_M1 has been generated following a full analysis of the RTL (`csr.v`, `core.v`) and specification.
+
+### Key Compliance Findings:
+*   **CSR Implementation**: `mstatus` (MIE/MPIE/MPP), `mie`/`mip` (MEIE/MEIP), `mtvec`, `mepc`, and `mcause` are correctly implemented for a basic M-mode only core.
+*   **Critical Non-Compliance**: A major bug was identified in `core.v` where `mepc` saves the **Next PC** instead of the **Current PC** during an interrupt. Since the instruction in the Write-Back (WB) stage is cancelled when an interrupt is taken, it is effectively skipped upon `mret`.
+*   **CDC Risk**: `irq_external_pulse` is sampled into the `ext_pending` register without a multi-stage synchronizer, posing a metastability risk if the source is asynchronous.
+*   **Architectural Note**: `mtvec` is hardcoded to Direct mode (MODE=00), which is compliant via WARL but limits vectored interrupt support.
+
+The full matrix and detailed findings have been written to `docs/reports/csr_compliance/interrupt_matrix.md`.
+
+[ERROR] Invalid stream: The model returned an empty response or malformed tool call.

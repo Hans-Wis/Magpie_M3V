@@ -1,0 +1,28 @@
+ROLE: Codex EXECUTOR (gpt-5.5), directed by Claude (PL). design_id=cpu_m1, ISA=RV32IMC_Zicsr_Zifencei. OSS tools (riscv-none-elf-gcc, spike, verilator) + optionally VCS (NOT sandboxed; -s danger-full-access). report-faithfully: real per-commit results only. A DIVERGENCE from Spike is a REAL BUG to SURFACE (capture pc/instr/regfile delta + minimal repro) — never hide or suppress it; that is the whole point of large-scale DV.
+
+GOAL J8: stand up a riscv-dv driven LARGE-SCALE Spike lockstep for cpu_m1 and accumulate >= 100,000 matched commits.
+
+RESOURCES:
+- riscv-dv (vendored): /home/edauser/project/SOC/Magpie_X6/vendored/riscv-dv
+- RV32 dv config reference: /home/edauser/project/SOC/Magpie_X3/dv/config  (and SOC/Magpie_X3/dv/AGENTS.md)
+- toolchain: riscv-none-elf-gcc (use -march=rv32imc -mabi=ilp32); spike at ~/.local/bin/spike
+- existing M1 lockstep harness to extend: flow/v2_pipeline/phase_03_05_random_lockstep (tb_random_lockstep.v + random_lockstep.py) ; RTL at IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e (top cpu_m1_top.v / bare core.v); platform/lib/spike_ref.py
+- Put new work under flow/v2_pipeline/phase_03_09_riscvdv_lockstep/.
+
+DO:
+1. Configure riscv-dv for the M1 target: RV32IMC + Zicsr/Zifencei, M-mode, no unsupported extensions (no A/F/D/V). Constrain generated programs to the supported ISA + a memory map the M1 TB models (avoid unsupported CSRs/instructions that the core legitimately treats as illegal unless you also model the trap in Spike identically). Prefer the riscv-dv pyflow if simpler than UVM/VCS.
+2. Generate MANY seeds / long programs; assemble (rv32imc/ilp32); run each on the DUT (Verilator or VCS) producing a commit trace; run Spike as golden; lockstep compare per retired instruction (pc + rd + wdata; handle CSR/trap ordering as the existing harness does).
+3. Accumulate total matched commits across all seeds to >= 100k. Log running total. If a mismatch occurs: STOP that seed, save the divergence (cycle, pc, dut vs spike instr/rd/wdata, last ~20 commits) under the phase dir, and REPORT it prominently — do not continue faking progress.
+4. Gate tests/gates/gate_03_09_riscvdv_lockstep.py: assert total matched commits >= 100000 (or, if a real divergence was found, the gate documents it and the result is reported honestly, not green-washed). Keep full pytest suite green for the non-divergence path. Confirm gate_03_08 still PASS.
+
+CONSTRAINTS: no RTL semantic change. Explicit paths. Keep big traces/logs in the phase dir (not in the result file). This is long-running — that is expected.
+
+OUTPUT (write <=40 lines) flow/v2_pipeline/phase_05_leader/J8_result.md:
+  ## summary (total matched commits ; #seeds ; PASS or DIVERGENCE-FOUND)
+  ## divergence (none, OR: seed/pc/dut-vs-spike/repro path)
+  ## isa_config (riscv-dv target settings used; how unsupported ops were excluded)
+  ## throughput (commits/sec or per-seed counts; sim used Verilator/VCS)
+  ## files_added
+  ## provenance (riscv-dv path/rev, gcc, spike, key commands)
+  ## gate_status (pytest pass count; lockstep gates PASS?)
+  ## tokens

@@ -1,0 +1,1024 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -nworst 5
+        -max_paths 20
+Design : cpu_m1_top
+Version: X-2025.06-SP2
+Date   : Tue Jun  9 22:29:00 2026
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: ffg0p88v0p99vm40c   Library: tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+Wire Load Model Mode: segmented
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[12]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 r
+  resetn (in)                                             0.00       0.10 r
+  C553/Z (GTECH_AND2)                                     0.00       0.10 r
+  u_core/mem_stall (core_00000000)                        0.00       0.10 r
+  u_core/B_50/Z (GTECH_BUF)                               0.00       0.10 r
+  u_core/C3298/Z_12 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[12] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_12 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[12] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_12 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[12] (core_00000000)                   0.00       0.10 r
+  C535/Z_12 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[12] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[12]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  resetn (in)                                             0.00       0.10 f
+  C553/Z (GTECH_AND2)                                     0.00       0.10 f
+  u_core/mem_stall (core_00000000)                        0.00       0.10 f
+  u_core/I_52/Z (GTECH_NOT)                               0.00       0.10 r
+  u_core/C3776/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3815/Z (GTECH_OR2)                              0.00       0.10 r
+  u_core/C3814/Z (GTECH_OR2)                              0.00       0.10 r
+  u_core/C3833/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_12 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[12] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_12 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[12] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_12 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[12] (core_00000000)                   0.00       0.10 r
+  C535/Z_12 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[12] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[11]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 r
+  resetn (in)                                             0.00       0.10 r
+  C553/Z (GTECH_AND2)                                     0.00       0.10 r
+  u_core/mem_stall (core_00000000)                        0.00       0.10 r
+  u_core/B_50/Z (GTECH_BUF)                               0.00       0.10 r
+  u_core/C3298/Z_11 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[11] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_11 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[11] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_11 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[11] (core_00000000)                   0.00       0.10 r
+  C535/Z_11 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[11] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[11]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  resetn (in)                                             0.00       0.10 f
+  C553/Z (GTECH_AND2)                                     0.00       0.10 f
+  u_core/mem_stall (core_00000000)                        0.00       0.10 f
+  u_core/I_52/Z (GTECH_NOT)                               0.00       0.10 r
+  u_core/C3776/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3815/Z (GTECH_OR2)                              0.00       0.10 r
+  u_core/C3814/Z (GTECH_OR2)                              0.00       0.10 r
+  u_core/C3833/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_11 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[11] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_11 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[11] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_11 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[11] (core_00000000)                   0.00       0.10 r
+  C535/Z_11 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[11] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[10]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 r
+  resetn (in)                                             0.00       0.10 r
+  C553/Z (GTECH_AND2)                                     0.00       0.10 r
+  u_core/mem_stall (core_00000000)                        0.00       0.10 r
+  u_core/B_50/Z (GTECH_BUF)                               0.00       0.10 r
+  u_core/C3298/Z_10 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[10] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_10 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[10] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_10 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[10] (core_00000000)                   0.00       0.10 r
+  C535/Z_10 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[10] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[10]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  resetn (in)                                             0.00       0.10 f
+  C553/Z (GTECH_AND2)                                     0.00       0.10 f
+  u_core/mem_stall (core_00000000)                        0.00       0.10 f
+  u_core/I_52/Z (GTECH_NOT)                               0.00       0.10 r
+  u_core/C3776/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3815/Z (GTECH_OR2)                              0.00       0.10 r
+  u_core/C3814/Z (GTECH_OR2)                              0.00       0.10 r
+  u_core/C3833/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_10 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[10] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_10 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[10] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_10 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[10] (core_00000000)                   0.00       0.10 r
+  C535/Z_10 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[10] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[0]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 r
+  resetn (in)                                             0.00       0.10 r
+  C553/Z (GTECH_AND2)                                     0.00       0.10 r
+  u_core/mem_stall (core_00000000)                        0.00       0.10 r
+  u_core/B_50/Z (GTECH_BUF)                               0.00       0.10 r
+  u_core/C3298/Z_0 (*SELECT_OP_6.32_6.1_32)               0.00       0.10 r
+  u_core/u_ifu/redirect_target[0] (ifu_00000000)          0.00       0.10 r
+  u_core/u_ifu/C105/Z_0 (*SELECT_OP_5.32_5.1_32)          0.00       0.10 r
+  u_core/u_ifu/next_pc[0] (ifu_00000000)                  0.00       0.10 r
+  u_core/C3205/Z_0 (*SELECT_OP_4.32_4.1_32)               0.00       0.10 r
+  u_core/i_mem_addr[0] (core_00000000)                    0.00       0.10 r
+  C535/Z_0 (*SELECT_OP_3.32_3.1_32)                       0.00       0.10 r
+  ibus_addr[0] (out)                                      0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[0]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  resetn (in)                                             0.00       0.10 f
+  C553/Z (GTECH_AND2)                                     0.00       0.10 f
+  u_core/mem_stall (core_00000000)                        0.00       0.10 f
+  u_core/I_52/Z (GTECH_NOT)                               0.00       0.10 r
+  u_core/C3776/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3815/Z (GTECH_OR2)                              0.00       0.10 r
+  u_core/C3814/Z (GTECH_OR2)                              0.00       0.10 r
+  u_core/C3833/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_0 (*SELECT_OP_6.32_6.1_32)               0.00       0.10 r
+  u_core/u_ifu/redirect_target[0] (ifu_00000000)          0.00       0.10 r
+  u_core/u_ifu/C105/Z_0 (*SELECT_OP_5.32_5.1_32)          0.00       0.10 r
+  u_core/u_ifu/next_pc[0] (ifu_00000000)                  0.00       0.10 r
+  u_core/C3205/Z_0 (*SELECT_OP_4.32_4.1_32)               0.00       0.10 r
+  u_core/i_mem_addr[0] (core_00000000)                    0.00       0.10 r
+  C535/Z_0 (*SELECT_OP_3.32_3.1_32)                       0.00       0.10 r
+  ibus_addr[0] (out)                                      0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[12]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 r
+  resetn (in)                                             0.00       0.10 r
+  C553/Z (GTECH_AND2)                                     0.00       0.10 r
+  u_core/mem_stall (core_00000000)                        0.00       0.10 r
+  u_core/I_52/Z (GTECH_NOT)                               0.00       0.10 f
+  u_core/C3776/Z (GTECH_AND2)                             0.00       0.10 f
+  u_core/C3815/Z (GTECH_OR2)                              0.00       0.10 f
+  u_core/C3814/Z (GTECH_OR2)                              0.00       0.10 f
+  u_core/I_179/Z (GTECH_NOT)                              0.00       0.10 r
+  u_core/C3835/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3836/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_12 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[12] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_12 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[12] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_12 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[12] (core_00000000)                   0.00       0.10 r
+  C535/Z_12 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[12] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[12]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  resetn (in)                                             0.00       0.10 f
+  C553/Z (GTECH_AND2)                                     0.00       0.10 f
+  u_core/mem_stall (core_00000000)                        0.00       0.10 f
+  u_core/I_159/Z (GTECH_NOT)                              0.00       0.10 r
+  u_core/C3835/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3836/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_12 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[12] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_12 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[12] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_12 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[12] (core_00000000)                   0.00       0.10 r
+  C535/Z_12 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[12] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[11]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 r
+  resetn (in)                                             0.00       0.10 r
+  C553/Z (GTECH_AND2)                                     0.00       0.10 r
+  u_core/mem_stall (core_00000000)                        0.00       0.10 r
+  u_core/I_52/Z (GTECH_NOT)                               0.00       0.10 f
+  u_core/C3776/Z (GTECH_AND2)                             0.00       0.10 f
+  u_core/C3815/Z (GTECH_OR2)                              0.00       0.10 f
+  u_core/C3814/Z (GTECH_OR2)                              0.00       0.10 f
+  u_core/I_179/Z (GTECH_NOT)                              0.00       0.10 r
+  u_core/C3835/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3836/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_11 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[11] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_11 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[11] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_11 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[11] (core_00000000)                   0.00       0.10 r
+  C535/Z_11 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[11] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[11]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  resetn (in)                                             0.00       0.10 f
+  C553/Z (GTECH_AND2)                                     0.00       0.10 f
+  u_core/mem_stall (core_00000000)                        0.00       0.10 f
+  u_core/I_159/Z (GTECH_NOT)                              0.00       0.10 r
+  u_core/C3835/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3836/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_11 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[11] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_11 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[11] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_11 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[11] (core_00000000)                   0.00       0.10 r
+  C535/Z_11 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[11] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[10]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  resetn (in)                                             0.00       0.10 f
+  C553/Z (GTECH_AND2)                                     0.00       0.10 f
+  u_core/mem_stall (core_00000000)                        0.00       0.10 f
+  u_core/I_159/Z (GTECH_NOT)                              0.00       0.10 r
+  u_core/C3835/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3836/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_10 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[10] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_10 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[10] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_10 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[10] (core_00000000)                   0.00       0.10 r
+  C535/Z_10 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[10] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[10]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 r
+  resetn (in)                                             0.00       0.10 r
+  C553/Z (GTECH_AND2)                                     0.00       0.10 r
+  u_core/mem_stall (core_00000000)                        0.00       0.10 r
+  u_core/I_52/Z (GTECH_NOT)                               0.00       0.10 f
+  u_core/C3776/Z (GTECH_AND2)                             0.00       0.10 f
+  u_core/C3815/Z (GTECH_OR2)                              0.00       0.10 f
+  u_core/C3814/Z (GTECH_OR2)                              0.00       0.10 f
+  u_core/I_179/Z (GTECH_NOT)                              0.00       0.10 r
+  u_core/C3835/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3836/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_10 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[10] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_10 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[10] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_10 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[10] (core_00000000)                   0.00       0.10 r
+  C535/Z_10 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[10] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[0]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 r
+  resetn (in)                                             0.00       0.10 r
+  C553/Z (GTECH_AND2)                                     0.00       0.10 r
+  u_core/mem_stall (core_00000000)                        0.00       0.10 r
+  u_core/I_52/Z (GTECH_NOT)                               0.00       0.10 f
+  u_core/C3776/Z (GTECH_AND2)                             0.00       0.10 f
+  u_core/C3815/Z (GTECH_OR2)                              0.00       0.10 f
+  u_core/C3814/Z (GTECH_OR2)                              0.00       0.10 f
+  u_core/I_179/Z (GTECH_NOT)                              0.00       0.10 r
+  u_core/C3835/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3836/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_0 (*SELECT_OP_6.32_6.1_32)               0.00       0.10 r
+  u_core/u_ifu/redirect_target[0] (ifu_00000000)          0.00       0.10 r
+  u_core/u_ifu/C105/Z_0 (*SELECT_OP_5.32_5.1_32)          0.00       0.10 r
+  u_core/u_ifu/next_pc[0] (ifu_00000000)                  0.00       0.10 r
+  u_core/C3205/Z_0 (*SELECT_OP_4.32_4.1_32)               0.00       0.10 r
+  u_core/i_mem_addr[0] (core_00000000)                    0.00       0.10 r
+  C535/Z_0 (*SELECT_OP_3.32_3.1_32)                       0.00       0.10 r
+  ibus_addr[0] (out)                                      0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[0]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  resetn (in)                                             0.00       0.10 f
+  C553/Z (GTECH_AND2)                                     0.00       0.10 f
+  u_core/mem_stall (core_00000000)                        0.00       0.10 f
+  u_core/I_159/Z (GTECH_NOT)                              0.00       0.10 r
+  u_core/C3835/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3836/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_0 (*SELECT_OP_6.32_6.1_32)               0.00       0.10 r
+  u_core/u_ifu/redirect_target[0] (ifu_00000000)          0.00       0.10 r
+  u_core/u_ifu/C105/Z_0 (*SELECT_OP_5.32_5.1_32)          0.00       0.10 r
+  u_core/u_ifu/next_pc[0] (ifu_00000000)                  0.00       0.10 r
+  u_core/C3205/Z_0 (*SELECT_OP_4.32_4.1_32)               0.00       0.10 r
+  u_core/i_mem_addr[0] (core_00000000)                    0.00       0.10 r
+  C535/Z_0 (*SELECT_OP_3.32_3.1_32)                       0.00       0.10 r
+  ibus_addr[0] (out)                                      0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[12]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  resetn (in)                                             0.00       0.10 f
+  C553/Z (GTECH_AND2)                                     0.00       0.10 f
+  u_core/mem_stall (core_00000000)                        0.00       0.10 f
+  u_core/I_159/Z (GTECH_NOT)                              0.00       0.10 r
+  u_core/C3833/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_12 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[12] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_12 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[12] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_12 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[12] (core_00000000)                   0.00       0.10 r
+  C535/Z_12 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[12] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[11]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  resetn (in)                                             0.00       0.10 f
+  C553/Z (GTECH_AND2)                                     0.00       0.10 f
+  u_core/mem_stall (core_00000000)                        0.00       0.10 f
+  u_core/I_159/Z (GTECH_NOT)                              0.00       0.10 r
+  u_core/C3833/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_11 (*SELECT_OP_6.32_6.1_32)              0.00       0.10 r
+  u_core/u_ifu/redirect_target[11] (ifu_00000000)         0.00       0.10 r
+  u_core/u_ifu/C105/Z_11 (*SELECT_OP_5.32_5.1_32)         0.00       0.10 r
+  u_core/u_ifu/next_pc[11] (ifu_00000000)                 0.00       0.10 r
+  u_core/C3205/Z_11 (*SELECT_OP_4.32_4.1_32)              0.00       0.10 r
+  u_core/i_mem_addr[11] (core_00000000)                   0.00       0.10 r
+  C535/Z_11 (*SELECT_OP_3.32_3.1_32)                      0.00       0.10 r
+  ibus_addr[11] (out)                                     0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: ibus_addr[0]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.10       0.10 f
+  resetn (in)                                             0.00       0.10 f
+  C553/Z (GTECH_AND2)                                     0.00       0.10 f
+  u_core/mem_stall (core_00000000)                        0.00       0.10 f
+  u_core/I_159/Z (GTECH_NOT)                              0.00       0.10 r
+  u_core/C3833/Z (GTECH_AND2)                             0.00       0.10 r
+  u_core/C3298/Z_0 (*SELECT_OP_6.32_6.1_32)               0.00       0.10 r
+  u_core/u_ifu/redirect_target[0] (ifu_00000000)          0.00       0.10 r
+  u_core/u_ifu/C105/Z_0 (*SELECT_OP_5.32_5.1_32)          0.00       0.10 r
+  u_core/u_ifu/next_pc[0] (ifu_00000000)                  0.00       0.10 r
+  u_core/C3205/Z_0 (*SELECT_OP_4.32_4.1_32)               0.00       0.10 r
+  u_core/i_mem_addr[0] (core_00000000)                    0.00       0.10 r
+  C535/Z_0 (*SELECT_OP_3.32_3.1_32)                       0.00       0.10 r
+  ibus_addr[0] (out)                                      0.00       0.10 r
+  data arrival time                                                  0.10
+
+  clock clk (rise edge)                                   1.43       1.43
+  clock network delay (ideal)                             0.00       1.43
+  clock uncertainty                                      -0.05       1.38
+  output external delay                                  -0.10       1.28
+  data required time                                                 1.28
+  --------------------------------------------------------------------------
+  data required time                                                 1.28
+  data arrival time                                                 -0.10
+  --------------------------------------------------------------------------
+  slack (MET)                                                        1.18
+
+
+  Startpoint: resetn (input port clocked by clk)
+  Endpoint: dbg_state[1]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  csr                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  div                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  mul                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ifu_00000000       ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  ras                ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  bp                 ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  cpu_m1_top         ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+  core_00000000      ZeroWireload          tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  input external delay                     0.10       0.10 f
+  resetn (in)                              0.00       0.10 f
+  C553/Z (GTECH_AND2)                      0.00       0.10 f
+  u_core/mem_stall (core_00000000)         0.00       0.10 f
+  u_core/I_52/Z (GTECH_NOT)                0.00       0.10 r
+  u_core/C3776/Z (GTECH_AND2)              0.00       0.10 r
+  u_core/dbg_state[1] (core_00000000)      0.00       0.10 r
+  dbg_state[1] (out)                       0.00       0.10 r
+  data arrival time                                   0.10
+
+  clock clk (rise edge)                    1.43       1.43
+  clock network delay (ideal)              0.00       1.43
+  clock uncertainty                       -0.05       1.38
+  output external delay                   -0.10       1.28
+  data required time                                  1.28
+  -----------------------------------------------------------
+  data required time                                  1.28
+  data arrival time                                  -0.10
+  -----------------------------------------------------------
+  slack (MET)                                         1.18
+
+
+1

@@ -1,0 +1,30 @@
+MMIO_RESULT[6]=53544152
+MMIO_RESULT[0]=00000001
+MMIO_RESULT[1]=0005ac11
+MMIO_RESULT[2]=00046b40
+MMIO_RESULT[3]=00004079
+MMIO_RESULT[4]=0005ec8a
+MMIO_RESULT[7]=53544f50
+TB_TIMED cycles=371762 commits=289627 load_use_stall=20523 muldiv_stall=37584 fetch_stall=8891 redirect=10037 other_stall=0
+2K performance run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 371729
+Total time (secs): 0
+Iterations       : 1
+Compiler version : GCC 13.2.0
+Compiler flags   : -O2 -funroll-loops -fno-common -fno-builtin -march=rv32imc -mabi=ilp32 -ffreestanding -nostartfiles -nostdlib -DITERATIONS=1 -DTOTAL_DATA_SIZE=2000 -DPERFORMANCE_RUN=1 -DMEM_METHOD=MEM_STATIC
+Memory location  : STATIC
+seedcrc          : 0xe9f5
+[0]crclist       : 0xe714
+[0]crcmatrix     : 0x1fd7
+[0]crcstate      : 0x8e3a
+[0]crcfinal      : 0xe714
+Correct operation validated. See README.md for run and reporting rules.
+MMIO_RESULT[5]=434d444e
+MMIO_RESULT[4]=00000000
+[4009665 ns] stop on illegal/ebreak pc=00000032 commits=310857 cycles=400966
+PASS: CoreMark firmware reached ebreak after 310857 commits
+- tb_coremark.v:146: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 4ms; walltime 0.130 s; speed 30.964 ms/s
+- Verilator: cpu 0.129 s on 1 threads; allocated 17 MB

@@ -1,0 +1,80 @@
+2026_06_10_00:06:52 : Configuration
+FV_RUN_CONFIG_INFO :  Task : FPV, cmd : check_fv
+[Info] Configuration Details
+[Info] Orchestration/Effort : default
+[Info] Run time limit : 12H
+[Info] Memory limit : 8GB
+[Info] Number of workers requested : 4
+[Info] FPV flow ver : v7 
+2026_06_10_00:06:52 : Verification Problem Current Stats
+
+  Summary Results
+   Property Summary: FPV
+   -----------------
+   > Assertion
+     - # found        : 18
+     - # not_run      : 18
+
+   > Vacuity
+     - # found        : 18
+     - # not_run      : 18
+
+   > Constraint
+     - # found        : 3
+
+2026_06_10_00:06:55 : Verification Problem Current Stats
+
+  Summary Results
+   Property Summary: FPV
+   -----------------
+   > Assertion
+     - # found        : 18
+     - # proven       : 18
+
+   > Vacuity
+     - # found        : 18
+     - # non_vacuous  : 18
+
+   > Constraint
+     - # found        : 3
+
+Solver jobs summary for verification task FPV (11 solver jobs)
+    #scheduled     :     0 
+    #running       :     0 
+    #completed     :    11 
+        #normal        :     8 
+        #timeout       :     0 
+        #memout        :     0 
+        #orc_killed    :     3 
+        #sig_killed    :     0 
+        #crash         :     0 
+        #start_fail    :     0 
+        #misc_error    :     0 
+Completed jobs profile for verification problem vp1 (id=1) in verification task FPV
+
+Memory/time profile by engine
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Engine |   MinMem(MB) |   MaxMem(MB) |  NumJobs | NumStoppedJobs |  Time(secs) | NumSolvedGoals | NumSuccessGoals |  NumFailedGoals | NumBestDepthGoals | 
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+   INIT |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     b1 |          111 |          111 |        1 |              0 |           1 |              0 |               0 |               0 |                 0 | 
+     b8 |          153 |          153 |        1 |              0 |           1 |             18 |              18 |               0 |                 0 | 
+     cc |           90 |           90 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     e2 |           91 |           91 |        1 |              0 |           0 |             18 |              18 |               0 |                 0 | 
+     f5 |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     s1 |           94 |          115 |        2 |              0 |           1 |              0 |               0 |               0 |                 0 | 
+     t0 |           74 |           74 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     t1 |           83 |           83 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     t3 |           75 |           75 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Memory distribution
+---------------------------------
+           Range |      NumJobs | 
+---------------------------------
+       0GB - 8GB |           11 | 
+---------------------------------
+Avg. Memory among completed jobs : 93 MB 
+Max. Memory among completed jobs : 153 MB 
+
+

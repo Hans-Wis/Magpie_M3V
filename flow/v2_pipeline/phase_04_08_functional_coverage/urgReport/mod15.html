@@ -1,0 +1,3770 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: cpu_m1_func_cov_observer</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | <a href="groups.html" ><b>groups</b></a> | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_cpu_m1_func_cov_observer'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_cpu_m1_func_cov_observer')">cpu_m1_func_cov_observer</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s5 cl rt"> 58.51</td>
+<td class="s8 cl rt"><a href="mod15.html#Line" > 81.48</a></td>
+<td class="s5 cl rt"><a href="mod15.html#Cond" > 50.82</a></td>
+<td class="s4 cl rt"><a href="mod15.html#Toggle" > 41.05</a></td>
+<td class="wht cl rt"></td>
+<td class="s6 cl rt"><a href="mod15.html#Branch" > 60.67</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_04_08_functional_coverage/cpu_m1_func_cov_bind.sv')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_04_08_functional_coverage/cpu_m1_func_cov_bind.sv</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod15.html#inst_tag_15"  onclick="showContent('inst_tag_15')">tb_wrapper_func_cov.dut.u_core.u_cpu_m1_func_cov_observer</a></td>
+<td class="s5 cl rt"> 58.51</td>
+<td class="s8 cl rt"><a href="mod15.html#Line" > 81.48</a></td>
+<td class="s5 cl rt"><a href="mod15.html#Cond" > 50.82</a></td>
+<td class="s4 cl rt"><a href="mod15.html#Toggle" > 41.05</a></td>
+<td class="wht cl rt"></td>
+<td class="s6 cl rt"><a href="mod15.html#Branch" > 60.67</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_cpu_m1_func_cov_observer'>
+<hr>
+<a name="inst_tag_15"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_15" >tb_wrapper_func_cov.dut.u_core.u_cpu_m1_func_cov_observer</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s5 cl rt"> 58.51</td>
+<td class="s8 cl rt"><a href="mod15.html#Line" > 81.48</a></td>
+<td class="s5 cl rt"><a href="mod15.html#Cond" > 50.82</a></td>
+<td class="s4 cl rt"><a href="mod15.html#Toggle" > 41.05</a></td>
+<td class="wht cl rt"></td>
+<td class="s6 cl rt"><a href="mod15.html#Branch" > 60.67</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s5 cl rt"> 58.51</td>
+<td class="s8 cl rt"> 81.48</td>
+<td class="s5 cl rt"> 50.82</td>
+<td class="s4 cl rt"> 41.05</td>
+<td class="wht cl rt"></td>
+<td class="s6 cl rt"> 60.67</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td><td class="alfsrt">NAME</td></tr><tr>
+<td class="s5 cl rt"> 54.25</td>
+<td class="s8 cl rt"> 88.33</td>
+<td class="s4 cl rt"> 47.59</td>
+<td class="s2 cl rt"> 21.67</td>
+<td class="wht cl rt"></td>
+<td class="s5 cl rt"> 59.41</td>
+<td><a href="mod11.html#inst_tag_11" >u_core</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td colspan=7>no children</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_cpu_m1_func_cov_observer'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod15.html" >cpu_m1_func_cov_observer</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s8"><td class="lf">TOTAL</td><td></td><td>108</td><td>88</td><td>81.48</td></tr>
+<tr class="s7"><td class="lf">ROUTINE</td><td>105</td><td>9</td><td>7</td><td>77.78</td></tr>
+<tr class="s7"><td class="lf">ROUTINE</td><td>121</td><td>7</td><td>5</td><td>71.43</td></tr>
+<tr class="s7"><td class="lf">ROUTINE</td><td>136</td><td>7</td><td>5</td><td>71.43</td></tr>
+<tr class="s7"><td class="lf">ROUTINE</td><td>151</td><td>10</td><td>7</td><td>70.00</td></tr>
+<tr class="s10"><td class="lf">INITIAL</td><td>293</td><td>2</td><td>2</td><td>100.00</td></tr>
+<tr class="s8"><td class="lf">ALWAYS</td><td>299</td><td>72</td><td>61</td><td>84.72</td></tr>
+<tr class="s10"><td class="lf">INITIAL</td><td>363</td><td>1</td><td>1</td><td>100.00</td></tr>
+</table>
+<pre class="code"><br clear=all>
+104                             begin
+105        1/1                      case (opcode)
+106        1/1                          `OPC_OP, `OPC_OP_IMM: instr_class = 3'd1;
+107        1/1                          `OPC_LOAD:            instr_class = 3'd2;
+108        1/1                          `OPC_STORE:           instr_class = 3'd3;
+109        <font color = "red">0/1     ==>                  `OPC_BRANCH:          instr_class = 3'd4;</font>
+110        <font color = "red">0/1     ==>                  `OPC_JAL, `OPC_JALR:  instr_class = 3'd5;</font>
+111        1/1                          `OPC_SYSTEM:          instr_class = 3'd6;
+112        1/1                          `OPC_LUI, `OPC_AUIPC: instr_class = 3'd7;
+113        1/1                          default:              instr_class = 3'd0;
+114                                 endcase
+115                             end
+116                         endfunction
+117                     
+118                         function [2:0] imm_format;
+119                             input [6:0] opcode;
+120                             begin
+121        1/1                      case (opcode)
+122        1/1                          `OPC_OP_IMM, `OPC_LOAD, `OPC_JALR, `OPC_SYSTEM, `OPC_FENCE: imm_format = FMT_I;
+123        1/1                          `OPC_STORE:  imm_format = FMT_S;
+124        <font color = "red">0/1     ==>                  `OPC_BRANCH: imm_format = FMT_B;</font>
+125        1/1                          `OPC_LUI, `OPC_AUIPC: imm_format = FMT_U;
+126        <font color = "red">0/1     ==>                  `OPC_JAL: imm_format = FMT_J;</font>
+127        1/1                          default: imm_format = FMT_NONE;
+128                                 endcase
+129                             end
+130                         endfunction
+131                     
+132                         function [31:0] decode_imm;
+133                             input [31:0] instr;
+134                             input [2:0] fmt;
+135                             begin
+136        1/1                      case (fmt)
+137        1/1                          FMT_I: decode_imm = {{20{instr[31]}}, instr[31:20]};
+138        1/1                          FMT_S: decode_imm = {{20{instr[31]}}, instr[31:25], instr[11:7]};
+139        <font color = "red">0/1     ==>                  FMT_B: decode_imm = {{19{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};</font>
+140        1/1                          FMT_U: decode_imm = {instr[31:12], 12'h000};
+141        <font color = "red">0/1     ==>                  FMT_J: decode_imm = {{11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1'b0};</font>
+142        1/1                          default: decode_imm = 32'h0;
+143                                 endcase
+144                             end
+145                         endfunction
+146                     
+147                         function [2:0] imm_corner;
+148                             input [31:0] imm;
+149                             input [2:0] fmt;
+150                             begin
+151        2/2                      if (fmt == FMT_NONE) imm_corner = 3'd0;
+152        2/2                      else if (imm == 32'h0000_0000) imm_corner = 3'd1;
+153                                 else begin
+154        1/1                          case (fmt)
+155        1/1                              FMT_I, FMT_S: imm_corner =
+156                                             (imm == 32'hffff_f800) ? 3'd2 :
+157                                             (imm == 32'h0000_07ff) ? 3'd3 : 3'd0;
+158        <font color = "red">0/1     ==>                      FMT_B: imm_corner =</font>
+159                                             (imm == 32'hffff_f000) ? 3'd2 :
+160                                             (imm == 32'h0000_0ffe) ? 3'd3 : 3'd0;
+161        1/1                              FMT_U: imm_corner =
+162                                             (imm == 32'h8000_0000) ? 3'd2 :
+163                                             (imm == 32'h7fff_f000) ? 3'd3 :
+164                                             (imm == 32'hffff_f000) ? 3'd4 : 3'd0;
+165        <font color = "red">0/1     ==>                      FMT_J: imm_corner =</font>
+166                                             (imm == 32'hfff0_0000) ? 3'd2 :
+167                                             (imm == 32'h000f_fffe) ? 3'd3 : 3'd0;
+168        <font color = "red">0/1     ==>                      default: imm_corner = 3'd0;</font>
+169                                     endcase
+170                                 end
+171                             end
+172                         endfunction
+173                     
+174                         wire [2:0] wb_instr_class = instr_class(wb_opcode);
+175                         wire [2:0] wb_imm_format = imm_format(wb_opcode);
+176                         wire [31:0] wb_imm = decode_imm(obs_ex_wb_instr, wb_imm_format);
+177                         wire [1:0] wb_imm_sign =
+178                             (wb_imm_format == FMT_NONE) ? 2'd0 :
+179                             (wb_imm == 32'h0) ? 2'd1 :
+180                             wb_imm[31] ? 2'd3 : 2'd2;
+181                         wire [2:0] wb_imm_corner = imm_corner(wb_imm, wb_imm_format);
+182                     
+183                         covergroup cg_opcode_instr_class @(posedge clk);
+184                             option.per_instance = 1;
+185                             cp_opcode: coverpoint dec_opcode iff (resetn &amp;&amp; if_ex_valid) {
+186                                 bins lui = {`OPC_LUI}; bins auipc = {`OPC_AUIPC}; bins jal = {`OPC_JAL};
+187                                 bins jalr = {`OPC_JALR}; bins branch = {`OPC_BRANCH}; bins load = {`OPC_LOAD};
+188                                 bins store = {`OPC_STORE}; bins op_imm = {`OPC_OP_IMM}; bins op = {`OPC_OP};
+189                                 bins system = {`OPC_SYSTEM}; bins fence = {`OPC_FENCE};
+190                             }
+191                             cp_size: coverpoint if_ex_is_16bit iff (resetn &amp;&amp; if_ex_valid) { bins rvc = {1}; bins rv32 = {0}; }
+192                             opcode_x_size: cross cp_opcode, cp_size;
+193                         endgroup
+194                     
+195                         covergroup cg_alu_m_funct @(posedge clk);
+196                             option.per_instance = 1;
+197                             cp_alu_funct3: coverpoint dec_funct3 iff (resetn &amp;&amp; if_ex_valid &amp;&amp; (dec_opcode == `OPC_OP || dec_opcode == `OPC_OP_IMM)) { bins f3[] = {[0:7]}; }
+198                             cp_funct7: coverpoint dec_funct7 iff (resetn &amp;&amp; if_ex_valid &amp;&amp; dec_opcode == `OPC_OP) { bins base = {`F7_DEFAULT}; bins sub_sra = {`F7_SUB_SRA}; bins muldiv = {`F7_MULDIV}; }
+199                             cp_md_op: coverpoint id_md_op iff (resetn &amp;&amp; if_ex_valid &amp;&amp; id_is_muldiv) { bins md[] = {[0:7]}; }
+200                             cp_md_kind: coverpoint id_md_is_div iff (resetn &amp;&amp; if_ex_valid &amp;&amp; id_is_muldiv) { bins mul = {0}; bins div = {1}; }
+201                         endgroup
+202                     
+203                         covergroup cg_load_store @(posedge clk);
+204                             option.per_instance = 1;
+205                             cp_ls_kind: coverpoint {ex_mem_is_store_r, ex_mem_is_load_r} iff (resetn &amp;&amp; ex_mem_valid_r &amp;&amp; (ex_mem_is_load_r || ex_mem_is_store_r)) { bins load = {2'b01}; bins store = {2'b10}; }
+206                             cp_width: coverpoint ex_mem_ls_funct3_r[1:0] iff (resetn &amp;&amp; ex_mem_valid_r &amp;&amp; (ex_mem_is_load_r || ex_mem_is_store_r)) { bins byte_bin = {0}; bins half = {1}; bins word = {2}; }
+207                             cp_sign: coverpoint ex_mem_ls_funct3_r[2] iff (resetn &amp;&amp; ex_mem_valid_r &amp;&amp; ex_mem_is_load_r) { bins signed_load = {0}; bins unsigned_load = {1}; }
+208                             cp_addr_lo: coverpoint ex_mem_addr_lo_r iff (resetn &amp;&amp; ex_mem_valid_r &amp;&amp; (ex_mem_is_load_r || ex_mem_is_store_r)) { bins lo[] = {[0:3]}; }
+209                             ls_shape: cross cp_ls_kind, cp_width, cp_addr_lo;
+210                         endgroup
+211                     
+212                         covergroup cg_branch_jump_bp_ras @(posedge clk);
+213                             option.per_instance = 1;
+214                             cp_branch_taken: coverpoint branch_taken iff (resetn &amp;&amp; if_ex_valid &amp;&amp; id_is_branch) { bins not_taken = {0}; bins taken = {1}; }
+215                             cp_branch_dir: coverpoint branch_backward iff (resetn &amp;&amp; if_ex_valid &amp;&amp; id_is_branch) { bins forward = {0}; bins backward = {1}; }
+216                             cp_jump: coverpoint {id_is_jal, id_is_jalr} iff (resetn &amp;&amp; if_ex_valid &amp;&amp; (id_is_jal || id_is_jalr)) { bins jal = {2'b10}; bins jalr = {2'b01}; }
+217                             cp_ras: coverpoint {ras_push, ras_pop} iff (resetn &amp;&amp; (ras_push || ras_pop)) { bins push = {2'b10}; bins pop = {2'b01}; bins push_pop = {2'b11}; }
+218                             cp_bp: coverpoint bp_result iff (resetn &amp;&amp; bp_event) { bins hit = {1}; bins miss = {2}; }
+219                             branch_shape: cross cp_branch_taken, cp_branch_dir;
+220                         endgroup
+221                     
+222                         covergroup cg_hazard_flush @(posedge clk);
+223                             option.per_instance = 1;
+224                             cp_hazard: coverpoint {load_use_stall, muldiv_busy_stall, fetch_stall, mem_stall} iff (resetn &amp;&amp; (stall || fetch_stall || mem_stall)) {
+225                                 bins load_use = {4'b1000}; bins muldiv_busy = {4'b0100}; bins fetch = {4'b0010}; bins memory = {4'b0001};
+226                             }
+227                             cp_redirect: coverpoint pc_redirect iff (resetn) { bins no_redirect = {0}; bins redirect = {1}; }
+228                         endgroup
+229                     
+230                         covergroup cg_csr_trap @(posedge clk);
+231                             option.per_instance = 1;
+232                             cp_csr_op: coverpoint ex_wb_csr_op_r iff (resetn &amp;&amp; wb_csr_we) { bins rw = {`CSR_OP_W}; bins rs = {`CSR_OP_S}; bins rc = {`CSR_OP_C}; }
+233                             cp_trap: coverpoint trap_kind iff (resetn &amp;&amp; (wb_take_irq || wb_take_data_trap || ex_wb_illegal_r)) {
+234                                 bins illegal = {0}; bins ecall = {1}; bins ebreak = {2}; bins irq = {3}; bins load_misalign = {4}; bins store_misalign = {5};
+235                             }
+236                             cp_mret: coverpoint ex_wb_is_mret_r iff (resetn &amp;&amp; ex_wb_valid_r) { bins no = {0}; bins yes = {1}; }
+237                         endgroup
+238                     
+239                         covergroup cg_riscvisacov_operands @(posedge clk);
+240                             option.per_instance = 1;
+241                             cp_instr_class: coverpoint wb_instr_class iff (wb_retire_valid) {
+242                                 bins alu = {1}; bins load = {2}; bins store = {3}; bins branch = {4};
+243                                 bins jump = {5}; bins csr = {6}; bins upper = {7};
+244                             }
+245                             cp_rd: coverpoint obs_ex_wb_rd_idx iff (wb_retire_valid) { bins x0 = {0}; bins x[] = {[1:31]}; }
+246                             cp_rs1: coverpoint obs_ex_wb_rs1_idx iff (wb_retire_valid) { bins x0 = {0}; bins x[] = {[1:31]}; }
+247                             cp_rs2: coverpoint obs_ex_wb_rs2_idx iff (wb_retire_valid) { bins x0 = {0}; bins x[] = {[1:31]}; }
+248                             rd_x_class: cross cp_rd, cp_instr_class;
+249                             rs1_x_class: cross cp_rs1, cp_instr_class;
+250                             rs2_x_class: cross cp_rs2, cp_instr_class;
+251                         endgroup
+252                     
+253                         covergroup cg_riscvisacov_value_corners @(posedge clk);
+254                             option.per_instance = 1;
+255                             cp_rs1_val: coverpoint obs_ex_wb_rs1_val iff (wb_retire_valid) {
+256                                 bins zero = {32'h0000_0000}; bins one = {32'h0000_0001};
+257                                 bins minus_one = {32'hffff_ffff}; bins max_pos = {32'h7fff_ffff};
+258                                 bins min_neg = {32'h8000_0000}; bins all_ones = {32'hffff_ffff};
+259                             }
+260                             cp_rs2_val: coverpoint obs_ex_wb_rs2_val iff (wb_retire_valid) {
+261                                 bins zero = {32'h0000_0000}; bins one = {32'h0000_0001};
+262                                 bins minus_one = {32'hffff_ffff}; bins max_pos = {32'h7fff_ffff};
+263                                 bins min_neg = {32'h8000_0000}; bins all_ones = {32'hffff_ffff};
+264                             }
+265                         endgroup
+266                     
+267                         covergroup cg_riscvisacov_immediates @(posedge clk);
+268                             option.per_instance = 1;
+269                             cp_imm_format: coverpoint wb_imm_format iff (wb_retire_valid &amp;&amp; wb_imm_format != FMT_NONE) {
+270                                 bins i = {FMT_I}; bins s = {FMT_S}; bins b = {FMT_B}; bins u = {FMT_U}; bins j = {FMT_J};
+271                             }
+272                             cp_imm_sign: coverpoint wb_imm_sign iff (wb_retire_valid &amp;&amp; wb_imm_format != FMT_NONE) {
+273                                 bins zero = {1}; bins positive = {2}; bins negative = {3};
+274                             }
+275                             cp_imm_corner: coverpoint wb_imm_corner iff (wb_retire_valid &amp;&amp; wb_imm_format != FMT_NONE) {
+276                                 bins zero = {1}; bins min = {2}; bins max = {3}; bins u_all_ones = {4};
+277                             }
+278                             format_x_sign: cross cp_imm_format, cp_imm_sign;
+279                             format_x_corner: cross cp_imm_format, cp_imm_corner;
+280                         endgroup
+281                     
+282                         cg_opcode_instr_class cg_opcode_instr_class_i = new();
+283                         cg_alu_m_funct cg_alu_m_funct_i = new();
+284                         cg_load_store cg_load_store_i = new();
+285                         cg_branch_jump_bp_ras cg_branch_jump_bp_ras_i = new();
+286                         cg_hazard_flush cg_hazard_flush_i = new();
+287                         cg_csr_trap cg_csr_trap_i = new();
+288                         cg_riscvisacov_operands cg_riscvisacov_operands_i = new();
+289                         cg_riscvisacov_value_corners cg_riscvisacov_value_corners_i = new();
+290                         cg_riscvisacov_immediates cg_riscvisacov_immediates_i = new();
+291                     
+292                         initial begin
+293        1/1                  fd = $fopen(&quot;functional_events.csv&quot;, &quot;w&quot;);
+294        1/1                  $fdisplay(fd, &quot;cycle,event,a,b,c,d,e&quot;);
+295                         end
+296                     
+297                         integer cycle;
+298                         always @(posedge clk) begin
+299        1/1                  if (!resetn) begin
+300        1/1                      cycle &lt;= 0;
+301        1/1                      obs_ex_mem_instr &lt;= 32'h0;
+302        1/1                      obs_ex_wb_instr &lt;= 32'h0;
+303        1/1                      obs_ex_mem_16bit &lt;= 1'b0;
+304        1/1                      obs_ex_wb_16bit &lt;= 1'b0;
+305        1/1                      obs_ex_mem_rd_idx &lt;= 5'h0;
+306        1/1                      obs_ex_mem_rs1_idx &lt;= 5'h0;
+307        1/1                      obs_ex_mem_rs2_idx &lt;= 5'h0;
+308        1/1                      obs_ex_mem_rs1_val &lt;= 32'h0;
+309        1/1                      obs_ex_mem_rs2_val &lt;= 32'h0;
+310        1/1                      obs_ex_wb_rd_idx &lt;= 5'h0;
+311        1/1                      obs_ex_wb_rs1_idx &lt;= 5'h0;
+312        1/1                      obs_ex_wb_rs2_idx &lt;= 5'h0;
+313        1/1                      obs_ex_wb_rs1_val &lt;= 32'h0;
+314        1/1                      obs_ex_wb_rs2_val &lt;= 32'h0;
+315                             end else begin
+316        1/1                      cycle &lt;= cycle + 1;
+317        1/1                      if (id_advance_to_ex_mem) begin
+318        1/1                          obs_ex_mem_instr &lt;= if_ex_instr;
+319        1/1                          obs_ex_mem_16bit &lt;= if_ex_is_16bit;
+320        1/1                          obs_ex_mem_rd_idx &lt;= id_rd_idx;
+321        1/1                          obs_ex_mem_rs1_idx &lt;= id_rs1_idx;
+322        1/1                          obs_ex_mem_rs2_idx &lt;= id_rs2_idx;
+323        1/1                          obs_ex_mem_rs1_val &lt;= rs1_val;
+324        1/1                          obs_ex_mem_rs2_val &lt;= rs2_val;
+325                                 end
+                        MISSING_ELSE
+326        1/1                      if (ex_mem_advance_to_wb) begin
+327        1/1                          obs_ex_wb_instr &lt;= obs_ex_mem_instr;
+328        1/1                          obs_ex_wb_16bit &lt;= obs_ex_mem_16bit;
+329        1/1                          obs_ex_wb_rd_idx &lt;= obs_ex_mem_rd_idx;
+330        1/1                          obs_ex_wb_rs1_idx &lt;= obs_ex_mem_rs1_idx;
+331        1/1                          obs_ex_wb_rs2_idx &lt;= obs_ex_mem_rs2_idx;
+332        1/1                          obs_ex_wb_rs1_val &lt;= obs_ex_mem_rs1_val;
+333        1/1                          obs_ex_wb_rs2_val &lt;= obs_ex_mem_rs2_val;
+334                                 end
+                        MISSING_ELSE
+335        1/1                      if (wb_retire_valid) begin
+336        1/1                          $fdisplay(fd, &quot;%0d,operand,%0d,%0d,%0d,%0d,%0d&quot;, cycle, obs_ex_wb_rd_idx, obs_ex_wb_rs1_idx, obs_ex_wb_rs2_idx, wb_instr_class, wb_opcode);
+337        1/1                          $fdisplay(fd, &quot;%0d,value,%0d,%0d,0,0,0&quot;, cycle, obs_ex_wb_rs1_val, obs_ex_wb_rs2_val);
+338        2/2                          if (wb_imm_format != FMT_NONE) $fdisplay(fd, &quot;%0d,imm,%0d,%0d,%0d,%0d,0&quot;, cycle, wb_imm_format, wb_imm_sign, wb_imm_corner, wb_imm);
+                        MISSING_ELSE
+339                                 end
+                        MISSING_ELSE
+340        1/1                      if (if_ex_valid) begin
+341        1/1                          $fdisplay(fd, &quot;%0d,decode,%0d,%0d,%0d,%0d,%0d&quot;, cycle, dec_opcode, if_ex_is_16bit, dec_funct3, dec_funct7, id_md_op);
+342        <font color = "red">1/2     ==>                  if (id_is_branch) $fdisplay(fd, &quot;%0d,branch,%0d,%0d,0,0,0&quot;, cycle, branch_taken, branch_backward);</font>
+                        MISSING_ELSE
+343        <font color = "red">1/2     ==>                  if (id_is_jal || id_is_jalr) $fdisplay(fd, &quot;%0d,jump,%0d,%0d,0,0,0&quot;, cycle, id_is_jal, id_is_jalr);</font>
+                        MISSING_ELSE
+344        <font color = "red">1/2     ==>                  if (id_is_csr) $fdisplay(fd, &quot;%0d,csr_decode,%0d,0,0,0,0&quot;, cycle, id_csr_op);</font>
+                        MISSING_ELSE
+345        <font color = "red">1/2     ==>                  if (id_is_mret) $fdisplay(fd, &quot;%0d,mret_decode,1,0,0,0,0&quot;, cycle);</font>
+                        MISSING_ELSE
+346                                 end
+                        MISSING_ELSE
+347        2/2                      if (ex_mem_valid_r &amp;&amp; (ex_mem_is_load_r || ex_mem_is_store_r)) $fdisplay(fd, &quot;%0d,ls,%0d,%0d,%0d,%0d,0&quot;, cycle, ex_mem_is_load_r, ex_mem_is_store_r, ex_mem_ls_funct3_r, ex_mem_addr_lo_r);
+                        MISSING_ELSE
+348        <font color = "red">1/2     ==>              if (ras_push) $fdisplay(fd, &quot;%0d,ras,push,0,0,0,0&quot;, cycle);</font>
+                        MISSING_ELSE
+349        <font color = "red">1/2     ==>              if (ras_pop) $fdisplay(fd, &quot;%0d,ras,pop,0,0,0,0&quot;, cycle);</font>
+                        MISSING_ELSE
+350        <font color = "red">1/2     ==>              if (bp_event) $fdisplay(fd, &quot;%0d,bp,%0d,0,0,0,0&quot;, cycle, ex_mem_mispredict_r);</font>
+                        MISSING_ELSE
+351        2/2                      if (load_use_stall) $fdisplay(fd, &quot;%0d,hazard,load_use,0,0,0,0&quot;, cycle);
+                        MISSING_ELSE
+352        <font color = "red">1/2     ==>              if (muldiv_busy_stall) $fdisplay(fd, &quot;%0d,hazard,muldiv_busy,0,0,0,0&quot;, cycle);</font>
+                        MISSING_ELSE
+353        <font color = "red">1/2     ==>              if (fetch_stall) $fdisplay(fd, &quot;%0d,hazard,fetch_stall,0,0,0,0&quot;, cycle);</font>
+                        MISSING_ELSE
+354        2/2                      if (mem_stall) $fdisplay(fd, &quot;%0d,hazard,mem_stall,0,0,0,0&quot;, cycle);
+                        MISSING_ELSE
+355        2/2                      if (pc_redirect) $fdisplay(fd, &quot;%0d,redirect,1,0,0,0,0&quot;, cycle);
+                        MISSING_ELSE
+356        <font color = "red">1/2     ==>              if (wb_csr_we) $fdisplay(fd, &quot;%0d,csr,%0d,0,0,0,0&quot;, cycle, ex_wb_csr_op_r);</font>
+                        MISSING_ELSE
+357        2/2                      if (wb_take_irq || wb_take_data_trap || ex_wb_illegal_r) $fdisplay(fd, &quot;%0d,trap,%0d,0,0,0,0&quot;, cycle, trap_kind);
+                        MISSING_ELSE
+358        <font color = "red">1/2     ==>              if (ex_wb_valid_r &amp;&amp; ex_wb_is_mret_r) $fdisplay(fd, &quot;%0d,mret,1,0,0,0,0&quot;, cycle);</font>
+                        MISSING_ELSE
+359                             end
+360                         end
+361                     
+362                         final begin
+363        1/1                  $fclose(fd);
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod15.html" >cpu_m1_func_cov_observer</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s5"><td class="lf">Conditions</td><td>122</td><td>62</td><td>50.82</td></tr>
+<tr class="s5"><td class="lf">Logical</td><td>122</td><td>62</td><td>50.82</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       81
+ EXPRESSION (resetn &amp;&amp; wb_instr_retired &amp;&amp; ex_wb_valid_r &amp;&amp; ((!ex_wb_illegal_r)))
+             ---1--    --------2-------    ------3------    ----------4---------
+</pre>
+<table class="noborder">
+<col span="4" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>-4-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td>1</td><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       83
+ EXPRESSION (stall &amp;&amp; ((!id_is_muldiv)) &amp;&amp; ((!md_busy)))
+             --1--    --------2--------    ------3-----
+</pre>
+<table class="noborder">
+<col span="3" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       84
+ EXPRESSION (stall &amp;&amp; id_is_muldiv &amp;&amp; md_busy)
+             --1--    ------2-----    ---3---
+</pre>
+<table class="noborder">
+<col span="3" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       85
+ EXPRESSION (ex_mem_valid_r &amp;&amp; (ex_mem_bp_upd_valid_r || ex_mem_is_jalr_r || ex_mem_pred_ras_r))
+             -------1------    --------------------------------2-------------------------------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       85
+ SUB-EXPRESSION (ex_mem_bp_upd_valid_r || ex_mem_is_jalr_r || ex_mem_pred_ras_r)
+                 ----------1----------    --------2-------    --------3--------
+</pre>
+<table class="noborder">
+<col span="3" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>0</td><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>0</td><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td>0</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       86
+ EXPRESSION (ex_mem_mispredict_r ? 2'd2 : 2'b1)
+             ---------1---------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ EXPRESSION 
+ Number  Term
+      1  wb_take_irq ? 3'd3 : ((wb_take_data_trap &amp;&amp; ((!ex_wb_is_misaligned_store_r))) ? 3'd4 : ((wb_take_data_trap &amp;&amp; ex_wb_is_misaligned_store_r) ? 3'd5 : ((ex_wb_illegal_r &amp;&amp; (wb_opcode == 7'b1110011) &amp;&amp; (wb_funct12 == 12'b0)) ? 3'b1 : ((ex_wb_illegal_r &amp;&amp; (wb_opcode == 7'b1110011) &amp;&amp; (wb_funct12 == 12'b1)) ? 3'd2 : 3'b0)))))
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION 
+ Number  Term
+      1  (wb_take_data_trap &amp;&amp; ((!ex_wb_is_misaligned_store_r))) ? 3'd4 : ((wb_take_data_trap &amp;&amp; ex_wb_is_misaligned_store_r) ? 3'd5 : ((ex_wb_illegal_r &amp;&amp; (wb_opcode == 7'b1110011) &amp;&amp; (wb_funct12 == 12'b0)) ? 3'b1 : ((ex_wb_illegal_r &amp;&amp; (wb_opcode == 7'b1110011) &amp;&amp; (wb_funct12 == 12'b1)) ? 3'd2 : 3'b0))))
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION (wb_take_data_trap &amp;&amp; ((!ex_wb_is_misaligned_store_r)))
+                 --------1--------    ----------------2---------------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION 
+ Number  Term
+      1  (wb_take_data_trap &amp;&amp; ex_wb_is_misaligned_store_r) ? 3'd5 : ((ex_wb_illegal_r &amp;&amp; (wb_opcode == 7'b1110011) &amp;&amp; (wb_funct12 == 12'b0)) ? 3'b1 : ((ex_wb_illegal_r &amp;&amp; (wb_opcode == 7'b1110011) &amp;&amp; (wb_funct12 == 12'b1)) ? 3'd2 : 3'b0)))
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION (wb_take_data_trap &amp;&amp; ex_wb_is_misaligned_store_r)
+                 --------1--------    -------------2-------------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION 
+ Number  Term
+      1  (ex_wb_illegal_r &amp;&amp; (wb_opcode == 7'b1110011) &amp;&amp; (wb_funct12 == 12'b0)) ? 3'b1 : ((ex_wb_illegal_r &amp;&amp; (wb_opcode == 7'b1110011) &amp;&amp; (wb_funct12 == 12'b1)) ? 3'd2 : 3'b0))
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION (ex_wb_illegal_r &amp;&amp; (wb_opcode == 7'b1110011) &amp;&amp; (wb_funct12 == 12'b0))
+                 -------1-------    ------------2------------    ----------3----------
+</pre>
+<table class="noborder">
+<col span="3" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION (wb_opcode == 7'b1110011)
+                ------------1------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION (wb_funct12 == 12'b0)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION ((ex_wb_illegal_r &amp;&amp; (wb_opcode == 7'b1110011) &amp;&amp; (wb_funct12 == 12'b1)) ? 3'd2 : 3'b0)
+                 -----------------------------------1-----------------------------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION (ex_wb_illegal_r &amp;&amp; (wb_opcode == 7'b1110011) &amp;&amp; (wb_funct12 == 12'b1))
+                 -------1-------    ------------2------------    ----------3----------
+</pre>
+<table class="noborder">
+<col span="3" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION (wb_opcode == 7'b1110011)
+                ------------1------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       87
+ SUB-EXPRESSION (wb_funct12 == 12'b1)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       151
+ EXPRESSION (fmt == FMT_NONE)
+            --------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       152
+ EXPRESSION (imm == 32'b0)
+            -------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       155
+ EXPRESSION ((imm == 32'hfffff800) ? 3'd2 : ((imm == 32'h000007ff) ? 3'd3 : 3'b0))
+             ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       155
+ SUB-EXPRESSION (imm == 32'hfffff800)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       155
+ SUB-EXPRESSION ((imm == 32'h000007ff) ? 3'd3 : 3'b0)
+                 ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       155
+ SUB-EXPRESSION (imm == 32'h000007ff)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       158
+ EXPRESSION ((imm == 32'hfffff000) ? 3'd2 : ((imm == 32'h00000ffe) ? 3'd3 : 3'b0))
+             ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       158
+ SUB-EXPRESSION (imm == 32'hfffff000)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       158
+ SUB-EXPRESSION ((imm == 32'h00000ffe) ? 3'd3 : 3'b0)
+                 ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       158
+ SUB-EXPRESSION (imm == 32'h00000ffe)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       161
+ EXPRESSION ((imm == 32'h80000000) ? 3'd2 : ((imm == 32'h7ffff000) ? 3'd3 : ((imm == 32'hfffff000) ? 3'd4 : 3'b0)))
+             ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       161
+ SUB-EXPRESSION (imm == 32'h80000000)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       161
+ SUB-EXPRESSION ((imm == 32'h7ffff000) ? 3'd3 : ((imm == 32'hfffff000) ? 3'd4 : 3'b0))
+                 ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       161
+ SUB-EXPRESSION (imm == 32'h7ffff000)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       161
+ SUB-EXPRESSION ((imm == 32'hfffff000) ? 3'd4 : 3'b0)
+                 ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       161
+ SUB-EXPRESSION (imm == 32'hfffff000)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       165
+ EXPRESSION ((imm == 32'hfff00000) ? 3'd2 : ((imm == 32'h000ffffe) ? 3'd3 : 3'b0))
+             ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       165
+ SUB-EXPRESSION (imm == 32'hfff00000)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       165
+ SUB-EXPRESSION ((imm == 32'h000ffffe) ? 3'd3 : 3'b0)
+                 ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       165
+ SUB-EXPRESSION (imm == 32'h000ffffe)
+                ----------1----------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       177
+ EXPRESSION ((wb_imm_format == FMT_NONE) ? 2'b0 : ((wb_imm == 32'b0) ? 2'b1 : (wb_imm[31] ? 2'd3 : 2'd2)))
+             -------------1-------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       177
+ SUB-EXPRESSION (wb_imm_format == FMT_NONE)
+                -------------1-------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       177
+ SUB-EXPRESSION ((wb_imm == 32'b0) ? 2'b1 : (wb_imm[31] ? 2'd3 : 2'd2))
+                 --------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       177
+ SUB-EXPRESSION (wb_imm == 32'b0)
+                --------1--------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       177
+ SUB-EXPRESSION (wb_imm[31] ? 2'd3 : 2'd2)
+                 -----1----
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       338
+ EXPRESSION (wb_imm_format != FMT_NONE)
+            -------------1-------------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       343
+ EXPRESSION (id_is_jal || id_is_jalr)
+             ----1----    -----2----
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       347
+ EXPRESSION (ex_mem_valid_r &amp;&amp; (ex_mem_is_load_r || ex_mem_is_store_r))
+             -------1------    -------------------2-------------------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       347
+ SUB-EXPRESSION (ex_mem_is_load_r || ex_mem_is_store_r)
+                 --------1-------    --------2--------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       357
+ EXPRESSION (wb_take_irq || wb_take_data_trap || ex_wb_illegal_r)
+             -----1-----    --------2--------    -------3-------
+</pre>
+<table class="noborder">
+<col span="3" width="40">
+<tr><th>-1-</th><th>-2-</th><th>-3-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>0</td><td>0</td><td>1</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>0</td><td>1</td><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uRed"><td>1</td><td>0</td><td>0</td><td class="lf">Not Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       358
+ EXPRESSION (ex_wb_valid_r &amp;&amp; ex_wb_is_mret_r)
+             ------1------    -------2-------
+</pre>
+<table class="noborder">
+<col span="2" width="40">
+<tr><th>-1-</th><th>-2-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td>1</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uRed"><td>1</td><td>1</td><td class="lf">Not Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod15.html" >cpu_m1_func_cov_observer</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s3">
+<td>Totals</td>
+<td class="rt">86</td>
+<td class="rt">34</td>
+<td class="rt">39.53 </td>
+</tr><tr class="s4">
+<td>Total Bits</td>
+<td class="rt">1028</td>
+<td class="rt">422</td>
+<td class="rt">41.05 </td>
+</tr><tr class="s4">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">514</td>
+<td class="rt">217</td>
+<td class="rt">42.22 </td>
+</tr><tr class="s3">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">514</td>
+<td class="rt">205</td>
+<td class="rt">39.88 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s4">
+<td>Ports</td>
+<td class="rt">55</td>
+<td class="rt">24</td>
+<td class="rt">43.64 </td>
+</tr><tr class="s4">
+<td>Port Bits</td>
+<td class="rt">402</td>
+<td class="rt">168</td>
+<td class="rt">41.79 </td>
+</tr><tr class="s4">
+<td nowrap>Port Bits 0->1</td>
+<td class="rt">201</td>
+<td class="rt">84</td>
+<td class="rt">41.79 </td>
+</tr><tr class="s4">
+<td nowrap>Port Bits 1->0</td>
+<td class="rt">201</td>
+<td class="rt">84</td>
+<td class="rt">41.79 </td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s3">
+<td>Signals</td>
+<td class="rt">31</td>
+<td class="rt">10</td>
+<td class="rt">32.26 </td>
+</tr><tr class="s4">
+<td>Signal Bits</td>
+<td class="rt">626</td>
+<td class="rt">254</td>
+<td class="rt">40.58 </td>
+</tr><tr class="s4">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">313</td>
+<td class="rt">133</td>
+<td class="rt">42.49 </td>
+</tr><tr class="s3">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">313</td>
+<td class="rt">121</td>
+<td class="rt">38.66 </td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Port Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td><td class="alfsrt">Direction</td></tr><tr>
+<td>clk</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>resetn</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>stall</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>fetch_stall</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>mem_stall</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>pc_redirect</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_advance_to_ex_mem</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_advance_to_wb</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>if_ex_valid</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>if_ex_instr[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>if_ex_instr[3]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>if_ex_instr[11:4]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>if_ex_instr[12]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>if_ex_instr[24:13]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>if_ex_instr[31:25]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>if_ex_is_16bit</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_is_branch</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>branch_taken</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_is_jal</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_is_jalr</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_is_load</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_is_store</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_ls_funct3[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_ls_funct3[2:1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_is_csr</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_csr_op[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_csr_op[1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_is_mret</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_is_muldiv</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_md_op[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_md_op[2:1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_md_is_div</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_illegal</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_imm[0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_imm[1]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_imm[4:2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_imm[13:5]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_imm[14]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_imm[31:15]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_rd_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_rs1_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>id_rs2_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>rs1_val[3:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>rs1_val[4]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>rs1_val[5]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>rs1_val[13:6]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>rs1_val[14]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>rs1_val[31:15]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>rs2_val[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>rs2_val[4:2]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>rs2_val[6:5]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>rs2_val[31:7]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>store_addr_lo[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_valid_r</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_is_load_r</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_is_store_r</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_ls_funct3_r[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_ls_funct3_r[1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_ls_funct3_r[2]</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_addr_lo_r[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_is_branch_taken_r</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_is_jal_r</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_is_jalr_r</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_mispredict_r</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_pred_ras_r</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_mem_bp_upd_valid_r</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_wb_valid_r</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_wb_illegal_r</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_wb_is_mret_r</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>wb_instr_retired</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>wb_csr_we</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_wb_csr_op_r[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_wb_csr_op_r[1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>wb_take_irq</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>wb_take_data_trap</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ex_wb_is_misaligned_store_r</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ras_push</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>ras_pop</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr><tr>
+<td>md_busy</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td>INPUT</td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>obs_ex_mem_instr[1:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_instr[2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_instr[3]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_mem_instr[11:4]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_instr[12]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_mem_instr[24:13]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_instr[31:25]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_wb_instr[1:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_instr[2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_instr[3]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_wb_instr[5:4]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_instr[6]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_instr[11:7]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_instr[12]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_wb_instr[19:13]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_instr[20]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_instr[24:21]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_instr[31:25]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_mem_16bit</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_16bit</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_mem_rd_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_rs1_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_rs2_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_rs1_val[3:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_rs1_val[4]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_mem_rs1_val[5]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_rs1_val[13:6]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_mem_rs1_val[14]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_rs1_val[31:15]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_mem_rs2_val[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_rs2_val[4:2]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_mem_rs2_val[6:5]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_mem_rs2_val[31:7]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_wb_rd_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_rs1_idx[4:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_rs2_idx[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_rs2_idx[4:1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_rs1_val[3:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_rs1_val[4]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_wb_rs1_val[5]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_rs1_val[13:6]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_wb_rs1_val[14]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_rs1_val[31:15]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_wb_rs2_val[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_rs2_val[4:2]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>obs_ex_wb_rs2_val[6:5]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>obs_ex_wb_rs2_val[31:7]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>dec_opcode[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>dec_opcode[3]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>dec_opcode[6:4]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>dec_funct3[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>dec_funct3[2:1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>dec_funct7[6:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>wb_opcode[1:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_opcode[2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_opcode[3]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>wb_opcode[5:4]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_opcode[6]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_funct12[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_funct12[4:1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_funct12[11:5]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>wb_retire_valid</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>branch_backward</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>load_use_stall</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>muldiv_busy_stall</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>bp_event</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>bp_result[1:0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>trap_kind[0]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>trap_kind[1]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>trap_kind[2]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>wb_instr_class[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_imm_format[2:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_imm[0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_imm[1]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>wb_imm[4:2]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_imm[13:5]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>wb_imm[14]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_imm[31:15]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr><tr>
+<td>wb_imm_sign[1:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_imm_corner[0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>wb_imm_corner[2:1]</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+<td class="s3 cl">No</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod15.html" >cpu_m1_func_cov_observer</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s6">
+<td>Branches</td>
+<td></td>
+<td class="rt">89</td>
+<td class="rt">54</td>
+<td class="rt">60.67 </td>
+</tr><tr class="s5">
+<td>TERNARY</td>
+<td class="rt">86</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s3">
+<td>TERNARY</td>
+<td class="rt">87</td>
+<td class="rt">6</td>
+<td class="rt">2</td>
+<td class="rt">33.33 </td>
+</tr><tr class="s7">
+<td>TERNARY</td>
+<td class="rt">177</td>
+<td class="rt">4</td>
+<td class="rt">3</td>
+<td class="rt">75.00 </td>
+</tr><tr class="s7">
+<td>IF</td>
+<td class="rt">299</td>
+<td class="rt">41</td>
+<td class="rt">30</td>
+<td class="rt">73.17 </td>
+</tr><tr class="s7">
+<td>CASE</td>
+<td class="rt">105</td>
+<td class="rt">8</td>
+<td class="rt">6</td>
+<td class="rt">75.00 </td>
+</tr><tr class="s6">
+<td>CASE</td>
+<td class="rt">121</td>
+<td class="rt">6</td>
+<td class="rt">4</td>
+<td class="rt">66.67 </td>
+</tr><tr class="s6">
+<td>CASE</td>
+<td class="rt">136</td>
+<td class="rt">6</td>
+<td class="rt">4</td>
+<td class="rt">66.67 </td>
+</tr><tr class="s2">
+<td>IF</td>
+<td class="rt">151</td>
+<td class="rt">16</td>
+<td class="rt">4</td>
+<td class="rt">25.00 </td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+86             wire [1:0] bp_result = ex_mem_mispredict_r ? 2'd2 : 2'd1;
+                                                          <font color = "red">-1-</font>  
+                                                          <font color = "red">==></font>  
+                                                          <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+87             wire [2:0] trap_kind =
+                                     
+88                 wb_take_irq ? 3'd3 :
+                               <font color = "red">-1-</font>  
+                               <font color = "red">==></font>  
+89                 (wb_take_data_trap && !ex_wb_is_misaligned_store_r) ? 3'd4 :
+                                                                       <font color = "red">-2-</font>  
+                                                                       <font color = "red">==></font>  
+90                 (wb_take_data_trap &&  ex_wb_is_misaligned_store_r) ? 3'd5 :
+                                                                       <font color = "red">-3-</font>  
+                                                                       <font color = "red">==></font>  
+91                 (ex_wb_illegal_r && wb_opcode == `OPC_SYSTEM && wb_funct12 == 12'h000) ? 3'd1 :
+                                                                                          <font color = "red">-4-</font>  
+                                                                                          <font color = "red">==></font>  
+92                 (ex_wb_illegal_r && wb_opcode == `OPC_SYSTEM && wb_funct12 == 12'h001) ? 3'd2 :
+                                                                                          <font color = "green">-5-</font>  
+                                                                                          <font color = "green">==></font>  
+                                                                                          <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>-5-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+177            wire [1:0] wb_imm_sign =
+                                       
+178                (wb_imm_format == FMT_NONE) ? 2'd0 :
+                                               <font color = "green">-1-</font>  
+                                               <font color = "green">==></font>  
+179                (wb_imm == 32'h0) ? 2'd1 :
+                                     <font color = "green">-2-</font>  
+                                     <font color = "green">==></font>  
+180                wb_imm[31] ? 2'd3 : 2'd2;
+                              <font color = "red">-3-</font>  
+                              <font color = "red">==></font>  
+                              <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+299                if (!resetn) begin
+                   <font color = "green">-1-</font>  
+300                    cycle <= 0;
+           <font color = "green">            ==></font>
+301                    obs_ex_mem_instr <= 32'h0;
+302                    obs_ex_wb_instr <= 32'h0;
+303                    obs_ex_mem_16bit <= 1'b0;
+304                    obs_ex_wb_16bit <= 1'b0;
+305                    obs_ex_mem_rd_idx <= 5'h0;
+306                    obs_ex_mem_rs1_idx <= 5'h0;
+307                    obs_ex_mem_rs2_idx <= 5'h0;
+308                    obs_ex_mem_rs1_val <= 32'h0;
+309                    obs_ex_mem_rs2_val <= 32'h0;
+310                    obs_ex_wb_rd_idx <= 5'h0;
+311                    obs_ex_wb_rs1_idx <= 5'h0;
+312                    obs_ex_wb_rs2_idx <= 5'h0;
+313                    obs_ex_wb_rs1_val <= 32'h0;
+314                    obs_ex_wb_rs2_val <= 32'h0;
+315                end else begin
+316                    cycle <= cycle + 1;
+317                    if (id_advance_to_ex_mem) begin
+                       <font color = "green">-2-</font>  
+318                        obs_ex_mem_instr <= if_ex_instr;
+           <font color = "green">                ==></font>
+319                        obs_ex_mem_16bit <= if_ex_is_16bit;
+320                        obs_ex_mem_rd_idx <= id_rd_idx;
+321                        obs_ex_mem_rs1_idx <= id_rs1_idx;
+322                        obs_ex_mem_rs2_idx <= id_rs2_idx;
+323                        obs_ex_mem_rs1_val <= rs1_val;
+324                        obs_ex_mem_rs2_val <= rs2_val;
+325                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+326                    if (ex_mem_advance_to_wb) begin
+                       <font color = "green">-3-</font>  
+327                        obs_ex_wb_instr <= obs_ex_mem_instr;
+           <font color = "green">                ==></font>
+328                        obs_ex_wb_16bit <= obs_ex_mem_16bit;
+329                        obs_ex_wb_rd_idx <= obs_ex_mem_rd_idx;
+330                        obs_ex_wb_rs1_idx <= obs_ex_mem_rs1_idx;
+331                        obs_ex_wb_rs2_idx <= obs_ex_mem_rs2_idx;
+332                        obs_ex_wb_rs1_val <= obs_ex_mem_rs1_val;
+333                        obs_ex_wb_rs2_val <= obs_ex_mem_rs2_val;
+334                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+335                    if (wb_retire_valid) begin
+                       <font color = "green">-4-</font>  
+336                        $fdisplay(fd, "%0d,operand,%0d,%0d,%0d,%0d,%0d", cycle, obs_ex_wb_rd_idx, obs_ex_wb_rs1_idx, obs_ex_wb_rs2_idx, wb_instr_class, wb_opcode);
+337                        $fdisplay(fd, "%0d,value,%0d,%0d,0,0,0", cycle, obs_ex_wb_rs1_val, obs_ex_wb_rs2_val);
+338                        if (wb_imm_format != FMT_NONE) $fdisplay(fd, "%0d,imm,%0d,%0d,%0d,%0d,0", cycle, wb_imm_format, wb_imm_sign, wb_imm_corner, wb_imm);
+                           <font color = "green">-5-</font>  
+           <font color = "green">                ==></font>
+                           MISSING_ELSE
+           <font color = "green">                ==></font>
+339                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+340                    if (if_ex_valid) begin
+                       <font color = "green">-6-</font>    
+341                        $fdisplay(fd, "%0d,decode,%0d,%0d,%0d,%0d,%0d", cycle, dec_opcode, if_ex_is_16bit, dec_funct3, dec_funct7, id_md_op);
+342                        if (id_is_branch) $fdisplay(fd, "%0d,branch,%0d,%0d,0,0,0", cycle, branch_taken, branch_backward);
+                           <font color = "red">-7-</font>  
+           <font color = "red">                ==></font>
+                           MISSING_ELSE
+           <font color = "green">                ==></font>
+343                        if (id_is_jal || id_is_jalr) $fdisplay(fd, "%0d,jump,%0d,%0d,0,0,0", cycle, id_is_jal, id_is_jalr);
+                           <font color = "red">-8-</font>  
+           <font color = "red">                ==></font>
+                           MISSING_ELSE
+           <font color = "green">                ==></font>
+344                        if (id_is_csr) $fdisplay(fd, "%0d,csr_decode,%0d,0,0,0,0", cycle, id_csr_op);
+                           <font color = "red">-9-</font>  
+           <font color = "red">                ==></font>
+                           MISSING_ELSE
+           <font color = "green">                ==></font>
+345                        if (id_is_mret) $fdisplay(fd, "%0d,mret_decode,1,0,0,0,0", cycle);
+                           <font color = "red">-10-</font>  
+           <font color = "red">                ==></font>
+                           MISSING_ELSE
+           <font color = "green">                ==></font>
+346                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+347                    if (ex_mem_valid_r && (ex_mem_is_load_r || ex_mem_is_store_r)) $fdisplay(fd, "%0d,ls,%0d,%0d,%0d,%0d,0", cycle, ex_mem_is_load_r, ex_mem_is_store_r, ex_mem_ls_funct3_r, ex_mem_addr_lo_r);
+                       <font color = "green">-11-</font>  
+           <font color = "green">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+348                    if (ras_push) $fdisplay(fd, "%0d,ras,push,0,0,0,0", cycle);
+                       <font color = "red">-12-</font>  
+           <font color = "red">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+349                    if (ras_pop) $fdisplay(fd, "%0d,ras,pop,0,0,0,0", cycle);
+                       <font color = "red">-13-</font>  
+           <font color = "red">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+350                    if (bp_event) $fdisplay(fd, "%0d,bp,%0d,0,0,0,0", cycle, ex_mem_mispredict_r);
+                       <font color = "red">-14-</font>  
+           <font color = "red">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+351                    if (load_use_stall) $fdisplay(fd, "%0d,hazard,load_use,0,0,0,0", cycle);
+                       <font color = "green">-15-</font>  
+           <font color = "green">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+352                    if (muldiv_busy_stall) $fdisplay(fd, "%0d,hazard,muldiv_busy,0,0,0,0", cycle);
+                       <font color = "red">-16-</font>  
+           <font color = "red">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+353                    if (fetch_stall) $fdisplay(fd, "%0d,hazard,fetch_stall,0,0,0,0", cycle);
+                       <font color = "red">-17-</font>  
+           <font color = "red">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+354                    if (mem_stall) $fdisplay(fd, "%0d,hazard,mem_stall,0,0,0,0", cycle);
+                       <font color = "green">-18-</font>  
+           <font color = "green">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+355                    if (pc_redirect) $fdisplay(fd, "%0d,redirect,1,0,0,0,0", cycle);
+                       <font color = "green">-19-</font>  
+           <font color = "green">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+356                    if (wb_csr_we) $fdisplay(fd, "%0d,csr,%0d,0,0,0,0", cycle, ex_wb_csr_op_r);
+                       <font color = "red">-20-</font>  
+           <font color = "red">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+357                    if (wb_take_irq || wb_take_data_trap || ex_wb_illegal_r) $fdisplay(fd, "%0d,trap,%0d,0,0,0,0", cycle, trap_kind);
+                       <font color = "green">-21-</font>  
+           <font color = "green">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+358                    if (ex_wb_valid_r && ex_wb_is_mret_r) $fdisplay(fd, "%0d,mret,1,0,0,0,0", cycle);
+                       <font color = "red">-22-</font>  
+           <font color = "red">            ==></font>
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>-5-</th><th nowrap width=80>-6-</th><th nowrap width=80>-7-</th><th nowrap width=80>-8-</th><th nowrap width=80>-9-</th><th nowrap width=80>-10-</th><th nowrap width=80>-11-</th><th nowrap width=80>-12-</th><th nowrap width=80>-13-</th><th nowrap width=80>-14-</th><th nowrap width=80>-15-</th><th nowrap width=80>-16-</th><th nowrap width=80>-17-</th><th nowrap width=80>-18-</th><th nowrap width=80>-19-</th><th nowrap width=80>-20-</th><th nowrap width=80>-21-</th><th nowrap width=80>-22-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+105                    case (opcode)
+                       <font color = "red">-1-</font>  
+106                        `OPC_OP, `OPC_OP_IMM: instr_class = 3'd1;
+           <font color = "green">                ==></font>
+107                        `OPC_LOAD:            instr_class = 3'd2;
+           <font color = "green">                ==></font>
+108                        `OPC_STORE:           instr_class = 3'd3;
+           <font color = "green">                ==></font>
+109                        `OPC_BRANCH:          instr_class = 3'd4;
+           <font color = "red">                ==></font>
+110                        `OPC_JAL, `OPC_JALR:  instr_class = 3'd5;
+           <font color = "red">                ==></font>
+111                        `OPC_SYSTEM:          instr_class = 3'd6;
+           <font color = "green">                ==></font>
+112                        `OPC_LUI, `OPC_AUIPC: instr_class = 3'd7;
+           <font color = "green">                ==></font>
+113                        default:              instr_class = 3'd0;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>7'b0110011 7'b0010011 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>7'b0000011 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>7'b0100011 </td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>7'b1100011 </td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>7'b1101111 7'b1100111 </td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>7'b1110011 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>7'b0110111 7'b0010111 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+121                    case (opcode)
+                       <font color = "red">-1-</font>  
+122                        `OPC_OP_IMM, `OPC_LOAD, `OPC_JALR, `OPC_SYSTEM, `OPC_FENCE: imm_format = FMT_I;
+           <font color = "green">                ==></font>
+123                        `OPC_STORE:  imm_format = FMT_S;
+           <font color = "green">                ==></font>
+124                        `OPC_BRANCH: imm_format = FMT_B;
+           <font color = "red">                ==></font>
+125                        `OPC_LUI, `OPC_AUIPC: imm_format = FMT_U;
+           <font color = "green">                ==></font>
+126                        `OPC_JAL: imm_format = FMT_J;
+           <font color = "red">                ==></font>
+127                        default: imm_format = FMT_NONE;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>7'b0010011 7'b0000011 7'b1100111 7'b1110011 7'b0001111 </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>7'b0100011 </td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>7'b1100011 </td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>7'b0110111 7'b0010111 </td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>7'b1101111 </td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+136                    case (fmt)
+                       <font color = "red">-1-</font>  
+137                        FMT_I: decode_imm = {{20{instr[31]}}, instr[31:20]};
+           <font color = "green">                ==></font>
+138                        FMT_S: decode_imm = {{20{instr[31]}}, instr[31:25], instr[11:7]};
+           <font color = "green">                ==></font>
+139                        FMT_B: decode_imm = {{19{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
+           <font color = "red">                ==></font>
+140                        FMT_U: decode_imm = {instr[31:12], 12'h000};
+           <font color = "green">                ==></font>
+141                        FMT_J: decode_imm = {{11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1'b0};
+           <font color = "red">                ==></font>
+142                        default: decode_imm = 32'h0;
+           <font color = "green">                ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>FMT_I </td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>FMT_S </td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>FMT_B </td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>FMT_U </td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>FMT_J </td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>default</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+151                    if (fmt == FMT_NONE) imm_corner = 3'd0;
+                       <font color = "green">-1-</font>  
+           <font color = "green">            ==></font>
+152                    else if (imm == 32'h0000_0000) imm_corner = 3'd1;
+                            <font color = "green">-2-</font>  
+           <font color = "green">            ==></font>
+153                    else begin
+154                        case (fmt)
+                           <font color = "red">-3-</font>  
+155                            FMT_I, FMT_S: imm_corner =
+                                                         
+156                                (imm == 32'hffff_f800) ? 3'd2 :
+                                                          <font color = "red">-4-</font>  
+                                                          <font color = "red">==></font>  
+157                                (imm == 32'h0000_07ff) ? 3'd3 : 3'd0;
+                                                          <font color = "red">-5-</font>  
+                                                          <font color = "red">==></font>  
+                                                          <font color = "green">==></font>  
+158                            FMT_B: imm_corner =
+                                                  
+159                                (imm == 32'hffff_f000) ? 3'd2 :
+                                                          <font color = "red">-6-</font>  
+                                                          <font color = "red">==></font>  
+160                                (imm == 32'h0000_0ffe) ? 3'd3 : 3'd0;
+                                                          <font color = "red">-7-</font>  
+                                                          <font color = "red">==></font>  
+                                                          <font color = "red">==></font>  
+161                            FMT_U: imm_corner =
+                                                  
+162                                (imm == 32'h8000_0000) ? 3'd2 :
+                                                          <font color = "red">-8-</font>  
+                                                          <font color = "red">==></font>  
+163                                (imm == 32'h7fff_f000) ? 3'd3 :
+                                                          <font color = "red">-9-</font>  
+                                                          <font color = "red">==></font>  
+164                                (imm == 32'hffff_f000) ? 3'd4 : 3'd0;
+                                                          <font color = "red">-10-</font>  
+                                                          <font color = "red">==></font>  
+                                                          <font color = "green">==></font>  
+165                            FMT_J: imm_corner =
+                                                  
+166                                (imm == 32'hfff0_0000) ? 3'd2 :
+                                                          <font color = "red">-11-</font>  
+                                                          <font color = "red">==></font>  
+167                                (imm == 32'h000f_fffe) ? 3'd3 : 3'd0;
+                                                          <font color = "red">-12-</font>  
+                                                          <font color = "red">==></font>  
+                                                          <font color = "red">==></font>  
+168                            default: imm_corner = 3'd0;
+           <font color = "red">                    ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>-5-</th><th nowrap width=80>-6-</th><th nowrap width=80>-7-</th><th nowrap width=80>-8-</th><th nowrap width=80>-9-</th><th nowrap width=80>-10-</th><th nowrap width=80>-11-</th><th nowrap width=80>-12-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_I FMT_S </td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_I FMT_S </td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_I FMT_S </td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_B </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_B </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_B </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_U </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_U </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_U </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_U </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_J </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_J </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>FMT_J </td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td>Not Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>default</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_15">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_cpu_m1_func_cov_observer">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

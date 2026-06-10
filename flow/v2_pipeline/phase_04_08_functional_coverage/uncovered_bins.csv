@@ -1,0 +1,2 @@
+covergroup,bin,reason,reachability,waiver_candidate
+cg_riscvisacov_immediates,j:max,JUSTIFIED EXCLUSION: structural memory-map limit,"RV32 JAL max positive offset is +0xFFFFE; from any nonzero JAL PC this requires an approximately 1 MiB forward executable target, but this phase/SKU config maps only 16 KiB (firmware.lds rom LENGTH=16K; tb_random_func_cov MEM_SIZE=4096 words indexed by i_mem_addr[13:2])",waive

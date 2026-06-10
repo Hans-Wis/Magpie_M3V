@@ -1,0 +1,15 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc z3
+
+[script]
+read_verilog -formal -sv -I ../../rtl ../../rtl/lsu.v lsu_assert_bind.sv
+prep -top lsu
+
+[files]
+../../rtl/def.vh
+../../rtl/lsu.v
+lsu_assert_bind.sv

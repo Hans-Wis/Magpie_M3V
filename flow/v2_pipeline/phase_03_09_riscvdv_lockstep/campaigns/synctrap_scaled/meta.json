@@ -1,0 +1,13 @@
+{
+  "campaign": "synctrap_scaled",
+  "git_rev": "3860f24",
+  "rtl_cksum": "de1b876f6905",
+  "jobs": 4,
+  "seeds": [
+    2026080001,
+    2026080040
+  ],
+  "instr_cnt": 2500,
+  "spike": "/home/edauser/.local/bin/spike",
+  "status": "RUNNING"
+}

@@ -1,0 +1,46 @@
+ 
+****************************************
+Report : area
+Design : cpu_m1_asic_top
+Version: X-2025.06-SP2
+Date   : Wed Jun 10 12:24:10 2026
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp40p140tt0p9v25c (File: /home/edauser/project/SOC/Magpie_X3/APR/ref/db/tcbn28hpcplusbwp40p140tt0p9v25c.db)
+    tsdn28hpcpa512x32m4mwaso_tt0p9v25c (File: /home/edauser/project/SOC/Magpie_X3/APR/ref/db/tsdn28hpcpa512x32m4mwaso_130a_tt0p9v25c.db)
+
+Number of ports:                          316
+Number of nets:                         29354
+Number of cells:                        28627
+Number of combinational cells:          21683
+Number of sequential cells:              6941
+Number of macros/black boxes:               1
+Number of buf/inv:                       2123
+Number of references:                      95
+
+Combinational area:              14047.865902
+Buf/Inv area:                      546.714008
+Noncombinational area:           13119.497900
+Macro/Black Box area:            15515.090820
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                 42682.454623
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area              Local cell area
+                                  -------------------  ---------------------------------- 
+Hierarchical cell                 Absolute    Percent  Combi-      Noncombi-   Black-
+                                  Total       Total    national    national    boxes       Design
+--------------------------------  ----------  -------  ----------  ----------  ----------  ---------
+cpu_m1_asic_top                   42682.4546    100.0   6609.4560   3805.5780  15515.0908  cpu_m1_asic_top
+u_cpu/u_cpu/u_core/u_bp           13209.0839     30.9   5770.0439   7439.0399      0.0000  bp
+u_cpu/u_cpu/u_core/u_rfu           3543.2460      8.3   1668.3660   1874.8800      0.0000  rfu
+--------------------------------  ----------  -------  ----------  ----------  ----------  ---------
+Total                                                  14047.8659  13119.4979  15515.0908
+
+1

@@ -1,0 +1,22 @@
+Info: [VCS_SAVE_RESTORE_INFO] ASLR (Address Space Layout Randomization) is detected on the machine. To enable $save functionality, ASLR will be switched off and simv re-executed.
+Please use '-no_save' simv switch to avoid re-execution or '-suppress=ASLR_DETECTED_INFO' to suppress this message.
+Chronologic VCS simulator copyright 1991-2025
+Contains Synopsys proprietary information.
+Compiler version X-2025.06-SP1_Full64; Runtime version X-2025.06-SP1_Full64;  Jun  9 20:39 2026
+
+ VCS Coverage Metrics Release X-2025.06-SP1_Full64 Copyright (c) 1991-2025 by Synopsys Inc.
+[1495 ns] stop on illegal/ebreak pc=0000000c commits=92
+PASS: P18 BP/RAS DUT trace wrote 92 commits before ebreak
+$finish called from file "tb_directed_lockstep.v", line 131.
+$finish at simulation time                 1495
+
+---------------------------------------------------------------------------
+VCS Coverage Metrics: during simulation line, cond, FSM, branch, tgl was monitored
+---------------------------------------------------------------------------
+
+ Coverage status: End of All Coverages ...
+
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 1495 ns
+CPU Time:      0.140 seconds;       Data structure size:   0.1Mb
+Tue Jun  9 20:39:22 2026

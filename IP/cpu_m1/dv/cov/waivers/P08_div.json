@@ -1,0 +1,32 @@
+{
+  "stage": "P08_div",
+  "reviewer": "Codex (producer, proposed)",
+  "approver": "Claude (PL) — independently verified div.v RTL 2026-06-09",
+  "waivers": [
+    {
+      "waiver_id": "TW-DIV-FSM-DEFAULT",
+      "module": "div.v",
+      "dut_scope": "core",
+      "signals": ["L134"],
+      "metric": "line+branch",
+      "structural_basis": "div.v:134 `default: state <= IDLE` — `state` is reg[1:0] with all 4 encodings defined (IDLE=0/WORK=1/FIXUP=2/DONE=3, div.v:31-34); the case default arm is unreachable (no 5th 2-bit value). Defensive synthesis-safety default.",
+      "stimulus_considered": "all FSM states+arcs exercised (URG state 4/4, arc 6/6); no legal input reaches a 5th state value",
+      "spike_impact": "none (coverage-only; FSM behavior is Spike-lockstep-correct)",
+      "approved": true,
+      "approver": "Claude"
+    },
+    {
+      "waiver_id": "TW-DIV-MDOP2",
+      "module": "div.v",
+      "dut_scope": "core",
+      "signal_re": "md_op",
+      "bit_lo": 2, "bit_hi": 2,
+      "metric": "toggle",
+      "structural_basis": "md_op[2] never toggles to 0 in div.v: the divider receives only DIV-class opcodes (MD_DIV/MD_DIVU/MD_REM/MD_REMU, encodings 100..111, bit2=1); the core routes mul-class opcodes (bit2=0) to mul.v, not div.v. So md_op[2] is constant 1 at the divider interface.",
+      "stimulus_considered": "all 4 div opcodes x sign x magnitude driven; mul-class opcodes are out of div.v's interface contract",
+      "spike_impact": "none (coverage-only)",
+      "approved": true,
+      "approver": "Claude"
+    }
+  ]
+}

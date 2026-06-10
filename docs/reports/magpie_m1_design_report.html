@@ -1,0 +1,357 @@
+<!doctype html><html lang='zh-Hant'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><link rel='preconnect' href='https://fonts.googleapis.com'><link href='https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap' rel='stylesheet'><title>Magpie_M1 — Design Report &amp; RV-CPU Playbook</title><style>
+:root{--ink:#16243d;--mut:#6b7488;--line:#dde3ec;--paper:#fbfaf7;--code:#f3f6fb;
+--green:#3b6d11;--coral:#d85a30;--blue:#1565c0;--grid:#eef1f6;
+--mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;--sans:'IBM Plex Sans',system-ui,'Noto Sans TC',sans-serif;}
+*{box-sizing:border-box;}body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.65;
+background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/22px 22px,
+linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/22px 22px,var(--paper);}
+.wrap{max-width:920px;margin:0 auto;padding:36px 24px 90px;}
+header{border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:8px;}
+.kick{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--coral);margin:0 0 8px;}
+h1{font-size:26px;font-weight:600;margin:0 0 6px;}
+.meta{font-family:var(--mono);font-size:12px;color:var(--mut);margin-top:10px;}
+.meta span{margin-right:16px;}
+h2{font-size:12px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#0c447c;
+border-bottom:1px solid var(--line);padding-bottom:7px;margin:34px 0 14px;}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 16px;min-width:120px;}
+.kpi .v{font-size:22px;font-weight:600;font-family:var(--mono);}
+.kpi .l{font-size:11px;color:var(--mut);font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+th{font-family:var(--mono);font-size:11px;color:#0c447c;background:var(--code);letter-spacing:.03em;}
+tr:last-child td{border-bottom:none;}.mono{font-family:var(--mono);font-size:12px;}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle;}
+.tl{list-style:none;margin:14px 0;padding:0;}
+.tl li{position:relative;padding:0 0 14px 26px;border-left:2px solid var(--line);margin-left:6px;}
+.tl li:last-child{border-left-color:transparent;}
+.tl li::before{content:"";position:absolute;left:-6px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--blue);}
+.tl .ts{font-family:var(--mono);font-size:11px;color:var(--mut);}
+.tl .act{font-weight:600;}.tl .dt{color:#33415c;font-size:13px;}
+.note{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:12.5px;color:#33415c;margin:12px 0;}
+footer{margin-top:46px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--mut);}
+table{border-collapse:collapse;margin:14px 0;font-size:0.92em;width:100%}th,td{border:1px solid #d0d0d8;padding:6px 9px;text-align:left;vertical-align:top}th{background:#f0f2f7;font-weight:600}h2{border-bottom:2px solid #4a6;padding-bottom:4px;margin-top:32px}h3{color:#246;margin-top:22px}blockquote{border-left:4px solid #4a6;background:#f6faf7;padding:8px 14px;margin:14px 0;color:#345}code{background:#eef;padding:1px 4px;border-radius:3px}
+.wrap{max-width:1000px;}</style></head><body><div class='wrap'><h1 id="magpie_m1-design-report-rv-cpu-project-playbook">Magpie_M1 — Design Report &amp; RV-CPU Project Playbook</h1>
+<blockquote>
+<p>A RV32IMC_Zicsr_Zifencei, M-mode embedded CPU IP + subsystem. This report serves two audiences:
+<strong>(A) engineers</strong> reviewing the design, and <strong>(B) AI agents / teams</strong> starting a <em>new</em> RISC-V CPU
+project who want a proven, repeatable methodology. The "how we built and verified it" sections are
+deliberately written as a transferable <strong>playbook</strong>, not just M1-specific notes. Date: 2026-06-10.</p>
+</blockquote>
+<hr />
+<h2 id="abstract">摘要 (Abstract)</h2>
+<p>Magpie_M1 is a clean greenfield RV32IMC M-mode core taken from RTL to a <strong>commercially-credible IP</strong>:
+<strong>official riscv-arch-test 74/74 (100%)</strong>, <strong>Tier-2 structural coverage</strong> on 13 island modules +
+Spike-lockstep-verified integration, <strong>VC Formal proofs</strong> (core 22/22 + AXI 18/18), <strong>Spyglass lint
+0/0</strong>, <strong>multi-corner DC 699.30 MHz</strong> (TSMC28HPC+), and a <strong>verified AXI4-Lite master</strong> + <strong>FPGA/ASIC
+subsystem</strong>. Three real bugs (one green-wash coverage trap, two RV32C compliance bugs) were caught by
+the discipline below — <em>all missed by random-stimulus lockstep alone</em>. The methodology, not the chip, is
+the product: it is captured here so a non-author can replay it.</p>
+<hr />
+<h2 id="1-goals-positioning">1. 設計目標與定位 (Goals &amp; Positioning)</h2>
+<ul>
+<li><strong>Product</strong>: RV32IMC_Zicsr_Zifencei, <strong>M-mode only</strong>, single-hart, in-order embedded CPU IP. Delivered
+  as a <strong>core</strong> (native or AXI4-Lite) and a <strong>drop-in subsystem</strong> (CPU + AXI + memory + boot ROM).</li>
+<li><strong>North Star</strong>: prove + strengthen a <em>transferable</em> CPU-IP development flow. M1 is the clean greenfield
+  example; the deliverable is the flow (gates + skills + harness + IDE), not the silicon.</li>
+<li><strong>Out of scope (deliberate, different SKU)</strong>: S/U mode, MMU/PMP, A/F/D, RVA22, UVM/RVVI, multi-port
+  AXI burst, full UPF. The SoC tier (pads/PLL/DDR/APR) consumes M1 as a <code>cpu_subsys</code> instance.</li>
+</ul>
+<hr />
+<h2 id="2-architecture">2. 架構 (Architecture)</h2>
+<p>4-stage in-order pipeline (IF / ID-EX / MEM / WB-class), single-hart. 13 RTL "island" modules under a
+<code>core.v</code> integrator, plus the AXI bridge and SoC blocks:</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Modules</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Leaf datapath</td>
+<td><code>alu</code> <code>lsu</code> <code>rfu</code> <code>forward</code> <code>hazard</code> <code>mul</code> <code>div</code></td>
+<td>compute, regfile, forwarding, stalls, M-ext</td>
+</tr>
+<tr>
+<td>Decode</td>
+<td><code>idu</code> <code>cdec</code></td>
+<td>32-bit decode + RV32C → 32-bit expander</td>
+</tr>
+<tr>
+<td>Stateful</td>
+<td><code>csr</code> <code>ras</code> <code>bp</code> <code>ifu</code></td>
+<td>M-mode CSR/trap, return-addr stack, branch predictor, fetch</td>
+</tr>
+<tr>
+<td>Integrator</td>
+<td><code>core.v</code></td>
+<td>pipeline glue: forward mux, stall, flush, <strong>RV32C cross-boundary prefetch</strong></td>
+</tr>
+<tr>
+<td>Bus / SoC</td>
+<td><code>cpu_m1_axil_top</code> <code>axil_bridge</code> <code>axil_bootrom</code> <code>axil_dp_bram</code> <code>cpu_m1_fpga_top</code> <code>clint</code> <code>plic</code> <code>uart</code></td>
+<td>AXI4-Lite master + memory + CLINT/PLIC/UART subsystem</td>
+</tr>
+<tr>
+<td>Debug</td>
+<td><code>dm</code> <code>dtm</code> <code>trigger</code> + core debug-mode</td>
+<td>RISC-V Debug v0.13.2: JTAG → DM → core; SW+HW breakpoints + watchpoints</td>
+</tr>
+</tbody>
+</table>
+<p>Key microarchitecture: full forwarding (EX/MEM + EX/WB), load-use + mul/div busy stalls, branch predictor
++ RAS, and a <strong>residue-buffer cross-boundary prefetch</strong> that assembles 32-bit instructions straddling a
+4-byte boundary with 0-cycle penalty on the predicted path.</p>
+<hr />
+<h2 id="3-key-decisions-see-adrs">3. 關鍵設計決策 (Key Decisions — see ADRs)</h2>
+<table>
+<thead>
+<tr>
+<th>ADR</th>
+<th>Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0002</td>
+<td>Active ISA scope = RV32IMC_Zicsr_Zifencei, M-only (Ch2 lab08e pipeline baseline)</td>
+</tr>
+<tr>
+<td>0015</td>
+<td><code>mstatus.MPP</code> is read-only WARL = M (M-only hart) — <em>found via Spyglass lint</em></td>
+</tr>
+<tr>
+<td>0016</td>
+<td>Compressed HINTs (C.LI/SLLI/MV/ADD/LUI rd=x0) execute as NOP, reserved trap — <em>found via lint + arch-test</em></td>
+</tr>
+<tr>
+<td>0017</td>
+<td><code>at_cross_boundary</code> gated off during <code>redirect_warmup</code> (stale-fetch fix) — <em>found via arch-test</em></td>
+</tr>
+<tr>
+<td>0018</td>
+<td>M1 as a CPU subsystem (FPGA BRAM / ASIC T28 SRAM variants); X3 consumes it as <code>cpu_subsys</code></td>
+</tr>
+<tr>
+<td>0019</td>
+<td>CLINT MTIP/MSIP interrupt extension (priority MEI&gt;MSI&gt;MTI) — RTOS-capable</td>
+</tr>
+<tr>
+<td>0020</td>
+<td>PLIC + UART peripheral subsystem (MEIP level path; first-party X3 RTL)</td>
+</tr>
+<tr>
+<td>0021</td>
+<td>RISC-V Debug MVD — DM + DTM + core debug-mode (adapted from first-party X1)</td>
+</tr>
+<tr>
+<td>0022</td>
+<td>Debug Trigger Module — HW breakpoints + watchpoints (mcontrol6)</td>
+</tr>
+<tr>
+<td>0001(ws)</td>
+<td>Clean-room → license-compliant reuse (workspace governance)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-verification-methodology-the-playbook">4. 驗證方法論 (Verification Methodology) — THE PLAYBOOK</h2>
+<p>This is the reusable core. For a <strong>new</strong> RV CPU, replay these in order:</p>
+<h3 id="41-per-island-tier-2-ladder-close-coverage-bottom-up">4.1 Per-island Tier-2 ladder (close coverage bottom-up)</h3>
+<p>Whole-core toggle/expr is an opaque mountain (a mature core sits ~65–75%). <strong>Decompose</strong> the core into
+leaf / decode / stateful islands; close <em>each</em> to <strong>Tier-2</strong> (line 100 · branch 100 · expr ≥95 · toggle
+≥95 · FSM 100) with a standalone unit TB + <strong>Verilator</strong> (line/toggle) + <strong>VCS/URG</strong> (branch/expr/FSM).
+Only then attempt integration. Tooling: <code>platform/lib/cov_metrics.py</code> + the <code>coverage-ladder</code> skill
+generate the waiver-aware, skip-guarded gates.</p>
+<h3 id="42-dual-number-raw-adjusted-structural-waivers-only">4.2 Dual-number RAW + ADJUSTED; structural waivers only</h3>
+<p>Always report RAW (tool output) and ADJUSTED (after waivers). A point is <strong>STRUCTURAL</strong> (waivable) only
+if it is <strong>RTL-hardwired constant — cite the line</strong>. A free input that is merely <em>unstimulated</em> is
+<strong>REACHABLE — close it, never waive</strong> (the green-wash trap, §5). <strong>producer ≠ approver</strong>: the implementer
+proposes a waiver; a <em>different</em> reviewer verifies it against the RTL before approving; every waiver
+<code>spike_impact:none</code>; a single waiver may not exclude &gt;90% of a module (blanket-ban enforced in code).</p>
+<h3 id="43-delta-integration-dont-re-climb-the-mountain">4.3 Delta-integration (don't re-climb the mountain)</h3>
+<p>Integration slices own <strong>only</strong> the <code>core.v</code> integrator's <em>incremental</em> coverage, never whole-core. The
+correctness authority is <strong>Spike per-commit lockstep</strong> (PC/GPR/CSR at each retire). Residual is attributed
+by owner (reachable / structural / cross-slice / SKU-bound). The whole-core riscv-dv farm is a <em>separate</em>
+milestone, never an integration-gate substitute.</p>
+<h3 id="44-three-independent-signoff-axes-they-catch-different-bugs">4.4 Three independent signoff axes (they catch different bugs)</h3>
+<ul>
+<li><strong>Spike lockstep</strong> over directed + riscv-dv random stimulus — architectural equivalence.</li>
+<li><strong>VC Formal (FPV)</strong> — prove invariants (x0=0, comparator equivalence, forwarding gating, CSR WARL, AXI
+  handshakes). <em>Found that x0=0 comes from the read-mux, not storage.</em></li>
+<li><strong>riscv-arch-test</strong> (official compliance) — the corner cases random stimulus rarely hits.</li>
+<li><strong>Spyglass lint</strong> <em>early</em> — a spec-audit surface, not just style (it found 2 real spec bugs).</li>
+</ul>
+<blockquote>
+<p><strong>Central lesson</strong>: lockstep-over-random-stimulus passed while <strong>3 real bugs hid</strong>. Formal + official
+compliance + lint each caught what the others missed. Run all of them.</p>
+</blockquote>
+<hr />
+<h2 id="5-bug-bugs-found-lessons">5. 發現的 Bug 與教訓 (Bugs Found &amp; Lessons)</h2>
+<table>
+<thead>
+<tr>
+<th>Bug</th>
+<th>Found by</th>
+<th>Root cause</th>
+<th>Lesson</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ras green-wash</strong></td>
+<td>reviewer (Claude) rejecting a Codex waiver</td>
+<td>a unit free-input's high bits were <em>unstimulated</em>, proposed as "structural" (16KB firmware)</td>
+<td>unit free inputs are REACHABLE — drive them; 45% "covered + bogus waiver" → real 100%</td>
+</tr>
+<tr>
+<td><strong>parse_urg column order</strong></td>
+<td>div's 19/20 (hit≠total)</td>
+<td>URG row is <code>&lt;TOTAL&gt; &lt;hit&gt;</code>, not <code>&lt;hit&gt; &lt;total&gt;</code> — masked while hit==total</td>
+<td>self-checking parsers (cross-check pct) catch column bugs</td>
+</tr>
+<tr>
+<td><strong>mstatus.MPP writable</strong></td>
+<td>Spyglass lint</td>
+<td>M-only hart stored illegal MPP</td>
+<td>lint is a spec audit; fix the source, don't waive</td>
+</tr>
+<tr>
+<td><strong>C.LUI rd=0 trap</strong></td>
+<td>riscv-arch-test clui-01</td>
+<td>a 5th compressed HINT mis-classified as illegal</td>
+<td>official compliance catches hint/reserved corners</td>
+</tr>
+<tr>
+<td><strong>cross-boundary +2/+4</strong></td>
+<td>riscv-arch-test cbnez/cj</td>
+<td><code>at_cross_boundary</code> fired on stale fetch during <code>redirect_warmup</code></td>
+<td>any new fetch/redirect signal must respect <code>redirect_warmup</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-co-work-4-agent-execution-for-ai-agent-projects">6. Co-work 模型 (4-agent execution) — for AI-agent projects</h2>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Role</th>
+<th>Guardrail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Claude</strong></td>
+<td>integrator / PL / <strong>only committer</strong>; independent verify (sha/gate/lockstep); writes/edits</td>
+<td>keeps the honesty boundary</td>
+</tr>
+<tr>
+<td><strong>Codex</strong> (gpt-5.5)</td>
+<td>surgical bug-hunt + single-module implement + licensed-EDA runs</td>
+<td>may shrink scope → PL checks completeness</td>
+</tr>
+<tr>
+<td><strong>Grok</strong></td>
+<td>DV-architect / roadmap / spec adjudication (web search)</td>
+<td>charters are <em>hints</em> — verify vs RTL</td>
+</tr>
+<tr>
+<td><strong>Gemini</strong></td>
+<td>corpus / large-context analysis / independent recompute</td>
+<td>condense big logs → small decisions</td>
+</tr>
+</tbody>
+</table>
+<p>Non-negotiables: <strong>producer ≠ approver</strong> (the agent that produces cannot self-approve), <strong>report-faithfully</strong>
+(no fabricated numbers; "didn't run" = <code>waived/unavailable</code>), per-run provenance, correctness authority =
+Spike lockstep + gates. Licensed EDA via Codex needs <code>-s danger-full-access</code> (license server @127.0.0.1;
+sandbox <code>--unshare-net</code> breaks it).</p>
+<hr />
+<h2 id="7-results">7. 結果 (Results)</h2>
+<table>
+<thead>
+<tr>
+<th>Axis</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compliance</td>
+<td><strong>riscv-arch-test 74/74 = 100%</strong> (RV32I 39 + RV32M 8 + RV32C 27)</td>
+</tr>
+<tr>
+<td>Code coverage</td>
+<td>13 islands <strong>Tier-2</strong> + integration lockstep-verified (merged core.v branch 96%)</td>
+</tr>
+<tr>
+<td>Functional coverage</td>
+<td>riscvISACOV-mapped operand/value/immediate 100% (1 mem-bound exclusion)</td>
+</tr>
+<tr>
+<td>Formal</td>
+<td>core <strong>22/22</strong> + AXI4-Lite <strong>18/18</strong> PROVEN (VC Formal FPV, 0 CEX)</td>
+</tr>
+<tr>
+<td>Lint</td>
+<td>Spyglass <strong>0 errors / 0 warnings</strong> (reviewed waivers)</td>
+</tr>
+<tr>
+<td>PPA</td>
+<td>multi-corner DC TSMC28HPC+ <strong>699.30 MHz</strong> (TT/SLOW/FAST, WNS=0), ~26.8 kµm², 13–17.5 mW</td>
+</tr>
+<tr>
+<td>AXI</td>
+<td>native-vs-AXI commit traces byte-identical @0/3 wait states</td>
+</tr>
+<tr>
+<td>Subsystem (FPGA)</td>
+<td>AXI→dual-port BRAM + boot ROM, boot→run→MMIO PASS; <strong>PYNQ-Z2 passing bitstream @ 50 MHz</strong> (4 817 LUT, LED blink)</td>
+</tr>
+<tr>
+<td>Subsystem (ASIC)</td>
+<td>AXI→TSMC28 1RW1R SRAM macro, boot→MMIO PASS; DC 699.30 MHz, 42 682 µm² (logic 27 167 + macro 15 515)</td>
+</tr>
+<tr>
+<td>Subsystem (RTOS)</td>
+<td><strong>CLINT MTIP/MSIP</strong> (ADR-0019) timer/sw IRQ + <strong>PLIC</strong> (MEIP, claim/complete) + <strong>UART</strong> console (ADR-0020); directed + highest-risk-flush corner PASS, no regression</td>
+</tr>
+<tr>
+<td>Debug</td>
+<td><strong>RISC-V Debug</strong> (ADR-0021/0022): real OpenOCD over JTAG — halt/resume/single-step, GPR/CSR access, SW+<strong>HW breakpoints</strong> (<code>halted due to breakpoint</code>) + <strong>watchpoints</strong>; RV32C-cross-boundary trigger corner PASS, 273 gates no regression</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td><strong>CoreMark 2.690/MHz</strong> (CRC-validated; Codex measured = Gemini recomputed = in Grok's RV32IMC band), <strong>IPC 0.779 / CPI 1.284</strong></td>
+</tr>
+<tr>
+<td>Gates</td>
+<td>53 pytest gates, 273 pass / 1 xfail</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-rv-cpu-step-by-step-for-a-new-rv-cpu">8. 給新 RV CPU 計畫的步驟 (Step-by-step for a new RV CPU)</h2>
+<ol>
+<li><strong>ADR the ISA scope first</strong> (don't write RTL until the scope + microarch contract are decided).</li>
+<li><strong>Bring up a core</strong>; get it to <strong>Spike per-commit lockstep</strong> on directed + riscv-dv ASAP — that is the
+   correctness authority, not "looks like it runs".</li>
+<li><strong>Per-island Tier-2 ladder</strong>: decompose, close each leaf/decode/stateful module to Tier-2 with a unit
+   TB + Verilator + VCS/URG; dual-number, structural-only waivers, producer≠approver. Use the
+   <code>coverage-ladder</code> skill + <code>cov_metrics</code> to generate gates.</li>
+<li><strong>Delta-integration slices</strong> under Spike lockstep; attribute residual honestly; do NOT re-climb whole-core.</li>
+<li><strong>Run the three independent axes</strong>: VC Formal on key invariants, <strong>official riscv-arch-test</strong>, Spyglass
+   lint early. Expect them to find bugs lockstep didn't.</li>
+<li><strong>SoC-readiness</strong>: an AXI4-Lite master bridge (verify native-vs-AXI equivalence + formal handshake
+   props), then a subsystem (memory + boot ROM), FPGA (Vivado) and ASIC (DC multi-corner) flows.</li>
+<li><strong>Hand-off</strong>: a signoff evidence pack mapping the result to the customer standard, with honest 3-layer
+   positioning (Closed / Near-term / Deliberate-non-goals) — every claim a re-runnable gate.</li>
+</ol>
+<blockquote>
+<p>Artifacts: <code>docs/adr/</code>, <code>docs/reports/</code> (signoff pack, integration closure, debug report, this report),
+<code>platform/lib/cov_metrics.py</code>, <code>platform/skills/coverage-ladder/</code>, <code>tests/gates/</code>. The flow is reusable.</p>
+</blockquote></div></body></html>

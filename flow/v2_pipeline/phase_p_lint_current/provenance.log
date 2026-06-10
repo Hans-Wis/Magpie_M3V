@@ -1,0 +1,25 @@
+host=eda
+timestamp_start=2026-06-09T21:41:34+08:00
+timestamp_end=2026-06-09T21:41:41+08:00
+pwd=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_lint_current
+spyglass_bin=/soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/bin/spyglass
+sg_shell_bin=/soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/bin/sg_shell
+tool=SpyGlass_vX-2025.06-SP1
+tool_banner=Version X-2025.06-SP1 for linux64 - Sep 02, 2025
+command=cd /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_lint_current && sg_shell -licqueue -tcl run_spyglass.tcl | tee spyglass_waiver_fix.log
+top=cpu_m1_top
+goal=lint/lint_rtl
+filelist=files.f; source=IP/cpu_m1/rtl/filelist.f normalized to phase-relative paths; includes def.vh and flat RTL
+waiver_file=magpie_m1_lint_waivers.awl
+exit_code=0
+generated_messages=27
+generated_warnings=24
+generated_infos=3
+waived_warnings=24
+reported_warnings=0
+reported_infos=3
+reported_errors=0
+reported_fatals=0
+waiver_update=robust_signal_msg_regex_for_W287b_core_ports_W528_core_cdec_signals
+cdec_illegal_waiver_rationale=cdec.illegal is a verification/diagnostic output checked by the unit TB + a sim-only invariant assertion (ADR-0016); reserved detection is via idu (expanded=0); not a synthesis trap signal.
+codex_token_record=see final assistant report for current goal token usage

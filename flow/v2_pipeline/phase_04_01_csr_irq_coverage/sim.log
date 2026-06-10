@@ -1,0 +1,19 @@
+[175 ns] mmio[00000000] <= 00000000
+[205 ns] mmio[00000004] <= 12345678
+[235 ns] mmio[00000008] <= 1234567f
+[275 ns] mmio[0000000c] <= 12345677
+[295 ns] mmio[00000010] <= 00000000
+[315 ns] mmio[00000014] <= 00000018
+[335 ns] mmio[00000018] <= 00000016
+[360 ns] inject pending IRQ at pc=0000006a instr=00000013
+[395 ns] mmio[0000001c] <= 00000800
+[485 ns] mmio[00000020] <= 0000007e
+[505 ns] mmio[00000024] <= 8000000b
+[525 ns] mmio[00000028] <= 00001880
+[585 ns] mmio[0000002c] <= 00000000
+[585 ns] mret resume marker observed data=00000000
+PASS: directed CSR/IRQ coverage completed mepc=0000007e
+- tb_csr_irq_coverage.v:242: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 3us; walltime 0.026 s; speed 130.388 us/s
+- Verilator: cpu 0.026 s on 1 threads; allocated 28 MB

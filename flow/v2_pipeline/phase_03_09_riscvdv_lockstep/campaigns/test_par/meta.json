@@ -1,0 +1,13 @@
+{
+  "campaign": "test_par",
+  "git_rev": "3860f24",
+  "rtl_cksum": "de1b876f6905",
+  "jobs": 4,
+  "seeds": [
+    2026070301,
+    2026070306
+  ],
+  "instr_cnt": 1500,
+  "spike": "/home/edauser/.local/bin/spike",
+  "status": "RUNNING"
+}

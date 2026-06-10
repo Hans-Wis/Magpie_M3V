@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<File version="1">
+	<State />
+	<Input>
+		<Pair vector="5'bx" name="id_rs1_idx" />
+		<Pair vector="5'bx" name="id_rs2_idx" />
+		<Pair vector="32'bx" name="rfu_rs1_data" />
+		<Pair vector="32'bx" name="rfu_rs2_data" />
+		<Pair vector="1'bx" name="em_valid" />
+		<Pair vector="1'bx" name="em_rd_we" />
+		<Pair vector="5'bx" name="em_rd_idx" />
+		<Pair vector="32'bx" name="em_fwd_val" />
+		<Pair vector="1'bx" name="em_is_load" />
+		<Pair vector="1'bx" name="wb_valid" />
+		<Pair vector="1'bx" name="wb_rd_we" />
+		<Pair vector="5'bx" name="wb_rd_idx" />
+		<Pair vector="32'bx" name="wb_data" />
+		<Pair vector="1'bx" name="wb_is_load" />
+		<Pair vector="1'b1" name="_atZero" />
+	</Input>
+</File>

@@ -1,0 +1,18 @@
+ROLE: Codex EXECUTOR (gpt-5.5), directed by Claude (PL). design_id=cpu_m1. This is STAGE 5.0 DC synth/PPA TRIAL (not production sign-off). report-faithfully: if PDK/.lib/license missing, prove it and waive — NEVER fake PPA numbers. Licensed EDA: run directly (you are NOT sandboxed).
+
+GOAL J4: Synopsys DC trial synthesis of cpu_m1_top for a basic TSMC 28HPC+ PPA estimate.
+DO:
+1. Locate the TSMC 28HPC+ standard-cell timing library (.lib/.db). Likely under ~/project/PDK/ (TSMC28HPC+ / TSMC28). If you find only .lib, use Library Compiler (lc_shell) or `read_lib`/`write_lib` to get .db, or read .lib directly. If NO 28HPC+ lib is found, STOP that path and WAIVE with the exact search evidence (do NOT substitute another PDK silently; note if only Sky130/other exists).
+2. dc_shell trial: read all RTL (ch2_lab08e filelist + cpu_m1_top.v), top=cpu_m1_top, set a trial clock (start 1.0 ns? sweep to a met-timing point, or report WNS at a stated target e.g. 700MHz/1.43ns), compile_ultra (trial, no scan/DFT). Output reports: area, timing (WNS/TNS), power (estimate). Put under flow/v2_pipeline/phase_05_01_synth_ppa/.
+3. Gate tests/gates/gate_05_01_synth_ppa.py: assert reports+provenance exist, parse PPA headline (area um^2, Fmax/WNS, power), record as TRIAL estimate (advisory, not a pass/fail threshold). If lib/license unavailable, gate marks waived/unavailable with evidence. Keep full pytest suite green.
+
+CONSTRAINTS: no RTL semantic change (decl/comment-only OK if a tool needs it, but verify gate_03_08 lockstep still passes after). Explicit paths. Keep raw logs/db in the phase dir.
+
+OUTPUT (write <=40 lines) flow/v2_pipeline/phase_05_leader/J4_result.md:
+  ## ppa (area um^2, Fmax or WNS@target, total power) OR waived+exact-evidence
+  ## library_used (lib name/path/process corner, or "none found: <search>")
+  ## files_added
+  ## provenance (dc version, host, key commands, license outcome)
+  ## gate_status (pytest pass count; confirm gate_03_08 lockstep still PASS)
+  ## issues_or_waivers
+  ## tokens

@@ -1,0 +1,18 @@
+timestamp=2026-06-08T14:23:15+08:00
+host=eda
+dc_shell_version=X-2025.06-SP2
+tool_path=/soft/synopsys/syn/X-2025.06-SP2/bin/dc_shell
+license_outcome=available
+top=cpu_m1_top
+target_period_ns=1.43
+target_library=/home/edauser/project/SOC/Magpie_X3/APR/ref/db/tcbn28hpcplusbwp40p140tt0p9v25c.db
+library_name=tcbn28hpcplusbwp40p140tt0p9v25c
+corner=tt0p9v25c
+rtl_filelist=files.f; full ch2_lab08e RTL plus cpu_m1_top.v
+key_command=cd /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_05_01_synth_ppa; dc_shell -f ./run_dc.tcl -output_log_file dc_shell.log | tee dc_stdout.log
+normalized_command=dc_shell -f run_dc.tcl -output_log_file dc_shell.log
+tcl_key_commands=analyze -format verilog -vcs "-f files.f"; elaborate cpu_m1_top; create_clock -period 1.43; compile_ultra; report_area; report_timing; report_power
+raw_reports=reports/qor.rpt; reports/area.rpt; reports/timing.rpt; reports/power.rpt; reports/constraints.rpt; reports/check_design.rpt
+raw_db=db/cpu_m1_top.ddc; db/cpu_m1_top.mapped.v
+trial_result=setup timing met at 1.43ns with WNS=0.00ns, TNS=0.00ns; area=26298.467795um2; estimated total power=15.8503mW
+issues=report_constraint records two min-delay/hold violators; power is vectorless low-effort estimate; no production sign-off claim

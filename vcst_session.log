@@ -1,0 +1,184 @@
+
+                                   VC Static 
+
+               Version X-2025.06-SP1 for linux64 - Sep 02, 2025 
+
+                    Copyright (c) 2010 - 2025 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+restore_session -level default
+
+help Formal
+Formal: Formal Verification Commands
+ add_sva_property     # Add sva bind properties.
+ aip_load             # Load AIP source files for compilation
+ bug_hunting_config   # Set parameters for use in bug hunting. Also set effort level (fml_effort) to bug_hunting
+ check_config         # Specifies certain configuration parameters for check commands
+ check_constraints    # Checks for conflicts/deadends due to constraints.
+ check_fv             # Check the properties
+ check_fv_setup       # Check the FV setup
+ compare_coi          # Compare one or more coi to a given coi and report those which are included, intersect or disjoint from the main coi
+ compute_bounded_cov  # Performs bounded coverage analysis.
+ compute_cov          # Performs coverage analysis using the auto scale flow. In this mode, VC Formal automatically creates different tasks and splits up the coverage targets based on metrics and runs them in parallel for better convergence. The number of tasks can be configured using the cov_config command
+ compute_formal_core  # Compute the formal core used in proving a property
+ compute_formal_core_coverage # Extract line, toggle, condition, SV-covergroup coverage for the formal core of the property.
+ compute_over_constraint # Performs over constraint analysis.
+ compute_proof_assist # Compute the Proof Assist info towards converging a property (single property only)
+ compute_reduced_constraints # Compute the reduced constraints required for proving a property
+ compute_verification_summary # Compute the current verification task summary
+ coverage_signoff_coi # Performs coi analysis.
+ create_random_clock  # Create random clock for formal with minimum period.
+ enable_coverage_goals_in_coi # Enables the coverage goals which are in the COI of a FPV goal
+ fca_report           # Print report for FCA analysis results.
+ flp_cc_vacuity_gen_split # Create different combination of vacuity properties for the provided vacuous property/properties or all vacuous properties.
+ flp_cc_vacuity_report # Get the vacuous report for the provided vacuous property/properties or all vacuous properties.
+ flp_pst_config       # pst config to be set to create the pst constraint for specific pst and state.
+ formal_setup_config  # Configure the setup for Formal clock inference.
+ fv_clock             # Modify the formal clock for the task
+ fv_clock_report      # Report the formal clocks for a task
+ fv_config            # VCF configuration settings
+ fv_depth_guide       # Create and set task for depth guidance analysis
+ fv_depth_guide_report # Report results of depth guidance computation. 
+ fv_proof_arch        # Proof architect command to create and automate compositional verification through tasks
+ fv_proof_arch_report # Proof Architect report and details
+ fv_prop_cluster      # Cluster properties for better performance/debug
+ fv_quickstart        # Starts the quick start mode for VC Formal
+ fv_session_check_config_report # Report configuration of VC Formal session summary
+ fv_session_check_report # VC Formal session check report
+ fv_setup_config      # Configure design and formal related checks for VC-Static Formal
+ fvassert             # Creates an assertion or sets the usage attribute to assert and enabled
+ fvassign             # Add logic to the design and assign to a new signal in the top design scope.
+ fvassist             # Sets the formal search assist attribute
+ fvassume             # Creates a constraint or sets the usage attribute to assume  and enabled
+ fvclear              # Clears the run status of selected properties.
+ fvcompile            # Compile Deferred Properties
+ fvcover              # Creates a cover or sets the usage attribute to cover and enabled
+ fvdelete             # Delete the property from all tasks and the design
+ fvdisable            # Disables properties
+ fvedit               # Edit an existing property. Allows rewrite and rename options for script properties. 
+ fvenable             # Enables properties
+ fvlatch              # Add a latch with the specified signal name to the top design scope.
+ fvlearn_config       # configure learn mode related setup for VC-Static Formal
+ fvlp_cc_print_path   # Show property path for structurally connected LPCC property.
+ fvlp_cc_trace_fanin  # Show property path for structurally disconnected LPCC property.
+ fvorc                # Specify user directed orchestration
+ fvorc_config         # Specifies certain configuration parameters for fvorc commands
+ fvorder              # Sets the formal search order attribute
+ fvregister           # Add a register with the specified signal name to the top design scope.
+ fvtask               # command to set/create/delete a user verification task
+ fvtrace              # Create an FSDB trace of selected property
+ fvtrace_check        # Run trace analysis to check a trace for potential problems.
+ fvtrace_config       # Set or display the trace analysis configuration. Run 'fvtrace_config' with no arguments to see the current settings.
+ fvtrace_report       # Report trace analysis results.
+ fvunwaive            # Unwaives coverage, aep, fta goals
+ fvwaive              # Waives coverage, aep, fta goals
+ gen_covers_for_coi_counters # Generate covers for counters in the COI 
+ gen_covers_for_range # Generate covers for a specified signal and a range 
+ gen_covers_from_cov_targets # Generate covers from coverage targets  
+ get_abstractions     # Returns a collection of nets driven by the various abstractions which are remodeled
+ get_change_at        # Return collection of data with set_change_at command
+ get_constant         # Get nets with constant value
+ get_fml_appmode      # Gets the current formal application mode.
+ get_fml_var          # Gets task specific and app formal variables.
+ get_formal_core      # Returns a collection of nets in the formal-core.
+ get_formal_signature # Computes a signature for the current verification problem.
+ get_fv_complexity    # Return collection of object for complexity of the COI  of a set of nets or properties, or complexity of a design instance
+ get_fvtask           # Returns the current FV task, or a collection of tasks meeting specified criteria
+ get_inst_parameter   # Get all the parameter name under a specific instance or get value of a specific parameter, instance name should be Verdi style full path
+ get_min_proof_depth  # Return minimum proof depth.
+ get_pkg_parameters   # Get package parameters or write in xml format
+ get_props            # Select properties according to various criteria
+ get_reduced_constraints # Returns a collection of needed constraints.
+ get_snips            # get snip drivers
+ infer_formal_setup   # Formal clock inference.
+ is_in_fanin          # Reports whether a given lookup signal is found in the fanin of given signal
+ kill_jobs            # Terminate solver jobs for a running verfication task
+ list_path            # Print a path between source to destination if it exists - replaced by fv_path_report.
+ orc_perf_debug       # Dumps various reports related to the current run
+ read_waiver_file     # Reading coverage, aep, fta waiver file
+ remove_constant      # Remove constant values for specified nets
+ remove_fta_waiver    # Remove FTA waivers specified by exclusion file(s)
+ remove_waiver_file   # Remove waiver file
+ replay_trace         # Replay VC-Static Formal traces saved previously with save_trace.
+ replay_trace_fsdb    # Replay saved fsdb traces.
+ report_abstractions  # Report all currently active abstractions in the design
+ report_assertion_density # Report line count and number of assertions/covers in given scope
+ report_backup_grid_usage # report backup grid configuration for VC-Static Formal
+ report_bug_dependency # Reports the results of the report_bug_dependency command
+ report_change_at     # Report information specified by set_change_at command
+ report_constant      # Report Constraint of a constant value
+ report_constraints   # Reports information about conflicting (contradictory) constraints and/or deadends found in the design.
+ report_fml_bug_hunting # Report about bug hunting started by orchestration.
+ report_fml_engines   # Reports information about engines started by orchestration and which goals they are working on.
+ report_fml_hosts     # Reports the CPU and memory utilization of the machines running solvers
+ report_fml_jobs      # Reports information about solver jobs running locally or on grid.
+ report_fml_var       # Report task specific and app formal variables.
+ report_formal_core   # Report formal core for the selected properties.
+ report_formal_setup  # Report inference results.
+ report_fv            # Reports formal information
+ report_fv_complexity # Reports complexity of the COI of a list of nets or properties, or complexity of a design instance
+ report_fv_coverage   # Report the coverage of assertions in the design (resulting from analyze_fv_coverage analysis)
+ report_fv_setup      # Reports the results of the check_fv_setup command
+ report_fvorc         # Reports specified fvorc information
+ report_fvtask        # Returns a report of the specified tasks
+ report_grid_usage    # report grid configuration for VC-Static Formal
+ report_icm           # Report results of ICM orchestation.
+ report_proof_assist  # Report Proof Assist info for the selected property.
+ report_reduced_constraints # Reports information about reduced constraints for selected properties.
+ report_run           # report orchestration status during the run
+ report_snips         # Report which nets in the design have been snipped using the snip_driver command
+ report_solve_path    # Report engines that solved the properties in the current verification task
+ report_verification_summary # Report the current verification task summary
+ run_idx              # run idx analysis in Formal Verification
+ save_complexity_results # Saves database for report_fv_complexity results.
+ save_property_density_results # Maps property density to coverage.
+ save_property_verification_results # Saves database and exclusion file for property verification.
+ save_trace           # Save VC-Static Formal traces for later replay with replay_trace.
+ save_waiver_file     # Save waived coverage, aep, fta goals in an exclusion file
+ seq_cg_guide_report  # Report guidance to achieve convergence in clock gating verification
+ seq_guidance         # Command to guide users to achieve convergence for clock-gating verification
+ set_abstractions     # Searches for user-requested design constructs, and replaces them with the desired abstraction. Return a collection of nets which are driven directly by the abstracted region
+ set_backup_grid_usage # set backup grid configuration
+ set_change_at        # Specify legal transition time of the signals
+ set_constant         # Set net to constant value
+ set_engine           # set engine on/off or score
+ set_fml_appmode      # Sets the current formal application mode.
+ set_fml_var          # Sets task specific formal variables.
+ set_grid_usage       # set grid configuration for VC-Static Formal
+ set_verification_summary # Set certain attributes of a tag in the verification summary
+ signoff_check        # Executes the signoff flow in various efforts.
+ snip_driver          # Snip the driver of the net
+ snip_formal_core_complement # Snip all registers in the complement of formal core of a set of properties in a new task
+ view_idx             # view idx result in Formal Verification
+ waive_verification_summary # Waive a tag in the verification summary
+
+help read_file
+ read_file            # Reading design files
+help elaborate
+ elaborate            # Elaborate the design, which is analyzed using analyze command
+help create_clock
+ create_clock         # Defines a clock
+help create_reset
+ create_reset         # Creates a reset
+help check_fv
+ check_fv             # Check the properties
+help report_fv
+ report_fv            # Reports formal information
+exit
+=======================================================
+Total Time(S)  :1.32
+CPU Time(S)    :0.50
+Peak Memory(MB):1
+=======================================================

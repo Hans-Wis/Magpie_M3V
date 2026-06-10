@@ -1,0 +1,6 @@
+[1745 ns] stop on illegal/ebreak pc=0000013c commits=81
+PASS: random DUT trace wrote 81 commits before ebreak
+- tb_random_lockstep.v:134: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 2us; walltime 0.001 s; speed 2.895 ms/s
+- Verilator: cpu 0.001 s on 1 threads; allocated 17 MB

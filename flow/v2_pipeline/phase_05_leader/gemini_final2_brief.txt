@@ -1,0 +1,7 @@
+Update SOC/Magpie_M1/flow/v2_pipeline/phase_05_leader/FINAL_REPORT.md (overwrite, write directly, do not ask). Keep the same structure/sections as the existing FINAL_REPORT.md but update with this NEW fact and adjust accordingly:
+- Functional coverage was LIFTED from 55.56% to **94.44% (68/72 bins)** via 8 directed stimulus programs (branch/jump/call, CSR ops, IRQ/mret, misalign, m_ext, ecall, illegal) merged with URG; covergroups were UNCHANGED (lifted by stimulus only).
+- Per-group NOW: opcode 100%, ALU/M 100%, load/store 100%, branch/BP/RAS 100% (was 0%), CSR/trap 100% (was 0%), hazard/flush has 4 bins left (load_use, muldiv_busy, fetch_stall reachable with hazard-directed stimulus; mem_stall needs the cpu_m1_top wrapper wait-state harness = waiver candidate).
+- So in the Flow stage table mark 4.0 Functional Coverage as **PASS (94.44%)** instead of PARTIAL.
+- In Honest residuals: replace the "coverage 55% / branch+CSR 0%" gap with "coverage 94.44%; only 4 hazard-stall bins remain (3 reachable, mem_stall needs wrapper harness)".
+- Keep stage 5.0 lint PASS + PPA trial numbers (~699MHz, 26298 um^2, 15.85mW) as-is. Keep IP status = still NOT fully qualified (single-corner synth trial, hold violators, lockstep only 81 commits, mem_stall coverage bin).
+- 176 gates pass. Read SOC/Magpie_M1/flow/v2_pipeline/phase_05_leader/J5_result.md for ground truth. Concise.

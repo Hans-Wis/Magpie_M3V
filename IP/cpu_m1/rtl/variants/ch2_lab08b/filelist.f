@@ -1,0 +1,13 @@
++incdir+IP/cpu_m1/rtl/variants/ch2_lab08b
+IP/cpu_m1/rtl/variants/ch2_lab08b/rfu.v
+IP/cpu_m1/rtl/variants/ch2_lab08b/alu.v
+IP/cpu_m1/rtl/variants/ch2_lab08b/idu.v
+IP/cpu_m1/rtl/variants/ch2_lab08b/ifu.v
+IP/cpu_m1/rtl/variants/ch2_lab08b/lsu.v
+IP/cpu_m1/rtl/variants/ch2_lab08b/csr.v
+IP/cpu_m1/rtl/variants/ch2_lab08b/mul.v
+IP/cpu_m1/rtl/variants/ch2_lab08b/div.v
+IP/cpu_m1/rtl/variants/ch2_lab08b/forward.v
+IP/cpu_m1/rtl/variants/ch2_lab08b/hazard.v
+IP/cpu_m1/rtl/variants/ch2_lab08b/bp.v
+IP/cpu_m1/rtl/variants/ch2_lab08b/core.v

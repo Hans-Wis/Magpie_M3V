@@ -1,0 +1,1 @@
+PASS: P17 core trap prefix lockstep matched 11 commits; trap events matched expected mepc/mcause/mtval values

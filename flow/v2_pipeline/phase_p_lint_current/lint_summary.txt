@@ -1,0 +1,53 @@
+status=pass_clean_with_reviewed_waivers
+gate_green=true
+approval=reviewed_waived; all generated warnings are reviewed benign waivers
+top=cpu_m1_top
+goal=lint/lint_rtl
+tool=SpyGlass_vX-2025.06-SP1
+host=eda
+timestamp=2026-06-09T21:41:34+08:00..2026-06-09T21:41:41+08:00
+command=cd /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_lint_current && sg_shell -licqueue -tcl run_spyglass.tcl | tee spyglass_waiver_fix.log
+filelist=flow/v2_pipeline/phase_p_lint_current/files.f
+waiver_file=flow/v2_pipeline/phase_p_lint_current/magpie_m1_lint_waivers.awl
+source_filelist=IP/cpu_m1/rtl/filelist.f normalized to phase-relative paths
+rtl_scope=IP/cpu_m1/rtl/def.vh + IP/cpu_m1/rtl/*.v flat current CPU IP RTL
+
+reported_fatals=0
+reported_errors=0
+reported_warnings=0
+reported_infos=3
+waived_errors=0
+waived_warnings=24
+waived_infos=0
+generated_messages=27
+reported_messages=3
+process_exit_code=0
+passes_lint_clean_0_errors=yes
+warning_clean=yes; all generated warnings are reviewed-waived
+
+reported_warning:
+  - none
+
+waiver_audit:
+  - Total generated warnings: 24
+  - Applied warning waivers: 24
+  - Line-shift-sensitive W287b/W528 waivers are scoped by rule, file, and regexp diagnostic text
+  - W528 core.v cdec_illegal is waived post-ADR-0016: cdec.illegal is a verification/diagnostic output checked by the unit TB + a sim-only invariant assertion; reserved detection is via idu (expanded=0); not a synthesis trap signal
+
+summary_by_phase:
+  Command-line read: 0 errors, 0 warnings, 0 infos
+  Design Read: 0 errors, 0 warnings, 2 infos
+  Blackbox Resolution: 0 errors, 0 warnings, 0 infos
+  SGDC Checks: 0 errors, 0 warnings, 0 infos
+  Policy starc2005: 0 errors, 0 warnings, 0 infos
+  Policy lint: 0 errors, 0 warnings, 1 info
+  Total: 0 errors, 0 warnings, 3 infos
+
+raw_reports:
+  - reports/lint_rtl.moresimple.rpt
+  - cpu_m1_phase_p_lint_current/consolidated_reports/cpu_m1_top_lint_lint_rtl/moresimple.rpt
+  - cpu_m1_phase_p_lint_current/cpu_m1_top/lint/lint_rtl/spyglass_reports/waiver.rpt
+logs:
+  - provenance.log
+  - spyglass_waiver_fix.log
+  - sg_shell.log

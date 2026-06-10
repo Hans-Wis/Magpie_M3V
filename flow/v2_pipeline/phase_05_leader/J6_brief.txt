@@ -1,0 +1,22 @@
+ROLE: Codex EXECUTOR for Magpie_M1, directed by Claude (PL). design_id=cpu_m1. Licensed EDA direct (you are NOT sandboxed). report-faithfully: real URG numbers only.
+
+CONTEXT: Functional coverage = 94.44% (68/72 bins) in flow/v2_pipeline/phase_04_08_functional_coverage. The ONLY remaining uncovered bins are in covergroup cg_hazard_flush: {load_use, muldiv_busy, fetch_stall, mem_stall}. The covergroups (cpu_m1_func_cov_bind.sv) are CORRECT and must NOT be changed. Lift by STIMULUS only. Existing merged flow: VCS per-test vdb -> urg -lca -flex_merge code_union (see Makefile).
+
+GOAL J6: add hazard-directed stimulus to hit the 3 core-local-reachable bins and push coverage to ~98.6%:
+ - load_use: a load (lw/lb/lh) immediately followed by an instruction that USES the loaded register (RAW load-use hazard -> 1-cycle stall).
+ - muldiv_busy: a mul/div followed quickly by a dependent op, or back-to-back mul/div, so the M-unit busy stall asserts.
+ - fetch_stall: trigger the at_cross_boundary fallback path (a 16/32-bit RVC cross-boundary that arrives WITHOUT pre-fetch setup, e.g. right after a taken branch/redirect lands on an unaligned 32-bit instr) so fetch_stall=1.
+ - mem_stall: this bin requires cpu_m1_top wrapper wait-states; the core-local harness ties mem_stall low, so it is NOT reachable here -> leave as a documented WAIVER (waiver_candidate=waive, reason "needs wrapper wait-state harness"). Do NOT fake it.
+
+DO: write the new directed stimulus .S program(s) under phase_04_08; run under VCS with the func_cov bind; merge ALL vdb (existing + new) with URG; re-measure. Update tests/gates/gate_04_08_functional_coverage.py threshold to the new achieved floor. Triage remaining bins.
+
+CONSTRAINTS: covergroups unchanged. No RTL semantic change. Explicit paths. Verify `python3 -m pytest tests/gates/gate_*.py -q` green AND gate_03_08 lockstep still PASS.
+
+OUTPUT (write <=35 lines) flow/v2_pipeline/phase_05_leader/J6_result.md:
+  ## summary (NEW overall % ; was 94.44%)
+  ## hazard_group (bin | hit? | how)
+  ## stimulus_added
+  ## provenance (vcs/urg, host, merge cmd)
+  ## gate_status (pytest pass count; lockstep PASS?)
+  ## issues_or_waivers (mem_stall waiver evidence)
+  ## tokens

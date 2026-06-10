@@ -1,0 +1,10 @@
+1. Final Pytest: 180 passed, 0 failed.
+2. Misalign Root Cause: Missing EX/MEM flush on data-trap & wrong mepc.
+3. Misalign Fix: RTL logic for wb_redirect & wb_sync_exception_pc (real fix).
+4. Assertions: Reconciled for sync-trap suppressions & CSR fwd; justified.
+5. Sync-trap Status: Scoped gap; Spike 1.1.1-dev halts at M-mode ecall entry.
+6. mstatus.MPP: Verified fixed at 2'b11 (M-only mode) in csr.v and reads.
+7. mscratch fwd: Verified EX/MEM forwarding into id_csr_rdata is correct.
+8. CSR Lockstep: 6,261 commits (5 seeds) matched with zero divergences.
+9. Relaxed Gates: None; updates tracked verified RTL changes/CSR sweep.
+10. Regressions: None remaining in gates or instruction-level lockstep.

@@ -1,0 +1,15 @@
+Date Created     : 08-06-2026 14:15:19
+SpyGlass Version : SpyGlass_vX-2025.06-SP1
+Project Name     : cpu_m1_phase_05_00_lint
+Goal Name        : lint/lint_rtl
+Scenario Name    : default_scenario
+Top              : cpu_m1_top
+
+Message Summary
+Severity   Non-Waived  Waived
+FATAL           0         0
+ERROR           0         0
+WARNING        24         0
+INFO            3         0
+
+-dashboard_data sync_crossings 

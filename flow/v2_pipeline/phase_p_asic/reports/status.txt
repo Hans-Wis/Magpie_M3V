@@ -1,0 +1,7 @@
+status=complete
+fmax_mhz=699.30
+wns_ns=0.00
+tns_ns=0.00
+area_um2=42682.454623
+stdcell_db=/home/edauser/project/SOC/Magpie_X3/APR/ref/db/tcbn28hpcplusbwp40p140tt0p9v25c.db
+sram_db=/home/edauser/project/SOC/Magpie_X3/APR/ref/db/tsdn28hpcpa512x32m4mwaso_130a_tt0p9v25c.db

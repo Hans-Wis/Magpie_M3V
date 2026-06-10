@@ -1,0 +1,5 @@
+
+Warning-[SM_IGN_IAD] Initial Assignment at Declaration
+axil_bridge_formal.sv, 94
+  Initial Assignment at Declaration for "f_past_valid" is ignored by synthesis
+

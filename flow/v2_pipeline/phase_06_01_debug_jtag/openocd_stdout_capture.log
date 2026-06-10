@@ -1,0 +1,30 @@
+Open On-Chip Debugger 0.12.0+dev-02554-g442ddcf6e (2026-06-10-06:34)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Warn : The command 'riscv set_reset_timeout_sec' is deprecated! Please, use 'riscv set_command_timeout_sec'.
+Info : Initializing remote_bitbang driver
+Info : Connecting to localhost:9824
+Info : remote_bitbang driver initialized
+Info : Note: The adapter "remote_bitbang" doesn't support configurable speed
+Info : JTAG tap: magpie_m1.cpu tap/device found: 0x10a98ad3 (mfg: 0x569 (Fraunhofer IIS), part: 0x0a98, ver: 0x1)
+Info : [magpie_m1.cpu] datacount=2 progbufsize=0
+Warn : [magpie_m1.cpu] We won't be able to execute fence instructions on this target. Memory may not always appear consistent. (progbufsize=0, impebreak=0)
+Warn : [magpie_m1.cpu] 'misa' register is read as zero.OpenOCD will not be able to determine some hart's capabilities.
+Info : [magpie_m1.cpu] Vector support with vlenb=0
+Info : [magpie_m1.cpu] S?aia detected with IMSIC
+Info : [magpie_m1.cpu] Examined RISC-V core
+Info : [magpie_m1.cpu]  XLEN=32, misa=0x0
+Info : [magpie_m1.cpu] Examination succeed
+Info : [magpie_m1.cpu] starting gdb server on 3333
+Info : Listening on port 3333 for gdb connections
+magpie_m1.cpu halted due to debug-request.
+pc (/32): 0x02960b10
+ra (/32): 0x00000123
+ra (/32): 0x00000123
+magpie_m1.cpu halted due to debug-request.
+Info : [magpie_m1.cpu] Found 0 triggers
+magpie_m1.cpu halted due to single-step.
+pc (/32): 0x03472348
+shutdown command invoked
+Info : remote_bitbang interface quit

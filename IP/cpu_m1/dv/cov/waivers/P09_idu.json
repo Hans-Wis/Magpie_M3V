@@ -1,0 +1,39 @@
+{
+  "stage": "P09_idu",
+  "reviewer": "Codex (producer) — TB closed all reachable; uncovered are RTL constants",
+  "approver": "Claude (PL) — independently verified each against idu.v RTL 2026-06-09; corrects Grok charter which assumed funct3 default coverable (it is not: funct3 is fully 8/8 decoded).",
+  "waivers": [
+    {
+      "waiver_id": "TW-IDU-FUNCT3-DEFAULT",
+      "module": "idu.v", "dut_scope": "core",
+      "signals": ["L173", "L185"], "metric": "line+branch",
+      "structural_basis": "idu.v:173/185 `default: alu_op=ALU_ADD` in the OP-IMM/OP funct3 case. funct3 is 3-bit and all 8 values are decoded (F3_ADD_SUB/SLT/SLTU/XOR/OR/AND/SLL/SRL_SRA, idu.v:160-172/176-184), so the default arm is unreachable (no 9th funct3 value). Defensive default.",
+      "stimulus_considered": "all 8 funct3 values driven for OP and OP-IMM; no illegal funct3 exists for a fully-decoded 3-bit field",
+      "spike_impact": "none (coverage-only)", "approved": true, "approver": "Claude"
+    },
+    {
+      "waiver_id": "TW-IDU-CSRZIMM-ZEXT",
+      "module": "idu.v", "dut_scope": "core",
+      "signal_re": "csr_zimm", "bit_lo": 5, "metric": "toggle",
+      "structural_basis": "csr_zimm = {27'b0, instr[19:15]} (idu.v:122) — zero-extended CSR immediate; bits [31:5] are hardwired 0 and can never toggle.",
+      "stimulus_considered": "all CSR-immediate values (zimm[4:0]) driven; upper bits are RTL constants",
+      "spike_impact": "none (coverage-only)", "approved": true, "approver": "Claude"
+    },
+    {
+      "waiver_id": "TW-IDU-IMMU-LOW12",
+      "module": "idu.v", "dut_scope": "core",
+      "signal_re": "imm_u", "bit_lo": 0, "bit_hi": 11, "metric": "toggle",
+      "structural_basis": "imm_u = {instr[31:12], 12'b0} (idu.v:91) — U-type immediate low 12 bits hardwired 0 (RISC-V LUI/AUIPC encoding).",
+      "stimulus_considered": "varied LUI/AUIPC immediates; low 12 bits are RTL constants",
+      "spike_impact": "none (coverage-only)", "approved": true, "approver": "Claude"
+    },
+    {
+      "waiver_id": "TW-IDU-IMMBJ-BIT0",
+      "module": "idu.v", "dut_scope": "core",
+      "signal_re": "imm_[bj]", "bit_lo": 0, "bit_hi": 0, "metric": "toggle",
+      "structural_basis": "imm_b/imm_j bit[0] = 1'b0 (idu.v:90,92) — B/J-type immediates are 2-byte aligned; bit 0 hardwired 0 per RISC-V encoding.",
+      "stimulus_considered": "varied branch/jal targets; bit 0 is an RTL constant",
+      "spike_impact": "none (coverage-only)", "approved": true, "approver": "Claude"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+(1) RV32IMC (no CSR) CLEAN: YES. 5 seeds, 6882 matched commits.
+(2) M-unit/rem @0x1478 (REAL-DUT): Done sampling race; Fix: latch result before done in mul.v, div.v (ADR-0009).
+(3) c.beqz @0x17a4 (REAL-DUT): wrong-path M-unit start; Fix: core.v gate M-start on redirect (ADR-0009).
+(3) mul @0x191e (HARNESS): reset base mismatch; Fix: Sync DUT reset PC to ELF_BASE + Spike --pc.
+(4) Regressions: None.
+(5) RTL Files: core.v, mul.v, div.v; ADR-0009.
+(6) Arith 100k: Clean (per J11 artifact).
+(7) gate_03_09: PASS.
+(8) Open: None in scope (mem, ctrlflow, M).

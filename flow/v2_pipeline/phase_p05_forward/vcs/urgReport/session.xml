@@ -1,0 +1,30 @@
+<session version="1.1" release="X-2025.06-SP1" timestp="2026-06-09 09:31:42 GMT">
+  <info>
+    <attr name="datetime" value="Tue Jun  9 17:31:43 2026
+"/>
+    <attr name="command" value="urg -full64 -dir simv.vdb -report urgReport -metric line+cond+branch+tgl"/>
+    <attr name="top_instance" value="tb_forward_unit"/>
+  </info>
+  <hvp>
+    <datadef>
+      <metdef name="Line" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="Cond" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="Toggle" type="ratio" aggregator="average" builtin="1" />
+      <metdef name="Branch" type="ratio" aggregator="average" builtin="1" />
+    </datadef>
+  </hvp>
+  <old_coverage>
+  <scope type="top" name="top">
+    <metric name="Line" value="82/86" />
+    <metric name="Cond" value="68/69" />
+    <metric name="Toggle" value="904/906" />
+    <metric name="Branch" value="11/13" />
+  </scope>
+  <scope type="instance" name="top">
+  </scope>
+  <scope type="group" name="top">
+  </scope>
+  <scope type="assert" name="Statistics">
+  </scope>
+  </old_coverage>
+</session>

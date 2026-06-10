@@ -1,0 +1,6 @@
+# Data Model Stats 
+Number of Operator = 95
+Number of OpBits = 1355
+
+Number of Abstract Models Used   : 0
+

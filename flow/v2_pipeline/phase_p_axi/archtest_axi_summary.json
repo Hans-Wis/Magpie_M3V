@@ -1,0 +1,24 @@
+{
+  "scope": "selected riscv-arch-test cases through cpu_m1_axil_top",
+  "tests": [
+    {
+      "extension": "RV32I",
+      "test": "add-01",
+      "status": "PASS",
+      "detail": "signature match at waits 0,3"
+    },
+    {
+      "extension": "RV32M",
+      "test": "mul-01",
+      "status": "PASS",
+      "detail": "signature match at waits 0,3"
+    }
+  ],
+  "wait_states": [
+    0,
+    3
+  ],
+  "passed": 2,
+  "total": 2,
+  "elapsed_sec": 0.5762302875518799
+}

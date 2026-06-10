@@ -1,0 +1,33 @@
+2026-06-09 23:56:42 1781020602.695166 | INFO  | Process Limits
+	 Virual Memory -> no limit
+	 Time Limit -> no limit
+	 Stack Size -> no limit
+	 Data Segment -> no limit
+	 File Size -> no limit
+	 Lock Limit -> no limit
+	 CPU Time Limit -> no limit
+	 RSS  -> no limit
+	 Threads  -> 386184 
+Available Cores : 24
+SystemInfo : totalram=96556 freeram=89870 sharedram=5.13672 bufferram=169.773 totalswap=24576 freeswap=23177.4 procs= 665
+Executable Args: /soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi,-batch,-file,/tmp/vcf_help.tcl,-mode64,-batch,-x,,-y,,-pathmap,/tmp/specify_pathmap.txt273379eda
+
+2026-06-09 23:56:42 1781020602.711865 | INFO  | Share License key => -6855546972067830616 for master run  Old Key => -6855546972067830616
+2026-06-09 23:56:42 1781020602.749191 | INFO  | checkForHostInfo :: /vcwrapmasterhost hostInfoExists: 0
+2026-06-09 23:56:42 1781020602.749205 | INFO  |  hostInfoFile not found
+2026-06-09 23:56:42 1781020602.749208 | INFO  | checkForMmFlow 
+2026-06-09 23:56:42 1781020602.809613 | INFO  | registerSyncPoint: check_cdc cmdPtr: 0x188c6000
+2026-06-09 23:56:42 1781020602.809631 | INFO  | registerSyncPoint: check_glitch cmdPtr: 0x188c8000
+2026-06-09 23:56:42 1781020602.809633 | INFO  | registerSyncPoint: check_hazard cmdPtr: 0x188c8550
+2026-06-09 23:56:42 1781020602.809636 | INFO  | registerSyncPoint: check_rdc cmdPtr: 0x188c7000
+2026-06-09 23:56:42 1781020602.809638 | INFO  | registerSyncPoint: finish_distributed_run cmdPtr: 0x340c0920
+2026-06-09 23:56:42 1781020602.809640 | INFO  | registerSyncPoint: sync_active_scenarios cmdPtr: 0x3500a660
+2026-06-09 23:56:42 1781020602.809642 | INFO  | registerSyncPoint: write_abstract_model cmdPtr: 0x34dff000
+2026-06-09 23:56:42 1781020602.809644 | INFO  | registerSyncPoint: write_constr_abstract_model cmdPtr: 0x188d2000
+2026-06-09 23:56:42 1781020602.809647 | INFO  | Trigger point for reading scenarioSpecific/common files: check_rdc
+2026-06-09 23:56:42 1781020602.809649 | INFO  | Trigger point for reading scenarioSpecific/common files: check_hazard
+2026-06-09 23:56:42 1781020602.809651 | INFO  | Trigger point for reading scenarioSpecific/common files: check_glitch
+2026-06-09 23:56:42 1781020602.809653 | INFO  | Trigger point for reading scenarioSpecific/common files: check_cdc
+2026-06-09 23:56:42 1781020602.822963 | INFO  | shutdownHandler 0
+2026-06-09 23:56:42 1781020602.823047 | INFO  | MultiModeEnabled: 0 dbMerged: 0 Child: 0
+2026-06-09 23:56:42 1781020602.823055 | INFO  | exitChilds

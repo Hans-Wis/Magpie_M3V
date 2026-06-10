@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Author" content="<username>"> <meta name="GENERATOR" content="urg/version [en] (platform name) [urg]">
+<title>Unified Coverage Report :: Module :: tb_ifu_unit</title>
+<link type="text/css" rel="stylesheet" href="css/.urg.css">
+<link type="text/css" rel="stylesheet" href="css/.layout.css">
+<link type="text/css" rel="stylesheet" href="css/.breadcrumb.css">
+<script type="text/javascript" src="js/.jquery.js"></script>
+<script type="text/javascript" src="js/.jquery-ui.js"></script>
+<script type="text/javascript" src="js/.sortable.js"></script>
+<script type="text/javascript" src="js/.layout.js"></script>
+<script type="text/javascript" src="js/.breadcrumb.js"></script>
+<script type="text/javascript">
+var layout, westLayout, centerLayout;
+$(document).ready(function () {
+  if ($("#north-bread-crumb")) {
+    $("#north-bread-crumb").jBreadCrumb({easing:'swing'})
+  }
+  layout = $("body").layout({ 
+    resizable: true,
+    spacing_open: 4,
+    spacing_closed: 4,
+    north: {
+      size: 76
+    },
+    south: {
+      size: 45,
+      initClosed: true
+    },
+    west: {
+      size: 500,
+      resizable: true,
+      initClosed: false
+    }
+  });
+  centerLayout = $('div.ui-layout-center').layout({
+    north__paneSelector: ".ui-layout-center-inner-north",
+    center__paneSelector: ".ui-layout-center-inner-center", 
+    north__size: 50,
+    spacing_open: 4,
+    spacing_closed: 4
+  });
+});
+</script>
+</head>
+<body onLoad="initPage();"><div class="ui-layout-north">
+<div class="logo"></div>
+<center class="pagetitle">Module Definition</center>
+<div align="center"><a href="dashboard.html" ><b>dashboard</b></a> | <a href="hierarchy.html" ><b>hierarchy</b></a> | <a href="modlist.html" ><b>modlist</b></a> | groups | <a href="tests.html" ><b>tests</b></a> | asserts</div>
+
+</div>
+<div class="ui-layout-west">
+<div name='tag_tb_ifu_unit'>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module : <a href="#"  onclick="showContent('tag_tb_ifu_unit')">tb_ifu_unit</a></span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s8 cl rt"> 87.01</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 91.38</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 90.00</a></td>
+<td class="s10 cl rt"><a href="mod0.html#Toggle" >100.00</a></td>
+<td class="wht cl rt"></td>
+<td class="s6 cl rt"><a href="mod0.html#Branch" > 66.67</a></td>
+</tr></table><br clear=all>
+<span class=repname>Source File(s) : </span>
+<br clear=all>
+<a href="javascript:void(0);"  onclick="openSrcFile('/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p14_ifu/vcs/../../../../IP/cpu_m1/dv/tb/tb_ifu_unit.v')">/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p14_ifu/vcs/../../../../IP/cpu_m1/dv/tb/tb_ifu_unit.v</a><br clear=all>
+<br clear=all>
+<span class=repname>Module self-instances :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod0.html#inst_tag_0"  onclick="showContent('inst_tag_0')">tb_ifu_unit</a></td>
+<td class="s8 cl rt"> 87.01</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 91.38</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 90.00</a></td>
+<td class="s10 cl rt"><a href="mod0.html#Toggle" >100.00</a></td>
+<td class="wht cl rt"></td>
+<td class="s6 cl rt"><a href="mod0.html#Branch" > 66.67</a></td>
+</tr></table></div>
+</div>
+<br clear=all>
+<div name='tag_tb_ifu_unit'>
+<hr>
+<a name="inst_tag_0"></a>
+<div class=modhdr>
+<br clear=all>
+<span class=titlename>Module Instance : <a href="hierarchy.html#tag_urg_inst_0" >tb_ifu_unit</a></span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Instance :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s8 cl rt"> 87.01</td>
+<td class="s9 cl rt"><a href="mod0.html#Line" > 91.38</a></td>
+<td class="s9 cl rt"><a href="mod0.html#Cond" > 90.00</a></td>
+<td class="s10 cl rt"><a href="mod0.html#Toggle" >100.00</a></td>
+<td class="wht cl rt"></td>
+<td class="s6 cl rt"><a href="mod0.html#Branch" > 66.67</a></td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Instance's subtree :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="s8 cl rt"> 89.82</td>
+<td class="s9 cl rt"> 91.60</td>
+<td class="s9 cl rt"> 95.00</td>
+<td class="s9 cl rt"> 93.51</td>
+<td class="wht cl rt"></td>
+<td class="s7 cl rt"> 79.17</td>
+</tr></table><br clear=all>
+<br clear=all>
+<span class=repname>Parent : </span>
+<br clear=all>
+<span class=inst>none</span>
+<br clear=all>
+<br clear=all>
+<span class=repname>Subtrees :</span>
+<br clear=all>
+<table align=left>
+<tr class="sortablehead">
+<td class="alfsrt">NAME</td><td>SCORE</td><td>LINE</td><td>COND</td><td>TOGGLE</td><td>FSM</td><td>BRANCH</td></tr><tr>
+<td class="wht cl wordwrap"><a href="mod1.html#inst_tag_1" id="tag_urg_inst_1">dut</a></td>
+<td class="s9 cl rt"> 96.75</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s10 cl rt">100.00</td>
+<td class="s8 cl rt"> 87.01</td>
+<td class="wht cl rt"></td>
+<td class="s10 cl rt">100.00</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<hr>
+Since this is the module's only instance, the coverage report is the same as for the module.</div>
+<div class="ui-layout-center">
+<div class="ui-layout-center-inner-center">
+<div name='tag_tb_ifu_unit'>
+<a name="Line"></a>
+Line Coverage for Module : <a href="mod0.html" >tb_ifu_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="4" width="82">
+<tr><th></th><th>Line No.</th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">TOTAL</td><td></td><td>116</td><td>106</td><td>91.38</td></tr>
+<tr class="s10"><td class="lf">INITIAL</td><td>41</td><td>4</td><td>4</td><td>100.00</td></tr>
+<tr class="s10"><td class="lf">ROUTINE</td><td>56</td><td>1</td><td>1</td><td>100.00</td></tr>
+<tr class="s6"><td class="lf">ROUTINE</td><td>67</td><td>10</td><td>6</td><td>60.00</td></tr>
+<tr class="s8"><td class="lf">ROUTINE</td><td>97</td><td>19</td><td>17</td><td>89.47</td></tr>
+<tr class="s9"><td class="lf">ROUTINE</td><td>120</td><td>29</td><td>27</td><td>93.10</td></tr>
+<tr class="s9"><td class="lf">INITIAL</td><td>147</td><td>53</td><td>51</td><td>96.23</td></tr>
+</table>
+<pre class="code"><br clear=all>
+40                          initial begin
+41         1/1                  clk = 1'b0;
+42         3/3                  forever #5 clk = ~clk;
+43                          end
+44                      
+45                          function [31:0] golden_next;
+46                              input [31:0] cur_pc;
+47                              input        stall_i;
+48                              input        redirect_i;
+49                              input [31:0] redirect_tgt_i;
+50                              input        ras_i;
+51                              input [31:0] ras_tgt_i;
+52                              input        bp_i;
+53                              input [31:0] bp_tgt_i;
+54                              input        c_i;
+55                              begin
+56         1/1                      golden_next = redirect_i ? redirect_tgt_i :
+57                                                stall_i    ? cur_pc :
+58                                                ras_i      ? ras_tgt_i :
+59                                                bp_i       ? bp_tgt_i :
+60                                                            cur_pc + (c_i ? 32'd2 : 32'd4);
+61                              end
+62                          endfunction
+63                      
+64                          task check_outputs;
+65                              input [8*120-1:0] tag;
+66                              begin
+67         1/1                      vectors = vectors + 1;
+68         1/1                      exp_next = golden_next(g_pc, pc_stall, pc_redirect, redirect_target,
+69                                                         ras_predict_ret, ras_predict_target,
+70                                                         bp_predict_taken, bp_predict_target, is_16bit);
+71         2/2                      #1;
+72         1/1                      if (pc !== g_pc) begin
+73         <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+74         <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s pc got=%h exp=%h&quot;,</font>
+75                                             vectors, tag, pc, g_pc);
+76                                  end
+                        MISSING_ELSE
+77         1/1                      if (next_pc !== exp_next) begin
+78         <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+79         <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s next_pc got=%h exp=%h cur=%h stall=%b redir=%b ras=%b bp=%b c=%b&quot;,</font>
+80                                             vectors, tag, next_pc, exp_next, g_pc, pc_stall,
+81                                             pc_redirect, ras_predict_ret, bp_predict_taken, is_16bit);
+82                                  end
+                        MISSING_ELSE
+83                              end
+84                          endtask
+85                      
+86                          task drive_cycle;
+87                              input        stall_i;
+88                              input        redirect_i;
+89                              input [31:0] redirect_tgt_i;
+90                              input        ras_i;
+91                              input [31:0] ras_tgt_i;
+92                              input        bp_i;
+93                              input [31:0] bp_tgt_i;
+94                              input        c_i;
+95                              input [8*120-1:0] tag;
+96                              begin
+97         2/2                      @(negedge clk);
+98         1/1                      pc_stall          = stall_i;
+99         1/1                      pc_redirect       = redirect_i;
+100        1/1                      redirect_target   = redirect_tgt_i;
+101        1/1                      ras_predict_ret   = ras_i;
+102        1/1                      ras_predict_target = ras_tgt_i;
+103        1/1                      bp_predict_taken  = bp_i;
+104        1/1                      bp_predict_target = bp_tgt_i;
+105        1/1                      is_16bit          = c_i;
+106        1/1                      check_outputs(tag);
+107        2/2                      @(posedge clk);
+108        1/1                      g_pc = exp_next;
+109        2/2                      #1;
+110        1/1                      if (pc !== g_pc) begin
+111        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+112        <font color = "red">0/1     ==>                  $error(&quot;FAIL[%0d] %0s registered pc got=%h exp=%h&quot;,</font>
+113                                            vectors, tag, pc, g_pc);
+114                                 end
+                        MISSING_ELSE
+115                             end
+116                         endtask
+117                     
+118                         task reset_dut;
+119                             begin
+120        2/2                      @(negedge clk);
+121        1/1                      resetn            = 1'b0;
+122        1/1                      pc_stall          = 1'b0;
+123        1/1                      pc_redirect       = 1'b0;
+124        1/1                      redirect_target   = 32'h0000_0000;
+125        1/1                      ras_predict_ret   = 1'b0;
+126        1/1                      ras_predict_target = 32'h0000_0000;
+127        1/1                      bp_predict_taken  = 1'b0;
+128        1/1                      bp_predict_target = 32'h0000_0000;
+129        1/1                      is_16bit          = 1'b0;
+130        1/1                      g_pc              = 32'h0000_0000;
+131        3/3                      repeat (2) @(posedge clk);
+                        REPEAT_FALSE
+132        2/2                      #1;
+133        1/1                      check_outputs(&quot;reset holds RESET_PC and default +4 next_pc&quot;);
+134        2/2                      @(negedge clk);
+135        1/1                      resetn = 1'b1;
+136        2/2                      @(posedge clk);
+137        1/1                      g_pc = exp_next;
+138        2/2                      #1;
+139        1/1                      if (pc !== g_pc) begin
+140        <font color = "red">0/1     ==>                  errors = errors + 1;</font>
+141        <font color = "red">0/1     ==>                  $error(&quot;FAIL reset release pc got=%h exp=%h&quot;, pc, g_pc);</font>
+142                                 end
+                        MISSING_ELSE
+143                             end
+144                         endtask
+145                     
+146                         initial begin
+147        1/1                  vectors = 0;
+148        1/1                  errors  = 0;
+149        1/1                  resetn  = 1'b1;
+150        1/1                  pc_stall = 1'b0;
+151        1/1                  pc_redirect = 1'b0;
+152        1/1                  redirect_target = 32'h0000_0000;
+153        1/1                  ras_predict_ret = 1'b0;
+154        1/1                  ras_predict_target = 32'h0000_0000;
+155        1/1                  bp_predict_taken = 1'b0;
+156        1/1                  bp_predict_target = 32'h0000_0000;
+157        1/1                  is_16bit = 1'b0;
+158        1/1                  g_pc = 32'h0000_0000;
+159                     
+160        1/1                  target_patterns[0]  = 32'h0000_0000;
+161        1/1                  target_patterns[1]  = 32'hFFFF_FFFC;
+162        1/1                  target_patterns[2]  = 32'hAAAA_AAAA;
+163        1/1                  target_patterns[3]  = 32'h5555_5555;
+164        1/1                  target_patterns[4]  = 32'h8000_0000;
+165        1/1                  target_patterns[5]  = 32'h7FFF_FFFC;
+166        1/1                  target_patterns[6]  = 32'hDEAD_BEEF;
+167        1/1                  target_patterns[7]  = 32'h1234_5678;
+168        1/1                  target_patterns[8]  = 32'h8765_4320;
+169        1/1                  target_patterns[9]  = 32'h0000_0002;
+170        1/1                  target_patterns[10] = 32'h0000_0006;
+171        1/1                  target_patterns[11] = 32'h0000_000A;
+172        1/1                  target_patterns[12] = 32'h0000_000E;
+173        1/1                  for (i = 0; i &lt; 32; i = i + 1) begin
+174        1/1                      target_patterns[i + 4] = 32'h0000_0001 &lt;&lt; i;
+175                             end
+176                     
+177        1/1                  reset_dut();
+178                     
+179        1/1                  drive_cycle(1'b0, 1'b0, 32'h1111_1111, 1'b0, 32'h2222_2222,
+180                                         1'b0, 32'h3333_3333, 1'b0, &quot;sequential RV32I +4&quot;);
+181        1/1                  drive_cycle(1'b0, 1'b0, 32'h1111_1111, 1'b0, 32'h2222_2222,
+182                                         1'b0, 32'h3333_3333, 1'b1, &quot;sequential RV32C +2&quot;);
+183                     
+184        1/1                  drive_cycle(1'b0, 1'b1, 32'h0000_1002, 1'b0, 32'h2222_2222,
+185                                         1'b0, 32'h3333_3333, 1'b0, &quot;redirect to halfword pc bit1 set&quot;);
+186        1/1                  drive_cycle(1'b0, 1'b0, 32'h1111_1111, 1'b0, 32'h2222_2222,
+187                                         1'b0, 32'h3333_3333, 1'b1, &quot;cross-boundary residue visible as +2 from PC[1]=1&quot;);
+188        1/1                  drive_cycle(1'b0, 1'b1, 32'h0000_2002, 1'b0, 32'h2222_2222,
+189                                         1'b0, 32'h3333_3333, 1'b0, &quot;redirect to PC[1]=1 before +4 fallback&quot;);
+190        1/1                  drive_cycle(1'b0, 1'b0, 32'h1111_1111, 1'b0, 32'h2222_2222,
+191                                         1'b0, 32'h3333_3333, 1'b0, &quot;cross-boundary fallback visible as +4 from PC[1]=1&quot;);
+192                     
+193        1/1                  drive_cycle(1'b1, 1'b0, 32'h1111_1111, 1'b0, 32'h2222_2222,
+194                                         1'b0, 32'h3333_3333, 1'b0, &quot;stall holds pc&quot;);
+195        1/1                  drive_cycle(1'b1, 1'b1, 32'hFACE_CAFE, 1'b1, 32'hAAAA_AAAA,
+196                                         1'b1, 32'h5555_5555, 1'b1, &quot;redirect priority over stall ras bp&quot;);
+197        1/1                  drive_cycle(1'b1, 1'b0, 32'h1111_1111, 1'b1, 32'hAAAA_AAAA,
+198                                         1'b1, 32'h5555_5555, 1'b1, &quot;stall priority over ras bp&quot;);
+199        1/1                  drive_cycle(1'b0, 1'b0, 32'h1111_1111, 1'b1, 32'hAAAA_AAAA,
+200                                         1'b1, 32'h5555_5555, 1'b0, &quot;ras priority over bp&quot;);
+201        1/1                  drive_cycle(1'b0, 1'b0, 32'h1111_1111, 1'b0, 32'h2222_2222,
+202                                         1'b1, 32'h5555_5555, 1'b1, &quot;bp target selected&quot;);
+203                     
+204        1/1                  for (i = 0; i &lt; 36; i = i + 1) begin
+205        1/1                      drive_cycle(1'b0, 1'b1, target_patterns[i], 1'b0, 32'h0000_0000,
+206                                             1'b0, 32'h0000_0000, i[0], &quot;redirect full-range target sweep&quot;);
+207        1/1                      drive_cycle(1'b0, 1'b0, 32'h0000_0000, 1'b1, ~target_patterns[i],
+208                                             1'b0, 32'h0000_0000, ~i[0], &quot;ras full-range target sweep&quot;);
+209        1/1                      drive_cycle(1'b0, 1'b0, 32'h0000_0000, 1'b0, 32'h0000_0000,
+210                                             1'b1, target_patterns[i] ^ 32'hA5A5_5A5A, i[0],
+211                                             &quot;bp full-range target sweep&quot;);
+212                             end
+213                     
+214        1/1                  drive_cycle(1'b0, 1'b1, 32'hFFFF_FFFC, 1'b0, 32'h0000_0000,
+215                                         1'b0, 32'h0000_0000, 1'b0, &quot;near top +4 wrap setup&quot;);
+216        1/1                  drive_cycle(1'b0, 1'b0, 32'h0000_0000, 1'b0, 32'h0000_0000,
+217                                         1'b0, 32'h0000_0000, 1'b0, &quot;near top +4 wraps to zero&quot;);
+218        1/1                  drive_cycle(1'b0, 1'b1, 32'hFFFF_FFFE, 1'b0, 32'h0000_0000,
+219                                         1'b0, 32'h0000_0000, 1'b1, &quot;near top +2 wrap setup&quot;);
+220        1/1                  drive_cycle(1'b0, 1'b0, 32'h0000_0000, 1'b0, 32'h0000_0000,
+221                                         1'b0, 32'h0000_0000, 1'b1, &quot;near top +2 wraps to zero&quot;);
+222                     
+223        1/1                  reset_dut();
+224                     
+225        1/1                  if (errors == 0) begin
+226        1/1                      $display(&quot;PASS: ifu unit %0d/%0d vectors&quot;, vectors, vectors);
+227                             end else begin
+228        <font color = "red">0/1     ==>              $display(&quot;FAIL: ifu unit %0d errors in %0d vectors&quot;, errors, vectors);</font>
+229        <font color = "red">0/1     ==>              $fatal(1);</font>
+230                             end
+231        1/1                  $finish;
+</pre>
+<hr>
+<a name="Cond"></a>
+Cond Coverage for Module : <a href="mod0.html" >tb_ifu_unit</a><br clear=all>
+<table class="noborder">
+<col width="122">
+<col span="3" width="82">
+<tr><th></th><th>Total</th><th>Covered</th><th>Percent</th></tr>
+<tr class="s9"><td class="lf">Conditions</td><td>10</td><td>9</td><td>90.00</td></tr>
+<tr class="s9"><td class="lf">Logical</td><td>10</td><td>9</td><td>90.00</td></tr>
+<tr class="wht"><td class="lf">Non-Logical</td><td>0</td><td>0</td><td></td></tr>
+<tr class="wht"><td class="lf">Event</td><td>0</td><td>0</td><td></td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       56
+ EXPRESSION (redirect_i ? redirect_tgt_i : (stall_i ? cur_pc : (ras_i ? ras_tgt_i : (bp_i ? bp_tgt_i : ((cur_pc + (c_i ? 32'd2 : 32'd4)))))))
+             -----1----
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       56
+ SUB-EXPRESSION (stall_i ? cur_pc : (ras_i ? ras_tgt_i : (bp_i ? bp_tgt_i : ((cur_pc + (c_i ? 32'd2 : 32'd4))))))
+                 ---1---
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       56
+ SUB-EXPRESSION (ras_i ? ras_tgt_i : (bp_i ? bp_tgt_i : ((cur_pc + (c_i ? 32'd2 : 32'd4)))))
+                 --1--
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       56
+ SUB-EXPRESSION (bp_i ? bp_tgt_i : ((cur_pc + (c_i ? 32'd2 : 32'd4))))
+                 --1-
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uGreen"><td>0</td><td class="lf">Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<br clear=all>
+<pre class="code"> LINE       225
+ EXPRESSION (errors == 0)
+            ------1------
+</pre>
+<table class="noborder">
+<col width="40">
+<tr><th>-1-</th><th>Status</th></tr>
+<tr class="uRed"><td>0</td><td class="lf">Not Covered</td></tr>
+<tr class="uGreen"><td>1</td><td class="lf">Covered</td></tr>
+</table>
+<hr>
+<a name="Toggle"></a>
+Toggle Coverage for Module : <a href="mod0.html" >tb_ifu_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s10">
+<td>Totals</td>
+<td class="rt">14</td>
+<td class="rt">14</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>Total Bits</td>
+<td class="rt">462</td>
+<td class="rt">462</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Total Bits 0->1</td>
+<td class="rt">231</td>
+<td class="rt">231</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Total Bits 1->0</td>
+<td class="rt">231</td>
+<td class="rt">231</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80></th><th nowrap width=80></th><th nowrap width=80></th></tr><tr class="s10">
+<td>Signals</td>
+<td class="rt">14</td>
+<td class="rt">14</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td>Signal Bits</td>
+<td class="rt">462</td>
+<td class="rt">462</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Signal Bits 0->1</td>
+<td class="rt">231</td>
+<td class="rt">231</td>
+<td class="rt">100.00</td>
+</tr><tr class="s10">
+<td nowrap>Signal Bits 1->0</td>
+<td class="rt">231</td>
+<td class="rt">231</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<table align=left class="sortable noborder">
+<caption><b>Signal Details</b></caption>
+<tr class="sortablehead">
+<td class="alfsrt">Name</td><td class="alfsrt">Toggle</td><td class="alfsrt">Toggle 1->0</td><td class="alfsrt">Toggle 0->1</td></tr><tr>
+<td>clk</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>resetn</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>pc_stall</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>pc_redirect</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>redirect_target[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>ras_predict_ret</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>ras_predict_target[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>bp_predict_taken</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>bp_predict_target[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>is_16bit</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>pc[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>next_pc[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>g_pc[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr><tr>
+<td>exp_next[31:0]</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+<td class="s9 cl">Yes</td>
+</tr></table><br clear=all>
+<hr>
+<a name="Branch"></a>
+Branch Coverage for Module : <a href="mod0.html" >tb_ifu_unit</a><br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=120></th><th nowrap width=80>Line No.</th><th nowrap width=80>Total</th><th nowrap width=80>Covered</th><th nowrap width=80>Percent</th></tr><tr class="s6">
+<td>Branches</td>
+<td></td>
+<td class="rt">15</td>
+<td class="rt">10</td>
+<td class="rt">66.67 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">225</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">72</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">77</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">110</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s5">
+<td>IF</td>
+<td class="rt">139</td>
+<td class="rt">2</td>
+<td class="rt">1</td>
+<td class="rt">50.00 </td>
+</tr><tr class="s10">
+<td>TERNARY</td>
+<td class="rt">56</td>
+<td class="rt">5</td>
+<td class="rt">5</td>
+<td class="rt">100.00</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+225                if (errors == 0) begin
+                   <font color = "red">-1-</font>  
+226                    $display("PASS: ifu unit %0d/%0d vectors", vectors, vectors);
+           <font color = "green">            ==></font>
+227                end else begin
+228                    $display("FAIL: ifu unit %0d errors in %0d vectors", errors, vectors);
+           <font color = "red">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uRed">
+<td align=center>0</td>
+<td>Not Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+72                     if (pc !== g_pc) begin
+                       <font color = "red">-1-</font>  
+73                         errors = errors + 1;
+           <font color = "red">                ==></font>
+74                         $error("FAIL[%0d] %0s pc got=%h exp=%h",
+75                                vectors, tag, pc, g_pc);
+76                     end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+77                     if (next_pc !== exp_next) begin
+                       <font color = "red">-1-</font>  
+78                         errors = errors + 1;
+           <font color = "red">                ==></font>
+79                         $error("FAIL[%0d] %0s next_pc got=%h exp=%h cur=%h stall=%b redir=%b ras=%b bp=%b c=%b",
+80                                vectors, tag, next_pc, exp_next, g_pc, pc_stall,
+81                                pc_redirect, ras_predict_ret, bp_predict_taken, is_16bit);
+82                     end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+110                    if (pc !== g_pc) begin
+                       <font color = "red">-1-</font>  
+111                        errors = errors + 1;
+           <font color = "red">                ==></font>
+112                        $error("FAIL[%0d] %0s registered pc got=%h exp=%h",
+113                               vectors, tag, pc, g_pc);
+114                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+139                    if (pc !== g_pc) begin
+                       <font color = "red">-1-</font>  
+140                        errors = errors + 1;
+           <font color = "red">                ==></font>
+141                        $error("FAIL reset release pc got=%h exp=%h", pc, g_pc);
+142                    end
+                       MISSING_ELSE
+           <font color = "green">            ==></font>
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>Status</th></tr><tr class="uRed">
+<td align=center>1</td>
+<td>Not Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+<pre class="code"><br clear=all>
+56                     golden_next = redirect_i ? redirect_tgt_i :
+                                                <font color = "green">-1-</font>  
+                                                <font color = "green">==></font>  
+57                                   stall_i    ? cur_pc :
+                                                <font color = "green">-2-</font>  
+                                                <font color = "green">==></font>  
+58                                   ras_i      ? ras_tgt_i :
+                                                <font color = "green">-3-</font>  
+                                                <font color = "green">==></font>  
+59                                   bp_i       ? bp_tgt_i :
+                                                <font color = "green">-4-</font>  
+                                                <font color = "green">==></font>  
+                                                <font color = "green">==></font>  
+</pre>
+<br clear=all>
+<span class=repname>Branches:</span>
+<br clear=all>
+<table align=left class="noborder">
+<tr>
+<th nowrap width=80>-1-</th><th nowrap width=80>-2-</th><th nowrap width=80>-3-</th><th nowrap width=80>-4-</th><th nowrap width=80>Status</th></tr><tr class="uGreen">
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td align=center nowrap>-</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>1</td>
+<td>Covered</td>
+</tr><tr class="uGreen">
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td align=center>0</td>
+<td>Covered</td>
+</tr></table><br clear=all>
+</div>
+</div>
+<div class="ui-layout-center-inner-north">
+<div id="center-bread-crumb" class="breadCrumb module urg-margin-bottom">
+  <ul name="inst_tag_0">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+  <ul name="tag_tb_ifu_unit">
+    <li>
+      <a href="#Line">Line</a>    </li>
+    <li>
+      <a href="#Cond">Cond</a>    </li>
+    <li>
+      <a href="#Toggle">Toggle</a>    </li>
+    <li>
+      <a href="#Branch">Branch</a>    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="ui-layout-south">
+<table align=center><tr><td class="s0 cl">0%</td>
+<td class="s1 cl">10%</td>
+<td class="s2 cl">20%</td>
+<td class="s3 cl">30%</td>
+<td class="s4 cl">40%</td>
+<td class="s5 cl">50%</td>
+<td class="s6 cl">60%</td>
+<td class="s7 cl">70%</td>
+<td class="s8 cl">80%</td>
+<td class="s9 cl">90%</td>
+<td class="s10 cl">100%</td></tr></table></div>
+</body>
+</html>

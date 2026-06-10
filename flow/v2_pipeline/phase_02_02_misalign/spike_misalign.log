@@ -1,0 +1,1 @@
+PASS: Spike trap-on-misaligned observed lw:mcause=4:mtval=0x80000011; lh:mcause=4:mtval=0x80000011; sh:mcause=6:mtval=0x80000015

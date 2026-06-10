@@ -1,0 +1,54 @@
+================================================
+ Magpie_M1 Phase 1.1 -- lab08e 4-stage pipeline + BP/RAS + RV32IMC
+ clock: 100 MHz, btn0 held low
+ DEBOUNCE_CYC = 16 (override 100_000 for sim speed)
+ firmware DELAY_ITER = 200
+ Phase 1: 讓 LED 跑到 ~3
+ Phase 2: 拉 btn1 觸發 IRQ → 預期 LED 回 0
+================================================
+[      0 ns]  LED  0000 -> 1010  pc=00000000  state=000
+[    425 ns]  LED  1010 -> 0000  pc=0000009a  state=001
+[  16595 ns]  LED  0000 -> 0001  pc=0000009a  state=001
+[  32735 ns]  LED  0001 -> 0010  pc=0000009a  state=001
+[  48875 ns]  LED  0010 -> 0011  pc=0000009a  state=001
+[  65015 ns]  LED  0011 -> 0100  pc=0000009a  state=001
+[  81155 ns]  LED  0100 -> 0101  pc=0000009a  state=001
+[  97295 ns]  LED  0101 -> 0110  pc=0000009a  state=001
+[ 113435 ns]  LED  0110 -> 0111  pc=0000009a  state=001
+[ 129575 ns]  LED  0111 -> 1000  pc=0000009a  state=001
+[ 145715 ns]  LED  1000 -> 1001  pc=0000009a  state=001
+[ 161855 ns]  LED  1001 -> 1010  pc=0000009a  state=001
+[ 177995 ns]  LED  1010 -> 1011  pc=0000009a  state=001
+[ 194135 ns]  LED  1011 -> 1100  pc=0000009a  state=001
+[ 210275 ns]  LED  1100 -> 1101  pc=0000009a  state=001
+[ 226415 ns]  LED  1101 -> 1110  pc=0000009a  state=001
+[ 242555 ns]  LED  1110 -> 1111  pc=0000009a  state=001
+[ 250000 ns]  *** Pressing BTN1 ***
+[ 250500 ns]  *** Releasing BTN1 ***
+[ 258835 ns]  >>> IRQ reset: LED was 1111, now 0
+[ 258835 ns]  LED  1111 -> 0000  pc=0000009a  state=001
+[ 274975 ns]  LED  0000 -> 0001  pc=0000009a  state=001
+[ 291115 ns]  LED  0001 -> 0010  pc=0000009a  state=001
+[ 307255 ns]  LED  0010 -> 0011  pc=0000009a  state=001
+[ 323395 ns]  LED  0011 -> 0100  pc=0000009a  state=001
+[ 339535 ns]  LED  0100 -> 0101  pc=0000009a  state=001
+[ 355675 ns]  LED  0101 -> 0110  pc=0000009a  state=001
+[ 371815 ns]  LED  0110 -> 0111  pc=0000009a  state=001
+[ 387955 ns]  LED  0111 -> 1000  pc=0000009a  state=001
+[ 404095 ns]  LED  1000 -> 1001  pc=0000009a  state=001
+[ 420235 ns]  LED  1001 -> 1010  pc=0000009a  state=001
+[ 436375 ns]  LED  1010 -> 1011  pc=0000009a  state=001
+[ 452515 ns]  LED  1011 -> 1100  pc=0000009a  state=001
+[ 468655 ns]  LED  1100 -> 1101  pc=0000009a  state=001
+[ 484795 ns]  LED  1101 -> 1110  pc=0000009a  state=001
+[ 500935 ns]  LED  1110 -> 1111  pc=0000009a  state=001
+[ 517075 ns]  >>> IRQ reset: LED was 1111, now 0
+[ 517075 ns]  LED  1111 -> 0000  pc=0000009a  state=001
+[ 533215 ns]  LED  0000 -> 0001  pc=0000009a  state=001
+
+=== sim end @ 540000 ns, final LED=0001, transitions=35 ===
+PASS: 35 LED transitions, BTN1 IRQ reset observed (LED 1111 -> 0)
+- tb_core.v:140: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 540us; walltime 0.027 s; speed 20.254 ms/s
+- Verilator: cpu 0.027 s on 1 threads; allocated 17 MB
