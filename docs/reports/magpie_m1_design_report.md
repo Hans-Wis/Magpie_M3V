@@ -12,7 +12,7 @@
 Magpie_M1 is a clean greenfield RV32IMC M-mode core taken from RTL to a **commercially-credible IP**:
 **official riscv-arch-test 74/74 (100%)**, **Tier-2 structural coverage** on 13 island modules +
 Spike-lockstep-verified integration, **VC Formal proofs** (core 22/22 + AXI 18/18), **Spyglass lint
-0/0**, **multi-corner DC 699.30 MHz** (TSMC28HPC+), and a **verified AXI4-Lite master** + **FPGA/ASIC
+0/0**, **multi-corner DC 699.30 MHz** (TSMC28HPC+), **configurable RV32IMC/RV32IMAC + optional PMP**, and a **verified AXI4-Lite master** + **FPGA/ASIC
 subsystem**. Three real bugs (one green-wash coverage trap, two RV32C compliance bugs) were caught by
 the discipline below — *all missed by random-stimulus lockstep alone*. The methodology, not the chip, is
 the product: it is captured here so a non-author can replay it.
@@ -63,6 +63,8 @@ Key microarchitecture: full forwarding (EX/MEM + EX/WB), load-use + mul/div busy
 | 0020 | PLIC + UART peripheral subsystem (MEIP level path; first-party X3 RTL) |
 | 0021 | RISC-V Debug MVD — DM + DTM + core debug-mode (adapted from first-party X1) |
 | 0022 | Debug Trigger Module — HW breakpoints + watchpoints (mcontrol6) |
+| 0023 | RV32A atomics — optional (parameter RV32A); RV32IMC↔RV32IMAC |
+| 0024 | PMP — optional (parameter PMP_ENTRIES); adapted ibex_pmp.sv (Apache) |
 | 0001(ws) | Clean-room → license-compliant reuse (workspace governance) |
 
 ---

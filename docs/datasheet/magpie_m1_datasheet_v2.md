@@ -13,7 +13,7 @@
 
 | | |
 |---|---|
-| ISA | RV32IMC_Zicsr_Zifencei, **machine-mode only** (embedded SKU) |
+| ISA | **RV32IMC_Zicsr_Zifencei** (default), M-mode only; **configurable** → RV32IMAC (optional **A**) + optional **PMP** |
 | Pipeline | 4-stage, in-order, single-hart; branch predictor + RAS + RV32C cross-boundary prefetch |
 | Compliance | **official riscv-arch-test 74/74 (RV32I 39 + RV32M 8 + RV32C 27) = 100%** |
 | Interfaces | native single-outstanding valid/ready (I/D) **and** AXI4-Lite master (M_AXI_I / M_AXI_D) |
@@ -28,8 +28,14 @@
 
 ## 2. ISA & Programmer's Model
 
-- **Extensions**: RV32 **I** (base), **M** (mul/div), **C** (compressed), **Zicsr**, **Zifencei**.
-- **Privilege**: **M-mode only**. `mstatus.MPP` is read-only WARL = M (ADR-0015). No S/U mode, no MMU/PMP.
+- **Extensions**: RV32 **I** (base), **M** (mul/div), **C** (compressed), **Zicsr**, **Zifencei**;
+  optional **A** (atomics: LR/SC + AMO, parameter `RV32A`, ADR-0023). `misa` reflects the build.
+- **Configurability** (ibex-style parameters): `RV32A` 0/1 (RV32IMC ↔ RV32IMAC), `PMP_ENTRIES` 0/4/8.
+  The **default is RV32IMC / PMP off** = the verified baseline; A and PMP are opt-in, separately verified.
+- **PMP** (optional, parameter `PMP_ENTRIES`, ADR-0024): up to 8 regions, `pmpcfg`/`pmpaddr`, modes
+  OFF/TOR/NA4/NAPOT, R/W/X + lock; instruction/load/store access-fault (mcause 1/5/7). For an M-only hart
+  the `L` lock protects regions from M (code/MMIO lock); ready for a future S/U bring-up.
+- **Privilege**: **M-mode only**. `mstatus.MPP` is read-only WARL = M (ADR-0015). No S/U mode, no MMU.
 - **M-mode CSRs**: mstatus, mie, mip, mtvec (direct mode), mepc, mcause, mtval, mscratch, mcycle/minstret.
 - **Trap model**: illegal-instruction, ecall, ebreak, mret, misaligned load/store (mcause 4/6), external IRQ.
 - **Compressed HINTs** execute as NOP per spec (ADR-0016 + addendum: C.LI/SLLI/MV/ADD/LUI rd=x0);
@@ -146,6 +152,7 @@ constraint (soft core on a 28nm-equivalent FPGA fabric) — re-target the FPGA c
 | **Lint** | Spyglass **0 errors / 0 warnings** (reviewed waivers); 2 spec bugs found+fixed (ADR-0015/16) |
 | **PPA** | multi-corner DC TSMC28HPC+ (above) |
 | **Debug** | **real OpenOCD** over JTAG: TAP enumerated, core examined, halt/resume/single-step, GPR/CSR read+write, **HW breakpoint** (`halted due to breakpoint`) + the RV32C-cross-boundary trigger corner. ADR-0021/0022 |
+| **Config matrix** | per-config re-verified: default **RV32A=0** == original (273 gates + arch-test 74/74 + all directed, identical); **RV32A=1** arch-test 74/74 + directed LR/SC/AMO/misalign/stall-IRQ + Spike lockstep; **PMP_ENTRIES=8** directed TOR/NA4/NAPOT + access faults + fetch-fault-on-RVC precise mepc. ADR-0023/0024 |
 | Gates | 53 pytest gates, 273 pass / 1 xfail; dual-number RAW+ADJUSTED, every waiver RTL-verified |
 
 ---

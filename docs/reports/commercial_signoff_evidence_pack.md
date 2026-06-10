@@ -14,7 +14,7 @@
 
 | | |
 |---|---|
-| ISA | RV32IMC_Zicsr_Zifencei, **M-mode only**; **official riscv-arch-test 74/74 = 100%** |
+| ISA | **RV32IMC** (default) / **RV32IMAC** (optional A) + optional **PMP**, M-mode only; **official riscv-arch-test 74/74 = 100%** |
 | Microarch | 4-stage pipeline + branch predictor + RAS + RV32C cross-boundary prefetch |
 | Interfaces | native valid/ready (I/D) **+ AXI4-Lite master** (M_AXI_I/D, formally proven) |
 | Subsystem | **FPGA** (PYNQ-Z2 bitstream @ 50 MHz) · **ASIC** (CPU+AXI+TSMC28 SRAM, 699 MHz) · **RTOS** (CLINT+PLIC+UART) · **JTAG debug** (OpenOCD/GDB) |
@@ -44,6 +44,9 @@
 | **ASIC subsystem** | ✅ verified | CPU+AXI+TSMC28 1RW1R SRAM macro, boot→MMIO PASS; DC 699.30 MHz, 42 682 µm². `flow/v2_pipeline/phase_p_asic`. |
 | **RTOS subsystem (CLINT+PLIC+UART)** | ✅ verified | CLINT MTIP/MSIP (ADR-0019, mcause 0x80000007/3) + PLIC MEIP (ADR-0020, mcause 0x8000000b, claim/complete deasserts) + UART console (string captured); `cpu_m1_soc_top`, directed + highest-risk-flush corner PASS, no regression. `phase_05_02`/`phase_05_03`. |
 | **Debug (RISC-V v0.13.2)** | ✅ verified | DM + DTM (JTAG) + core debug-mode + Trigger module (ADR-0021/0022). **Real OpenOCD** over JTAG: TAP enumerated, core examined, halt/resume/single-step, GPR/CSR R+W, **HW breakpoint** (`halted due to breakpoint`) + RV32C-cross-boundary trigger corner. SW+HW breakpoints + watchpoints. `phase_06_*`. |
+| **RV32A atomics (optional)** | ✅ verified | LR/SC + AMO via parameter `RV32A` (ADR-0023). RV32A=1: arch-test 74/74 + directed LR/SC + all AMO + misaligned→mcause6 + stall-plus-IRQ reservation corner + Spike lockstep. `phase_07_00`. (RV32A=0 default == original.) |
+| **PMP (optional)** | ✅ verified | up to 8 regions via `PMP_ENTRIES` (ADR-0024, adapted ibex_pmp.sv Apache-2.0). PMP=8: directed TOR/NA4/NAPOT R/W/X allow+deny → access fault mcause 1/5/7 + mtval + lowest-index priority + locked-M deny + fetch-fault-on-RVC precise mepc. `phase_07_10`. |
+| **Configurability** | ✅ verified | ibex-style params RV32A (0/1) + PMP_ENTRIES (0/4/8); per-config matrix re-verified: default RV32IMC == original (273 gates + arch-test 74/74), RV32IMAC + PMP=8 each pass. Customer picks PPA/area config. |
 
 ## Honest 3-layer positioning
 
@@ -53,6 +56,8 @@
 - **Official riscv-arch-test 74/74 (RV32IMC compliance)**; 2 RV32C bugs + 1 green-wash + 2 spec bugs caught.
 - **AXI4-Lite** (proven) · **FPGA bitstream** · **ASIC subsystem** · **RTOS subsystem (CLINT+PLIC+UART)** ·
   **RISC-V Debug** (DM/DTM/trigger, real OpenOCD: halt/step/HW-breakpoint/watchpoint) · CoreMark 2.690/MHz.
+- **Configurable ISA**: RV32IMC (default == original) / **RV32IMAC** (optional A) + optional **PMP** — each
+  config independently re-verified (default == original on the full corpus); customer picks by PPA/area.
 
 **Near-term closeable (funded increments):**
 - ASIC SRAM tiling to 16 KB · FPGA pipelining to clear 83 MHz · whole-core riscv-dv ≥100k-commit campaign ·

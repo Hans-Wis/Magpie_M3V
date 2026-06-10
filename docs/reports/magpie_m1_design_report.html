@@ -43,7 +43,7 @@ deliberately written as a transferable <strong>playbook</strong>, not just M1-sp
 <p>Magpie_M1 is a clean greenfield RV32IMC M-mode core taken from RTL to a <strong>commercially-credible IP</strong>:
 <strong>official riscv-arch-test 74/74 (100%)</strong>, <strong>Tier-2 structural coverage</strong> on 13 island modules +
 Spike-lockstep-verified integration, <strong>VC Formal proofs</strong> (core 22/22 + AXI 18/18), <strong>Spyglass lint
-0/0</strong>, <strong>multi-corner DC 699.30 MHz</strong> (TSMC28HPC+), and a <strong>verified AXI4-Lite master</strong> + <strong>FPGA/ASIC
+0/0</strong>, <strong>multi-corner DC 699.30 MHz</strong> (TSMC28HPC+), <strong>configurable RV32IMC/RV32IMAC + optional PMP</strong>, and a <strong>verified AXI4-Lite master</strong> + <strong>FPGA/ASIC
 subsystem</strong>. Three real bugs (one green-wash coverage trap, two RV32C compliance bugs) were caught by
 the discipline below — <em>all missed by random-stimulus lockstep alone</em>. The methodology, not the chip, is
 the product: it is captured here so a non-author can replay it.</p>
@@ -150,6 +150,14 @@ the product: it is captured here so a non-author can replay it.</p>
 <tr>
 <td>0022</td>
 <td>Debug Trigger Module — HW breakpoints + watchpoints (mcontrol6)</td>
+</tr>
+<tr>
+<td>0023</td>
+<td>RV32A atomics — optional (parameter RV32A); RV32IMC↔RV32IMAC</td>
+</tr>
+<tr>
+<td>0024</td>
+<td>PMP — optional (parameter PMP_ENTRIES); adapted ibex_pmp.sv (Apache)</td>
 </tr>
 <tr>
 <td>0001(ws)</td>
