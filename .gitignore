@@ -31,3 +31,16 @@ vivado*.log
 *.trace
 # arch-test / riscv-dv per-seed runs (regenerable, large)
 **/runs/
+
+# tool scratch that must never be committed (lesson: swept into 994faa1)
+vcst_rtdb*/
+vcst_*.log
+vcst_*.log.bak
+vcf.log
+.vc_env_*.txt
+*_toggle_raw.txt
+*_uncovered_toggles.txt
+combined.info
+.pytest_cache/
+.agents/
+.codex/
