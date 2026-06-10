@@ -25,7 +25,7 @@ the product: it is captured here so a non-author can replay it.
   as a **core** (native or AXI4-Lite) and a **drop-in subsystem** (CPU + AXI + memory + boot ROM).
 - **North Star**: prove + strengthen a *transferable* CPU-IP development flow. M1 is the clean greenfield
   example; the deliverable is the flow (gates + skills + harness + IDE), not the silicon.
-- **Out of scope (deliberate, different SKU)**: S/U mode, MMU/PMP, A/F/D, RVA22, UVM/RVVI, multi-port
+- **Out of scope (deliberate, different SKU)**: S/U mode, MMU, F/D, RVA22, UVM/RVVI, multi-port
   AXI burst, full UPF. The SoC tier (pads/PLL/DDR/APR) consumes M1 as a `cpu_subsys` instance.
 
 ---

@@ -170,8 +170,8 @@ constraint (soft core on a 28nm-equivalent FPGA fabric) — re-target the FPGA c
 
 ## 9. Known Limitations & SKU Scope
 
-- **In scope**: RV32IMC M-only embedded core + AXI/subsystem. RTOS-capable with the CLINT roadmap.
-- **Out of scope (deliberate, different SKU)**: S/U mode, MMU/PMP, A/F/D extensions, RVA22 application
+- **In scope**: RV32IMC (default) / RV32IMAC (optional A) M-only core + optional PMP + AXI/subsystem + RTOS (CLINT/PLIC/UART) + JTAG debug.
+- **Out of scope (deliberate, different SKU)**: S/U mode, MMU, F/D extensions (A optional; PMP optional), RVA22 application
   profile, full UVM/RVVI deliverable, multi-port AXI4 bursts, full UPF power-domain methodology.
   Customer integration (pads, PLL, DDR, interconnect matrix, APR/STA signoff) is the SoC tier
   (cf. Magpie_X3), which consumes M1 as a `cpu_subsys` instance.
