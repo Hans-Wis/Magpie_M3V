@@ -208,3 +208,24 @@ lockstep at scale).
 u_csr in-SKU = **1192/1371 = 87.0%**; the only genuine remaining stimulus gaps are IRQ (blocker 4b)
 and trap-cause/PC variety (~50 bits). Artifacts: `csr_pattern_summary.json`,
 `coverage_merged/farm_all2.dat`, `coverage_merged/toggle_breakdown.txt`.
+
+### 2.11 msip directed lockstep — IRQ-sourced u_csr bits reachable + blocker #4b lockstep-able path
+
+The §2.10 residual flagged 76 u_csr "IRQ-sourced" bits as needing interrupt stimulus. `phase_03_14_msip_
+directed` drives the **msip** (CLINT M software interrupt, ADR-0019) — the *deterministic*, lockstep-able
+interrupt — through a real handler. **Prefix per-commit lockstep vs Spike (12 commits, 0 divergence) +
+spec-validated handler** (mcause=`0x8000_0003`, mepc=`0x82`, mstatus=`0x1880`, resume=`0x600d`); same
+rigor as the through-trap slice (gate_03_12). This **closes blocker #4b's lockstep-able path**
+(`gate_03_14`, 5/5).
+
+The `--coverage` island confirms the msip IRQ path **toggles** in u_csr: `msip` 2/2, `irq_msi` 2/2,
+`irq_pending` 2/2, `mie_msie`, `mstatus_mie` 2/2, `mip[3]`, `irq_cause`(MSW), `mcause_reg`(0x80000003).
+Cold (as expected — non-msip paths): `ext_pending`/`irq_mei` (meip, external) and `irq_mti` (timer),
+which stay **directed-only** (Spike has no deterministic async meip/mtip injection).
+
+**Honest merge caveat:** this is a **per-island** result, *not* added to the farm 70.4%. A distinct TB
+top (`tb_msip_directed`) gives every toggle point a distinct coverage *hierarchy* string, so a cross-TB
+`verilator_coverage` union would double-count, not merge (the same cross-TB-unmergeable limitation noted
+for the earlier "62.93%" figure). The island stands as per-island evidence that the msip IRQ bits are
+reachable + lockstep-validated; folding IRQ coverage into the farm number would require driving msip
+inside the farm TB itself. Artifact: `phase_03_14_msip_directed/msip_directed_summary.json`.

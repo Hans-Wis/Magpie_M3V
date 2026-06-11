@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "kind": "msip (M software interrupt) directed lockstep",
+  "blocker": "4b lockstep-able path",
+  "prefix_commits_lockstepped": 12,
+  "divergences": 0,
+  "isa": "rv32imc_zicsr_zifencei",
+  "mcause": "0x80000003 (M software interrupt, ADR-0019)",
+  "mepc": "0x82",
+  "handler_mstatus": "0x1880 (MPP=11+MPIE=1)",
+  "method": "prefix per-commit lockstep vs Spike + spec-validated handler CSRs (same rigor as gate_03_12 through-trap)",
+  "coverage_island": {
+    "u_csr_pct": "268/3772 = 7.1% (tiny directed prog; value is IRQ bits not total)",
+    "irq_path_bits_toggled": {
+      "msip": "2/2",
+      "irq_msi": "2/2",
+      "irq_pending": "2/2",
+      "mie_msie": "1/2",
+      "mstatus_mie": "2/2",
+      "mstatus_mpie": "1/2",
+      "mip_val": "2/64(bit3)",
+      "irq_cause": "5/64(MSW)",
+      "mcause_reg": "3/64"
+    },
+    "cold_as_expected": {
+      "ext_pending": "meip path",
+      "irq_mei": "external",
+      "irq_mti": "timer"
+    }
+  },
+  "merge_note": "per-island only \u2014 distinct TB top => distinct coverage hierarchy, cross-TB union unsound (closure-doc cross-TB caveat). NOT merged into farm 70.4%.",
+  "remaining_4b": "truly-async meip/mtip stay directed-only (Spike has no deterministic async injection)."
+}

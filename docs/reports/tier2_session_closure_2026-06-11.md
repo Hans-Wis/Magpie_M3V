@@ -22,7 +22,7 @@ the remaining gaps are whole-core coverage to bar + async-IRQ + CSR-formal. No r
 | 7 | "2 hold violators" | ✅ **DISPOSITIONED** | No APR/PnR flow; FF-corner hold = pre-CTS ideal-clock artifact → back-end stage, out of RTL-IP scope (figure was a mischaracterization, corrected) |
 | 1 | Toggle → 95% | 🟡 **66.4% in-SKU** | farm-coverage measured 53.3% raw; CSR-injection (lockstep-safe) → 54.5%; structural waiver 3651 bits → 66.4%; RAS blocked by pyflow hang |
 | 2 | Branch / expr | 🟡 measured | branch 66.7% / expr 59.5% (same farm run); folds into #1 campaign |
-| 4b | async IRQ lockstep | 🔶 scoped | Spike has no deterministic ext-IRQ injection → msip (software-int) is the lockstep-able path; truly-async meip stays directed-only |
+| 4b | async IRQ lockstep | ✅ **lockstep-able path DONE** | `gate_03_14` (5/5): msip software-int directed — prefix per-commit lockstep vs Spike (12 commits, 0 div) + spec handler (mcause=0x8000_0003); IRQ-path u_csr bits toggle. Truly-async meip/mtip stay directed-only (no deterministic Spike async injection) |
 | 6 | Formal coverage ≥90% | 🟡 4/5 | alu/rfu/forward/lsu 100%, csr 10% (Codex/VC Formal) |
 
 ## 3. Honesty findings surfaced (corrections to prior claims)

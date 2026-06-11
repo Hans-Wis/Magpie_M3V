@@ -1,0 +1,1 @@
+PASS: prefix lockstep matched 12 commits; msip handler events matched mepc/mcause=0x80000003/mstatus/mret
