@@ -1,0 +1,18 @@
+{
+  "contract": "Tier-2-Narrow (RV32IMC core-only, FEATURE_FREEZE SKU-1)",
+  "coverage_db": "coverage_merged/farm_all3.dat (33 seeds)",
+  "raw_hit": 12043,
+  "raw_total": 20450,
+  "raw_pct": 58.9,
+  "effective_hit": 12043,
+  "effective_denom": 13035,
+  "effective_pct": 92.4,
+  "defensible_bar_pct": 90.0,
+  "exclusions": {
+    "out_of_sku": 5700,
+    "structural": 516,
+    "address_bound": 1199
+  },
+  "in_sku_genuine_debt": 992,
+  "dv_lead_signature": "PENDING"
+}

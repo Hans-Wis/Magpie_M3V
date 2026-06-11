@@ -1,28 +1,30 @@
 {
   "artifacts": [
-    "flow/v2_pipeline/phase_06_00_debug_mvd/tb_debug_mvd.v",
-    "tests/gates/gate_06_00_debug_mvd_coverage.py",
-    "docs/reports/coverage_report.md"
+    "docs/reports/toggle_exclusion_list.md",
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/classify_signoff.py",
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/toggle_signoff_snapshot.json",
+    "tests/gates/gate_04_10_toggle_effective_signoff.py"
   ],
   "autonomy": "L0",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "gate_06_00_debug_mvd_coverage",
+  "gate": "gate_04_10_toggle_effective_signoff",
   "metrics": {
-    "debug_bucket_pct": 49,
-    "debug_bucket_prev_pct": 19,
-    "debug_csr_rdata": "64/64",
-    "debug_csr_wdata": "64/64",
-    "dscratch0_reg": "48/64",
-    "gate_tests": 3,
-    "tier_c_debug_bits": 460
+    "addr_bound_excl": 1199,
+    "defensible_bar": 90.0,
+    "gate_tests": 4,
+    "in_sku_debt": 992,
+    "in_sku_effective_pct": 92.4,
+    "out_of_sku_excl": 5700,
+    "raw_toggle_pct": 58.9,
+    "structural_excl": 516
   },
   "reviewed_by_codex": "none",
   "run": {
-    "ended": "2026-06-11T18:05:17",
+    "ended": "2026-06-11T18:20:57",
     "host": "eda",
-    "id": "run-gate_06_00_debug_mvd_coverage",
-    "started": "2026-06-11T18:05:17"
+    "id": "run-gate_04_10_toggle_effective_signoff",
+    "started": "2026-06-11T18:20:57"
   },
   "stage": "dv",
   "status": "pass"
