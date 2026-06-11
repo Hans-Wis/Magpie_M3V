@@ -281,3 +281,23 @@ while lockstep HELD for 2.2M commits** — riscv-dv `sp` points into the *unifie
 `sw ra,0(sp)` self-modified an instruction (identically on both models, hence no divergence, just non-
 termination); switched to the memory-free push-chain. (2) The chain must `csrw mscratch, ra` first — the
 opening `jal ra` clobbers the program's live return address.
+
+### 2.14 Waiver-legitimacy reconciliation (STRICT — Claude + Grok, honesty correction)
+
+§2.10–2.13 use the phrase "structural waiver candidate" loosely. A strict review (independent Grok +
+PL) finds **not all of those bits are cleanly waivable** — only a minority is. The honest three-tier
+split of the ~2900 untoggled "waiver-bucket" bits a customer DV-lead is asked to sign:
+
+| tier | bits | categories | what is required |
+|---|---|---|---|
+| **A — unconditionally waivable** | ~240 | constant/tied nets (misa/mstatus/mie hardwired-0 fields) | tie proof; standard toggle exclusion |
+| **B — conditionally waivable** | ~2535 | PMP (PMP_ENTRIES=0, ~2270) · counter rollover (~202) · BTB `valid` 1→0 sticky (~63) | PMP: per-SKU elaboration waiver **+ proof synth strips the dead logic from the delivered netlist** (PMP-enabled variant needs its own closure). Counter: low-bit-increment + directed/formal rollover evidence. valid-1→0: ADR documenting "no invalidate". |
+| **C — coverage DEBT (must be COVERED, not waived)** | ~1100 | **debug/dcsr/dpc/trigger** (~460) · **address-range-limited high PC/tag bits** (~600) · saturating-counter edge (~few) | debug is a shipped JTAG feature → needs a directed halt/step/trigger test (like §2.11 msip / §2.12 bp_way1). High-PC bits are a **TB artifact, not RTL structure** → need a relocated-base image or a directed high-address test. |
+
+**Correction of record:** the earlier "u_csr 2401 / u_ifu+bp 455 structural waiver" framing was **too
+generous** — it folded Tier-C coverage-debt (debug + high-PC, ~1100 bits) in with genuine structural
+exclusions. Those ~1100 bits are *not yet verified*, not *unverifiable*; calling them waiver would be
+green-wash. They are tracked here as **coverage debt** with a concrete closure path (directed tests, the
+same pattern already used for msip/bp_way1), or must be explicitly **scope-agreed** with the customer
+(e.g. "this SKU does not ship debug", "address map bounded to low region") and signed as a *scope*
+decision, not a *coverage* waiver. Only Tier-A (~240) is signable as-is today.
