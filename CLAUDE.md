@@ -149,6 +149,8 @@ python3 ~/project/platform/design-ide/server.py --port 8810 --bind 127.0.0.1   #
 
 **護欄不變**:producer≠approver(Claude 驗收)、report-faithfully(不假造/不放水/scope 誠實)、每 run provenance、授權 EDA 經 Codex 必 `-s danger-full-access`、Layer-1 誠實、權威=Spike lockstep+pytest。**Token 紀律**:大 bytes 交 Gemini 濃縮再進 Claude。
 
+**守則:決策必附 agent 優先序(User 裁示 2026-06-11)**:每次向 User 徵詢決策(AskUserQuestion 或「下一步做哪個」),**一律先諮詢 agents(Grok 為主,必要時 Codex/Gemini)對「計畫上最優先/最佳的順序」之意見,整合成一個排序清單呈現**,再讓 User 選。即:不要只丟選項,要附上「agents 建議的優先排序 + 理由」。承 [[grok-standing-decision-advisor]] 決策流;Grok 意見背景跑、不 block。
+
 **守則:agent 執行心跳 + 中文重點(User 裁示 2026-06-11)**:
 - **5-min 進度心跳**:任何背景 agent / 長 job(Codex/Gemini/Grok、Verilator/Spike/DC、riscv-dv farm…)執行中,**Claude 每 ≤5 分鐘給一次進度提示**(還在跑/已完成/卡住),不可放著不管。**判活看 CPU time 不是只看輸出大小**(`ps -o etimes,time` — elapsed 走但 CPU=0 = 卡死,如本輪 Codex 兩度卡在 `Reading additional input from stdin`)。背景啟 agent 一律 `< /dev/null` 餵空 stdin,避免 headless 卡讀。job 死了要**立刻發現並換手或重起**,不空等。
 - **重點用中文**:給 User 的關鍵結論 / 決策 / 風險 / 進度,**用中文描述**(技術術語、檔名、指令、code 保留原文)。
