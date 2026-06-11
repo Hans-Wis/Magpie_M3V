@@ -203,6 +203,8 @@ python3 ~/project/platform/design-ide/server.py --port 8810 --bind 127.0.0.1   #
 
 ## §8 現況 / 下一步(2026-06-08 更新)
 
+**🧊 DESIGN FREEZE(2026-06-11,User 裁示)**:M1 RTL 凍結於 tag `m1-rtl-freeze-v1.0`(見 [`docs/M1_DESIGN_FREEZE.md`](docs/M1_DESIGN_FREEZE.md))。本線只允許文件/Tier-2 簽核封包工作,**不得再動 `IP/cpu_m1/rtl/`**。效能改版線 = **Magpie_M1A**(`~/project/SOC/Magpie_M1A`,design_id=cpu_m1a,證據與本線硬隔離)。
+
 **TL;DR(2026-06-08,PL 主導 Codex/Gemini 推進)**:flow **0→5.0 全綠**——mem_wrapper(Spike 等效,ADR-0005)、misalign(mcause 4/6)、重跑式 lockstep gate(gate_03_08,補 cached-log 漏洞)、**functional coverage 100%(72/72,gate_04_08)**、**Spyglass lint PASS**(0 error)、**DC synth/PPA trial**(~699MHz / 26298µm² / 15.85mW,TSMC28HPC+)。**176 gates pass,零假造**。
 
 > **⚠️ 下一個 work item(最高優先,新 session 接手)= `BUG-XBOUND-0001`**:riscv-dv 大規模 lockstep(J8)在 commit 5 對 Spike 發散——壓縮指令把對齊推成奇半字後,**連續 cross-boundary 32-bit 取指組裝錯**(`addi@0x0e` 被誤判 illegal)。真 RTL bug,**非 harness**。完整交接 + repro + 修法計畫見 [`docs/reports/bug_xbound_0001/findings.md`](docs/reports/bug_xbound_0001/findings.md)。修法為 delicate cross-boundary RTL(ifu/core,**不交 Spark**),clean-room + ADR + 重驗(176 gates + lockstep + coverage 須不回歸),修好後 resume J8 衝 ≥100k commits。
