@@ -1,25 +1,29 @@
 {
   "artifacts": [
-    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/campaigns/synctrap_100k/summary.json"
+    "flow/v2_pipeline/phase_03_11_stall_xboundary/firmware.S",
+    "flow/v2_pipeline/phase_03_11_stall_xboundary/spike_lockstep.py",
+    "flow/v2_pipeline/phase_03_11_stall_xboundary/lockstep.log",
+    "tests/gates/gate_03_11_stall_xboundary_lockstep.py"
   ],
   "autonomy": "L2",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "gate_03_09_riscvdv_lockstep",
+  "gate": "gate_03_11_stall_xboundary_lockstep",
   "metrics": {
-    "farm_synctrap_100k": "PASS 120/120, 0 fail, 0 waived, 104729 commits, ZERO divergence",
-    "jobs": 6,
-    "milestone": ">=100k sync-trap lockstep via parallel farm",
-    "provenance": "rev 3860f24 cksum de1b876f6905",
-    "sync_traps": "113/120 seeds exercised synchronous traps"
+    "cross_boundary_32bit_instrs": "16",
+    "gate_tests": "6 pass",
+    "isa": "rv32imc_zicsr_zifencei",
+    "matched_commits": "39/39 vs Spike",
+    "open_lead": "DISPROVEN — stall-freeze (i_mem_en=0) + pc_redirect-clear guards hold",
+    "rtl_changed": "none (test-only; verifies existing core.v FSM)",
+    "simulator": "Verilator",
+    "stall_classes": "load-use, mul, div, fwd-redirect(+wrong-path), bwd-redirect"
   },
   "reviewed_by_codex": "none",
   "run": {
-    "command": "dv_farm.py --seeds 120 --jobs 6",
-    "ended": "2026-06-08T23:24:08",
+    "command": "make all; pytest gate_03_11",
     "host": "eda",
-    "id": "run-farm-100k-20260608",
-    "started": "2026-06-08T23:24:08"
+    "simulator": "Verilator+Spike"
   },
   "stage": "dv",
   "status": "pass"

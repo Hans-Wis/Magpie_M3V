@@ -7,12 +7,19 @@
   now corrected.)
 - Follow-on note: the c.lui mismatch (idx59) recorded later was a HARNESS bug in
   `spike_commit.py` (base-norm), not RTL — see `j10_rvc_lui_evidence.md`.
-- **Open lead (NOT a confirmed bug — Layer-1 clue)**: a load-use/muldiv `stall` (or redirect)
-  landing ON a consecutive cross-boundary run holds `cross_assemble`/`residue` while `i_mem_addr`
-  reverts to the held PC, so the resumed `{cur_half_lo, residue}` may use a stale `cur_half_lo`.
-  The narrow arith+RVC farm cannot exercise this (no loads → no load-use stall during a run);
-  full-mix DV would. Action: directed test for stall/redirect × triple cross-boundary before/while
-  widening the DV mix. (Surfaced by Gemini corpus review 2026-06-09; unverified.)
+- **Open lead — RESOLVED / DISPROVEN (2026-06-11, `gate_03_11_stall_xboundary_lockstep`)**: the
+  clue was that a load-use/muldiv `stall` (or redirect) landing ON a consecutive cross-boundary run
+  holds `cross_assemble`/`residue` while `i_mem_addr` reverts to the held PC, so the resumed
+  `{cur_half_lo, residue}` might use a stale `cur_half_lo`. **Not a live bug.** Two guards cover it:
+  (1) a load-use/muldiv stall drives `i_mem_en=0` (`core.v:309`), freezing the prefetched BRAM word
+  so `cur_half_lo` and registered `residue` stay consistent across the stall (FSM `core.v:328-330`
+  holds `cross_assemble` through stalls "so BRAM data stays valid"); (2) `pc_redirect` clears
+  `cross_assemble` entirely (`core.v:313`) and re-warms. Proven empirically: directed program
+  (`flow/v2_pipeline/phase_03_11_stall_xboundary/firmware.S`) drives 16 cross-boundary 32-bit instrs
+  with load-use, mul, div, forward-redirect (+wrong-path suppression) and backward-redirect all
+  landing ON the run, via both the prefetch-armed and redirect-fallback cross paths → **39/39 commits
+  matched Spike, 0 divergence**. (Clue surfaced by Gemini corpus review 2026-06-09; closed by Claude
+  2026-06-11. The riscv-dv arith+RVC farm physically cannot reach this corner, hence the directed gate.)
 - Status (historical, pre-fix): **OPEN** (found 2026-06-08 by riscv-dv large-scale lockstep, J8)
 - Severity: **high** (common code pattern; blocks riscv-dv ≥100k lockstep; correctness)
 - Found by: Codex gpt-5.5 (riscv-dv pyflow → cpu_m1 Verilator → Spike lockstep)
