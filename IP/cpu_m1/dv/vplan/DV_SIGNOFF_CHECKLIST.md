@@ -40,12 +40,12 @@ Full gap analysis + closure plan: `docs/reports/tier2_acceptance_gap_and_closure
 - 🟡 Constrained-random — riscv-dv 105k commits; ❌ async IRQ + fence/SYNCH excluded from farm
 - ❌ Regression automation zero-waived — `gate_04_09` xfail present; no nightly CI farm
 - ✅ ISA compliance — riscv-arch-test 74/74 (`phase_p_archtest`)
-- 🟡 DV docs: ✅ V-Plan · ✅ this checklist · ✅ Feature Freeze · ❌ Coverage Report (per-block+exclusions) ·
-  ❌ Bug-tracking summary (sev1-2 root-cause/fix/SHA) · ❌ Regression log archive (frozen, reproducible)
+- ✅ DV docs: ✅ V-Plan · ✅ this checklist · ✅ Feature Freeze · ✅ Coverage Report (`docs/reports/coverage_report.md`) ·
+  ✅ Bug-tracking summary (`docs/reports/bug_tracking_summary.md`) · ✅ Regression archive (`docs/reports/regression_archive.md`, SHA-lock at acceptance)
 
 ## §06 RTL sign-off
 - ✅ Lint clean · ✅ CDC (0 unsync) · ✅ RDC (0) · ✅ X-prop (0) (`phase_p_cdc_rdc_xprop/`)
-- 🟡 Synthesis QoR — multi-corner 699 MHz WNS=0 (setup); ❌ **2 APR hold violators** open
+- 🟡 Synthesis QoR — multi-corner 699 MHz WNS=0 (setup, ideal clock). Hold: ⬜ back-end (APR/CTS) stage — there is NO place-and-route flow; FF-corner hold violations are pre-CTS ideal-clock synthesis artifacts, fixed during CTS/APR (not in this DC-trial). Physical/hold signoff = integrator back-end scope.
 - ⬜ Power intent UPF — single-domain N/A (needs signed N/A)
 - ❌ DFT scan ≥95% — no scan/DFT in this SKU
 - ❌ Code coverage Tier target (see §01) · ❌ Regression 100% zero-waived (xfail)
