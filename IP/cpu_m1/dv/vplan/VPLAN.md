@@ -1,9 +1,11 @@
 # cpu_m1 Verification Plan (V-Plan) — RV32IMC_Zicsr_Zifencei, M-mode
 
-Rev 0.1 (2026-06-09). Owner: PL (Claude). Authority = Spike per-commit lockstep + pytest gates.
+Rev 0.2 (2026-06-11). Owner: PL (Claude). Authority = Spike per-commit lockstep + pytest gates.
 This V-Plan maps each RTL feature → test → coverage, with HONEST status. It is the customer-facing
-trace matrix the 3-agent review (Grok/Codex/Gemini) flagged as MISSING. Targets the customer standard
-**Tier-1 (Consumer/IoT) for the RV32IMC SKU-1 scope** (ADR-0012); higher tiers are out of scope here.
+trace matrix the agent reviews flagged as MISSING. Acceptance target = **Tier-2 (Industrial), RV32IMC
+SKU-1** per `FEATURE_FREEZE.md`. Current state is **below Tier-2** — see the full gap+closure plan in
+`docs/reports/tier2_acceptance_gap_and_closure.md` and the per-row status in `DV_SIGNOFF_CHECKLIST.md`
+(rev 0.2). Optional A/PMP and SoC peripherals (CLINT/PLIC/UART/Debug) are scoped in `FEATURE_FREEZE.md`.
 
 ## Scope (and explicit exclusions — required for justified coverage)
 - IN: RV32I, M, C, Zicsr (M-mode CSRs), Zifencei (FENCE.I), sync traps (illegal/ecall/ebreak/mret),

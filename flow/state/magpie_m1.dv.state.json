@@ -1,30 +1,28 @@
 {
   "artifacts": [
-    "flow/v2_pipeline/phase_03_11_stall_xboundary/firmware.S",
-    "flow/v2_pipeline/phase_03_11_stall_xboundary/spike_lockstep.py",
-    "flow/v2_pipeline/phase_03_11_stall_xboundary/lockstep.log",
-    "tests/gates/gate_03_11_stall_xboundary_lockstep.py"
+    "docs/reports/tier2_acceptance_gap_and_closure.md",
+    "docs/reports/commercial_signoff_evidence_pack.md",
+    "IP/cpu_m1/dv/vplan/FEATURE_FREEZE.md",
+    "IP/cpu_m1/dv/vplan/DV_SIGNOFF_CHECKLIST.md",
+    "IP/cpu_m1/dv/vplan/VPLAN.md"
   ],
   "autonomy": "L2",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "gate_03_11_stall_xboundary_lockstep",
+  "gate": "tier2_acceptance_closure",
   "metrics": {
-    "cross_boundary_32bit_instrs": "16",
-    "gate_tests": "6 pass",
-    "isa": "rv32imc_zicsr_zifencei",
-    "matched_commits": "39/39 vs Spike",
-    "open_lead": "DISPROVEN — stall-freeze (i_mem_en=0) + pc_redirect-clear guards hold",
-    "rtl_changed": "none (test-only; verifies existing core.v FSM)",
-    "simulator": "Verilator",
-    "stall_classes": "load-use, mul, div, fwd-redirect(+wrong-path), bwd-redirect"
+    "biggest_blocker": "whole-core toggle 62.93% (need 95%) + gate_04_09 xfail",
+    "docs_closed_this_session": "gap+closure plan, pack honesty reconcile, FEATURE_FREEZE, VPLAN+checklist rev0.2",
+    "eda_gated_remaining": "toggle95, branch/expr close, CDC/RDC/Xprop, formal-coverage90, DFT, expanded-lockstep, through-trap, hold-violators",
+    "genuinely_closed": "lint 0/0, VC Formal 40/40, arch-test 74/74, 105k-commit lockstep 0-div",
+    "paths": "full Tier-2 ~4-6wk | Tier-2-Narrow core-only ~2wk",
+    "verdict": "NOT Tier-2 signable today (REJECT) — reconciled to honest baseline"
   },
   "reviewed_by_codex": "none",
   "run": {
-    "command": "make all; pytest gate_03_11",
-    "host": "eda",
-    "simulator": "Verilator+Spike"
+    "command": "gemini+grok customer audit; doc reconciliation",
+    "host": "eda"
   },
   "stage": "dv",
-  "status": "pass"
+  "status": "planned"
 }

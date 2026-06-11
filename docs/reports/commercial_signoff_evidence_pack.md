@@ -1,14 +1,23 @@
 # Magpie_M1 — Commercial Signoff Evidence Pack
 
-> Customer-facing signoff evidence for **Magpie_M1**, a **RV32IMC, M-mode-only embedded CPU IP +
-> subsystem**. Mapped to the RISC-V 商品化 IP Coverage Signoff standard (7 sections). **Honest
-> positioning**: M1 is a **correctness-qualified, compliance-100%, formally-proven embedded core**
-> delivered as a core *and* an FPGA/ASIC/RTOS subsystem — with a documented UVM/RVA22 boundary (different
-> SKU, not a gap).
+> ⚠️ **Tier-2 acceptance status (2026-06-11): NOT signable today.** This pack is an **evidence
+> inventory**, not a Tier-2 sign-off claim. An independent customer-acceptance review (Gemini + Grok)
+> found genuine closure on the execution path but **real whole-core coverage gaps and missing sign-off
+> deliverables**. Read this pack together with the authoritative gap+closure plan:
+> [`tier2_acceptance_gap_and_closure.md`](tier2_acceptance_gap_and_closure.md). Where a row below says
+> "CLOSED", it is qualified there as **per-island vs whole-core**. Do not read any §n cell as Tier-2
+> customer acceptance.
+
+> Customer-facing evidence for **Magpie_M1**, a **RV32IMC, M-mode-only embedded CPU IP + subsystem**.
+> Mapped to the RISC-V 商品化 IP Coverage Signoff standard (Tier-2 Industrial target). **Honest
+> positioning**: M1 is a **correctness-qualified (Spike lockstep), compliance-100% (arch-test 74/74),
+> formally-proven (VC Formal 40/40) embedded core** delivered as a core *and* an FPGA/ASIC/RTOS
+> subsystem — but **below Tier-2 customer acceptance** pending the closure items in the gap doc.
 >
-> **Reproducible finality**: every numeric claim is produced by a re-runnable gate (`tests/gates/`).
-> `python3 -m pytest tests/gates/ -q` reproduces the pack. Date: 2026-06-10 · Authority = Spike per-commit
-> lockstep + pytest gates.
+> **Reproducibility**: the *core-flow* numeric claims are produced by re-runnable gates (`tests/gates/`,
+> `python3 -m pytest tests/gates/ -q`). NOTE: the SoC-subsystem rows (debug / RV32A / PMP / PLIC / UART)
+> are **directed sim only — not yet gate-backed or lockstep/coverage-closed** (see gap doc §1, §3).
+> Date: 2026-06-10 (rev 2026-06-11 honesty reconciliation) · Authority = Spike per-commit lockstep + pytest gates.
 
 ## Product summary
 
@@ -27,15 +36,22 @@
 
 | # | Standard (Tier-2) | M1 status | Evidence (re-runnable) |
 |---|---|---|---|
-| **01 Code Coverage** | line/branch/expr/toggle/FSM | ✅ **CLOSED** | 13 island modules at Tier-2 (line 100 · branch 100 · expr ≥95 · toggle ≥95 · FSM 100), dual-number RAW+ADJUSTED. `gate_p02..p14`; integration `gate_p15..p19` (merged core.v branch 96.0%, residual attributed). |
+| **01 Code Coverage** | line/branch/expr/toggle/FSM | 🟡 **PARTIAL — islands closed, whole-core gap** | **Per-island (`gate_p02..p14`)**: 13 modules at Tier-2 (line 100 · branch 100 · expr ≥95 · toggle ≥95 · FSM 100). **Whole-core (the number a customer signs)**: line ~95.95%, branch ~96%, expr ~79%, **toggle 62.93%** — below Tier-2 (100/100/95/95). Toggle tracked behind `gate_04_09` `@pytest.mark.xfail`. Close via stimulus + §04 waivers; see gap doc §3. |
 | **02 Functional Coverage** | riscvISACOV + custom covergroup | ✅ **CLOSED** | Custom functional 72/72 bins (`gate_04_08`) + **riscvISACOV-mapped operand 103/103, value 12/12, immediate 23/23 = 100% effective** (1 justified mem-bound exclusion). `docs/reports/riscvisacov_equivalence.md`. |
 | **03 Formal / SVA** | assert property formal-proven | ✅ **CLOSED** | **VC Formal FPV: core 22/22 PROVEN** (alu/forward/lsu/csr/rfu) **+ AXI4-Lite 18/18 PROVEN**, 0 CEX. `docs/reports/formal_assertions.md`. |
 | **04 Coverage Exclusion / Waiver** | % after justified exclusion, DB retained | ✅ **CLOSED** | Dual-number RAW+ADJUSTED; waiver files RTL-verified, structural-only, `spike_impact:none`, **producer≠approver**; green-wash rejected (1 caught: 45%→100% real). |
 | **05 DV Delivery (UVM/RVVI)** | UVM TB (≥80% reuse) + RVVI lockstep | ⚪ **DOCUMENTED DEVIATION** | Directed Verilog unit TBs + **Spike per-commit lockstep** (PC/GPR/CSR every retire) + **riscv-dv** + **official riscv-arch-test 74/74**. RVVI-equivalent audit trail; UVM wrapper is a funded Phase-B enabler, not a correctness blocker. `docs/reports/dv_methodology_equivalence.md`. |
 | **06 Android RVA22** | RV64IMAFDC + Zb* + Sv39 + Sstc | ⚪ **DIFFERENT SKU** | M1 is intentionally RV32IMC M-only embedded. The applicable subset (**riscv-arch-test RV32IMC compliance**) is **CLOSED 74/74**; RVA22 (RV64/MMU/FP) is a separate application-core product, not an M1 gap. |
-| **07 RTL Sign-off** | lint clean · multi-corner QoR · UPF | ✅ **CLOSED** (UPF n/a) | Lint **0/0** (`gate_05_00`). **Multi-corner DC** TT/SLOW/FAST all 699.30 MHz WNS=0 (SLOW signoff −10% margin met), power 13.1/16.1/17.5 mW (`multicorner_qor.md`). **FPGA passing bitstream** @ 50 MHz. UPF deferred (no power domains in this SKU). |
+| **07 RTL Sign-off** | lint · CDC/RDC/X-prop · multi-corner QoR · DFT · UPF | 🟡 **PARTIAL** | ✅ Lint **0/0** (`gate_05_00`). ✅ **Multi-corner DC** TT/SLOW/FAST 699.30 MHz **WNS=0 (setup)**, power 13.1/16.1/17.5 mW (`multicorner_qor.md`). ⬜ UPF n/a (single power domain — needs signed N/A). **Open**: ❌ **2 APR hold violators** (WNS=0 is setup only), ❌ **no CDC / RDC / X-prop report**, ❌ **no DFT scan** (`multicorner_qor.md` states "no scan/DFT"). Not RTL-signoff-complete; see gap doc §3. |
 
 ## SoC / subsystem evidence (beyond the 7-section core standard)
+
+> **Maturity caveat (2026-06-11):** "✅ verified" below means **directed simulation passed** (and, where
+> noted, Spike lockstep on the directed program). It does **NOT** mean gate-backed regression, coverage
+> closure, or constrained-random lockstep. There are **no `tests/gates/` gates** for debug / RV32A / PMP /
+> PLIC / UART yet, so these rows are not reproduced by `pytest tests/gates/`. For Tier-2 acceptance each
+> must be either promoted to a gated lockstep+coverage phase **or** declared SoC-integrator scope in the
+> Feature Freeze. See `tier2_acceptance_gap_and_closure.md` §1/§3.
 
 | Capability | Status | Evidence |
 |---|---|---|

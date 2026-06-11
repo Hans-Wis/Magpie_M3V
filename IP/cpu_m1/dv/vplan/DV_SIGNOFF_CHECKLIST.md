@@ -1,42 +1,64 @@
-# cpu_m1 DV Sign-off Checklist — Tier-1 (Consumer/IoT), RV32IMC SKU-1
+# cpu_m1 DV Sign-off Checklist — Tier-2 (Industrial), RV32IMC SKU-1
 
-Rev 0.1 (2026-06-09). Honest status per 3-agent review (Grok/Codex/Gemini) vs customer standard.
-Legend: ✅ done · 🟡 partial · ❌ missing · ⬜ excluded(documented). NOT a signoff claim until all
-non-excluded rows are ✅ and an independent approver (producer≠approver) signs.
+Rev 0.2 (2026-06-11). Reconciled to current state after the Gemini+Grok customer-acceptance review.
+Authority = Spike per-commit lockstep + pytest gates. Legend: ✅ done · 🟡 partial · ❌ missing ·
+⬜ excluded (documented, see `FEATURE_FREEZE.md`). **Not a sign-off claim** until all non-excluded rows
+are ✅ and an independent approver (producer≠approver) signs at a locked git SHA.
+Full gap analysis + closure plan: `docs/reports/tier2_acceptance_gap_and_closure.md`.
 
-## Code coverage (after justified exclusions)
-- ❌ Line 100% (now ~77–95%)
-- ❌ Branch ≥95% (not separately measured)
-- ❌ Expr/Condition ≥90% (not measured)
-- ❌ Toggle ≥90% (now ~63–74%; WS6 in progress, gate_04_09 xfail; RAW + adjusted dual-number per Grok)
-- ❌ FSM state+arc 100% (not separately measured)
+## §01 Code coverage (whole-core — the number the customer signs)
+- ❌ Line 100% — whole-core ~95.95% (1374/1432)
+- ❌ Branch 100% — whole-core ~96% (`gate_p19`)
+- ❌ Expr/Condition ≥95% — whole-core ~79% (`gate_p19` floor 78%)
+- ❌ Toggle ≥95% — whole-core **62.93%** (12745/20252); tracked `gate_04_09` xfail
+- ✅ FSM state+arc 100% — per-island (`gate_p02..p14`)
+- NOTE: per-island 13 modules ARE at Tier-2 (line/branch 100, expr/toggle ≥95, FSM 100). Island ✅ ≠ core ✅.
 
-## Functional coverage
-- 🟡 ISA coverage (100% own coverpoints; ❌ riscvISACOV bins not used)
-- 🟡 Hazard cross ≥80% (M-unit done; broader RAW/WAW/WAR×forward×flush shallow)
-- 🟡 Priv/IRQ/CSR ≥90% (M-mode only; ⬜ S/U/MMU excluded)
-- 🟡 Corner operands ≥85% (ALU/MD corners; no full random sweep)
+## §02 Functional coverage
+- ✅ ISA instruction (riscvISACOV-mapped 100%, `riscvisacov_equivalence.md`)
+- 🟡 Compressed C (mapped; per-mnemonic RVC bins missing)
+- ✅ M corner (mapped 100%)
+- 🟡 A atomic (RV32A directed LR/SC+AMO; ungated — optional config)
+- 🟡 Pipeline hazard cross (micro-stalls; ISA-level RAW/WAW/WAR cross missing)
+- 🟡 Priv/IRQ/CSR (mapped; per-CSR address bins missing)
+- ✅ Corner operands (mapped 100%)
 
-## Methodology / TB
-- 🟡 Reference lockstep (Spike per-commit PC/GPR/CSR via Python harness; ❌ NOT RVVI SV / UVM)
-- 🟡 Constrained random (riscv-dv, sync mix incl real CSR; ⬜ async IRQ Gold-deferred; ❌ pyflow fence-gen)
-- ✅ Regression automation (pytest gates, 189 pass/1 xfail; ❌ no nightly CI farm/coverage-DB merge)
-- ❌ UVM env (agent/monitor/scoreboard, reuse ≥80%) — justified-equivalent argued, customer-mandate = SKU-2
+## §03 Formal / static
+- ✅ SVA Pipeline+CSR proven — **VC Formal 40/40 properties proven, 0 CEX** (`formal_assertions.md`)
+- ❌ Formal coverage closure ≥90% — no FCA/reachability metric run
+- ✅ Lint clean 0 error / 0 warn (`gate_05_00`)
+- ❌ CDC report · ❌ RDC report · ❌ X-prop report
 
-## Formal / static signoff
-- ❌ SVA key-module proofs (decode legality, ALU eq, x0, CSR WARL, valid-ready stability, no-X-control)
-- ✅ Lint base PASS (0 error); ❌ 0-warn (24 advisory, ADR-0006)
-- ❌ CDC report (single-clock → low risk but report MISSING) · ❌ RDC · ❌ X-prop
-- 🟡 Synthesis (DC TRIAL ~699MHz, 2 hold violators, single corner) — ❌ multi-corner signoff QoR
-- ⬜ DFT scan / power-intent (SKU-1 excluded, SKU-2 roadmap)
+## §04 Waiver
+- ✅ JSON waivers retained, dual-number RAW+ADJUSTED, structural-only, `spike_impact:none`
+- 🟡 Written waivers for the whole-core line/branch/expr/toggle residuals — to be authored per-exclusion
+- ❌ Human DV-lead review signature artifact
 
-## Deliverables
-- 🟡 V-Plan (this dir, rev 0.1) · ❌ final Coverage Report (per-block + exclusions)
-- 🟡 Bug-tracking summary (docs/v2_pipeline_bug_taxonomy.md; no severity/fix-SHA/regress matrix)
-- ❌ Regression log archive (frozen, reproducible) · ❌ DV signoff checklist SIGNED · ❌ Databook
-- 🟡 Integration guide (PENDING, P3)
+## §05 DV delivery
+- ⬜ UVM/SV TB reuse ≥80% — directed Verilog TBs (deviation; equivalence memo required)
+- 🟡 Reference lockstep — Spike per-commit PC/GPR/CSR (not RVVI shim); ❌ through-trap not commit-level (`--priv=m`)
+- 🟡 Constrained-random — riscv-dv 105k commits; ❌ async IRQ + fence/SYNCH excluded from farm
+- ❌ Regression automation zero-waived — `gate_04_09` xfail present; no nightly CI farm
+- ✅ ISA compliance — riscv-arch-test 74/74 (`phase_p_archtest`)
+- 🟡 DV docs: ✅ V-Plan · ✅ this checklist · ✅ Feature Freeze · ❌ Coverage Report (per-block+exclusions) ·
+  ❌ Bug-tracking summary (sev1-2 root-cause/fix/SHA) · ❌ Regression log archive (frozen, reproducible)
 
-## Honest verdict
-**M1 is BELOW Tier-1 today** (development-qualified exemplar). Tier-1 RV32IMC is reachable in ~8–12
-months with the items above closed + a written exclusion list. M1 does NOT claim Tier-2/3, ASIL-D,
-Android RVA22, riscvISACOV-met, RVVI/UVM-compliant, lint-clean(0-warn), or PPA-signoff.
+## §06 RTL sign-off
+- ✅ Lint clean · ❌ CDC · ❌ RDC · ❌ X-prop
+- 🟡 Synthesis QoR — multi-corner 699 MHz WNS=0 (setup); ❌ **2 APR hold violators** open
+- ⬜ Power intent UPF — single-domain N/A (needs signed N/A)
+- ❌ DFT scan ≥95% — no scan/DFT in this SKU
+- ❌ Code coverage Tier target (see §01) · ❌ Regression 100% zero-waived (xfail)
+- ✅ SVA/Formal proven (40/40)
+- 🟡 RTL feature freeze — ✅ `FEATURE_FREEZE.md`; ❌ Databook/Register-Map freeze doc
+
+## §08 Embedded integration (SoC-integrator scope unless contracted in)
+- 🟡 AXI4-Lite (FPV 18/18 proven) · 🟡 CLINT/PLIC/UART directed · 🟡 Debug DM/DTM/Trigger directed+OpenOCD smoke
+- ❌ none gated/lockstep-closed — see `FEATURE_FREEZE.md` (out-of-scope) or promote to gates
+
+## Honest verdict (2026-06-11)
+**M1 is NOT Tier-2 signable today.** Real closure exists (lint 0/0, formal 40/40, arch-test 74/74,
+105k-commit lockstep 0-divergence, multi-corner DC); the blockers are **whole-core coverage (toggle 63%,
+expr 79%, branch/line <100%) + the xfail, scope-carved lockstep + through-trap granularity, CDC/RDC/X-prop,
+formal coverage, and the missing DV deliverable docs**. Two honest paths in `FEATURE_FREEZE.md`:
+full Tier-2 (~4–6 wks) or Tier-2-Narrow core-only (~2 wks). No row above is fake-green.
