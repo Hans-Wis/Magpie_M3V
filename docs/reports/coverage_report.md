@@ -133,3 +133,13 @@ PMP-CSR 1280 + DEBUG-CSR 615 (both **waivable**, disabled in default SKU) + TRAP
 **Remaining to 95% (in-SKU):** u_ras 624 (directed call/return), u_csr M-CSR/TRAP storage ~571 (directed
 walking CSR writes + trap variety), u_csr other 495, ifu/bp/idu/cdec/rfu corner. Est ~1 day directed.
 Status: CSR-injection + full structural waiver done (66.4% in-SKU); RAS + CSR-write directed pending.
+
+### 2.8 RAS (u_ras 624) — sub-program lever blocked by pyflow hang (2026-06-11)
+
+Attempted the native RAS lever: raise riscv-dv `--num_of_sub_program` (0→8, then 2) so the generator
+emits a call graph (jal ra / ret) to toggle the return-address stack. **The vendored riscv-dv PYFLOW
+generator HANGS with num_of_sub_program > 0** (gen process at 0 CPU, no asm, >5 min — a riscv-dv pyflow
+limitation, not a cpu_m1 issue). Recorded in `inject_ras_cov.py`. FALLBACK (next step): inline
+control-flow-neutral call/return injection (`jal ra,2f; 1: beq x0,x0,3f; 2: jalr x0,0(ra); 3:`) — same
+proven lockstep-safe mechanism as fence/CSR injection — for RAS push/pop; mispredict-recovery needs a
+return target != RAS top. u_ras 624 remains open pending this fallback (or a VCS gen path).
