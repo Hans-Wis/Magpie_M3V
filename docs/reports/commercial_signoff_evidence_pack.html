@@ -1,0 +1,218 @@
+<!doctype html><html lang='zh-Hant'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><link rel='preconnect' href='https://fonts.googleapis.com'><link href='https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap' rel='stylesheet'><title>Magpie_M1 — commercial signoff evidence pack</title><style>
+:root{--ink:#16243d;--mut:#6b7488;--line:#dde3ec;--paper:#fbfaf7;--code:#f3f6fb;
+--green:#3b6d11;--coral:#d85a30;--blue:#1565c0;--grid:#eef1f6;
+--mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;--sans:'IBM Plex Sans',system-ui,'Noto Sans TC',sans-serif;}
+*{box-sizing:border-box;}body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.65;
+background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/22px 22px,
+linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/22px 22px,var(--paper);}
+.wrap{max-width:920px;margin:0 auto;padding:36px 24px 90px;}
+header{border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:8px;}
+.kick{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--coral);margin:0 0 8px;}
+h1{font-size:26px;font-weight:600;margin:0 0 6px;}
+.meta{font-family:var(--mono);font-size:12px;color:var(--mut);margin-top:10px;}
+.meta span{margin-right:16px;}
+h2{font-size:12px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#0c447c;
+border-bottom:1px solid var(--line);padding-bottom:7px;margin:34px 0 14px;}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 16px;min-width:120px;}
+.kpi .v{font-size:22px;font-weight:600;font-family:var(--mono);}
+.kpi .l{font-size:11px;color:var(--mut);font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+th{font-family:var(--mono);font-size:11px;color:#0c447c;background:var(--code);letter-spacing:.03em;}
+tr:last-child td{border-bottom:none;}.mono{font-family:var(--mono);font-size:12px;}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle;}
+.tl{list-style:none;margin:14px 0;padding:0;}
+.tl li{position:relative;padding:0 0 14px 26px;border-left:2px solid var(--line);margin-left:6px;}
+.tl li:last-child{border-left-color:transparent;}
+.tl li::before{content:"";position:absolute;left:-6px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--blue);}
+.tl .ts{font-family:var(--mono);font-size:11px;color:var(--mut);}
+.tl .act{font-weight:600;}.tl .dt{color:#33415c;font-size:13px;}
+.note{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:12.5px;color:#33415c;margin:12px 0;}
+footer{margin-top:46px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--mut);}
+table{border-collapse:collapse;margin:14px 0;font-size:0.92em;width:100%}th,td{border:1px solid #d0d0d8;padding:6px 9px;text-align:left;vertical-align:top}th{background:#f0f2f7;font-weight:600}h2{border-bottom:2px solid #4a6;padding-bottom:4px;margin-top:32px}h3{color:#246;margin-top:22px}blockquote{border-left:4px solid #4a6;background:#f6faf7;padding:8px 14px;margin:14px 0;color:#345}code{background:#eef;padding:1px 4px;border-radius:3px}
+.wrap{max-width:1000px;}</style></head><body><div class='wrap'><h1 id="magpie_m1-commercial-signoff-evidence-pack">Magpie_M1 — Commercial Signoff Evidence Pack</h1>
+<blockquote>
+<p>Customer-facing signoff evidence for <strong>Magpie_M1</strong>, a <strong>RV32IMC, M-mode-only embedded CPU IP +
+subsystem</strong>. Mapped to the RISC-V 商品化 IP Coverage Signoff standard (7 sections). <strong>Honest
+positioning</strong>: M1 is a <strong>correctness-qualified, compliance-100%, formally-proven embedded core</strong>
+delivered as a core <em>and</em> an FPGA/ASIC/RTOS subsystem — with a documented UVM/RVA22 boundary (different
+SKU, not a gap).</p>
+<p><strong>Reproducible finality</strong>: every numeric claim is produced by a re-runnable gate (<code>tests/gates/</code>).
+<code>python3 -m pytest tests/gates/ -q</code> reproduces the pack. Date: 2026-06-10 · Authority = Spike per-commit
+lockstep + pytest gates.</p>
+</blockquote>
+<h2 id="product-summary">Product summary</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ISA</td>
+<td><strong>RV32IMC</strong> (default) / <strong>RV32IMAC</strong> (optional A) + optional <strong>PMP</strong>, M-mode only; <strong>official riscv-arch-test 74/74 = 100%</strong></td>
+</tr>
+<tr>
+<td>Microarch</td>
+<td>4-stage pipeline + branch predictor + RAS + RV32C cross-boundary prefetch</td>
+</tr>
+<tr>
+<td>Interfaces</td>
+<td>native valid/ready (I/D) <strong>+ AXI4-Lite master</strong> (M_AXI_I/D, formally proven)</td>
+</tr>
+<tr>
+<td>Subsystem</td>
+<td><strong>FPGA</strong> (PYNQ-Z2 bitstream @ 50 MHz) · <strong>ASIC</strong> (CPU+AXI+TSMC28 SRAM, 699 MHz) · <strong>RTOS</strong> (CLINT+PLIC+UART) · <strong>JTAG debug</strong> (OpenOCD/GDB)</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td><strong>CoreMark 2.690/MHz</strong>, IPC 0.779 (3-way cross-checked; competitive vs Ibex/Cortex-M0+/ESP32-C3)</td>
+</tr>
+<tr>
+<td>Process</td>
+<td>TSMC 28HPC+ — <strong>multi-corner</strong> DC: 699.30 MHz (TT/SLOW/FAST, WNS=0) · ~26.8 kµm² · 13–17.5 mW</td>
+</tr>
+<tr>
+<td>Verification authority</td>
+<td>Spike per-commit lockstep + 53 pytest gates (273 pass / 1 xfail)</td>
+</tr>
+<tr>
+<td>RTL quality</td>
+<td>Spyglass lint <strong>0 errors / 0 warnings</strong>; 2 spec bugs found+fixed via lint</td>
+</tr>
+</tbody>
+</table>
+<h2 id="section-by-section-evidence-vs-the-standard">Section-by-section evidence vs the standard</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Standard (Tier-2)</th>
+<th>M1 status</th>
+<th>Evidence (re-runnable)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>01 Code Coverage</strong></td>
+<td>line/branch/expr/toggle/FSM</td>
+<td>✅ <strong>CLOSED</strong></td>
+<td>13 island modules at Tier-2 (line 100 · branch 100 · expr ≥95 · toggle ≥95 · FSM 100), dual-number RAW+ADJUSTED. <code>gate_p02..p14</code>; integration <code>gate_p15..p19</code> (merged core.v branch 96.0%, residual attributed).</td>
+</tr>
+<tr>
+<td><strong>02 Functional Coverage</strong></td>
+<td>riscvISACOV + custom covergroup</td>
+<td>✅ <strong>CLOSED</strong></td>
+<td>Custom functional 72/72 bins (<code>gate_04_08</code>) + <strong>riscvISACOV-mapped operand 103/103, value 12/12, immediate 23/23 = 100% effective</strong> (1 justified mem-bound exclusion). <code>docs/reports/riscvisacov_equivalence.md</code>.</td>
+</tr>
+<tr>
+<td><strong>03 Formal / SVA</strong></td>
+<td>assert property formal-proven</td>
+<td>✅ <strong>CLOSED</strong></td>
+<td><strong>VC Formal FPV: core 22/22 PROVEN</strong> (alu/forward/lsu/csr/rfu) <strong>+ AXI4-Lite 18/18 PROVEN</strong>, 0 CEX. <code>docs/reports/formal_assertions.md</code>.</td>
+</tr>
+<tr>
+<td><strong>04 Coverage Exclusion / Waiver</strong></td>
+<td>% after justified exclusion, DB retained</td>
+<td>✅ <strong>CLOSED</strong></td>
+<td>Dual-number RAW+ADJUSTED; waiver files RTL-verified, structural-only, <code>spike_impact:none</code>, <strong>producer≠approver</strong>; green-wash rejected (1 caught: 45%→100% real).</td>
+</tr>
+<tr>
+<td><strong>05 DV Delivery (UVM/RVVI)</strong></td>
+<td>UVM TB (≥80% reuse) + RVVI lockstep</td>
+<td>⚪ <strong>DOCUMENTED DEVIATION</strong></td>
+<td>Directed Verilog unit TBs + <strong>Spike per-commit lockstep</strong> (PC/GPR/CSR every retire) + <strong>riscv-dv</strong> + <strong>official riscv-arch-test 74/74</strong>. RVVI-equivalent audit trail; UVM wrapper is a funded Phase-B enabler, not a correctness blocker. <code>docs/reports/dv_methodology_equivalence.md</code>.</td>
+</tr>
+<tr>
+<td><strong>06 Android RVA22</strong></td>
+<td>RV64IMAFDC + Zb* + Sv39 + Sstc</td>
+<td>⚪ <strong>DIFFERENT SKU</strong></td>
+<td>M1 is intentionally RV32IMC M-only embedded. The applicable subset (<strong>riscv-arch-test RV32IMC compliance</strong>) is <strong>CLOSED 74/74</strong>; RVA22 (RV64/MMU/FP) is a separate application-core product, not an M1 gap.</td>
+</tr>
+<tr>
+<td><strong>07 RTL Sign-off</strong></td>
+<td>lint clean · multi-corner QoR · UPF</td>
+<td>✅ <strong>CLOSED</strong> (UPF n/a)</td>
+<td>Lint <strong>0/0</strong> (<code>gate_05_00</code>). <strong>Multi-corner DC</strong> TT/SLOW/FAST all 699.30 MHz WNS=0 (SLOW signoff −10% margin met), power 13.1/16.1/17.5 mW (<code>multicorner_qor.md</code>). <strong>FPGA passing bitstream</strong> @ 50 MHz. UPF deferred (no power domains in this SKU).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="soc-subsystem-evidence-beyond-the-7-section-core-standard">SoC / subsystem evidence (beyond the 7-section core standard)</h2>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Status</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AXI4-Lite master</strong></td>
+<td>✅ verified</td>
+<td>native-vs-AXI commit traces byte-identical @0/3 wait states; FPV 18/18 PROVEN. <code>flow/v2_pipeline/phase_p_axi</code>.</td>
+</tr>
+<tr>
+<td><strong>FPGA subsystem</strong></td>
+<td>✅ deployable</td>
+<td>PYNQ-Z2 (xc7z020) <strong>passing bitstream @ 50 MHz</strong>, boot ROM→BRAM→LED blink. <code>flow/fpga/pynq_z2/system_pynq_m1.bit</code>.</td>
+</tr>
+<tr>
+<td><strong>ASIC subsystem</strong></td>
+<td>✅ verified</td>
+<td>CPU+AXI+TSMC28 1RW1R SRAM macro, boot→MMIO PASS; DC 699.30 MHz, 42 682 µm². <code>flow/v2_pipeline/phase_p_asic</code>.</td>
+</tr>
+<tr>
+<td><strong>RTOS subsystem (CLINT+PLIC+UART)</strong></td>
+<td>✅ verified</td>
+<td>CLINT MTIP/MSIP (ADR-0019, mcause 0x80000007/3) + PLIC MEIP (ADR-0020, mcause 0x8000000b, claim/complete deasserts) + UART console (string captured); <code>cpu_m1_soc_top</code>, directed + highest-risk-flush corner PASS, no regression. <code>phase_05_02</code>/<code>phase_05_03</code>.</td>
+</tr>
+<tr>
+<td><strong>Debug (RISC-V v0.13.2)</strong></td>
+<td>✅ verified</td>
+<td>DM + DTM (JTAG) + core debug-mode + Trigger module (ADR-0021/0022). <strong>Real OpenOCD</strong> over JTAG: TAP enumerated, core examined, halt/resume/single-step, GPR/CSR R+W, <strong>HW breakpoint</strong> (<code>halted due to breakpoint</code>) + RV32C-cross-boundary trigger corner. SW+HW breakpoints + watchpoints. <code>phase_06_*</code>.</td>
+</tr>
+<tr>
+<td><strong>RV32A atomics (optional)</strong></td>
+<td>✅ verified</td>
+<td>LR/SC + AMO via parameter <code>RV32A</code> (ADR-0023). RV32A=1: arch-test 74/74 + directed LR/SC + all AMO + misaligned→mcause6 + stall-plus-IRQ reservation corner + Spike lockstep. <code>phase_07_00</code>. (RV32A=0 default == original.)</td>
+</tr>
+<tr>
+<td><strong>PMP (optional)</strong></td>
+<td>✅ verified</td>
+<td>up to 8 regions via <code>PMP_ENTRIES</code> (ADR-0024, adapted ibex_pmp.sv Apache-2.0). PMP=8: directed TOR/NA4/NAPOT R/W/X allow+deny → access fault mcause 1/5/7 + mtval + lowest-index priority + locked-M deny + fetch-fault-on-RVC precise mepc. <code>phase_07_10</code>.</td>
+</tr>
+<tr>
+<td><strong>Configurability</strong></td>
+<td>✅ verified</td>
+<td>ibex-style params RV32A (0/1) + PMP_ENTRIES (0/4/8); per-config matrix re-verified: default RV32IMC == original (273 gates + arch-test 74/74), RV32IMAC + PMP=8 each pass. Customer picks PPA/area config.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="honest-3-layer-positioning">Honest 3-layer positioning</h2>
+<p><strong>Closed (truthfully claimable today):</strong>
+- §01 Tier-2 structural coverage (13 islands) + Spike-lockstep integration · §02 functional/riscvISACOV ·
+  §03 VC Formal (40/40 proven) · §04 waiver discipline · §07 multi-corner DC + Spyglass 0/0.
+- <strong>Official riscv-arch-test 74/74 (RV32IMC compliance)</strong>; 2 RV32C bugs + 1 green-wash + 2 spec bugs caught.
+- <strong>AXI4-Lite</strong> (proven) · <strong>FPGA bitstream</strong> · <strong>ASIC subsystem</strong> · <strong>RTOS subsystem (CLINT+PLIC+UART)</strong> ·
+  <strong>RISC-V Debug</strong> (DM/DTM/trigger, real OpenOCD: halt/step/HW-breakpoint/watchpoint) · CoreMark 2.690/MHz.
+- <strong>Configurable ISA</strong>: RV32IMC (default == original) / <strong>RV32IMAC</strong> (optional A) + optional <strong>PMP</strong> — each
+  config independently re-verified (default == original on the full corpus); customer picks by PPA/area.</p>
+<p><strong>Near-term closeable (funded increments):</strong>
+- ASIC SRAM tiling to 16 KB · FPGA pipelining to clear 83 MHz · whole-core riscv-dv ≥100k-commit campaign ·
+  end-to-end OpenOCD-on-FPGA · debug trigger scale-up (more triggers / SBA / program buffer).</p>
+<p><strong>Deliberate non-goals (unless funded):</strong>
+- Full UVM/SV + RVVI-standard interface (§05) · RVA22 application profile / RV64 / MMU / FP (§06) ·
+  full UPF power-domain methodology (§07) · multi-port AXI4 bursts.</p>
+<h2 id="how-to-reproduce">How to reproduce</h2>
+<pre><code>python3 -m pytest tests/gates/ -q                 # 53 gates (273 pass / 1 xfail)
+# arch-test 74/74, AXI equiv, formal, multi-corner, CLINT directed, FPGA bitstream, ASIC DC:
+#   flow/v2_pipeline/phase_p_archtest | phase_p_axi | phase_p_formal | phase_p_multicorner_dc
+#   phase_05_02_clint_directed | ../fpga/pynq_z2 | phase_p_asic
+</code></pre>
+<p>Coverage DBs, waivers (<code>IP/cpu_m1/dv/cov/waivers/</code>), ADRs (<code>docs/adr/0001..0019</code>), lockstep traces,
+formal results, the FPGA bitstream, and the design report (<code>magpie_m1_design_report.html</code>) are retained
+for customer audit.</p></div></body></html>

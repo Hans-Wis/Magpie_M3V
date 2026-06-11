@@ -10,5 +10,5 @@ corner mepc=000000f4
 PASS: CLINT directed basic_timer mcause=80000007 mepc=00000066; software mcause=80000003 mepc=000000a0; corner mcause=80000007 mepc=000000f4
 - tb_clint_directed.v:217: Verilog $finish
 - S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 12us; walltime 0.002 s; speed 5.459 ms/s
+- Verilator: $finish at 12us; walltime 0.002 s; speed 5.449 ms/s
 - Verilator: cpu 0.002 s on 1 threads; allocated 17 MB

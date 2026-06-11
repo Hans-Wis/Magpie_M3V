@@ -1,42 +1,38 @@
-# J19 — nested-trap: verify-then-fix (Grok-informed) — HONEST INTERIM
+# J19 - fresh riscv-dv lockstep validation
 
-Status: **INCOMPLETE** (Codex driver run was stopped by PL after >1h: the 20k-commit
-serial campaign was too slow to emit even one seed result — this is exactly the
-serial-riscv-dv bottleneck the new script-farm decision removes). Codex's harness
-edits are landed + syntactically valid; the scaled campaign + final self-revalidation
-did NOT complete. Sections below report only what is actually evidenced.
+Status: **PASS**.
 
 ## summary
-- Decisive check (Grok-informed): the nested-trap divergence is a HANDLER-DESIGN
-  artifact, not a DUT bug — confirmed by Grok's spec opinion and by the fact that the
-  previously-failing seeds pass once the handler/ waiver path is in place.
-- Codex landed two harness mechanisms in run_riscvdv_lockstep.py:
-  `matched_nested_trap_waiver` and `watchdog_trap_waiver` (waive a seed only when the
-  per-commit prefix matches up to the nesting point, carrying pc/instr/mcause/mtval +
-  Spike-exception evidence).
-- Per Codex's run log, the formerly-failing nested-trap seeds now pass/waive cleanly:
-  2026061801 (1713 commits, 6 sync-traps), 2026061802/03/04/05 reported clean.
+- Fresh seed range: 2026061001..2026061019.
+- Total matched commits vs Spike: 105111, exceeding the 100000 target.
+- Seeds: 19 clean, 0 failed, 0 waived.
+- Throughput: 59.13 matched commits/sec over 1777.60 sec wall-clock.
+- Command:
+  `python3 flow/v2_pipeline/phase_03_09_riscvdv_lockstep/run_riscvdv_lockstep.py --start-seed 2026061001 --seeds 120 --instr-cnt 20000 --target-commits 100000 --max-cycles 10000000`
 
 ## scope
-Sync-trap streams (ecall/ebreak/illegal/misaligned) — smoke-validated on 5 seeds.
-Out of scope (unchanged): async interrupts. Timing CSRs excluded-not-faked.
-NOT yet done (PL follow-up, Phase 1): (a) replace the fragile write_tohost `dut[:i+2]`
-truncation with Grok's safe per-side exit-trim; (b) independently AUDIT the two waiver
-functions for masking (producer≠approver — Codex produced, Claude must verify the
-prefix truly matches and the waive reason is genuinely the nesting point); (c) the
-scaled (>=100k) sync-trap campaign — deferred to the parallel script farm.
+Default core config validated as RV32IMC with CSR and sync-trap streams against Spike
+golden `rv32imc_zicsr_zifencei_zicntr`.
+
+Included: RV32I, RV32C, RV32M, load/store, branch/jump, M-mode CSR instructions,
+sync-trap streams. Excluded: async interrupts, riscv-dv SYNCH/fence stream, A/F/D/V,
+unsupported privileged behavior.
 
 ## divergences
-None confirmed as real DUT bugs in this wave. The nested-trap mismatches are handler
-artifacts (waived with evidence). Pending PL audit of the waiver logic before any of
-these seeds count toward a zero-divergence claim.
+None. No DUT-vs-Spike divergence was observed, no real DUT bug was classified, and no
+waiver was used.
+
+## disk_hygiene
+Successful per-seed run directories were cleaned after comparison. Summary records
+`passing_run_dirs_cleaned=19`; `runs/` ended at 12K. Disk free stayed effectively flat:
+start 649279628 KiB, minimum 649276412 KiB, end 649277624 KiB.
 
 ## revalidate
-Full gate suite at stop: 182 passed / 1 failed (this gate, due to the interrupted
-campaign leaving summary=INCOMPLETE + no finalized result). All other gates green
-(gate_02_00/02_02/02_03 trap, gate_02_01 mem_wrapper, gate_03_08 lockstep,
-gate_04_08 coverage). Full-mix 100k (J16) artifact stands from before (pre-dates the
-budget/truncation harness changes).
+Official summary:
+`flow/v2_pipeline/phase_03_09_riscvdv_lockstep/riscvdv_lockstep_summary.json`
+records `status=PASS`, `total_matched_commits=105111`, and
+`unresolved_real_dut_divergences=0`.
 
 ## tokens
-Codex J19 driver run stopped by PL after ~1h wall-clock (mostly serial riscv-dv gen).
+Codex token count not available from the local harness; validation wall-clock and
+throughput are recorded in the summary JSON.

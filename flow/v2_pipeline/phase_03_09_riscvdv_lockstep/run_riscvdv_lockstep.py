@@ -589,6 +589,11 @@ def run_one(seed: int, instr_cnt: int, max_cycles: int) -> tuple[int, bool, bool
     return sim_compare_seed(seed, work, max_cycles)
 
 
+def disk_free_kb(path: Path = ROOT) -> int:
+    usage = shutil.disk_usage(path)
+    return usage.free // 1024
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--start-seed", type=int, default=2026060801)
@@ -596,8 +601,11 @@ def main() -> int:
     parser.add_argument("--instr-cnt", type=int, default=4000)
     parser.add_argument("--target-commits", type=int, default=TARGET_COMMITS)
     parser.add_argument("--max-cycles", type=int, default=2_000_000)
+    parser.add_argument("--keep-passing-runs", action="store_true",
+                        help="retain successful per-seed traces/work dirs for debug")
     args = parser.parse_args()
 
+    free_start_kb = disk_free_kb()
     summary = {
         "status": "RUNNING",
         "target_commits": args.target_commits,
@@ -628,6 +636,10 @@ def main() -> int:
         "spike_isa": SPIKE_ISA,
         "riscv_dv_path": str(RISCV_DV),
         "start_time": time.time(),
+        "disk_free_start_kb": free_start_kb,
+        "disk_free_min_kb": free_start_kb,
+        "disk_free_end_kb": free_start_kb,
+        "passing_run_dirs_cleaned": 0,
     }
     div_dir = ROOT / "divergence"
     if div_dir.exists():
@@ -636,15 +648,22 @@ def main() -> int:
     for offset in range(args.seeds):
         seed = args.start_seed + offset
         count, ok, waived, message = run_one(seed, args.instr_cnt, args.max_cycles)
+        work = ROOT / "runs" / f"seed_{seed}"
         row = {"seed": seed, "matched_commits": count if ok else 0, "dut_commits": count, "ok": ok, "waived": waived, "message": message}
         summary["seeds"].append(row)
         if ok:
             summary["total_matched_commits"] += count
             if waived:
                 summary["waivers"].append({"seed": seed, "matched_commits": count, "message": message})
+            if not args.keep_passing_runs and work.exists():
+                shutil.rmtree(work)
+                summary["passing_run_dirs_cleaned"] += 1
         else:
             summary["divergences"].append({"seed": seed, "dut_commits": count, "message": message})
             summary["unresolved_real_dut_divergences"] += 1
+        free_now_kb = disk_free_kb()
+        summary["disk_free_min_kb"] = min(int(summary["disk_free_min_kb"]), free_now_kb)
+        summary["disk_free_end_kb"] = free_now_kb
         print(f"seed={seed} ok={ok} waived={waived} dut_commits={count} total_matched={summary['total_matched_commits']} {message}", flush=True)
         if summary["total_matched_commits"] >= args.target_commits:
             break
