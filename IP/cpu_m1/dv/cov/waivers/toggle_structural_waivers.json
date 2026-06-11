@@ -24,13 +24,31 @@
       "reason": "Debug trigger module (ADR-0022) is not active in the default-SKU functional farm run (no debugger attached). Trigger match/hit datapath only toggles under debug-active stimulus. Verified separately in phase_06_02_debug_trigger.",
       "config_to_cover": "debug-active (OpenOCD/JTAG) run",
       "spike_impact": "none"
+    },
+    {
+      "id": "TOG-WAIVE-PMP-CSR",
+      "module": "u_csr (PMP CSR fields: pmpcfg/pmpaddr)",
+      "untoggled_bits": 1280,
+      "reason": "PMP configuration/address CSRs (pmpcfg0-3, pmpaddr0-N) read/write datapath inside u_csr is tied off when PMP_ENTRIES=0 (default SKU). Toggles only with PMP_ENTRIES>0. Verified separately in phase_07_10_pmp_directed.",
+      "config_to_cover": "PMP_ENTRIES=8",
+      "spike_impact": "none"
+    },
+    {
+      "id": "TOG-WAIVE-DEBUG-CSR",
+      "module": "u_csr (debug CSR fields: dcsr/dpc/dscratch)",
+      "untoggled_bits": 615,
+      "reason": "Debug-mode CSRs (dcsr, dpc, dscratch0/1) inside u_csr only toggle when the core enters debug mode (debugger attached). Not exercised in the default-SKU functional farm. Verified separately in phase_06_* debug runs.",
+      "config_to_cover": "debug-active (OpenOCD/JTAG) run",
+      "spike_impact": "none"
     }
   ],
   "totals": {
-    "raw_toggle": "10905/20450 = 53.3%",
-    "waived_bits": 1756,
-    "adjusted_denominator": 18694,
-    "adjusted_toggle": "10905/18694 = 58.3%",
-    "remaining_to_close": "u_csr 3079 (directed CSR sweep) + u_ras 624 (directed call/return) + debug-mode glue (debug-active run) + minor idu/cdec/bp/ifu corner top-ups"
+    "raw_toggle_base": "10905/20450 = 53.3% (8 farm seeds)",
+    "raw_toggle_with_csr_inject": "11149/20450 = 54.5% (+ 4 CSR-injection seeds, gate-safe lockstep 0-div)",
+    "waived_bits": 3651,
+    "waived_breakdown": "u_pmp 921 + u_trigger 835 + u_csr-PMP 1280 + u_csr-DEBUG 615",
+    "adjusted_denominator": 16799,
+    "adjusted_toggle_in_sku": "11149/16799 = 66.4%",
+    "remaining_to_close": "in-SKU remaining ~5650 bits: u_ras 624 (directed call/return), u_csr M-CSR/TRAP storage ~571 (directed walking CSR writes + trap variety), u_csr other 495, ifu/bp/idu/cdec/rfu corner top-ups. Est ~1 day directed."
   }
 }

@@ -1,25 +1,26 @@
 {
   "artifacts": [
-    "tests/gates/gate_03_13_fence_in_stream_lockstep.py",
-    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/inject_fence_lockstep.py",
-    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/fence_in_stream_summary.json"
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/inject_csr_cov.py",
+    "IP/cpu_m1/dv/cov/waivers/toggle_structural_waivers.json",
+    "docs/reports/coverage_report.md"
   ],
   "autonomy": "L2",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "gate_03_13_fence_in_stream_lockstep",
+  "gate": "toggle_csr_inject_campaign",
   "metrics": {
-    "async_irq_remaining": "Spike no deterministic ext-IRQ injection; msip is lockstep-able path",
-    "closes": "farm fence-excluded gap (vs directed-only gate_03_10)",
-    "divergences": "0",
-    "matched_commits": "10539",
-    "seeds": "4"
+    "csr_inject_lockstep": "0-div 8243 commits",
+    "in_sku_toggle": "66.4%",
+    "raw_toggle": "54.5% (12 seeds)",
+    "real_finding": "timing-CSR read poisons GPR -> downstream divergence (excluded)",
+    "remaining": "u_ras 624 + u_csr M/TRAP storage ~571 + other 495 + corner",
+    "waivable_bits": "3651 (pmp921+trigger835+csr-pmp1280+csr-debug615)"
   },
   "reviewed_by_codex": "none",
   "run": {
-    "command": "python3 inject_fence_lockstep.py; pytest gate_03_13",
+    "command": "python3 inject_csr_cov.py; verilator_coverage merge",
     "host": "eda"
   },
   "stage": "dv",
-  "status": "pass"
+  "status": "planned"
 }

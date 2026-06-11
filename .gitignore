@@ -45,3 +45,4 @@ combined.info
 .agents/
 .codex/
 flow/v2_pipeline/phase_03_09_riscvdv_lockstep/fence_runs/
+flow/v2_pipeline/phase_03_09_riscvdv_lockstep/csr_cov_runs/

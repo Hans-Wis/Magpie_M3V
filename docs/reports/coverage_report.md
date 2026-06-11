@@ -109,3 +109,27 @@ closure (not yet applied — so the whole-core numbers above are RAW, honest).
 ### 2.6 Waiver applied (2026-06-11)
 
 §04 structural waiver authored: `IP/cpu_m1/dv/cov/waivers/toggle_structural_waivers.json` (PMP 921 + trigger 835 = 1756 bits, PMP_ENTRIES=0/debug-trigger-inactive in default SKU, spike_impact:none, **producer=Claude / approver_dv_lead=PENDING-SIGN**). **In-SKU adjusted toggle = 10905/18694 = 58.3%.** Remaining directed buckets to 95%: u_csr 3079 (riscv-dv `gen_csr_test.py` walking-bit CSR test — next step), u_ras 624 (call/return density), debug-mode glue.
+
+### 2.7 Directed CSR-injection + refined waiver (2026-06-11, executed)
+
+Extended the proven lockstep-safe injection mechanism to inject DETERMINISTIC CSR reads (mhartid/
+mstatus/mie/mtvec/mscratch/mepc/mcause/mtval) + mscratch walking writes into the random stream
+(`inject_csr_cov.py`, coverage build, 4 seeds). **Lockstep finding (real catch):** injecting reads of
+*timing* CSRs (cycle/instret/mip) poisons the destination GPR with a DUT≠Spike value that diverges
+downstream — excluded those; deterministic-CSR injection is 0-divergence (8243 commits). u_csr toggle
+18.4%→21.5% (read-mux paths; storage bits need writes/traps).
+
+**Refined structural waiver (`toggle_structural_waivers.json`):** u_csr's untoggled decomposes as
+PMP-CSR 1280 + DEBUG-CSR 615 (both **waivable**, disabled in default SKU) + TRAP-CSR 229 (trap variety)
++ M-CSR 342 (directed writes) + other 495. Total structural-waivable now **3651** (u_pmp 921 + u_trigger
+835 + u_csr-PMP 1280 + u_csr-DEBUG 615).
+
+| | toggle |
+|---|---|
+| raw (8 farm seeds) | 10905/20450 = 53.3% |
+| + CSR-injection (12 seeds) | 11149/20450 = 54.5% |
+| **in-SKU (after 3651-bit structural waiver)** | **11149/16799 = 66.4%** |
+
+**Remaining to 95% (in-SKU):** u_ras 624 (directed call/return), u_csr M-CSR/TRAP storage ~571 (directed
+walking CSR writes + trap variety), u_csr other 495, ifu/bp/idu/cdec/rfu corner. Est ~1 day directed.
+Status: CSR-injection + full structural waiver done (66.4% in-SKU); RAS + CSR-write directed pending.
