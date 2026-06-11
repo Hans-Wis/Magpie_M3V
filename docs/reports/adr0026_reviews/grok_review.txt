@@ -1,0 +1,12 @@
+**Phase ordering:** A1→A2→A3 is sound for scalar-first bring-up, but A1’s “CoreMark matrix lift” is weak justification—pipelined MUL mainly hits MAC/CPI paths, not CoreMark instruction count; reframe A1 success as MACSTREAM/CPI, defer CoreMark claims to A2. A3 before B is correct for bandwidth groundwork; OK that B/C stay ADR-gated.
+
+**Missing scope:** No explicit Phase A items for (1) mul/div hazard + forwarding rewrite and wrong-path behavior during 2-cycle MUL—classic lockstep divergence surface; (2) RV32C + cross-boundary fetch regression after exec changes (M1 had `BUG-XBOUND-0001` class risk); (3) A2 toolchain gate (`rv32imc_zba_zbb_zbs_zicond` compile + Spike ISA string parity before RTL merge); (4) functional coverage re-derivation for Zb*/Zicond decode, not just line/toggle; (5) power guardrail (M1 baseline 15.9 mW)—frequency/area alone insufficient.
+
+**Targets vs baseline:** Metric mismatch: baseline GEMV = **11.0 c/MAC**, A1 targets **MACSTREAM 6.63→~3**—different workloads; tie A1 exit to GEMV c/MAC delta or name MACSTREAM as the authoritative A1 KPI. A2 **≥2.9 CoreMark/MHz** from 2.47 (~17%) needs an instr-count budget in the ADR (which CoreMark hot loops, which Zb* ops)—otherwise unverifiable. Phase B math checks: 8 MAC/c × 699 MHz ≈ **5.6 GOPS** > Helium 3.2. Phase C 89–179 GOPS vs U55-128 ~102 GOPS is coherent; keep SKU math explicit (128 vs 256 MAC).
+
+**Lockstep viability:** A1/A2 timing-invisible to Spike is fine if commit semantics unchanged. A3 “timing-invisible” is risky if dual-bank TCM changes alignment fault, ordering, or map-visible latency—Spike memory model must match or scope stays wrapper-only with no new fault paths. Phase B vector-retire ADR precondition is correct. Phase C custom-0 plugin must define per-commit retire contract (single-cycle vs multi-beat, CSR side effects)—undefined = lockstep trap.
+
+**PPA:** ≥650 MHz / +15% area post-**whole** Phase A is reasonable but late; add per-subphase DC smoke (A1 mul, A2 Zb* mux) to catch erosion early.
+
+**Verdict: ACCEPT-WITH-CHANGES** — (1) align A1 KPI to baseline or document MACSTREAM mapping; (2) add hazard/forwarding + RV32C regression to Phase A gates; (3) A2 toolchain + instr-count budget for 2.9 target; (4) tighten A3 lockstep/memory-model scope; (5) per-subphase PPA smoke + power guardrail.
+GROK_DONE

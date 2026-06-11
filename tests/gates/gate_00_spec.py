@@ -57,7 +57,7 @@ def test_spec_has_no_tbd_and_matches_active_scope():
 
 def test_ip_json_matches_spec_scope_and_interfaces():
     data = json.loads(_read("IP/cpu_m1/ip.json"))
-    assert data["design_id"] == "cpu_m1"
+    assert data["design_id"] == "cpu_m1a"  # M1A line identity (ADR-0026; gate_00_identity_m1a is the primary enforcer)
     assert data["kind"] == "cpu"
     assert data["flow"] == "cpu"
 
@@ -98,6 +98,11 @@ def test_ip_json_matches_spec_scope_and_interfaces():
 def test_gate_map_matches_lab08e_development_flow():
     data = json.loads(_read("IP/cpu_m1/ip.json"))
     expected = {
+        # M1A line additions (ADR-0026: identity + Phase A planned stages, status not-run until opened)
+        "m1a_identity",
+        "m1a_a1_mul_throughput",
+        "m1a_a2_zb_zicond",
+        "m1a_a3_dtcm",
         "isa_scope",
         "pipeline_reference",
         "fetch_rv32c_prefetch",

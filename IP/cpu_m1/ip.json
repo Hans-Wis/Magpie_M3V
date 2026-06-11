@@ -27,7 +27,9 @@
         "programmers-model",
         "dv-signoff-report",
         "handoff-test"
-      ]
+      ],
+      "isa_m1a_phase_a2_target": "RV32IMC_Zba_Zbb_Zbs_Zicond_Zicsr_Zifencei",
+      "isa_note": "isa = current RTL truth; the Zb*/Zicond string is the ADR-0026 Phase A2 TARGET, claimable only after A2 gates green (honest taxonomy: planned != present)"
     },
     "sku2_gold": {
       "maturity_target": "production-qualified",
@@ -50,7 +52,26 @@
   "microarchitecture": {
     "kind": "4-stage-pipeline-bp-ras-rv32c-prefetch",
     "pipeline_stages": 4,
-    "pipeline_hazards": "required-for-qualification"
+    "pipeline_hazards": "required-for-qualification",
+    "m1a_planned_features": {
+      "adr": "docs/adr/0026-m1a-performance-scope.md",
+      "phase_a": [
+        "mul-issue-decoupling (lat2/thr1, scoreboard+bypass)",
+        "zba",
+        "zbb",
+        "zbs",
+        "zicond",
+        "dtcm-dual-bank (behind valid/ready contract)",
+        "64b-fetch-groundwork"
+      ],
+      "phase_b_adr_gated": [
+        "rvv-zve32x-vlen128-dual-beat"
+      ],
+      "phase_c_adr_gated": [
+        "tc-gemv-int8-int4-custom0"
+      ],
+      "status": "planned/not-run"
+    }
   },
   "variants": {
     "v1_fsm": {
@@ -195,7 +216,11 @@
     "lint_synth_ppa_signoff": [
       "tests/gates/gate_05_00_lint.py",
       "tests/gates/gate_05_01_synth_ppa.py"
-    ]
+    ],
+    "m1a_identity": "tests/gates/gate_00_identity_m1a.py",
+    "m1a_a1_mul_throughput": "tests/gates/gate_a1_mul_throughput.py",
+    "m1a_a2_zb_zicond": "tests/gates/gate_a2_zb_zicond.py",
+    "m1a_a3_dtcm": "tests/gates/gate_a3_dtcm.py"
   },
   "risks": [
     "ADR-0001 FSM path is superseded for implementation; do not present it as active sign-off RTL",
@@ -219,5 +244,6 @@
     "note": "Full-history clone. M1 Tier-2 evidence is NOT claimable by cpu_m1a; all gates/coverage/lockstep must be re-earned on this line. Physical path IP/cpu_m1/ retained to avoid churn in Makefiles/gates; identity = design_id cpu_m1a everywhere.",
     "evaluation": "docs/reports/m1a_performance_evaluation.md",
     "baseline": "docs/reports/m1_benchmark_baseline.md (CoreMark/MHz 2.47, CPI 1.29, GEMV 11.0 c/MAC)"
-  }
+  },
+  "gate_map_note": "m1a_a1/a2/a3 gates are PLANNED (ADR-0026 D2); status not-run until each sub-phase opens — never green by default (§9)"
 }

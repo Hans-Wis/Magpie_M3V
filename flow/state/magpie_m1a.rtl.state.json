@@ -1,26 +1,30 @@
 {
   "artifacts": [
+    "docs/adr/0026-m1a-performance-scope.md",
+    "docs/reports/adr0026_reviews/",
     "IP/cpu_m1/ip.json",
-    "tests/gates/gate_00_identity_m1a.py",
-    "CLAUDE.md"
+    "tests/gates/gate_00_spec.py"
   ],
   "autonomy": "L0",
   "data_quality": "full",
   "design": "magpie_m1a",
-  "gate": "gate_00_identity_m1a",
+  "gate": "adr_0026_m1a_scope",
   "metrics": {
-    "baseline_coremark_per_mhz": 2.47,
-    "baseline_cpi": 1.29,
-    "baseline_gemv_i8_c_per_mac": 11.0,
-    "fork_sha": "4e6e1d4",
-    "fork_tag": "m1-rtl-freeze-v1.0"
+    "codex": "ACCEPT-WITH-CHANGES(9:3H/4M/2L)",
+    "findings_integrated": 17,
+    "gemini": "INCONSISTENT(3)",
+    "grok": "ACCEPT-WITH-CHANGES(5)",
+    "guardrails": "freq>=650MHz, area<=+15%, power<=18mW, per-sub-phase DC smoke",
+    "phase_a2_coremark_per_mhz": 2.9,
+    "phase_a_kpi_macstream_c_per_mac": 3.5,
+    "reviewers": 3
   },
   "reviewed_by_codex": "none",
   "run": {
-    "ended": "2026-06-11T21:53:39",
+    "ended": "2026-06-11T22:43:26",
     "host": "eda",
-    "id": "run-gate_00_identity_m1a",
-    "started": "2026-06-11T21:53:39"
+    "id": "run-adr_0026_m1a_scope",
+    "started": "2026-06-11T22:43:26"
   },
   "stage": "rtl",
   "status": "pass"

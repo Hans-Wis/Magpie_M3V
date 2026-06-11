@@ -1,0 +1,18 @@
+(a) Contradictions:
+- **MUL Latency**: ADR-0026 §D2 A1 "pipelined MUL (latency 2)" vs. Evaluation §4/Baseline §4 "1-cycle MUL" (docs/reports/m1a_performance_evaluation.md, docs/reports/m1_benchmark_baseline.md).
+- **Dual-Issue Scope**: ADR-0026 §D1 "Dual-issue is explicitly OUT" vs. Evaluation §6 "per-MHz scalar parity ... likely needs dual-issue" to match M55's 4.2 CoreMark/MHz.
+- **ISA String**: ADR-0026 §Consequences "rv32imc_zba_zbb_zbs_zicond..." vs. ip.json `sku1_mvp.isa` "RV32IMC_Zicsr_Zifencei" (IP/cpu_m1/ip.json).
+
+(b) Missing References:
+- **docs/adr/0002-pipeline-v2-ch2-integration.md**: Foundational for the "4-stage in-order spine" and "M1 §2 convention" cited in §D1/§D2.
+- **docs/adr/0023-rv32a-optional.md** & **0024-pmp-optional.md**: Status of A/PMP extensions in M1A's expanded ISA scope/config matrix.
+- **docs/M1_DESIGN_FREEZE.md**: Defines the `m1-rtl-freeze-v1.0` tag/SHA provenance cited in Inputs.
+
+(c) ip.json fields to change:
+- `gate_map`: Must add Phase A (A1/A2/A3) validation gates.
+- `variants`: Add `v3_m1a_phase_a` active-signoff baseline.
+- `commercial.sku1_mvp.isa`: Update to `RV32IMC_Zba_Zbb_Zbs_Zicond_Zicsr_Zifencei`.
+- `microarchitecture.features`: Add `pipelined-mul`, `Zba`, `Zbb`, `Zbs`, `Zicond`.
+
+INCONSISTENT(3 findings)
+GEMINI_DONE
