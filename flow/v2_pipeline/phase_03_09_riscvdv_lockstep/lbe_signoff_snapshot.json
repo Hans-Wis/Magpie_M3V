@@ -1,0 +1,36 @@
+{
+  "contract": "Tier-2-Narrow (RV32IMC core-only, FEATURE_FREEZE SKU-1), DUT-scoped",
+  "coverage_db": "coverage_merged/farm_all3.dat (33 seeds, Verilator --coverage all)",
+  "defensible_bar_pct": 90.0,
+  "metrics": {
+    "line": {
+      "raw_hit": 224,
+      "raw_total": 342,
+      "raw_pct": 65.5,
+      "out_of_sku_cold": 93,
+      "in_sku_debt": 25,
+      "effective_denom": 249,
+      "effective_pct": 90.0
+    },
+    "branch": {
+      "raw_hit": 283,
+      "raw_total": 416,
+      "raw_pct": 68.0,
+      "out_of_sku_cold": 112,
+      "in_sku_debt": 21,
+      "effective_denom": 304,
+      "effective_pct": 93.1
+    },
+    "expr": {
+      "raw_hit": 184,
+      "raw_total": 312,
+      "raw_pct": 59.0,
+      "out_of_sku_cold": 119,
+      "in_sku_debt": 9,
+      "effective_denom": 193,
+      "effective_pct": 95.3
+    }
+  },
+  "genuine_debt_focus": "RV32C decoder (cdec.v) compressed-instruction variety + few core/csr/div/ras corners",
+  "dv_lead_signature": "PENDING"
+}

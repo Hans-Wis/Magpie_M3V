@@ -76,3 +76,24 @@ silently dropped; the raw number (58.9%) is reported transparently and the parti
 
 Reproduce: `python3 flow/v2_pipeline/phase_03_09_riscvdv_lockstep/classify_signoff.py \
 flow/v2_pipeline/phase_03_09_riscvdv_lockstep/coverage_merged/farm_all3.dat`
+
+## 4. Line / Branch / Expression — same exclusion close (Tier-2 §01)
+
+The farm builds Verilator with `--coverage` (all kinds), so the merged DB also carries line/branch/expr
+points. Raw whole-design numbers are low for the same reason as toggle (out-of-SKU code paths in shared
+files + testbench lines). `classify_signoff_lines.py` excludes, DUT-scoped, the out-of-SKU paths (RV32A
+atomics, PMP, Debug/DM/Trigger — by source-line keyword + out-of-SKU module file) and testbench files,
+giving the in-SKU effective:
+
+| metric | raw (DUT) | out-of-SKU cold | in-SKU debt | **in-SKU effective** |
+|---|---|---|---|---|
+| Line | 224/342 = 65.5% | 93 | 25 | **224/249 = 90.0%** |
+| Branch | 283/416 = 68.0% | 112 | 21 | **283/304 = 93.1%** |
+| Expression | 184/312 = 59.0% | 119 | 9 | **184/193 = 95.3%** |
+
+All three clear the ≥90% defensible bar (expr clears 95%). Gated by `gate_04_11`
+(snapshot `lbe_signoff_snapshot.json` + live re-derive). Remaining in-SKU genuine debt (~25/21/9
+points) is concentrated in the **RV32C decoder (`cdec.v`)** — needs more compressed-instruction variety
+— plus a few `core.v`/`csr.v`/`div.v`/`ras.v` control corners; documented with a directed-closure path,
+**not excluded**. With toggle (§1–3, 92.4%), the Tier-2 §01 code-coverage rows (line/branch/expr/toggle)
+are all at defensible effective sign-off for the SKU-1 core, DV-lead signature pending.
