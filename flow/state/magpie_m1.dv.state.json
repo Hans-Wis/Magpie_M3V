@@ -1,24 +1,24 @@
 {
   "artifacts": [
-    "tests/gates/gate_03_12_through_trap_lockstep.py",
-    "flow/v2_pipeline/phase_03_12_through_trap/spike_lockstep.py",
-    "flow/v2_pipeline/lib/spike_commit.py"
+    "tests/gates/gate_03_13_fence_in_stream_lockstep.py",
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/inject_fence_lockstep.py",
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/fence_in_stream_summary.json"
   ],
   "autonomy": "L2",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "gate_03_12_through_trap_lockstep",
+  "gate": "gate_03_13_fence_in_stream_lockstep",
   "metrics": {
-    "prefix_lockstep": "7 commits Spike-equivalent",
-    "rtl_changed": "none (core.v decl-reorder by Codex, verified logic-safe)",
-    "spike_limitation": "--log-commits halts post sync-trap (documented)",
-    "through_trap": "2 traps, handler CSRs spec-correct"
+    "async_irq_remaining": "Spike no deterministic ext-IRQ injection; msip is lockstep-able path",
+    "closes": "farm fence-excluded gap (vs directed-only gate_03_10)",
+    "divergences": "0",
+    "matched_commits": "10539",
+    "seeds": "4"
   },
   "reviewed_by_codex": "none",
   "run": {
-    "command": "make all; pytest gate_03_12",
-    "host": "eda",
-    "simulator": "Verilator+Spike"
+    "command": "python3 inject_fence_lockstep.py; pytest gate_03_13",
+    "host": "eda"
   },
   "stage": "dv",
   "status": "pass"

@@ -37,7 +37,7 @@ Full gap analysis + closure plan: `docs/reports/tier2_acceptance_gap_and_closure
 ## §05 DV delivery
 - ⬜ UVM/SV TB reuse ≥80% — directed Verilog TBs (deviation; equivalence memo required)
 - 🟡 Reference lockstep — Spike per-commit PC/GPR/CSR (not RVVI shim); ✅ through-trap verified (`gate_03_12`: prefix lockstep + spec-validated handler mepc/mcause/mstatus; this Spike build halts commit-log post-trap, documented)
-- 🟡 Constrained-random — riscv-dv 105k commits; ❌ async IRQ + fence/SYNCH excluded from farm
+- 🟡 Constrained-random — riscv-dv 105k commits + ✅ fence/fence.i in-stream at scale (gate_03_13, 10539 commits 0-div); ❌ async IRQ still excluded (Spike no deterministic ext-IRQ injection — msip path pending)
 - ❌ Regression automation zero-waived — `gate_04_09` xfail present; no nightly CI farm
 - ✅ ISA compliance — riscv-arch-test 74/74 (`phase_p_archtest`)
 - ✅ DV docs: ✅ V-Plan · ✅ this checklist · ✅ Feature Freeze · ✅ Coverage Report (`docs/reports/coverage_report.md`) ·

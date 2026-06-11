@@ -44,3 +44,4 @@ combined.info
 .pytest_cache/
 .agents/
 .codex/
+flow/v2_pipeline/phase_03_09_riscvdv_lockstep/fence_runs/

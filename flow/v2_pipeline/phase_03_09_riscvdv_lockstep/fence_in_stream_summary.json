@@ -1,0 +1,48 @@
+{
+  "status": "PASS",
+  "kind": "fence-in-stream riscv-dv lockstep",
+  "seeds": 4,
+  "total_matched_commits": 10539,
+  "divergences": 0,
+  "isa": "rv32imc_zicsr_zifencei",
+  "spike_isa": "rv32imc_zicsr_zifencei_zicntr",
+  "note": "fence/fence.i injected into random riscv-dv programs; fence.i is a NOP on cpu_m1 (no I-cache) and in Spike's trace, so a correct DUT retires it identically. Closes the farm 'fence excluded' gap AT SCALE (vs directed-only gate_03_10).",
+  "per_seed": [
+    {
+      "seed": 2026061201,
+      "injected": 414,
+      "disasm_fence_i": 311,
+      "disasm_fence": 103,
+      "matched_commits": 2556,
+      "ok": true,
+      "message": "riscv-dv seed 2026061201 matched 2556 commits; sync_traps=6"
+    },
+    {
+      "seed": 2026061202,
+      "injected": 289,
+      "disasm_fence_i": 217,
+      "disasm_fence": 72,
+      "matched_commits": 2033,
+      "ok": true,
+      "message": "riscv-dv seed 2026061202 matched 2033 commits; sync_traps=6"
+    },
+    {
+      "seed": 2026061203,
+      "injected": 853,
+      "disasm_fence_i": 640,
+      "disasm_fence": 213,
+      "matched_commits": 5373,
+      "ok": true,
+      "message": "riscv-dv seed 2026061203 matched 5373 commits; sync_traps=6"
+    },
+    {
+      "seed": 2026061204,
+      "injected": 77,
+      "disasm_fence_i": 58,
+      "disasm_fence": 19,
+      "matched_commits": 577,
+      "ok": true,
+      "message": "riscv-dv seed 2026061204 matched 577 commits; sync_traps=6"
+    }
+  ]
+}
