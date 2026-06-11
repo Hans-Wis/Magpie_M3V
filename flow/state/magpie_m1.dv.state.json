@@ -1,20 +1,22 @@
 {
   "artifacts": [
-    "docs/reports/tier2_session_closure_2026-06-11.md"
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/inject_ras_inline.py",
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/ras_inline_summary.json",
+    "docs/reports/coverage_report.md"
   ],
   "autonomy": "L2",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "tier2_session_closure_20260611",
+  "gate": "toggle_ras_inline",
   "metrics": {
-    "done": "#3 #5 #8 #4a + #7 dispositioned",
-    "genuinely_closed": "lint0/0, formal40/40, archtest74/74, 105k-lockstep, through-trap, fence-in-stream, cdc/rdc/xprop",
-    "honesty_findings": "6 (spike-trap-log, coverage-merge, timing-CSR-poison, pyflow-hang, hold-mischar, pack-overclaim)",
-    "partial": "#1 66.4% in-SKU, #2, #4b scoped, #6 4/5"
+    "in_sku_toggle": "67.6%",
+    "ras_lockstep": "0-div 7793 commits",
+    "remaining": "RAS deeper-stack needs nested calls + address-varied targets; u_csr storage; corner long-tail",
+    "u_ras": "15.2% (was 5.5%)"
   },
   "reviewed_by_codex": "none",
   "run": {
-    "command": "session closure",
+    "command": "python3 inject_ras_inline.py",
     "host": "eda"
   },
   "stage": "dv",

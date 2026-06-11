@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "kind": "RAS inline-injection lockstep",
+  "seeds": 4,
+  "total_matched_commits": 7793,
+  "divergences": 0,
+  "isa": "rv32imc_zicsr_zifencei",
+  "note": "control-flow-neutral call/return snippets (ra saved/restored via mscratch) injected into random riscv-dv programs: correct-predict + mispredict-recovery (ADR-0008) RAS paths. Lockstep-safe (RAS is a predictor invisible to retire; Spike has no RAS). u_ras toggle 5.5%->15.2%.",
+  "u_ras_toggle": "100/660 = 15.2% (was 36/660 = 5.5%)",
+  "remaining": "deeper RAS stack entries need NESTED calls (depth>1); ras_top high bits need address-varied return targets. Long-tail directed work.",
+  "per_seed": [
+    {
+      "seed": 2026061501,
+      "snippets": 118,
+      "matched": 1766
+    },
+    {
+      "seed": 2026061502,
+      "snippets": 59,
+      "matched": 1121
+    },
+    {
+      "seed": 2026061503,
+      "snippets": 178,
+      "matched": 3042
+    },
+    {
+      "seed": 2026061504,
+      "snippets": 114,
+      "matched": 1864
+    }
+  ]
+}

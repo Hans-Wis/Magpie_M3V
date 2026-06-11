@@ -143,3 +143,23 @@ limitation, not a cpu_m1 issue). Recorded in `inject_ras_cov.py`. FALLBACK (next
 control-flow-neutral call/return injection (`jal ra,2f; 1: beq x0,x0,3f; 2: jalr x0,0(ra); 3:`) — same
 proven lockstep-safe mechanism as fence/CSR injection — for RAS push/pop; mispredict-recovery needs a
 return target != RAS top. u_ras 624 remains open pending this fallback (or a VCS gen path).
+
+### 2.9 RAS inline-injection (executed, lockstep-safe) — u_ras 5.5%→15.2%
+
+The pyflow sub-program hang (§2.8) forced the inline fallback: `inject_ras_inline.py` injects control-
+flow-neutral call/return snippets (ra saved/restored via mscratch) — both correct-predict and
+mispredict-recovery (ADR-0008) RAS paths — into random riscv-dv programs. **4 seeds, 7793 commits, 0
+divergence** (lockstep-safe: RAS is a predictor invisible to retire; Spike has no RAS). u_ras toggle
+**5.5%→15.2%**. (One harness fix en route: the work-dir path overran the TB `+TRACE=%s` reg buffer and
+front-truncated `/home`→`ome`; shortened the dir.)
+
+| | toggle |
+|---|---|
+| raw (base 8 + CSR 4 + RAS 4 = 16 seeds) | 11351/20450 = 55.5% |
+| **in-SKU (after 3651-bit waiver)** | **11351/16799 = 67.6%** |
+
+**RAS long-tail remaining:** deeper RAS stack entries need NESTED calls (depth>1, my snippets are
+depth-1); ras_top high bits need address-varied return targets (my labels are in a narrow range). u_csr
+M/TRAP storage (~571, directed CSR writes + trap variety), ifu/bp/idu/cdec corner also remain. This is
+the classic coverage long tail — datapath 100%, predictor/CSR-storage/control bits each need bespoke
+stimulus. Est ~1 day more directed + the §04 waiver DV-lead sign to reach the in-SKU 95% bar.
