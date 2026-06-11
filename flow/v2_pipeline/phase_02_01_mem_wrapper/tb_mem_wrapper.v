@@ -7,6 +7,10 @@ module tb_mem_wrapper;
     wire        dbg_dummy_mode;
     wire [31:0] dbg_dummy_acc_rdata;
     wire        dbg_dummy_acc_err;
+    wire        dbg_dummy2_halted;
+    wire        dbg_dummy2_mode;
+    wire [31:0] dbg_dummy2_acc_rdata;
+    wire        dbg_dummy2_acc_err;
 
     localparam int MEM_WORDS        = 4096;
     localparam int ADDR_BITS        = 12;
@@ -124,7 +128,7 @@ module tb_mem_wrapper;
         .dm_halt_req        (1'b0),
         .dm_resume_req      (1'b0),
         .dm_hart_halted     (dbg_dummy_halted),
-        .debug_mode_o       (dbg_dummy_mode),
+        .debug_mode         (dbg_dummy_mode),
         .dm_acc_en          (1'b0),
         .dm_acc_write       (1'b0),
         .dm_acc_regno       (16'h0),
@@ -155,14 +159,14 @@ module tb_mem_wrapper;
         .meip               (1'b0),
         .dm_halt_req        (1'b0),
         .dm_resume_req      (1'b0),
-        .dm_hart_halted     (dbg_dummy_halted),
-        .debug_mode         (dbg_dummy_mode),
+        .dm_hart_halted     (dbg_dummy2_halted),
+        .debug_mode_o       (dbg_dummy2_mode),
         .dm_acc_en          (1'b0),
         .dm_acc_write       (1'b0),
         .dm_acc_regno       (16'h0),
         .dm_acc_wdata       (32'h0),
-        .dm_acc_rdata       (dbg_dummy_acc_rdata),
-        .dm_acc_err         (dbg_dummy_acc_err),
+        .dm_acc_rdata       (dbg_dummy2_acc_rdata),
+        .dm_acc_err         (dbg_dummy2_acc_err),
         .dbg_pc            (ref_dbg_pc),
         .dbg_instr         (ref_dbg_instr),
         .dbg_state         (ref_dbg_state)

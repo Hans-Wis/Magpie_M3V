@@ -1,35 +1,29 @@
 {
   "artifacts": [
-    "IP/cpu_m1/rtl/bmu.v",
-    "IP/cpu_m1/rtl/idu.v",
-    "IP/cpu_m1/rtl/csr.v",
-    "flow/v2_pipeline/phase_a2_zb_zicond/",
-    "tests/gates/gate_a2_zb_zicond.py",
-    "flow/v2_pipeline/lib/spike_commit.py"
+    "IP/cpu_m1/rtl/dtcm.v",
+    "flow/v2_pipeline/phase_a3_dtcm/",
+    "tests/gates/gate_a3_dtcm.py",
+    "docs/adr/0026-m1a-performance-scope.md",
+    "flow/v2_pipeline/phase_02_01_mem_wrapper/REPAIR_NEEDED.md"
   ],
   "autonomy": "L0",
   "data_quality": "full",
   "design": "magpie_m1a",
-  "gate": "gate_a2_zb_zicond",
+  "gate": "gate_a3_dtcm",
   "metrics": {
-    "coremark_abs_699mhz": 2257,
-    "coremark_per_mhz_o2_zb": 2.74,
-    "coremark_per_mhz_o3_zb": 3.23,
-    "directed_commits": 57,
-    "farm_100k_campaign": "RUNNING",
-    "farm_commits_sofar": 30983,
-    "farm_divergences": 0,
-    "gate_tests": 5,
-    "illegal_encodings_trapped": 4,
-    "kpi_bar": 2.9,
-    "m55_abs_400mhz": 1680
+    "core_rtl_diff_files": 0,
+    "gate_tests": 4,
+    "inloop_lockstep_commits": 57,
+    "inloop_wide_coherent_grants": 59,
+    "wide_grants": "64/64",
+    "wide_port_bytes_per_cycle": 8
   },
   "reviewed_by_codex": "none",
   "run": {
-    "ended": "2026-06-12T00:01:39",
+    "ended": "2026-06-12T00:21:39",
     "host": "eda",
-    "id": "run-gate_a2_zb_zicond",
-    "started": "2026-06-12T00:01:39"
+    "id": "run-gate_a3_dtcm",
+    "started": "2026-06-12T00:21:39"
   },
   "stage": "dv",
   "status": "pass"
