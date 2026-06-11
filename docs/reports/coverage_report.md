@@ -301,3 +301,21 @@ green-wash. They are tracked here as **coverage debt** with a concrete closure p
 same pattern already used for msip/bp_way1), or must be explicitly **scope-agreed** with the customer
 (e.g. "this SKU does not ship debug", "address map bounded to low region") and signed as a *scope*
 decision, not a *coverage* waiver. Only Tier-A (~240) is signable as-is today.
+
+### 2.15 Debug coverage-DEBT discharged (Tier-C #5) — debug is COVERED, not waived
+
+The Tier-C debug bucket (~460 u_csr bits) is **not waived** — it is **covered** by the directed
+debug-mode test `phase_06_00_debug_mvd` (`gate_06_00`, 3/3), which was already functionally verifying
+Debug Mode (it just was not coverage-measured). Two things were done: (1) the TB now builds with
+`--coverage`; (2) two previously-cold reachable paths were added — **dscratch0** (0x7b2) walking-pattern
+abstract access and **dcsr.ebreakm** (bit 15) set. The debug datapath now toggles fully:
+`debug_csr_wdata` **64/64**, `debug_csr_rdata` **64/64**, `dscratch0_reg` 48/64, `dcsr_ebreakm_reg`/`_o`,
+`debug_halt_enter` 2/2, `debug_halt_cause` 6/6, `dpc`. Aggregate debug bucket **19% → 49%** per-island.
+
+Authority = the RISC-V Debug spec (TB checks dpc capture, abstract GPR read/write, single-step retires
+exactly one instruction, dscratch0/ebreakm readback). The residual cold debug bits are `dpc`/`dscratch0`/
+`debug_halt_pc` **high** bits + `dcsr` reserved-constant fields — address/constant-limited (Tier-A/the
+address-range tail), not unverified logic. **So debug moves out of Tier-C: the shipped JTAG feature is
+directed-tested and coverage-measured;** only the constant/high-bit remainder is exclusion-class.
+Per-island (cross-TB, like §2.11/§2.12). Coverage-debt now reduces to the address-range-limited high-PC
+bits (~600), pending a relocated-base run or explicit scope agreement.

@@ -1,31 +1,28 @@
 {
   "artifacts": [
-    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/inject_ras_nested.py",
-    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/ras_nested_summary.json",
+    "flow/v2_pipeline/phase_06_00_debug_mvd/tb_debug_mvd.v",
+    "tests/gates/gate_06_00_debug_mvd_coverage.py",
     "docs/reports/coverage_report.md"
   ],
   "autonomy": "L0",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "gate_03_09_ras_nested_injection",
+  "gate": "gate_06_00_debug_mvd_coverage",
   "metrics": {
-    "commits": 12108,
-    "divergences": 0,
-    "farm_merged": true,
-    "in_sku_prev_pct": 70.4,
-    "in_sku_toggle_pct": 71.7,
-    "ptr": "6/6",
-    "seeds": 5,
-    "top_idx": "6/6",
-    "u_ras_prev_pct": 15.2,
-    "u_ras_toggle_pct": 47.1
+    "debug_bucket_pct": 49,
+    "debug_bucket_prev_pct": 19,
+    "debug_csr_rdata": "64/64",
+    "debug_csr_wdata": "64/64",
+    "dscratch0_reg": "48/64",
+    "gate_tests": 3,
+    "tier_c_debug_bits": 460
   },
   "reviewed_by_codex": "none",
   "run": {
-    "ended": "2026-06-11T16:57:34",
+    "ended": "2026-06-11T18:05:17",
     "host": "eda",
-    "id": "run-gate_03_09_ras_nested_injection",
-    "started": "2026-06-11T16:57:34"
+    "id": "run-gate_06_00_debug_mvd_coverage",
+    "started": "2026-06-11T18:05:17"
   },
   "stage": "dv",
   "status": "pass"

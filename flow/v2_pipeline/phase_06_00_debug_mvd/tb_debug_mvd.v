@@ -225,6 +225,8 @@ module tb_debug_mvd;
     reg [31:0] x4_val;
     reg [31:0] dpc_val;
     reg [31:0] commits_before;
+    reg [31:0] dscr_val;
+    reg [31:0] dcsr_rb;
 
     initial begin
         cycle = 0;
@@ -300,8 +302,27 @@ module tb_debug_mvd;
             $finish;
         end
 
-        $display("PASS: DMI halt x1=%h dpc0=%h write_x2=%h step_dpc=%h x4=%h commits=%0d corner_hits=%0d",
-                 x1_val, 32'h0000_000c, x2_val, dpc_val, x4_val, commits, corner_hits);
+        // ---- Coverage closure for previously-cold debug CSR bits (hart still halted) ----
+        // dscratch0 (0x7b2): plain 32-bit debug scratch, never accessed before -> walking patterns.
+        abstract_write(16'h07b2, 32'hAAAA_AAAA);
+        abstract_read(16'h07b2, dscr_val);
+        if (dscr_val !== 32'hAAAA_AAAA) begin
+            $error("dscratch0 AAAA readback=%h", dscr_val); $finish;
+        end
+        abstract_write(16'h07b2, 32'h5555_5555);
+        abstract_read(16'h07b2, dscr_val);
+        if (dscr_val !== 32'h5555_5555) begin
+            $error("dscratch0 5555 readback=%h", dscr_val); $finish;
+        end
+        // dcsr.ebreakm (bit 15): make EBREAK enter Debug Mode from M-mode — previously cold.
+        abstract_write(16'h07b0, 32'h0000_8000);
+        abstract_read(16'h07b0, dcsr_rb);
+        if (dcsr_rb[15] !== 1'b1) begin
+            $error("dcsr.ebreakm not set dcsr=%h", dcsr_rb); $finish;
+        end
+
+        $display("PASS: DMI halt x1=%h dpc0=%h write_x2=%h step_dpc=%h x4=%h commits=%0d corner_hits=%0d dscratch0=%h ebreakm=%0b",
+                 x1_val, 32'h0000_000c, x2_val, dpc_val, x4_val, commits, corner_hits, dscr_val, dcsr_rb[15]);
         $finish;
     end
 endmodule
