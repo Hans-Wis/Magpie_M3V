@@ -229,3 +229,28 @@ top (`tb_msip_directed`) gives every toggle point a distinct coverage *hierarchy
 for the earlier "62.93%" figure). The island stands as per-island evidence that the msip IRQ bits are
 reachable + lockstep-validated; folding IRQ coverage into the farm number would require driving msip
 inside the farm TB itself. Artifact: `phase_03_14_msip_directed/msip_directed_summary.json`.
+
+### 2.12 u_ifu / u_bp — address-range-limited waiver + bp 2-way (way1) directed coverage
+
+u_ifu (195/462) and u_bp (636/872) were the next farm levers, but a bit-index classification
+(`classify_ifu_bp_waiver.py`, artifact `coverage_merged/ifu_bp_waiver_classification.txt`) shows their
+untoggled bits are **overwhelmingly structural**, NOT stimulus-addressable in this lockstep farm
+(executed PC stays < 0x8000 — measured max ~0x6A2C — in a low-address IMEM):
+
+| module | untoggled | structural/addr-limited waiver | genuinely coverable |
+|---|---|---|---|
+| u_ifu | 267 | **229** (228 high PC/target bits `pc/next_pc/pc_reg/redirect_target/*_predict_target/pc_inc` [≥15] + 1 reset) | 38 (low PC bits; mostly `pc_inc` low — needs program-flow variety) |
+| u_bp | 236 | **226** (96 high PC + 64 high tag = PC[31:7] high + 64 sticky `valid` 1→0 never-clears + 1 monotonic counter edge + 1 reset) | 10 (way1 read/predict + a few low PC bits) |
+
+So **no farm stimulus can move u_ifu/u_bp meaningfully** — the gap is high PC/tag bits unreachable
+without executing at high addresses (which would alias the IMEM and diverge from Spike — not lockstep-
+viable) plus inherently one-way edges (valid never invalidates; counter saturates monotonically). These
+**455 bits are §04 structural-waiver candidates** (DV-lead sign PENDING); after waiver u_ifu in-SKU ≈
+195/233 = **83.7%**, u_bp ≈ 636/646 = **98.5%**.
+
+The one genuinely-reachable u_bp gap — the **BTB second-way read/predict path** (`rd_hit1` /
+`predict_from_way1`, cold in the farm because random branches rarely alias a set with a distinct tag and
+re-execute taken) — is closed by `phase_03_15_bp_way1` (`gate_03_15`, 4/4): a deterministic loop with
+two always-taken aliasing branches (brA@0x100 tag 0x2 / brB@0x180 tag 0x3, BTB set 0) fills both ways;
+**full per-commit Spike lockstep, 102 commits, 0 divergence**; the `--coverage` island toggles `rd_hit1`
+2/2 and `predict_from_way1` 2/2. Per-island (cross-TB), same caveat as §2.11.

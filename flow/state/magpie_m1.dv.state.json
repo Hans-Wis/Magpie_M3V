@@ -1,29 +1,32 @@
 {
   "artifacts": [
-    "flow/v2_pipeline/phase_03_14_msip_directed/tb_msip_directed.v",
-    "flow/v2_pipeline/phase_03_14_msip_directed/firmware.S",
-    "flow/v2_pipeline/phase_03_14_msip_directed/msip_directed.py",
-    "flow/v2_pipeline/phase_03_14_msip_directed/msip_directed_summary.json",
-    "tests/gates/gate_03_14_msip_directed_lockstep.py"
+    "flow/v2_pipeline/phase_03_15_bp_way1/tb_bp_way1.v",
+    "flow/v2_pipeline/phase_03_15_bp_way1/firmware.S",
+    "flow/v2_pipeline/phase_03_15_bp_way1/bp_way1.py",
+    "tests/gates/gate_03_15_bp_way1_lockstep.py",
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/classify_ifu_bp_waiver.py"
   ],
   "autonomy": "L0",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "gate_03_14_msip_directed_lockstep",
+  "gate": "gate_03_15_bp_way1_lockstep",
   "metrics": {
     "divergences": 0,
-    "gate_tests": 5,
-    "irq_path_signals_toggled": 9,
-    "mcause": "0x80000003",
-    "prefix_commits": 12,
-    "u_csr_island_pct": 7.1
+    "full_lockstep_commits": 102,
+    "gate_tests": 4,
+    "predict_from_way1": "2/2",
+    "rd_hit1": "2/2",
+    "u_bp_coverable": 10,
+    "u_bp_waiver_bits": 226,
+    "u_ifu_coverable": 38,
+    "u_ifu_waiver_bits": 229
   },
   "reviewed_by_codex": "none",
   "run": {
-    "ended": "2026-06-11T16:24:36",
+    "ended": "2026-06-11T16:40:07",
     "host": "eda",
-    "id": "run-gate_03_14_msip_directed_lockstep",
-    "started": "2026-06-11T16:24:36"
+    "id": "run-gate_03_15_bp_way1_lockstep",
+    "started": "2026-06-11T16:40:07"
   },
   "stage": "dv",
   "status": "pass"
