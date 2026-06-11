@@ -1,0 +1,23 @@
+2K performance run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 4043648
+Total time (secs): 4
+Iterations/Sec   : 2
+ERROR! Must execute for at least 10 secs for a valid result!
+Iterations       : 10
+Compiler version : riscv64-unknown-elf-gcc 13.2.0 (riscv-tools 1.0.6)
+Compiler flags   : -O2 -march=rv32imc_zicsr_zifencei -mabi=ilp32 -nostdlib
+Memory location  : STACK
+seedcrc          : 0xe9f5
+[0]crclist       : 0xe714
+[0]crcmatrix     : 0x1fd7
+[0]crcstate      : 0x8e3a
+[0]crcfinal      : 0xfcaf
+Errors detected
+M1_BENCH: cycles=4043648 instret=3133381
+
+BENCH DONE: tb cycles=4076429
+- tb_bench.v:109: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 41ms; walltime 1.193 s; speed 34.165 ms/s
+- Verilator: cpu 1.193 s on 1 threads; allocated 17 MB

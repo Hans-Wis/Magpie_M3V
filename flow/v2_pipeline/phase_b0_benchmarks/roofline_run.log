@@ -1,0 +1,10 @@
+LOADSTREAM bytes=32768 cycles=18445
+MACSTREAM macs=32768 cycles=217106
+GEMV_I8 macs=4096 cycles=45067
+ROOFLINE DONE sink=1418756106
+
+BENCH DONE: tb cycles=399427
+- tb_bench.v:109: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
+- Verilator: $finish at 4ms; walltime 0.160 s; speed 24.982 ms/s
+- Verilator: cpu 0.160 s on 1 threads; allocated 17 MB

@@ -51,3 +51,7 @@ flow/v2_pipeline/phase_03_09_riscvdv_lockstep/coverage_merged/
 flow/v2_pipeline/phase_03_09_riscvdv_lockstep/rr/
 flow/v2_pipeline/phase_03_09_riscvdv_lockstep/csr_pat_runs/
 flow/v2_pipeline/phase_03_09_riscvdv_lockstep/rn/
+flow/v2_pipeline/phase_b0_benchmarks/coremark/
+flow/v2_pipeline/phase_b0_benchmarks/obj_dir/
+flow/v2_pipeline/phase_b0_benchmarks/*.elf
+flow/v2_pipeline/phase_b0_benchmarks/firmware.hex
