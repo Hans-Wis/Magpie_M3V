@@ -1,0 +1,23 @@
+# Magpie_M1 merged farm toggle coverage by module (riscv-dv farm TB, multi-seed merge)
+# module                    hit/tot      %  untoggled  disposition
+  u_csr                  693/3772     18.4       3079  DIRECTED (CSR field reads/writes)
+  dut                   4500/7498     60.0       2998  MIXED (RAS/debug glue: directed+waiver)
+  u_pmp_*                 69/990       7.0        921  WAIVABLE (PMP_ENTRIES=0 default SKU)
+  u_trigger              233/1068     21.8        835  WAIVABLE (debug-trigger inactive)
+  u_ras                   36/660       5.5        624  DIRECTED (call/return mispredict)
+  u_ifu                  165/462      35.7        297  DIRECTED (fetch corner)
+  tb_riscvdv_lockstep    618/862      71.7        244  core (near-100%)
+  u_bp                   636/872      72.9        236  DIRECTED (predictor corner)
+  u_rfu                  227/370      61.4        143  core (near-100%)
+  u_idu                  618/712      86.8         94  core (near-100%)
+  u_cdec                 370/434      85.3         64  core (near-100%)
+  u_lsu_*                390/396      98.5          6  core (near-100%)
+  u_div                  683/686      99.6          3  core (near-100%)
+  u_mul                  611/612      99.8          1  core (near-100%)
+  u_alu                  542/542     100.0          0  core (near-100%)
+  u_forward              448/448     100.0          0  core (near-100%)
+  u_hazard                66/66      100.0          0  core (near-100%)
+  TOTAL                10905/20450    53.3       9545
+
+# structurally-disabled (PMP+trigger), §04-waivable: 1756 untoggled bits
+# toggle excl. disabled subsystems: 10905/18694 = 58.3%

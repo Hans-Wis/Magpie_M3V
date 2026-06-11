@@ -52,6 +52,40 @@ not contributing any toggle data. This is the **biggest missed lever**.
 
 Estimated effort: ~1–2 days (farm coverage rebuild + seed runs + merge + waiver authoring).
 
+### 2.5 MEASURED (2026-06-11 farm-coverage run — executed)
+
+Rebuilt the riscv-dv farm TB (`tb_riscvdv_lockstep`, single consistent hierarchy) with `--coverage`,
+ran 8 seeds (`--keep-passing-runs`), merged `runs/seed_*/coverage.dat` →
+`phase_03_09_riscvdv_lockstep/coverage_merged/farm_merged_coverage.dat`
+(breakdown: `coverage_merged/toggle_breakdown.txt`). Result — **random RV32IMC plateaus at 53.3% toggle**
+(10905/20450), confirming closure is NOT a stimulus-volume problem. Per-module decomposition:
+
+| module | toggle | untoggled | disposition |
+|---|---|---|---|
+| alu/forward/hazard | 100% | 0 | core datapath fully toggled ✅ |
+| mul/div/lsu | ~99–100% | 1–6 | ✅ |
+| idu/cdec | 85–87% | 64–94 | directed corner top-ups |
+| bp/ifu/rfu | 36–73% | 143–297 | DIRECTED (predictor/fetch/regfile corner) |
+| **u_csr** | 18% | **3079** | DIRECTED (per-CSR field reads/writes — large bucket) |
+| **u_ras** | 5.5% | **624** | DIRECTED (random has few call/return; need call/ret mispredict) |
+| **dut glue** | 60% | **2998** | MIXED — RAS/debug-mode signals (directed) + AXI/glue (waiver) |
+| **u_pmp** | 7% | **921** | **§04-WAIVABLE** (PMP_ENTRIES=0 in default SKU — structurally tied off) |
+| **u_trigger** | 22% | **835** | **§04-WAIVABLE** (debug-trigger inactive in default SKU) |
+
+**Decomposition of the 9545 untoggled bits:** ~1756 are structurally-disabled optional subsystems
+(PMP + trigger) → §04 waivers per `FEATURE_FREEZE.md` (excl. those → 58.3%). The rest is dominated by
+**u_csr (3079)** and **u_ras (624)** + debug-mode glue — these need DIRECTED stimulus (CSR field
+sweeps, call/return mispredict streams, a debug-active run), not more random. **The core ALU/forward/
+hazard/mul/div/lsu datapath is already ~100% toggled.**
+
+**Revised closure path to 95% (precise, from measured data):**
+1. §04 waivers: PMP (921) + trigger (835) + AXI-master/unused-counter glue → ~2.5–3k bits (disabled-in-SKU).
+2. Directed CSR coverage program (sweep mstatus/mie/mip/mtvec/mepc/mcause/mscratch/mhartid + WARL fields) → most of u_csr's 3079.
+3. Directed RAS call/return + mispredict stream → u_ras 624 + dut RAS glue.
+4. Debug-active farm run (or fold the existing debug phases' coverage) → debug-mode glue bits.
+5. Re-merge → expect ≥95% on the in-SKU denominator after waivers. Remaining effort ~1–2 days (directed
+   programs + waiver authoring). Status: **measured + decomposed; directed/waiver campaign pending.**
+
 ## 3. Branch / Expr (blocker #2)
 Whole-core branch ~96% / expr ~79% have the same single-TB limitation. The expr gap (~79%) is mostly
 compound conditions in `core.v` trap/hazard priority logic that the directed mix under-samples; the
