@@ -188,7 +188,8 @@ module csr #(
     wire [31:0] mip_val     = {20'b0, (ext_pending | meip), 3'b0, mtip, 3'b0, msip, 3'b0};
     wire [31:0] mtvec_val   = {mtvec_base, 2'b00};
     wire [31:0] mtval_val   = mtval_reg;
-    localparam [25:0] MISA_EXT_BASE = (26'h1 << 8) | (26'h1 << 12) | (26'h1 << 2);
+    // M1A A2 (ADR-0026): + misa.B (bit1) — Zba+Zbb+Zbs ratified as B; Spike --priv=m parity = 0x40001106
+    localparam [25:0] MISA_EXT_BASE = (26'h1 << 8) | (26'h1 << 12) | (26'h1 << 2) | (26'h1 << 1);
     wire [31:0] misa_val    = {2'b01, 4'b0, (MISA_EXT_BASE | ((RV32A != 0) ? 26'h1 : 26'h0))};
     wire [31:0] dcsr_val    = {4'h4, 12'h0, dcsr_ebreakm_reg, 3'h0, 1'b0, 2'b0,
                                dcsr_cause_reg, 3'h0, dcsr_step_reg, 2'b11};

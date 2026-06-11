@@ -85,6 +85,49 @@
 `define ALU_SEQ     4'd10  // ==       (給 BEQ/BNE 用，與 SLT 共用比較器)
 `define ALU_COPY_B  4'd11  // result = op_b (給 LUI 用：imm 已含 << 12)
 
+// ============================================================
+// M1A A2 (ADR-0026): BMU (bit-manip unit) op codes — Zba/Zbb/Zbs/Zicond
+// Separate 5-bit space; heavy ops stay OUT of the base ALU case mux.
+// ============================================================
+`define BMU_SH1ADD  5'd0
+`define BMU_SH2ADD  5'd1
+`define BMU_SH3ADD  5'd2
+`define BMU_ANDN    5'd3
+`define BMU_ORN     5'd4
+`define BMU_XNOR    5'd5
+`define BMU_CLZ     5'd6
+`define BMU_CTZ     5'd7
+`define BMU_CPOP    5'd8
+`define BMU_MIN     5'd9
+`define BMU_MINU    5'd10
+`define BMU_MAX     5'd11
+`define BMU_MAXU    5'd12
+`define BMU_SEXTB   5'd13
+`define BMU_SEXTH   5'd14
+`define BMU_ZEXTH   5'd15
+`define BMU_ROL     5'd16
+`define BMU_ROR     5'd17
+`define BMU_ORCB    5'd18
+`define BMU_REV8    5'd19
+`define BMU_BCLR    5'd20
+`define BMU_BEXT    5'd21
+`define BMU_BINV    5'd22
+`define BMU_BSET    5'd23
+`define BMU_CZEQZ   5'd24
+`define BMU_CZNEZ   5'd25
+
+// Zb*/Zicond funct7 selectors (OPC_OP / OPC_OP_IMM space)
+`define F7_ZBA      7'b0010000  // sh1add/sh2add/sh3add (f3=010/100/110)
+`define F7_ZBB_NEG  7'b0100000  // andn/orn/xnor (f3=111/110/100) — shares SUB/SRA f7
+`define F7_MINMAX   7'b0000101  // min/minu/max/maxu (f3=100/101/110/111)
+`define F7_ROT      7'b0110000  // rol(001)/ror(101); OP-IMM: clz/ctz/cpop/sext (001 + rs2 sel), rori(101)
+`define F7_BCLR_EXT 7'b0100100  // bclr(001)/bext(101) (+ *i forms in OP-IMM)
+`define F7_BINV     7'b0110100  // binv(001); OP-IMM 101: rev8 (rs2=11000)
+`define F7_BSET     7'b0010100  // bset(001); OP-IMM 101: orc.b (rs2=00111)
+`define F7_ZEXTH    7'b0000100  // zext.h (OP, f3=100, rs2=00000)
+`define F7_ZICOND   7'b0000111  // czero.eqz(101)/czero.nez(111)
+
+
 // -----------------------------------------------------------------------------
 // Branch 條件碼 (3-bit, 直接用 funct3 即可)
 //   core.v 將 funct3 餵給 branch comparator，所以無需獨立 encoding

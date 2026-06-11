@@ -7,13 +7,14 @@ VERILATOR ?= /home/edauser/miniforge3/envs/magpie_claude/bin/verilator
 GCC_MARCH = rv32imc_zicsr_zifencei
 GCC_MABI  = ilp32
 ITER     ?= 10
+OPT      ?= -O2
 
 CM   = coremark
 PORT = port_m1
 CM_SRCS = $(CM)/core_main.c $(CM)/core_list_join.c $(CM)/core_matrix.c \
           $(CM)/core_state.c $(CM)/core_util.c \
           $(PORT)/core_portme.c $(PORT)/ee_printf.c
-CFLAGS = -O2 -march=$(GCC_MARCH) -mabi=$(GCC_MABI) -nostdlib -nostartfiles -ffreestanding \
+CFLAGS = $(OPT) -march=$(GCC_MARCH) -mabi=$(GCC_MABI) -nostdlib -nostartfiles -ffreestanding \
          -I$(CM) -I$(PORT) -DITERATIONS=$(ITER) -DPERFORMANCE_RUN=1 -DTOTAL_DATA_SIZE=2000
 
 RTL_DIR  = ../../../IP/cpu_m1/rtl

@@ -400,6 +400,8 @@ module core #(
     wire [31:0] id_imm;
     wire [ 3:0] id_alu_op;
     wire        id_alu_b_use_imm;
+    wire        id_is_bmu;        // M1A A2: BMU (Zba/Zbb/Zbs/Zicond) op in ID/EX
+    wire [ 4:0] id_bmu_op;
     wire        id_rd_we;
     wire [ 2:0] id_wb_sel;
     wire        id_is_branch, id_branch_invert;
@@ -436,6 +438,8 @@ module core #(
         .imm           (id_imm),
         .alu_op        (id_alu_op),
         .alu_b_use_imm (id_alu_b_use_imm),
+        .is_bmu        (id_is_bmu),
+        .bmu_op        (id_bmu_op),
         .rd_we         (id_rd_we),
         .wb_sel        (id_wb_sel),
         .is_branch     (id_is_branch),
@@ -594,6 +598,16 @@ module core #(
     wire [31:0] alu_op_b = id_alu_b_use_imm ? id_imm : rs2_val;
     wire [31:0] alu_result;
     wire        alu_cmp_eq, alu_cmp_lt_s, alu_cmp_lt_u;
+
+    // M1A A2: BMU beside the ALU — same operands (post-forward rs1 / op-b mux), result
+    // selected by id_is_bmu below (one 2:1 mux on the EX writeback path; DC-smoke-guarded).
+    wire [31:0] bmu_result;
+    bmu u_bmu (
+        .op_a   (rs1_val),
+        .op_b   (alu_op_b),
+        .bmu_op (id_bmu_op),
+        .result (bmu_result)
+    );
 
     alu u_alu (
         .op_a      (alu_op_a),
@@ -1169,7 +1183,7 @@ module core #(
         end else if (id_advance_to_ex_mem) begin
             ex_mem_valid_r           <= 1'b1;
             ex_mem_pc_r              <= if_ex_pc;
-            ex_mem_alu_result_r      <= alu_result;
+            ex_mem_alu_result_r      <= id_is_bmu ? bmu_result : alu_result;  // M1A A2
             ex_mem_md_result_r       <= md_result;
             ex_mem_pc_plus_4_r       <= if_ex_pc_plus_4;
             ex_mem_pc_plus_imm_r     <= if_ex_pc_plus_imm;

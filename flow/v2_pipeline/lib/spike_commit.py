@@ -32,6 +32,7 @@ def run_spike(
     cmd = [
         "spike",
         f"--isa={isa}",
+        "--priv=m",   # M1A A2: M-only hart, misa parity (S/U bits dropped)
         f"--priv={priv}",
         f"--pc=0x{pc_base:08x}",
         "--log-commits",
@@ -133,6 +134,74 @@ def parse_spike_commits(
             return _u32(sa - quot * sb)
         return _u32((a & 0xFFFF_FFFF) % (b & 0xFFFF_FFFF))
 
+    # ---- M1A A2: Zba/Zbb/Zbs/Zicond evaluation in NORMALIZED space (funct7-aware).
+    # The normalizer re-computes OP/OP-IMM results from norm_regs so PC-derived operand
+    # chains stay base-normalized; pre-A2 it dispatched on funct3 only and mis-evaluated
+    # Zb encodings as base ops (e.g. sh1add -> SLT). Caught by the A2 directed lockstep.
+    def _zb_unary(sel, a):
+        if sel == 0x00:   # clz
+            for i in range(31, -1, -1):
+                if (a >> i) & 1: return 31 - i
+            return 32
+        if sel == 0x01:   # ctz
+            for i in range(32):
+                if (a >> i) & 1: return i
+            return 32
+        if sel == 0x02:   # cpop
+            return bin(a & 0xFFFF_FFFF).count("1")
+        if sel == 0x04:   # sext.b
+            return _u32(_sext(a & 0xFF, 8))
+        if sel == 0x05:   # sext.h
+            return _u32(_sext(a & 0xFFFF, 16))
+        return None
+
+    def _eval_zb_op(funct7, funct3, a, b):
+        """OP (0x33) Zb/Zicond register forms; None = not a Zb encoding."""
+        sh = b & 0x1F
+        if funct7 == 0x10:  # Zba
+            return {2: _u32((a << 1) + b), 4: _u32((a << 2) + b), 6: _u32((a << 3) + b)}.get(funct3)
+        if funct7 == 0x20:  # andn/orn/xnor (SUB/SRA slot)
+            return {7: _u32(a & ~b), 6: _u32(a | ~b), 4: _u32(~(a ^ b))}.get(funct3)
+        if funct7 == 0x05:  # min/minu/max/maxu
+            sa, sb = _s32(a), _s32(b)
+            ua, ub = a & 0xFFFF_FFFF, b & 0xFFFF_FFFF
+            return {4: _u32(sa if sa < sb else sb), 5: ua if ua < ub else ub,
+                    6: _u32(sa if sa > sb else sb), 7: ua if ua > ub else ub}.get(funct3)
+        if funct7 == 0x30:  # rol/ror
+            if funct3 == 1: return _u32((a << sh) | (a >> ((32 - sh) & 31))) if sh else _u32(a)
+            if funct3 == 5: return _u32((a >> sh) | (a << ((32 - sh) & 31))) if sh else _u32(a)
+        if funct7 == 0x24 and funct3 == 1: return _u32(a & ~(1 << sh))      # bclr
+        if funct7 == 0x24 and funct3 == 5: return (a >> sh) & 1             # bext
+        if funct7 == 0x34 and funct3 == 1: return _u32(a ^ (1 << sh))      # binv
+        if funct7 == 0x14 and funct3 == 1: return _u32(a | (1 << sh))      # bset
+        if funct7 == 0x04 and funct3 == 4: return a & 0xFFFF               # zext.h
+        if funct7 == 0x07:  # Zicond
+            if funct3 == 5: return 0 if (b & 0xFFFF_FFFF) == 0 else _u32(a)   # czero.eqz
+            if funct3 == 7: return 0 if (b & 0xFFFF_FFFF) != 0 else _u32(a)   # czero.nez
+        return None
+
+    def _eval_zb_imm(funct7, funct3, rs2f, a):
+        """OP-IMM (0x13) f3=001/101 Zb forms; None = base/unknown."""
+        sh = rs2f & 0x1F
+        if funct3 == 1:
+            if funct7 == 0x30: return _u32(_zb_unary(rs2f, a)) if _zb_unary(rs2f, a) is not None else None
+            if funct7 == 0x24: return _u32(a & ~(1 << sh))                  # bclri
+            if funct7 == 0x34: return _u32(a ^ (1 << sh))                   # binvi
+            if funct7 == 0x14: return _u32(a | (1 << sh))                   # bseti
+        if funct3 == 5:
+            if funct7 == 0x30:                                              # rori
+                return _u32((a >> sh) | (a << ((32 - sh) & 31))) if sh else _u32(a)
+            if funct7 == 0x24: return (a >> sh) & 1                         # bexti
+            if funct7 == 0x14 and rs2f == 0x07:                             # orc.b
+                r = 0
+                for byte in range(4):
+                    if (a >> (8 * byte)) & 0xFF: r |= 0xFF << (8 * byte)
+                return _u32(r)
+            if funct7 == 0x34 and rs2f == 0x18:                             # rev8
+                return _u32(((a & 0xFF) << 24) | ((a & 0xFF00) << 8) |
+                            ((a >> 8) & 0xFF00) | ((a >> 24) & 0xFF))
+        return None
+
     def _eval_norm_wdata(instr: int, pc: int, rd: int, raw_wdata: int) -> int:
         if rd == 0:
             return 0
@@ -175,6 +244,7 @@ def parse_spike_commits(
                 return _u32(norm_regs[rd] << ((instr >> 2) & 0x1F))
             return raw_wdata
 
+
         opcode = instr & 0x7F
         funct3 = (instr >> 12) & 0x7
         a = norm_regs[_rs1(instr)]
@@ -207,6 +277,10 @@ def parse_spike_commits(
                 return _u32(a | imm_i)
             if funct3 == 7:
                 return _u32(a & imm_i)
+            if funct3 in (1, 5):
+                zb = _eval_zb_imm((instr >> 25) & 0x7F, funct3, (instr >> 20) & 0x1F, a)
+                if zb is not None:
+                    return zb
             if funct3 == 1:
                 return _u32(a << ((instr >> 20) & 0x1F))
             if funct3 == 5:
@@ -214,6 +288,9 @@ def parse_spike_commits(
         if opcode == 0x33:
             if ((instr >> 25) & 0x7F) == 1:
                 return _eval_muldiv(funct3, a, b)
+            zb = _eval_zb_op((instr >> 25) & 0x7F, funct3, a, b)
+            if zb is not None:
+                return zb
             if funct3 == 0:
                 return _u32(a - b if (instr & 0x4000_0000) else a + b)
             if funct3 == 1:
@@ -249,6 +326,7 @@ def parse_spike_commits(
         if normalize_wdata_base:
             wdata = _eval_norm_wdata(instr, pc, rd, wdata)
         if rd != 0:
+            assert wdata is not None, f"normalizer returned None for instr={instr:#x} pc={pc:#x}"
             norm_regs[rd] = wdata
         rows.append({"idx": len(rows), "pc": pc, "instr": instr, "rd": rd, "wdata": wdata})
         if len(rows) >= limit:

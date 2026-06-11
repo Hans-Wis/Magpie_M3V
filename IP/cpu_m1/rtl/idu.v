@@ -38,6 +38,10 @@ module idu #(
     output reg [ 3:0] alu_op,
     output            alu_b_use_imm,
 
+    // M1A A2 (ADR-0026): BMU (Zba/Zbb/Zbs/Zicond) control — single-cycle EX unit
+    output reg        is_bmu,
+    output reg [ 4:0] bmu_op,
+
     // Write-back control
     output            rd_we,
     output reg [ 2:0] wb_sel,         // 000=ALU 001=PC+imm 010=PC+4 011=LSU 100=CSR
@@ -232,6 +236,117 @@ module idu #(
         // 其他 case (load/store/jalr/auipc/jal/fence) → ALU_ADD (default)
     end
 
+    // -------------------------------------------------------------------------
+    // M1A A2: BMU decode (Zba/Zbb/Zbs/Zicond) + OP/OP-IMM reserved-space tightening
+    //   Encoding truth source: flow/v2_pipeline/phase_a2_zb_zicond/toolchain_probe.S
+    //   disasm (gcc 13.2) + Spike retire log. Undecoded funct7 slots in the OP space
+    //   and the OP-IMM shift rows (f3=001/101) are ILLEGAL (negative-tested) — note
+    //   the M1 baseline silently wrong-decoded these reserved encodings as base ops.
+    // -------------------------------------------------------------------------
+    wire [4:0] zbb_sel = rs2_idx;   // OP-IMM f3=001 unary selector / rs2 pattern checks
+
+    reg bmu_slot_illegal;           // reserved encoding inside an otherwise-known opcode
+    always @* begin
+        is_bmu = 1'b0;
+        bmu_op = `BMU_SH1ADD;
+        bmu_slot_illegal = 1'b0;
+        if (is_op) begin
+            case (funct7)
+                `F7_DEFAULT, `F7_MULDIV: ;                       // base RV32I / M — legal, not BMU
+                `F7_SUB_SRA: begin                               // SUB/SRA base + Zbb andn/orn/xnor
+                    case (funct3)
+                        3'b000, 3'b101: ;                        // SUB / SRA (base)
+                        3'b111: begin is_bmu = 1'b1; bmu_op = `BMU_ANDN; end
+                        3'b110: begin is_bmu = 1'b1; bmu_op = `BMU_ORN;  end
+                        3'b100: begin is_bmu = 1'b1; bmu_op = `BMU_XNOR; end
+                        default: bmu_slot_illegal = 1'b1;
+                    endcase
+                end
+                `F7_ZBA: begin
+                    case (funct3)
+                        3'b010: begin is_bmu = 1'b1; bmu_op = `BMU_SH1ADD; end
+                        3'b100: begin is_bmu = 1'b1; bmu_op = `BMU_SH2ADD; end
+                        3'b110: begin is_bmu = 1'b1; bmu_op = `BMU_SH3ADD; end
+                        default: bmu_slot_illegal = 1'b1;
+                    endcase
+                end
+                `F7_MINMAX: begin
+                    case (funct3)
+                        3'b100: begin is_bmu = 1'b1; bmu_op = `BMU_MIN;  end
+                        3'b101: begin is_bmu = 1'b1; bmu_op = `BMU_MINU; end
+                        3'b110: begin is_bmu = 1'b1; bmu_op = `BMU_MAX;  end
+                        3'b111: begin is_bmu = 1'b1; bmu_op = `BMU_MAXU; end
+                        default: bmu_slot_illegal = 1'b1;       // clmul* (Zbc) not implemented
+                    endcase
+                end
+                `F7_ROT: begin
+                    case (funct3)
+                        3'b001: begin is_bmu = 1'b1; bmu_op = `BMU_ROL; end
+                        3'b101: begin is_bmu = 1'b1; bmu_op = `BMU_ROR; end
+                        default: bmu_slot_illegal = 1'b1;
+                    endcase
+                end
+                `F7_BCLR_EXT: begin
+                    case (funct3)
+                        3'b001: begin is_bmu = 1'b1; bmu_op = `BMU_BCLR; end
+                        3'b101: begin is_bmu = 1'b1; bmu_op = `BMU_BEXT; end
+                        default: bmu_slot_illegal = 1'b1;
+                    endcase
+                end
+                `F7_BINV:
+                    if (funct3 == 3'b001) begin is_bmu = 1'b1; bmu_op = `BMU_BINV; end
+                    else bmu_slot_illegal = 1'b1;
+                `F7_BSET:
+                    if (funct3 == 3'b001) begin is_bmu = 1'b1; bmu_op = `BMU_BSET; end
+                    else bmu_slot_illegal = 1'b1;
+                `F7_ZEXTH:
+                    if (funct3 == 3'b100 && zbb_sel == 5'b00000) begin
+                        is_bmu = 1'b1; bmu_op = `BMU_ZEXTH;
+                    end else bmu_slot_illegal = 1'b1;
+                `F7_ZICOND: begin
+                    case (funct3)
+                        3'b101: begin is_bmu = 1'b1; bmu_op = `BMU_CZEQZ; end
+                        3'b111: begin is_bmu = 1'b1; bmu_op = `BMU_CZNEZ; end
+                        default: bmu_slot_illegal = 1'b1;
+                    endcase
+                end
+                default: bmu_slot_illegal = 1'b1;               // any other funct7 in OP = reserved
+            endcase
+        end else if (is_op_imm && funct3 == 3'b001) begin       // shift-left row
+            case (funct7)
+                `F7_DEFAULT: ;                                   // SLLI (base)
+                `F7_ROT: begin                                   // unary Zbb (rs2 field selects)
+                    is_bmu = 1'b1;
+                    case (zbb_sel)
+                        5'b00000: bmu_op = `BMU_CLZ;
+                        5'b00001: bmu_op = `BMU_CTZ;
+                        5'b00010: bmu_op = `BMU_CPOP;
+                        5'b00100: bmu_op = `BMU_SEXTB;
+                        5'b00101: bmu_op = `BMU_SEXTH;
+                        default : begin is_bmu = 1'b0; bmu_slot_illegal = 1'b1; end
+                    endcase
+                end
+                `F7_BCLR_EXT: begin is_bmu = 1'b1; bmu_op = `BMU_BCLR; end   // bclri
+                `F7_BINV    : begin is_bmu = 1'b1; bmu_op = `BMU_BINV; end   // binvi
+                `F7_BSET    : begin is_bmu = 1'b1; bmu_op = `BMU_BSET; end   // bseti
+                default     : bmu_slot_illegal = 1'b1;
+            endcase
+        end else if (is_op_imm && funct3 == 3'b101) begin       // shift-right row
+            case (funct7)
+                `F7_DEFAULT, `F7_SUB_SRA: ;                      // SRLI / SRAI (base)
+                `F7_ROT     : begin is_bmu = 1'b1; bmu_op = `BMU_ROR;  end   // rori
+                `F7_BCLR_EXT: begin is_bmu = 1'b1; bmu_op = `BMU_BEXT; end   // bexti
+                `F7_BSET:
+                    if (zbb_sel == 5'b00111) begin is_bmu = 1'b1; bmu_op = `BMU_ORCB; end
+                    else bmu_slot_illegal = 1'b1;
+                `F7_BINV:
+                    if (zbb_sel == 5'b11000) begin is_bmu = 1'b1; bmu_op = `BMU_REV8; end
+                    else bmu_slot_illegal = 1'b1;
+                default     : bmu_slot_illegal = 1'b1;
+            endcase
+        end
+    end
+
     // BRANCH operand 也是 rs2，不是 imm
     assign alu_b_use_imm = is_op_imm | is_lui | is_auipc | is_load | is_store | is_amo
                          | is_jal     | is_jalr;
@@ -281,6 +396,6 @@ module idu #(
       | is_jalr | is_csr | is_mret;
     wire known_opcode = known_base_opcode | is_dret;
 
-    assign illegal = !known_opcode;
+    assign illegal = !known_opcode | bmu_slot_illegal;   // M1A A2: reserved OP/OP-IMM-shift slots trap (Spike parity)
 
 endmodule

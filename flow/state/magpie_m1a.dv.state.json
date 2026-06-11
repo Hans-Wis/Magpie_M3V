@@ -1,35 +1,35 @@
 {
   "artifacts": [
-    "IP/cpu_m1/rtl/mul.v",
-    "IP/cpu_m1/rtl/core.v",
-    "IP/cpu_m1/rtl/hazard.v",
-    "flow/v2_pipeline/phase_a1_mul_directed/",
-    "tests/gates/gate_a1_mul_throughput.py",
-    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/riscvdv_lockstep_summary.json"
+    "IP/cpu_m1/rtl/bmu.v",
+    "IP/cpu_m1/rtl/idu.v",
+    "IP/cpu_m1/rtl/csr.v",
+    "flow/v2_pipeline/phase_a2_zb_zicond/",
+    "tests/gates/gate_a2_zb_zicond.py",
+    "flow/v2_pipeline/lib/spike_commit.py"
   ],
   "autonomy": "L0",
   "data_quality": "full",
   "design": "magpie_m1a",
-  "gate": "gate_a1_mul_throughput",
+  "gate": "gate_a2_zb_zicond",
   "metrics": {
-    "codex_verdict": "no blocking finding (3 LOW comment-debt, fixed)",
-    "coremark_baseline": 2.47,
-    "coremark_per_mhz": 2.66,
-    "cpi": 1.2,
-    "directed_commits": 62,
-    "divergences": 0,
-    "gemv_i8_c_per_mac": 8.0,
-    "lockstep_commits": 102150,
-    "macstream_baseline": 6.63,
-    "macstream_c_per_mac": 3.63,
-    "regressions_pass": 6
+    "coremark_abs_699mhz": 2257,
+    "coremark_per_mhz_o2_zb": 2.74,
+    "coremark_per_mhz_o3_zb": 3.23,
+    "directed_commits": 57,
+    "farm_100k_campaign": "RUNNING",
+    "farm_commits_sofar": 30983,
+    "farm_divergences": 0,
+    "gate_tests": 5,
+    "illegal_encodings_trapped": 4,
+    "kpi_bar": 2.9,
+    "m55_abs_400mhz": 1680
   },
   "reviewed_by_codex": "none",
   "run": {
-    "ended": "2026-06-11T23:36:46",
+    "ended": "2026-06-12T00:01:39",
     "host": "eda",
-    "id": "run-gate_a1_mul_throughput",
-    "started": "2026-06-11T23:36:46"
+    "id": "run-gate_a2_zb_zicond",
+    "started": "2026-06-12T00:01:39"
   },
   "stage": "dv",
   "status": "pass"

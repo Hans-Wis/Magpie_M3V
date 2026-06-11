@@ -27,8 +27,8 @@ NM = os.environ.get("RISCV_NM", "riscv-none-elf-nm")
 VERILATOR = os.environ.get("VERILATOR", "/home/edauser/miniforge3/envs/magpie_claude/bin/verilator")
 GEN_TARGET = "rv32imc"
 M1_CONFIG = "m1_riscvdv"
-ISA = "rv32imc_zicsr_zifencei"
-SPIKE_ISA = "rv32imc_zicsr_zifencei_zicntr"
+ISA = "rv32imc_zba_zbb_zbs_zicond_zicsr_zifencei"   # M1A A2 (ADR-0026)
+SPIKE_ISA = "rv32imc_zba_zbb_zbs_zicond_zicsr_zifencei_zicntr"   # M1A A2
 MABI = "ilp32"
 TARGET_COMMITS = 100_000
 SPIKE_PC_BASE = 0x1000
@@ -338,6 +338,7 @@ def run_spike(work: Path, instructions: int) -> None:
     cmd = [
         str(SPIKE),
         f"--isa={SPIKE_ISA}",
+        "--priv=m",   # M1A A2: M-only hart — misa parity with DUT (0x40001106 incl B)
         "--priv=m",
         "--disable-dtb",
         "-m0x1000:0x40000",
