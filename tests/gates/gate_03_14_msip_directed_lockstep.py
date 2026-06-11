@@ -40,10 +40,12 @@ def test_phase_03_14_artifacts_exist():
 
 
 def test_phase_03_14_program_enables_msie_and_handles_msw():
-    disasm = _read("firmware.disasm")
-    assert re.search(r"csrr?s?\s+\w*,\s*mie", disasm) or "csrs" in disasm, "must touch mie"
-    assert re.search(r"csrr\s+\w+,\s*mcause", disasm), "handler must read mcause"
-    assert re.search(r"\bmret\b", disasm), "handler must mret"
+    # Read the COMMITTED source (firmware.S), not firmware.disasm — the disasm is a .gitignore'd
+    # build output, absent in a fresh clone (caught by the M1A fork smoke run).
+    src = _read("firmware.S")
+    assert re.search(r"csrs\s+mie", src), "must enable MIE.MSIE (csrs mie)"
+    assert re.search(r"csrr\s+\w+,\s*mcause", src), "handler must read mcause"
+    assert re.search(r"\bmret\b", src), "handler must mret"
 
 
 def test_phase_03_14_sim_asserts_msip_and_passes():
