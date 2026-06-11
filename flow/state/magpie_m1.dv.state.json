@@ -1,24 +1,20 @@
 {
   "artifacts": [
-    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/inject_csr_cov.py",
-    "IP/cpu_m1/dv/cov/waivers/toggle_structural_waivers.json",
-    "docs/reports/coverage_report.md"
+    "docs/reports/tier2_session_closure_2026-06-11.md"
   ],
   "autonomy": "L2",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "toggle_csr_inject_campaign",
+  "gate": "tier2_session_closure_20260611",
   "metrics": {
-    "csr_inject_lockstep": "0-div 8243 commits",
-    "in_sku_toggle": "66.4%",
-    "raw_toggle": "54.5% (12 seeds)",
-    "real_finding": "timing-CSR read poisons GPR -> downstream divergence (excluded)",
-    "remaining": "u_ras 624 + u_csr M/TRAP storage ~571 + other 495 + corner",
-    "waivable_bits": "3651 (pmp921+trigger835+csr-pmp1280+csr-debug615)"
+    "done": "#3 #5 #8 #4a + #7 dispositioned",
+    "genuinely_closed": "lint0/0, formal40/40, archtest74/74, 105k-lockstep, through-trap, fence-in-stream, cdc/rdc/xprop",
+    "honesty_findings": "6 (spike-trap-log, coverage-merge, timing-CSR-poison, pyflow-hang, hold-mischar, pack-overclaim)",
+    "partial": "#1 66.4% in-SKU, #2, #4b scoped, #6 4/5"
   },
   "reviewed_by_codex": "none",
   "run": {
-    "command": "python3 inject_csr_cov.py; verilator_coverage merge",
+    "command": "session closure",
     "host": "eda"
   },
   "stage": "dv",
