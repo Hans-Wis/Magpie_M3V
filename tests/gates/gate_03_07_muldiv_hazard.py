@@ -17,7 +17,7 @@ def _rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(fh))
 
 
-def _read_head(path: Path, size: int = 12288) -> str:
+def _read_head(path: Path, size: int = 24576) -> str:  # M1A A1: +2 dumped signals pushed the header past 12K
     with path.open("rb") as fh:
         return fh.read(size).decode("utf-8", errors="replace")
 
@@ -128,7 +128,10 @@ def test_phase_03_07_vcd_header_exposes_m_unit_review_context():
         "dbg_pc",
         "dbg_instr",
         "md_started",
-        "md_active_is_div",
+        # M1A A1: md_active_is_div removed (MUL is issue-decoupled; only DIV uses the FSM).
+        # Review context now = the MUL slot tag + the ERRATA-0001 operand gate.
+        "ex_mem_is_mul_r",
+        "hz_operand_stall",
         "md_result_valid",
         "md_result_q",
         "md_done",

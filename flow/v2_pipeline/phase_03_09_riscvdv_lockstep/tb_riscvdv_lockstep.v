@@ -205,11 +205,11 @@ module tb_riscvdv_lockstep;
         end
         if ((debug_munit != 0) && (dut.md_start || dut.md_done || dut.id_advance_to_ex_mem ||
             (dut.ex_wb_valid_r && dut.ex_wb_wb_sel_r == `WB_SEL_MD))) begin
-            $display("MDBUG cyc=%0d ifpc=%08x ifinstr=%08x id_md=%0d op=%0d is_div=%0d rs1=x%0d/%08x rs2=x%0d/%08x start=%0d done=%0d busy=%0d md_started=%0d active_div=%0d valid=%0d mul=%08x div=%08x mdq=%08x adv=%0d em_pc=%08x em_sel=%0d em_md=%08x wb_pc=%08x wb_sel=%0d wb_rd=x%0d wb_data=%08x stall=%0d",
+            $display("MDBUG cyc=%0d ifpc=%08x ifinstr=%08x id_md=%0d op=%0d is_div=%0d rs1=x%0d/%08x rs2=x%0d/%08x start=%0d done=%0d busy=%0d md_started=%0d em_is_mul=%0d valid=%0d mul=%08x div=%08x mdq=%08x adv=%0d em_pc=%08x em_sel=%0d em_md=%08x wb_pc=%08x wb_sel=%0d wb_rd=x%0d wb_data=%08x stall=%0d",
                      watchdog, dut.if_ex_pc, dut.if_ex_instr, dut.id_is_muldiv,
                      dut.id_md_op, dut.id_md_is_div, dut.id_rs1_idx, dut.rs1_val,
                      dut.id_rs2_idx, dut.rs2_val, dut.md_start, dut.md_done,
-                     dut.md_busy, dut.md_started, dut.md_active_is_div,
+                     dut.md_busy, dut.md_started, dut.ex_mem_is_mul_r,
                      dut.md_result_valid, dut.mul_result, dut.div_result,
                      dut.md_result_q, dut.id_advance_to_ex_mem, dut.ex_mem_pc_r,
                      dut.ex_mem_wb_sel_r, dut.ex_mem_md_result_r, dut.ex_wb_pc_r,

@@ -38,10 +38,16 @@ module hazard (
     // M-unit 狀態
     input         md_busy,
 
-    output        stall
+    output        stall,
+    // M1A A1: the producer-in-MEM-not-ready RAW component alone — core.v gates the DIV
+    // M-unit operand capture (md_start) on this, so a div never latches a stale operand
+    // while its producer (load OR pipelined mul) is still in EX/MEM. Single source of
+    // truth: same expression that drives the stall (no duplicated hazard logic).
+    output        operand_stall
 );
 
-    // ---- Load-use: 只 stall「load 在 EX/MEM」這拍 (1 cycle stall) ----
+    // ---- Load-use (M1A: 含 pipelined MUL — em_is_load port 由 caller OR 進 is_mul):
+    //      只 stall「value-not-ready producer 在 EX/MEM」這拍 (1 cycle stall) ----
     // load 走到 EX/WB 後 wb_data mux 已包含 lsu_ld_result，可 forward
     wire load_use_match_em = (id_rs1_idx == em_rd_idx) || (id_rs2_idx == em_rd_idx);
     wire load_use_stall = id_valid && em_valid && em_is_load && em_rd_we &&
@@ -55,5 +61,6 @@ module hazard (
     wire muldiv_stall = id_valid && id_is_muldiv && md_busy;
 
     assign stall = load_use_stall | muldiv_stall;
+    assign operand_stall = load_use_stall;
 
 endmodule

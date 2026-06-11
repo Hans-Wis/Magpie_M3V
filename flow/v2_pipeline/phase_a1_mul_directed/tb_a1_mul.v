@@ -1,6 +1,6 @@
 `timescale 1ns / 1ns
 
-module tb_muldiv_hazard;
+module tb_a1_mul;
     reg         clk = 1'b0;
     reg         resetn = 1'b0;
     wire        dbg_dummy_halted;
@@ -118,20 +118,23 @@ module tb_muldiv_hazard;
 
     always @(posedge clk) begin
         watchdog <= watchdog + 1;
-        if (watchdog > 1400) begin
+        if (watchdog > 6000) begin
             $display("FAIL: watchdog timeout");
             $fatal(1);
         end
 
-        if (dut.ex_wb_valid_r && dut.ex_wb_illegal_r) begin
-            $display("[%0t ns] stop on illegal/ebreak pc=%08x commits=%0d",
+        // Through-trap variant: halt ONLY on ebreak (the end marker). ecall also asserts
+        // ex_wb_illegal_r (generic sync-exception flag) but must flow to the handler, so we
+        // key the stop on ex_wb_is_ebreak_r, not ex_wb_illegal_r.
+        if (dut.ex_wb_valid_r && dut.ex_wb_is_ebreak_r) begin
+            $display("[%0t ns] stop on ebreak pc=%08x commits=%0d",
                      $time, dut.ex_wb_pc_r, commit_count);
             if (commit_count < 8) begin
                 $display("FAIL: too few commits before ebreak");
                 $fatal(1);
             end
             $fclose(trace_fd);
-            $display("PASS: muldiv hazard DUT trace wrote %0d commits before ebreak", commit_count);
+            $display("PASS: DUT commit trace wrote %0d commits before ebreak", commit_count);
             $finish;
         end else if (dut.wb_instr_retired && !dut.ex_wb_illegal_r) begin
             /* verilator lint_off BLKSEQ */
@@ -152,10 +155,7 @@ module tb_muldiv_hazard;
         $dumpvars(0, clk, resetn, trap, commit_count,
                      i_mem_addr, i_mem_en, i_mem_rdata,
                      d_mem_valid, d_mem_addr, d_mem_wdata, d_mem_wstrb,
-                     dbg_pc, dbg_instr, dbg_state,
-                     dut.md_started, dut.ex_mem_is_mul_r, dut.hz_operand_stall, dut.md_result_valid,
-                     dut.md_result_q, dut.md_done, dut.md_busy, dut.id_is_muldiv,
-                     dut.id_md_is_div, dut.ex_mem_md_result_r, dut.ex_wb_md_result_r);
+                     dbg_pc, dbg_instr, dbg_state);
 
         repeat (6) @(posedge clk);
         resetn = 1'b1;

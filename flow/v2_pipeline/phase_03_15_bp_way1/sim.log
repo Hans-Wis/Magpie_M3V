@@ -2,5 +2,5 @@
 PASS: DUT commit trace wrote 103 commits before ebreak
 - tb_bp_way1.v:138: Verilog $finish
 - S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 1us; walltime 0.112 s; speed 11.904 us/s
-- Verilator: cpu 0.112 s on 1 threads; allocated 34 MB
+- Verilator: $finish at 1us; walltime 0.122 s; speed 10.901 us/s
+- Verilator: cpu 0.122 s on 1 threads; allocated 34 MB

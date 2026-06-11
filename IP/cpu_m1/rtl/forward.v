@@ -30,7 +30,8 @@ module forward (
     input         em_rd_we,
     input  [ 4:0] em_rd_idx,
     input  [31:0] em_fwd_val,      // = alu_result 或 pc_plus_4 / pc_plus_imm / csr / md
-    input         em_is_load,      // load 在 ex_mem 不能 forward (alu_result = addr)
+    input         em_is_load,      // value-not-ready-in-MEM class: load (alu_result=addr)
+                                     // OR M1A pipelined MUL (product lands at WB) — caller ORs both
 
     // EX/WB stage 的寫回資訊 (2 cycles ahead, 但 load 可以 forward 因為 wb_data 已 mux)
     input         wb_valid,

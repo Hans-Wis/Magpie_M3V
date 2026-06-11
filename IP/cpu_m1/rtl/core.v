@@ -91,6 +91,7 @@ module core #(
     reg         pc_redirect;
     reg  [31:0] redirect_target;
     wire        stall;         // load-use / muldiv stall (existing)
+    wire        hz_operand_stall; // M1A A1: producer-in-MEM (load/mul) RAW — gates DIV md_start
     wire        flush_if_next; // bubble next-cycle IF/EX
     wire        amo_mem_hold;  // internal MEM-stage AMO two-beat freeze
     wire        core_mem_stall = mem_stall | amo_mem_hold;
@@ -515,6 +516,7 @@ module core #(
     reg        ex_mem_rd_we_r;
     reg [ 2:0] ex_mem_wb_sel_r;
     reg        ex_mem_is_load_r;
+    reg        ex_mem_is_mul_r;   // M1A A1: MUL slot tag (result-at-WB; blocks EX/MEM forward like a load)
     reg        ex_mem_is_store_r;
     reg        ex_mem_is_amo_r;
     reg        ex_mem_amo_is_lr_r;
@@ -574,7 +576,8 @@ module core #(
         .em_rd_we     (ex_mem_rd_we_r),
         .em_rd_idx    (ex_mem_rd_idx_r),
         .em_fwd_val   (ex_mem_fwd_val),
-        .em_is_load   (ex_mem_is_load_r),
+        // M1A A1: MUL-in-MEM is value-not-ready, same class as load-in-MEM
+        .em_is_load   (ex_mem_is_load_r || ex_mem_is_mul_r),
         .wb_valid     (ex_wb_valid),
         .wb_rd_we     (ex_wb_rd_we),
         .wb_rd_idx    (ex_wb_rd_idx),
@@ -651,18 +654,26 @@ module core #(
     // =========================================================================
     // MUL / DIV units
     // =========================================================================
-    // 兩個共用一條 start / done / result 介面 (透過 md_is_div 路由)
-    wire        mul_done, div_done;
+    // M1A A1: MUL = stateless pipelined (issue/result, rides its pipe slot);
+    // 只有 DIV 仍走 start/done/result 阻塞 FSM 介面
+    // M1A ADR-0026 A1: MUL is issue-decoupled ("load-like result-at-WB") — it no longer
+    // uses the blocking md_busy/FSM path. Only DIV keeps the blocking M-unit handshake.
+    wire        div_done;
     wire [31:0] mul_result, div_result;
     reg         md_started;
-    reg         md_active_is_div;
     reg         md_result_valid;
     reg  [31:0] md_result_q;
-    wire        md_done = md_active_is_div ? div_done : mul_done;
-    wire        md_busy = if_ex_valid && id_is_muldiv && !md_result_valid;
+    wire        id_is_mul = id_is_muldiv && !id_md_is_div;
+    wire        md_done = div_done;
+    wire        md_busy = if_ex_valid && id_is_muldiv && id_md_is_div && !md_result_valid;
     wire [31:0] md_result = md_result_q;
 
-    wire md_start = if_ex_valid && id_is_muldiv && !md_started && !md_result_valid &&
+    // M1A A1 fix (caught by directed lockstep, mul->div dist-1): md_start must NOT fire
+    // while the div's producer (load or pipelined MUL) is still in EX/MEM — rs values are
+    // not forwardable that cycle and the FSM would latch a STALE operand. Gate on the
+    // hazard unit's operand_stall (same predicate that stalls the pipe; single source).
+    wire md_start = if_ex_valid && id_is_muldiv && id_md_is_div &&
+                    !md_started && !md_result_valid && !hz_operand_stall &&
                     !pc_redirect && !warmup && !redirect_warmup && !debug_mode;
     // Original mul/div start gate:
     // !pc_redirect && !warmup && !redirect_warmup;
@@ -670,7 +681,6 @@ module core #(
     always @(posedge clk) begin
         if (!resetn) begin
             md_started       <= 1'b0;
-            md_active_is_div <= 1'b0;
             md_result_valid  <= 1'b0;
             md_result_q      <= 32'h0;
         end else if (pc_redirect || debug_halt_enter || debug_mode) begin
@@ -679,24 +689,28 @@ module core #(
         end else if (md_done) begin
             md_started      <= 1'b0;
             md_result_valid <= 1'b1;
-            md_result_q     <= md_active_is_div ? div_result : mul_result;
+            md_result_q     <= div_result;
         end else if (id_advance_to_ex_mem && md_result_valid) begin
             md_result_valid <= 1'b0;
         end else if (md_start) begin
             md_started       <= 1'b1;
-            md_active_is_div <= id_md_is_div;
         end
     end
+
+    // MUL issue = the MUL instruction actually advances ID/EX -> EX/MEM (this qualifier
+    // already folds in !any_stall, !warmup, !pc_redirect, !debug_mode). Operands are the
+    // POST-FORWARDING rs values, same as the old md_start capture. mul.v is stateless:
+    // a squashed MUL's product is simply never consumed (slot tag ex_mem_is_mul_r below).
+    wire mul_issue = id_advance_to_ex_mem && id_is_mul;
 
     mul u_mul (
         .clk    (clk),
         .resetn (resetn),
-        .start  (md_start && !id_md_is_div),
+        .issue  (mul_issue),
         .md_op  (id_md_op),
         .op_a   (rs1_val),
         .op_b   (rs2_val),
-        .result (mul_result),
-        .done   (mul_done)
+        .result (mul_result)
     );
 
     div u_div (
@@ -1060,13 +1074,15 @@ module core #(
         .em_valid     (ex_mem_valid_r),
         .em_rd_we     (ex_mem_rd_we_r),
         .em_rd_idx    (ex_mem_rd_idx_r),
-        .em_is_load   (ex_mem_is_load_r),
+        // M1A A1: MUL-in-MEM is value-not-ready, same class as load-in-MEM
+        .em_is_load   (ex_mem_is_load_r || ex_mem_is_mul_r),
         .wb_valid     (ex_wb_valid),
         .wb_rd_we     (ex_wb_rd_we),
         .wb_rd_idx    (ex_wb_rd_idx),
         .wb_is_load   (ex_wb_is_load),
         .md_busy      (md_busy),
-        .stall        (stall)
+        .stall        (stall),
+        .operand_stall(hz_operand_stall)
     );
 
     // =========================================================================
@@ -1094,6 +1110,7 @@ module core #(
             ex_mem_valid_r           <= 1'b0;
             ex_mem_rd_we_r           <= 1'b0;
             ex_mem_is_load_r         <= 1'b0;
+            ex_mem_is_mul_r          <= 1'b0;
             ex_mem_is_store_r        <= 1'b0;
             ex_mem_is_amo_r          <= 1'b0;
             ex_mem_amo_is_lr_r       <= 1'b0;
@@ -1123,6 +1140,7 @@ module core #(
             ex_mem_valid_r           <= 1'b0;
             ex_mem_rd_we_r           <= 1'b0;
             ex_mem_is_load_r         <= 1'b0;
+            ex_mem_is_mul_r          <= 1'b0;
             ex_mem_is_store_r        <= 1'b0;
             ex_mem_is_amo_r          <= 1'b0;
             ex_mem_amo_is_lr_r       <= 1'b0;
@@ -1160,6 +1178,7 @@ module core #(
             ex_mem_rd_we_r           <= id_rd_we;
             ex_mem_wb_sel_r          <= id_wb_sel;
             ex_mem_is_load_r         <= id_is_load || id_is_amo;
+            ex_mem_is_mul_r          <= id_is_mul;
             ex_mem_is_store_r        <= id_is_store;
             ex_mem_is_amo_r          <= id_is_amo;
             ex_mem_amo_is_lr_r       <= id_amo_is_lr;
@@ -1202,6 +1221,7 @@ module core #(
             ex_mem_valid_r           <= 1'b0;
             ex_mem_rd_we_r           <= 1'b0;
             ex_mem_is_load_r         <= 1'b0;
+            ex_mem_is_mul_r          <= 1'b0;
             ex_mem_is_store_r        <= 1'b0;
             ex_mem_is_amo_r          <= 1'b0;
             ex_mem_amo_is_lr_r       <= 1'b0;
@@ -1410,7 +1430,9 @@ module core #(
             ex_wb_valid_r           <= 1'b1;
             ex_wb_pc_r              <= ex_mem_pc_r;
             ex_wb_alu_result_r      <= ex_mem_alu_result_r;
-            ex_wb_md_result_r       <= ex_mem_md_result_r;
+            // M1A A1: a MUL's product is computed during its EX/MEM cycle (comb from
+            // mul.v's issue-registered operands) and captured HERE; DIV keeps the old path.
+            ex_wb_md_result_r       <= ex_mem_is_mul_r ? mul_result : ex_mem_md_result_r;
             ex_wb_pc_plus_4_r       <= ex_mem_pc_plus_4_r;
             ex_wb_pc_plus_imm_r     <= ex_mem_pc_plus_imm_r;
             ex_wb_csr_rdata_r       <= ex_mem_csr_rdata_r;
