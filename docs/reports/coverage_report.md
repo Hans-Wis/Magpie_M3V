@@ -254,3 +254,30 @@ re-execute taken) — is closed by `phase_03_15_bp_way1` (`gate_03_15`, 4/4): a 
 two always-taken aliasing branches (brA@0x100 tag 0x2 / brB@0x180 tag 0x3, BTB set 0) fills both ways;
 **full per-commit Spike lockstep, 102 commits, 0 divergence**; the `--coverage` island toggles `rd_hit1`
 2/2 and `predict_from_way1` 2/2. Per-island (cross-TB), same caveat as §2.11.
+
+### 2.13 RAS nested-call injection — u_ras 15.2%→47.1% (FARM-merged), in-SKU 70.4%→71.7%
+
+The depth-1 inline RAS injection (§2.9) only drove the return-address-stack pointer to 1, so `stack[1..7]`
+were never written (485/512 stack toggle bits cold) and `ptr[1]`/`ptr[2]` never toggled.
+`inject_ras_nested.py` climbs the pointer with a chain of **DEPTH=8 `jal ra,<next-instr>`**: each is a
+call (`id_is_jal && rd==ra`) so it **pushes** the RAS (`ptr++`, `stack[ptr]<=pc+4`), but its target is
+the immediately-following instruction, so **architecturally the chain is straight-line** — DUT and Spike
+commit the identical sequence (the RAS is a predictor invisible to retire; Spike has no RAS). Bracketed
+by `csrw/csrr mscratch` to save+restore the program's `ra`. **5 seeds, 12108 commits, 0 divergence.**
+
+| | toggle |
+|---|---|
+| u_ras | **100/660 (15.2%) → 311/660 (47.1%)** — `ptr` 6/6 FULL, `top_idx` 6/6 FULL, `stack` deep entries written |
+| **in-SKU total** (28 farm + 5 nested seeds, same 3651 waiver) | **12043/16799 = 71.7%** (was 70.4%) |
+
+Unlike the msip / bp_way1 directed islands, this is **FARM-TB injection** (same `tb_riscvdv_lockstep`
+hierarchy) so it **merges into the headline farm number**. Residual ~349 cold = return-PC **high** bits
+(`ras_top`/`push_val`/`stack` [≥15], address-range-limited — programs run < 0x8000) + deeper `stack` low
+bits needing more injected-PC address variety (diminishing returns); the high-bit tail is §04 structural
+waiver. Artifact: `ras_nested_summary.json`, `coverage_merged/farm_all3.dat`.
+
+**Two bring-up findings (memory-free was forced):** (1) an sp-based nested recursion **infinite-looped
+while lockstep HELD for 2.2M commits** — riscv-dv `sp` points into the *unified* code memory, so
+`sw ra,0(sp)` self-modified an instruction (identically on both models, hence no divergence, just non-
+termination); switched to the memory-free push-chain. (2) The chain must `csrw mscratch, ra` first — the
+opening `jal ra` clobbers the program's live return address.

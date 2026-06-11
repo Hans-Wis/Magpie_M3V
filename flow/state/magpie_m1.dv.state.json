@@ -1,32 +1,31 @@
 {
   "artifacts": [
-    "flow/v2_pipeline/phase_03_15_bp_way1/tb_bp_way1.v",
-    "flow/v2_pipeline/phase_03_15_bp_way1/firmware.S",
-    "flow/v2_pipeline/phase_03_15_bp_way1/bp_way1.py",
-    "tests/gates/gate_03_15_bp_way1_lockstep.py",
-    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/classify_ifu_bp_waiver.py"
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/inject_ras_nested.py",
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/ras_nested_summary.json",
+    "docs/reports/coverage_report.md"
   ],
   "autonomy": "L0",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "gate_03_15_bp_way1_lockstep",
+  "gate": "gate_03_09_ras_nested_injection",
   "metrics": {
+    "commits": 12108,
     "divergences": 0,
-    "full_lockstep_commits": 102,
-    "gate_tests": 4,
-    "predict_from_way1": "2/2",
-    "rd_hit1": "2/2",
-    "u_bp_coverable": 10,
-    "u_bp_waiver_bits": 226,
-    "u_ifu_coverable": 38,
-    "u_ifu_waiver_bits": 229
+    "farm_merged": true,
+    "in_sku_prev_pct": 70.4,
+    "in_sku_toggle_pct": 71.7,
+    "ptr": "6/6",
+    "seeds": 5,
+    "top_idx": "6/6",
+    "u_ras_prev_pct": 15.2,
+    "u_ras_toggle_pct": 47.1
   },
   "reviewed_by_codex": "none",
   "run": {
-    "ended": "2026-06-11T16:40:07",
+    "ended": "2026-06-11T16:57:34",
     "host": "eda",
-    "id": "run-gate_03_15_bp_way1_lockstep",
-    "started": "2026-06-11T16:40:07"
+    "id": "run-gate_03_09_ras_nested_injection",
+    "started": "2026-06-11T16:57:34"
   },
   "stage": "dv",
   "status": "pass"

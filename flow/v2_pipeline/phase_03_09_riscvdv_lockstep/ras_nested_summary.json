@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "kind": "RAS nested push-chain injection lockstep (FARM-merged)",
+  "seeds": 5,
+  "total_matched_commits": 12108,
+  "divergences": 0,
+  "isa": "rv32imc_zicsr_zifencei",
+  "mechanism": "chain of DEPTH=8 `jal ra,<next-instr>` (each pushes RAS ptr++, stack[ptr]<=pc+4; target=next instr so architecturally straight-line) bracketed by csrw/csrr mscratch to save+restore the program ra. NO memory (sp points into unified code mem -> sw self-modifies -> infinite loop, rejected), NO extra reg clobber.",
+  "u_ras_toggle": "311/660 = 47.1% (was 100/660 = 15.2%; +211 bits)",
+  "ptr": "6/6 FULL (all pointer bits toggle, depth 0..7+wrap)",
+  "top_idx": "6/6 FULL",
+  "stack": "~232/512 (deep entries stack[0..7] now written; was only stack[0])",
+  "in_sku_total": "12043/16799 = 71.7% (was 11824 = 70.4%; FARM-merged, NOT a per-island number)",
+  "merge_note": "FARM-TB injection (tb_riscvdv_lockstep hierarchy) -> merges into the headline farm toggle, unlike the msip/bp_way1 cross-TB islands.",
+  "residual": "~349 cold = return-PC HIGH bits (ras_top/push_val/stack [>=15] address-range-limited, programs run <0x8000) + deeper stack low bits needing more injected-PC address variety (diminishing returns). High-bit tail is \u00a704 structural waiver.",
+  "bringup_findings": [
+    "work-dir path overran TB +TRACE buffer (/home->ome) -> short dir 'rn'",
+    "sp-based recursion infinite-looped (lockstep HELD 2.2M commits): riscv-dv sp points into unified code memory, sw ra,0(sp) self-modified an instruction. Switched to memory-free push-chain.",
+    "must csrw mscratch,ra before the chain (first jal ra clobbers the program's live ra)"
+  ]
+}

@@ -50,3 +50,4 @@ flow/v2_pipeline/phase_03_09_riscvdv_lockstep/coverage_merged/
 .fsm.sch.verilog.xml
 flow/v2_pipeline/phase_03_09_riscvdv_lockstep/rr/
 flow/v2_pipeline/phase_03_09_riscvdv_lockstep/csr_pat_runs/
+flow/v2_pipeline/phase_03_09_riscvdv_lockstep/rn/
