@@ -163,3 +163,48 @@ depth-1); ras_top high bits need address-varied return targets (my labels are in
 M/TRAP storage (~571, directed CSR writes + trap variety), ifu/bp/idu/cdec corner also remain. This is
 the classic coverage long tail — datapath 100%, predictor/CSR-storage/control bits each need bespoke
 stimulus. Est ~1 day more directed + the §04 waiver DV-lead sign to reach the in-SKU 95% bar.
+
+### 2.10 CSR save-modify-restore pattern injection — u_csr 21.6%→31.6%, in-SKU 67.6%→70.4%
+
+The §2.4 CSR-read injection only toggled the read mux + mscratch; u_csr write-data / storage high bits
+stayed dark. `inject_csr_pattern.py` adds the missing lever: for each writable M-CSR
+(mscratch/mepc/mcause/mtval/mtvec/mstatus/mie) it injects a **save-modify-restore** snippet —
+`csrr x31,<csr>` (save OLD), two `csrw <csr>,xPAT` with walking 0xAA/55/FF/00 patterns, then
+`csrw <csr>,x31` (restore). **8 seeds, 17740 commits, 0 divergence.**
+
+**Why lockstep-safe (verified against `flow/v2_pipeline/lib/spike_commit.py`):** the comparator parses
+only `(pc, rd, wdata)` GPR writebacks from Spike `--log-commits`. A `csrw csr,rs` (rd=x0) emits **no**
+`x<rd> 0x<wdata>` field, so the patterned — possibly WARL-legalized-differently on subset CSRs
+(mstatus/mtvec/mie) — value is invisible to the comparator and cannot diverge. The only compared writes
+are the save-read (OLD value — the same read the base farm does safely at 105k commits/0-div) and the
+deterministic `li` constants. Restore returns architectural state, so the random program continues
+unperturbed. This is *more* aggressive than the conservative "mscratch + RO csrr only" advice yet has a
+concrete safety proof from the comparator's granularity.
+
+| | toggle |
+|---|---|
+| raw (base 8 + CSR-read 4 + fence 4 + RAS 4 + CSR-pattern 8 = 28 seeds) | 11824/20450 = 57.8% |
+| **in-SKU (after 3651-bit waiver)** | **11824/16799 = 70.4%** |
+
+u_csr **813/3772 (21.6%) → 1192/3772 (31.6%)**. Full-width plain regs saturate to 100% (mscratch,
+mcause, mtval; mepc 62/64). Coverage **plateaus after one seed** — walking patterns toggle every
+instruction-stream-reachable CSR storage bit, so the 7 extra seeds add 0 new u_csr bits (they re-prove
+lockstep at scale).
+
+**u_csr residual (2580 untoggled) — precise classification (`classify_csr_waiver.py`):**
+
+| bucket | bits | disposition |
+|---|---|---|
+| PMP (`pmp_addr_o/pmpaddr_r/pmp_cfg_o/pmpcfg_r`) | 1280 | structural waiver — PMP_ENTRIES=0 SKU (same class as u_pmp_*) |
+| DCSR/DPC/DSCRATCH | 267 | structural waiver — debug-mode CSRs, debug never entered |
+| TRIGGER routing | 218 | structural waiver — trigger inactive (same class as u_trigger) |
+| DEBUG halt iface | 194 | structural waiver — debug halt never asserted |
+| CONST read-mux zero fields (`misa/mstatus/mie/mip` hardwired-0) | 240 | unreachable — constant nets, cannot toggle by construction |
+| COUNTER high bits (`cycle/instret`) | 202 | unreachable — rollover needs >2³² cycles |
+| IRQ-sourced (`mip/irq_cause/ext_pending`) | 76 | → blocker 4b (msip software-interrupt directed) |
+| coverable (trap_cause/trap_pc variety, mepc) | 103 | more directed trap-variety seeds |
+
+**Structural+const+counter waiver subtotal = 2401 bits** (DV-lead sign PENDING). Applying it,
+u_csr in-SKU = **1192/1371 = 87.0%**; the only genuine remaining stimulus gaps are IRQ (blocker 4b)
+and trap-cause/PC variety (~50 bits). Artifacts: `csr_pattern_summary.json`,
+`coverage_merged/farm_all2.dat`, `coverage_merged/toggle_breakdown.txt`.

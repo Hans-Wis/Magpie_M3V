@@ -1,24 +1,31 @@
 {
   "artifacts": [
-    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/inject_ras_inline.py",
-    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/ras_inline_summary.json",
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/inject_csr_pattern.py",
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/csr_pattern_summary.json",
     "docs/reports/coverage_report.md"
   ],
-  "autonomy": "L2",
+  "autonomy": "L0",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "toggle_ras_inline",
+  "gate": "gate_03_09_csr_pattern_injection",
   "metrics": {
-    "in_sku_toggle": "67.6%",
-    "ras_lockstep": "0-div 7793 commits",
-    "remaining": "RAS deeper-stack needs nested calls + address-varied targets; u_csr storage; corner long-tail",
-    "u_ras": "15.2% (was 5.5%)"
+    "commits": 17740,
+    "divergences": 0,
+    "in_sku_prev_pct": 67.6,
+    "in_sku_toggle_pct": 70.4,
+    "seeds": 8,
+    "u_csr_in_sku_after_waiver_pct": 87.0,
+    "u_csr_prev_pct": 21.6,
+    "u_csr_toggle_pct": 31.6,
+    "u_csr_waiver_proposal_bits": 2401
   },
   "reviewed_by_codex": "none",
   "run": {
-    "command": "python3 inject_ras_inline.py",
-    "host": "eda"
+    "ended": "2026-06-11T16:14:01",
+    "host": "eda",
+    "id": "run-gate_03_09_csr_pattern_injection",
+    "started": "2026-06-11T16:14:01"
   },
   "stage": "dv",
-  "status": "planned"
+  "status": "pass"
 }

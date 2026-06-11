@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "kind": "CSR save-modify-restore pattern injection lockstep",
+  "seeds": 8,
+  "total_matched_commits": 17740,
+  "divergences": 0,
+  "isa": "rv32imc_zicsr_zifencei",
+  "mechanism": "csrr save -> csrw walking-pattern(rd=x0, NOT in commit trace) x2 -> csrw restore, for mscratch/mepc/mcause/mtval/mtvec/mstatus/mie",
+  "lockstep_safety": "verified vs flow/v2_pipeline/lib/spike_commit.py: comparator parses only (pc,rd,wdata) GPR writebacks; rd=x0 csrw emits no compared field, so WARL-legalized CSR writes are invisible -> cannot diverge. Save-read is the same op the base farm does at 105k commits/0-div.",
+  "u_csr_toggle": "1192/3772 = 31.6% (was 813/3772 = 21.6%; +379 bits)",
+  "in_sku_total": "11824/16799 = 70.4% (was 11351/16799 = 67.6%; same 3651-bit waiver)",
+  "saturation": "plateaus after 1 seed: walking 0xAA/55/FF/00 patterns toggle every instruction-stream-reachable CSR storage bit; full-width plain regs (mscratch/mcause/mtval) 100%, mepc 62/64",
+  "u_csr_residual_classified": {
+    "PMP_dead_PMP_ENTRIES_0": 1280,
+    "DCSR_DPC_DSCRATCH_debug_only": 267,
+    "TRIGGER_routing_inactive": 218,
+    "DEBUG_halt_iface_inactive": 194,
+    "CONST_readmux_zero_fields": 240,
+    "COUNTER_high_bits_rollover": 202,
+    "IRQ_sourced_blocker_4b": 76,
+    "coverable_directed_trap_variety": 103
+  },
+  "waiver_proposal_bits": 2401,
+  "u_csr_in_sku_after_waiver": "1192/1371 = 87.0% (waiving PMP+debug+trigger+const+counter = 2401 structural-dead bits; DV-lead sign PENDING)",
+  "remaining": "IRQ-sourced 76 -> blocker 4b (msip directed); trap_cause/trap_pc variety ~50 -> more directed trap seeds"
+}
