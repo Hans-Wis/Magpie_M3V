@@ -180,6 +180,14 @@ def parse_spike_commits(
         a = norm_regs[_rs1(instr)]
         b = norm_regs[_rs2(instr)]
         imm_i = _sext((instr >> 20) & 0xFFF, 12)
+        # CSR read of a PC-holding CSR (mepc/mtvec/mtval) returns an absolute PC; the DUT runs at base
+        # 0x0 while Spike runs at pc_base, so normalize by subtracting pc_base. This is the harness fix
+        # that enables THROUGH-TRAP per-commit lockstep (a handler reading mepc/mcause then mret) —
+        # previously the mepc read mismatched by pc_base. mcause/mstatus are not PC-based and pass as-is.
+        if opcode == 0x73 and funct3 != 0:
+            csr = (instr >> 20) & 0xFFF
+            if csr in (0x341, 0x305, 0x343) and raw_wdata >= pc_base:  # mepc, mtvec, mtval
+                return _u32(raw_wdata - pc_base)
         if opcode == 0x37:
             return _u32(instr & 0xFFFF_F000)
         if opcode == 0x17:

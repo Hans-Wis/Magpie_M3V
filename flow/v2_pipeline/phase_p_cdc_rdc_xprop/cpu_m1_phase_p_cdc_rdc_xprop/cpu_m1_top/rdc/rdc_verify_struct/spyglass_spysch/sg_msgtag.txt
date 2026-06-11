@@ -1,0 +1,257 @@
+4 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+1
+5 "Setup_port01" 3
+"SG_MULTILINE_PROPERTY"
+1
+"SG_MULTILINE_MSGTAG"
+["18@@2"]
+"SETUP_PORT_SDC_TAG"
+2
+6 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+3
+7 "Setup_port01" 3
+"SG_MULTILINE_PROPERTY"
+1
+"SG_MULTILINE_MSGTAG"
+["18@@3"]
+"SETUP_PORT_SDC_TAG"
+4
+8 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+5
+9 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+6
+10 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+7
+11 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+8
+12 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+9
+13 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+10
+14 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+11
+15 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+12
+16 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+13
+17 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+14
+18 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+15
+19 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+16
+20 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+17
+22 "Setup_port01" 1
+"SETUP_PORT_SS_SCH"
+18
+23 "Setup_port01" 1
+"Open_Sp_Sheet"
+["./cpu_m1_phase_p_cdc_rdc_xprop/cpu_m1_top/rdc/rdc_verify_struct/spyglass_reports/clock-reset/Setup_port01/cpu_m1_top.csv"]
+55 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+1
+56 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+2
+57 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+3
+58 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+4
+59 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+5
+60 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+6
+61 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+7
+62 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+8
+63 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+9
+64 "Setup_blackbox01" 3
+"SG_MULTILINE_PROPERTY"
+1
+"SG_MULTILINE_MSGTAG"
+["18@@2"]
+"SETUP_BBOX01_SDC_TAG"
+10
+65 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+11
+66 "Setup_blackbox01" 3
+"SG_MULTILINE_PROPERTY"
+1
+"SG_MULTILINE_MSGTAG"
+["18@@3"]
+"SETUP_BBOX01_SDC_TAG"
+12
+67 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+13
+68 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+14
+69 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+15
+70 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+16
+71 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+17
+72 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+18
+73 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+19
+74 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+20
+75 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+21
+76 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+22
+77 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+23
+78 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+24
+79 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+25
+80 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+26
+81 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+27
+82 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+28
+83 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+29
+84 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+30
+85 "Setup_blackbox01" 1
+"SETUP_BBOX01_SS_SCH"
+31
+86 "Setup_blackbox01" 1
+"Open_Sp_Sheet"
+["./cpu_m1_phase_p_cdc_rdc_xprop/cpu_m1_top/rdc/rdc_verify_struct/spyglass_reports/clock-reset/Setup_blackbox01/cpu_m1_top_trigger.csv"]
+88 "Ar_resetcross_matrix01" 1
+"Open_Sp_Sheet"
+["./cpu_m1_phase_p_cdc_rdc_xprop/cpu_m1_top/rdc/rdc_verify_struct/spyglass_reports/clock-reset/Ar_resetcross_matrix01/ResetCrossingMatrix.01.csv@@noofheadercol:1@@col-prop:1r"]
+89 "ErrorAnalyzeBBox" 2
+"BBoxEng"
+["trigger","BB_NO_MOD_DEF"]
+"BBoxEngAuxiInfo"
+["WORK","trigger","1"]
+-1 "Ar_resetcross_matrix01" 3
+"TEMPLATE"
+["rdc/rdc_verify_struct"]
+"RULE_ORDER"
+[12]
+"RULEGROUP"
+["clock-reset/ADV_CLOCKS"]
+-1 "Clock_info03b" 3
+"TEMPLATE"
+["rdc/rdc_verify_struct"]
+"RULE_ORDER"
+[5]
+"RULEGROUP"
+["clock-reset/INFORMATION/Clock_info03"]
+-1 "Clock_info15" 3
+"TEMPLATE"
+["rdc/rdc_verify_struct"]
+"RULE_ORDER"
+[9]
+"RULEGROUP"
+["clock-reset/INFORMATION"]
+-1 "DetectTopDesignUnits" 2
+"RULEGROUP"
+["Design Read"]
+"BUILTIN"
+"1"
+-1 "ElabSummary" 2
+"RULEGROUP"
+["Design Read"]
+"BUILTIN"
+"1"
+-1 "ErrorAnalyzeBBox" 2
+"RULEGROUP"
+["Blackbox Resolution"]
+"BUILTIN"
+"1"
+-1 "Info_Case_Analysis" 5
+"TEMPLATE"
+["rdc/rdc_verify_struct"]
+"RULE_ORDER"
+[10]
+"RULEGROUP"
+["Design Read"]
+"BUILTIN"
+"1"
+"SPG_RULETAG_SCH_INFO_RULE"
+"Show Info Case Analysis Data"
+-1 "Propagate_Clocks" 3
+"TEMPLATE"
+["rdc/rdc_verify_struct"]
+"RULE_ORDER"
+[-1]
+"RULEGROUP"
+["clock-reset/INFORMATION"]
+-1 "Propagate_Resets" 3
+"TEMPLATE"
+["rdc/rdc_verify_struct"]
+"RULE_ORDER"
+[-1]
+"RULEGROUP"
+["clock-reset/INFORMATION"]
+-1 "SYNTH_5143" 2
+"RULEGROUP"
+["Design Read"]
+"BUILTIN"
+"1"
+-1 "Setup_blackbox01" 3
+"TEMPLATE"
+["rdc/rdc_verify_struct"]
+"RULE_ORDER"
+[8]
+"RULEGROUP"
+["clock-reset/SETUP"]
+-1 "Setup_port01" 3
+"TEMPLATE"
+["rdc/rdc_verify_struct"]
+"RULE_ORDER"
+[7]
+"RULEGROUP"
+["clock-reset/SETUP"]

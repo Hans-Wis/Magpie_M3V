@@ -1,0 +1,3 @@
+
+clock@@name@@cpu_m1_top.clk@@
+reset@@name@@resetn@@value@@0@@async@@

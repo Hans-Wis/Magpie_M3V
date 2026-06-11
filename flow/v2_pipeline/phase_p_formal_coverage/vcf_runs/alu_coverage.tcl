@@ -1,0 +1,17 @@
+set_fml_appmode FPV
+set outdir flow/v2_pipeline/phase_p_formal_coverage
+set design alu
+read_file -top $design -format sverilog -sva -cov all -vcs {+incdir+IP/cpu_m1/rtl IP/cpu_m1/rtl/alu.v IP/cpu_m1/dv/formal/alu_assert_bind.sv}
+check_fv -block
+redirect -file $outdir/logs/alu_coverage_report_fv.txt {report_fv}
+redirect -file $outdir/logs/alu_coverage_report_fv_verbose.txt {report_fv -verbose -no_summary}
+analyze_fv_coverage -hierdepth 100
+redirect -file $outdir/logs/alu_fv_coverage.txt {report_fv_coverage -hierdepth 100}
+redirect -file $outdir/logs/alu_fv_coverage_covered.txt {report_fv_coverage -hierdepth 100 -list_covered}
+redirect -file $outdir/logs/alu_fv_coverage_uncovered.txt {report_fv_coverage -hierdepth 100 -list_uncovered}
+set fp [open $outdir/logs/alu_coverage_props.tsv w]
+puts $fp "property\tstatus"
+foreach_in_collection prop [get_props -usage assert] {
+    puts $fp "[get_attribute $prop name]\t[get_attribute $prop status]"
+}
+close $fp

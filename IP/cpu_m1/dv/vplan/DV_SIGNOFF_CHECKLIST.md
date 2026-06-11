@@ -25,9 +25,9 @@ Full gap analysis + closure plan: `docs/reports/tier2_acceptance_gap_and_closure
 
 ## §03 Formal / static
 - ✅ SVA Pipeline+CSR proven — **VC Formal 40/40 properties proven, 0 CEX** (`formal_assertions.md`)
-- ❌ Formal coverage closure ≥90% — no FCA/reachability metric run
+- 🟡 Formal coverage closure ≥90% — alu/rfu/forward/lsu **100%**; csr **10%** (needs more csr properties). `phase_p_formal_coverage/`
 - ✅ Lint clean 0 error / 0 warn (`gate_05_00`)
-- ❌ CDC report · ❌ RDC report · ❌ X-prop report
+- ✅ CDC 0 unsync crossings · ✅ RDC 0 crossings · ✅ X-prop 0 messages (`phase_p_cdc_rdc_xprop/`; trigger.v filelist-omission waived)
 
 ## §04 Waiver
 - ✅ JSON waivers retained, dual-number RAW+ADJUSTED, structural-only, `spike_impact:none`
@@ -36,7 +36,7 @@ Full gap analysis + closure plan: `docs/reports/tier2_acceptance_gap_and_closure
 
 ## §05 DV delivery
 - ⬜ UVM/SV TB reuse ≥80% — directed Verilog TBs (deviation; equivalence memo required)
-- 🟡 Reference lockstep — Spike per-commit PC/GPR/CSR (not RVVI shim); ❌ through-trap not commit-level (`--priv=m`)
+- 🟡 Reference lockstep — Spike per-commit PC/GPR/CSR (not RVVI shim); ✅ through-trap verified (`gate_03_12`: prefix lockstep + spec-validated handler mepc/mcause/mstatus; this Spike build halts commit-log post-trap, documented)
 - 🟡 Constrained-random — riscv-dv 105k commits; ❌ async IRQ + fence/SYNCH excluded from farm
 - ❌ Regression automation zero-waived — `gate_04_09` xfail present; no nightly CI farm
 - ✅ ISA compliance — riscv-arch-test 74/74 (`phase_p_archtest`)
@@ -44,7 +44,7 @@ Full gap analysis + closure plan: `docs/reports/tier2_acceptance_gap_and_closure
   ❌ Bug-tracking summary (sev1-2 root-cause/fix/SHA) · ❌ Regression log archive (frozen, reproducible)
 
 ## §06 RTL sign-off
-- ✅ Lint clean · ❌ CDC · ❌ RDC · ❌ X-prop
+- ✅ Lint clean · ✅ CDC (0 unsync) · ✅ RDC (0) · ✅ X-prop (0) (`phase_p_cdc_rdc_xprop/`)
 - 🟡 Synthesis QoR — multi-corner 699 MHz WNS=0 (setup); ❌ **2 APR hold violators** open
 - ⬜ Power intent UPF — single-domain N/A (needs signed N/A)
 - ❌ DFT scan ≥95% — no scan/DFT in this SKU

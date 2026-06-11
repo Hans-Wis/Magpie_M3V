@@ -1,0 +1,32 @@
+#!SPYGLASS_PROJECT_FILE
+#!VERSION 3.0
+#  -------------------------------------------------------------------
+#  This is a software generated project file. Manual edits to this file could be lost during the next save operation
+#  Copyright Synopsys Inc.
+#  Last Updated By: SpyGlass SpyGlass_vX-2025.06-SP1
+#  Last Updated On Thu Jun 11 11:30:45 2026
+#
+#  -------------------------------------------------------------------
+
+##Data Import Section
+
+read_file -type sourcelist files.f
+#BackRefFile:/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_cdc_rdc_xprop/run_spyglass.tcl #LineNumber:12
+read_file -type sgdc cdc_rdc_xprop.sgdc
+read_file -type awl magpie_m1_cdc_rdc_xprop_waivers.awl
+
+##Common Options Section
+
+set_option projectwdir .
+set_option language_mode mixed
+set_option designread_enable_synthesis no
+set_option designread_disable_flatten no
+set_option top cpu_m1_top
+set_option enableSV yes
+set_option active_methodology $SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff
+
+
+##Goal Setup Section
+
+current_methodology $SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff
+

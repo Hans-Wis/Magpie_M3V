@@ -784,6 +784,21 @@ module core #(
                              ((id_ls_funct3 == `F3_LW) || (id_ls_funct3 == `F3_SW)) ? (alu_result[1:0] != 2'b00) :
                              1'b0);
     wire id_mem_misaligned = id_mem_align_error && if_ex_valid && !stall && !pc_redirect && !warmup;
+    wire [31:0] trigger_csr_rdata;
+    wire [31:0] trigger_debug_csr_rdata;
+    wire        trigger_csr_we;
+    wire [11:0] trigger_csr_waddr;
+    wire [31:0] trigger_csr_wdata;
+    wire        trigger_debug_csr_we;
+    wire [11:0] trigger_debug_csr_waddr;
+    wire [31:0] trigger_debug_csr_wdata;
+    wire        ex_trigger_hit;
+    wire [ 1:0] ex_trigger_idx;
+    wire        mem_trigger_hit;
+    wire [ 1:0] mem_trigger_idx;
+    wire        mem_trigger_is_load;
+    wire        mem_trigger_is_store;
+    wire        mem_side_effect_block;
 
     // 對外 d-port：MEM stage 驅動 (lab06b: 從 ex_mem.Q 出，不是 ID/EX 組合)
     //   d_mem_addr 走 register output → 切開 lab06 的 "BRAM → ALU → d_mem WEA" 長路徑
@@ -838,22 +853,6 @@ module core #(
     wire [31:0] wb_irq_cause;       // priority-encoded interrupt mcause from csr (ADR-0019)
     wire [31:0] wb_trap_cause;
     wire [31:0] wb_trap_mtval;
-    wire [31:0] trigger_csr_rdata;
-    wire [31:0] trigger_debug_csr_rdata;
-    wire        trigger_csr_we;
-    wire [11:0] trigger_csr_waddr;
-    wire [31:0] trigger_csr_wdata;
-    wire        trigger_debug_csr_we;
-    wire [11:0] trigger_debug_csr_waddr;
-    wire [31:0] trigger_debug_csr_wdata;
-    wire        ex_trigger_hit;
-    wire [ 1:0] ex_trigger_idx;
-    wire        mem_trigger_hit;
-    wire [ 1:0] mem_trigger_idx;
-    wire        mem_trigger_is_load;
-    wire        mem_trigger_is_store;
-    wire        mem_side_effect_block;
-
     // CSR write happens in EX/WB stage (latched into ex_wb register)
     wire        wb_csr_we;
     wire        wb_trap_enter, wb_trap_exit;

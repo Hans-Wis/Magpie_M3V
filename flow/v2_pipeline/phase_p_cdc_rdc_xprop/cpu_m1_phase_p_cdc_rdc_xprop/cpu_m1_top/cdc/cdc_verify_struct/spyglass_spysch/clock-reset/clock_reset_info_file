@@ -1,0 +1,53 @@
+Enabled AND-Sync
+Enabled Sync-Enable
+Enabled Clock_Gate-Sync
+Enabled Mux-Select
+Enabled Recirculation
+BEGIN::INFO
+SGDC current_design = cpu_m1_top
+clock =
+clk
+END::INFO
+BEGIN::INFO
+SGDC current_design = cpu_m1_top
+reset =
+resetn
+END::INFO
+BEGIN INFO :: CLOCKS INFORMATION
+Clk-Name=cpu_m1_top.clk::Pos-Flop=7180::Neg-Flop=0::UnKnown-Flop=0::Gating=No
+END CLOCKS INFORMATION
+BEGIN INFO :: CLOCK SOURCES
+PRIMARY:
+
+cpu_m1_top.clk
+
+BLACK-BOX:
+
+
+UNDRIVEN:
+
+
+DERIVED:
+
+
+GATED:
+
+
+END::CLOCK-INFO
+BEGIN INFO :: RESET SOURCES
+PRIMARY:
+
+
+BLACK-BOX:
+
+
+UNDRIVEN:
+
+
+DERIVED:
+
+
+GATED:
+
+
+END::RESET-INFO

@@ -1,28 +1,25 @@
 {
   "artifacts": [
-    "docs/reports/tier2_acceptance_gap_and_closure.md",
-    "docs/reports/commercial_signoff_evidence_pack.md",
-    "IP/cpu_m1/dv/vplan/FEATURE_FREEZE.md",
-    "IP/cpu_m1/dv/vplan/DV_SIGNOFF_CHECKLIST.md",
-    "IP/cpu_m1/dv/vplan/VPLAN.md"
+    "tests/gates/gate_03_12_through_trap_lockstep.py",
+    "flow/v2_pipeline/phase_03_12_through_trap/spike_lockstep.py",
+    "flow/v2_pipeline/lib/spike_commit.py"
   ],
   "autonomy": "L2",
   "data_quality": "full",
   "design": "magpie_m1",
-  "gate": "tier2_acceptance_closure",
+  "gate": "gate_03_12_through_trap_lockstep",
   "metrics": {
-    "biggest_blocker": "whole-core toggle 62.93% (need 95%) + gate_04_09 xfail",
-    "docs_closed_this_session": "gap+closure plan, pack honesty reconcile, FEATURE_FREEZE, VPLAN+checklist rev0.2",
-    "eda_gated_remaining": "toggle95, branch/expr close, CDC/RDC/Xprop, formal-coverage90, DFT, expanded-lockstep, through-trap, hold-violators",
-    "genuinely_closed": "lint 0/0, VC Formal 40/40, arch-test 74/74, 105k-commit lockstep 0-div",
-    "paths": "full Tier-2 ~4-6wk | Tier-2-Narrow core-only ~2wk",
-    "verdict": "NOT Tier-2 signable today (REJECT) — reconciled to honest baseline"
+    "prefix_lockstep": "7 commits Spike-equivalent",
+    "rtl_changed": "none (core.v decl-reorder by Codex, verified logic-safe)",
+    "spike_limitation": "--log-commits halts post sync-trap (documented)",
+    "through_trap": "2 traps, handler CSRs spec-correct"
   },
   "reviewed_by_codex": "none",
   "run": {
-    "command": "gemini+grok customer audit; doc reconciliation",
-    "host": "eda"
+    "command": "make all; pytest gate_03_12",
+    "host": "eda",
+    "simulator": "Verilator+Spike"
   },
   "stage": "dv",
-  "status": "planned"
+  "status": "pass"
 }

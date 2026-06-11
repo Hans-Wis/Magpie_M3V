@@ -1,0 +1,6 @@
+module	coverage_score	total_registers	uncovered_registers	uncovered_percent	properties_proven	properties_total	meets_90	exit_code
+alu	100	0	0	0	3	3	yes	3
+rfu	100	1	0	0	4	4	yes	3
+forward	100	0	0	0	8	8	yes	3
+lsu	100	0	0	0	1	1	yes	3
+csr	10	20	18	90	6	6	no	3

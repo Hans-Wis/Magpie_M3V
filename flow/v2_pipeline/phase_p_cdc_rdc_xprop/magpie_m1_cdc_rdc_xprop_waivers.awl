@@ -1,0 +1,8 @@
+####################################################################################################
+# Magpie_M1 SpyGlass CDC/RDC/X-prop waivers for phase_p_cdc_rdc_xprop.
+# Scope waivers by rule, source file, and diagnostic text.
+####################################################################################################
+
+waive -rules {SYNTH_5143} -file {../../../IP/cpu_m1/rtl/rfu.v} -msg {rfu -> Initial block is ignored for synthesis} -comment {Matches reviewed lint waiver: rfu.regs simulation-only register-file initialization; synthesis ignores this initialization by construction.}
+
+waive -rules {ErrorAnalyzeBBox} -file {../../../IP/cpu_m1/rtl/core.v} -msg {Design Unit 'trigger' has no definition; black-box behavior assumed and module interface inferred} -comment {Filelist-scope waiver for mandated reuse of flow/v2_pipeline/phase_p_lint_current/files.f, which omits IP/cpu_m1/rtl/trigger.v while canonical IP/cpu_m1/rtl/filelist.f includes it. trigger.v structural audit shows only input clk, input resetn, one always @(posedge clk), no generated clock/reset, and only combinational outputs plus clk/reset-local state; no additional CDC/RDC domain is introduced. Full non-waived setup sign-off should update the lint filelist to include trigger.v.}

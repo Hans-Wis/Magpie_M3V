@@ -1,0 +1,42 @@
+
+  Verbose Results
+   Property Verbose List:
+   ----------------------
+   > Assertion
+     # Assertion: 3
+     > ID: [0] proven 
+      - name          : alu.alu_assert_i.unnamed$$_0
+      - language      : SVA
+      - type          : assert
+      - usage         : assert
+      - update_time   : 11:26:06 - Jun 11
+      - elapsed_time  : 00:00:00
+      - converge_time : 00:00:00
+      - location      : IP/cpu_m1/dv/formal/alu_assert_bind.sv:11
+      - engine        : t1
+
+     > ID: [1] proven 
+      - name          : alu.alu_assert_i.unnamed$$_1
+      - language      : SVA
+      - type          : assert
+      - usage         : assert
+      - update_time   : 11:26:06 - Jun 11
+      - elapsed_time  : 00:00:00
+      - converge_time : 00:00:00
+      - location      : IP/cpu_m1/dv/formal/alu_assert_bind.sv:12
+      - engine        : t1
+
+     > ID: [2] proven 
+      - name          : alu.alu_assert_i.unnamed$$_2
+      - language      : SVA
+      - type          : assert
+      - usage         : assert
+      - update_time   : 11:26:06 - Jun 11
+      - elapsed_time  : 00:00:00
+      - converge_time : 00:00:00
+      - location      : IP/cpu_m1/dv/formal/alu_assert_bind.sv:13
+      - engine        : t1
+
+
+
+

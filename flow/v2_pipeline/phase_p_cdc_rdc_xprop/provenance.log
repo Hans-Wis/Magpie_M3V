@@ -1,0 +1,21 @@
+host=eda
+timestamp_final_report=2026-06-11T11:31:44+08:00
+run_summary_cdc_created=2026-06-11T11:30:41+08:00
+run_summary_rdc_created=2026-06-11T11:30:44+08:00
+pwd=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_cdc_rdc_xprop
+git_head=a45636d
+spyglass_bin=/soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/bin/spyglass
+sg_shell_bin=/soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/bin/sg_shell
+tool=SpyGlass_vX-2025.06-SP1
+tool_banner=Version X-2025.06-SP1 for linux64 - Sep 02, 2025
+license=SNPSLMD_LICENSE_FILE=27050@127.0.0.1; LM_LICENSE_FILE=27050@127.0.0.1; command used sg_shell -licqueue
+command=cd /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_cdc_rdc_xprop && sg_shell -licqueue -tcl /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_cdc_rdc_xprop/run_spyglass.tcl
+exit_code=0
+top=cpu_m1_top
+goals=cdc/cdc_verify_struct,rdc/rdc_verify_struct
+xprop_rules=Ac_initstate01,Ac_unsync01,Ac_unsync02 within cdc/cdc_verify_struct
+methodology=$SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff
+filelist=files.f copied from flow/v2_pipeline/phase_p_lint_current/files.f
+constraints=cdc_rdc_xprop.sgdc: clock -name clk; reset -name resetn -value 0
+waiver_file=magpie_m1_cdc_rdc_xprop_waivers.awl
+rtl_delta=IP/cpu_m1/rtl/core.v declaration-order cleanup for SpyGlass CDC/RDC design-read; no logic change

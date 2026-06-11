@@ -1,0 +1,19 @@
+	mie_meie
+	mie_mtie
+	mie_msie
+	mtvec_base
+	mscratch
+	mepc_reg
+	mcause_reg
+	mtval_reg
+	ext_pending
+	cycle_cnt
+	instret_cnt
+	dcsr_ebreakm_reg
+	dcsr_cause_reg
+	dcsr_step_reg
+	dpc_reg
+	dscratch0_reg
+	pmpaddr_r
+	pmpcfg_r
+

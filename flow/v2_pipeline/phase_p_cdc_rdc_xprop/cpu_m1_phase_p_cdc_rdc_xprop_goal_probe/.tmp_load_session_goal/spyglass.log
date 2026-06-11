@@ -1,0 +1,15 @@
+SpyGlass run started at 11:25:32 AM on Jun 11 2026 
+
+SpyGlass Predictive Analyzer(R) - Version SpyGlass_vX-2025.06-SP1
+Synopsys TestMAX(TM)
+SpyGlass Fault Analysis
+Last compiled on Sep  2 2025
+
+All Rights Reserved. Use, disclosure or duplication
+without prior written permission of Synopsys Inc. is prohibited.
+Technical support: email spyglass_support@synopsys.com.
+
+Loading Policy: spyglass (Version: SpyGlass_vX-2025.06-SP1) from path: /soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/policies/spyglass
+Loading Shared library libspyglassrules-Linux4.spyso from /soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/lib/libspyglassrules-Linux4.spyso 
+Loading Shared library libsdcInitRules-Linux4.spyso from /soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/lib/libsdcInitRules-Linux4.spyso 
+Loading Shared library librmerules-Linux4.spyso from /soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/lib/librmerules-Linux4.spyso 
