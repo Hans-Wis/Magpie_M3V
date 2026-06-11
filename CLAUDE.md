@@ -1,3 +1,12 @@
+# CLAUDE.md — `SOC/Magpie_M1A` 效能改版線(M1 fork)
+
+> ⭐ **本 repo 是 Magpie_M1A**:M1 的效能升級線,fork 自 `m1-rtl-freeze-v1.0`(M1 @ 4e6e1d4,完整歷史保留,remote=parent)。
+> **design_id = `cpu_m1a` / `magpie_m1a`**(ip.json 已改;物理路徑沿用 `IP/cpu_m1/` 避免 Makefile/gate 大翻修——身分以 design_id 為準)。
+> **M1 的 Tier-2 證據不得由本線宣稱**:flow/state 已清空,所有 gate/lockstep/coverage 在本線重新掙。identity gate = `tests/gates/gate_00_identity_m1a.py`。
+> **任務**:超越 Cortex-M55(DSP+edge-LLM)。藍圖=[`docs/reports/m1a_performance_evaluation.md`](docs/reports/m1a_performance_evaluation.md);實測基線=[`docs/reports/m1_benchmark_baseline.md`](docs/reports/m1_benchmark_baseline.md)(CoreMark/MHz 2.47、CPI 1.29、GEMV 11.0 c/MAC)。
+> **第一動作 = 開 ADR-0026(M1A scope)**:pipelined MUL(latency 2/throughput 1)→ Zba/Zbb/Zbs+Zicond → TCM/頻寬 → RVV Zve32x(VLEN=128, dual-beat)→ TC-GEMV。保 4-stage 脊椎(頻率資產);dual-issue 最後。
+> 以下為承襲自 M1 的 charter(規則/工具/flow 不變,凍結註記屬 M1 線):
+
 # CLAUDE.md — `SOC/Magpie_M1` CPU IP 開發線
 
 > 本檔是 **Magpie_M1** 子專案的 charter + 新 session 上手指南。

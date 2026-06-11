@@ -1,11 +1,15 @@
 {
-  "id": "cpu.cpu_m1",
-  "name": "cpu_m1",
-  "display_name": "Magpie M1 — RV32IMC_Zicsr_Zifencei Pipeline CPU IP",
+  "id": "cpu.cpu_m1a",
+  "name": "cpu_m1a",
+  "display_name": "Magpie M1A — performance line (pipelined MUL / Zb* / TCM / RVV Zve32x / TC-GEMV), forked from M1",
   "kind": "cpu",
   "flow": "cpu",
   "maturity": "draft",
-  "maturity_taxonomy": ["draft", "qualified-mvp", "production-qualified"],
+  "maturity_taxonomy": [
+    "draft",
+    "qualified-mvp",
+    "production-qualified"
+  ],
   "commercial": {
     "decision_ref": "docs/adr/0012-mvp-irq-scope-and-commercial-cut.md",
     "model": "two-sku-staged",
@@ -18,14 +22,28 @@
       "dv_bar": "bar-B-minus = riscv-dv full-mix EXCLUDING async interrupts; Spike per-commit lockstep",
       "coverage_bar": "functional 100% on scope (incl fence.i + MEI) AND code line/toggle >=85% or ADR waiver",
       "ppa": "DC trial = indicative, not production signoff",
-      "package": ["integration-guide", "programmers-model", "dv-signoff-report", "handoff-test"]
+      "package": [
+        "integration-guide",
+        "programmers-model",
+        "dv-signoff-report",
+        "handoff-test"
+      ]
     },
     "sku2_gold": {
       "maturity_target": "production-qualified",
-      "adds": ["async MTI/MSI RTL+ADR", "riscv-dv async stress (full bar B)", "riscv-arch-test/compliance", "CDC/RDC signoff", "DFT/scan", "multi-corner hold-clean STA", "first-class retire/trap observability ports", "datasheet + SDC package"]
+      "adds": [
+        "async MTI/MSI RTL+ADR",
+        "riscv-dv async stress (full bar B)",
+        "riscv-arch-test/compliance",
+        "CDC/RDC signoff",
+        "DFT/scan",
+        "multi-corner hold-clean STA",
+        "first-class retire/trap observability ports",
+        "datasheet + SDC package"
+      ]
     }
   },
-  "design_id": "cpu_m1",
+  "design_id": "cpu_m1a",
   "source_mode": "greenfield-ip-native",
   "path_policy": "ip-native",
   "active_variant": "v2_pipeline_ch2_lab08e",
@@ -125,11 +143,22 @@
     "IP/cpu_m1/rtl/core.v"
   ],
   "vendor_rtl": [],
-  "dv": { "filelists": [], "testbenches": [] },
+  "dv": {
+    "filelists": [],
+    "testbenches": []
+  },
   "depends": [],
   "interfaces": [
-    { "name": "imem", "protocol": "valid-ready", "role": "manager" },
-    { "name": "dmem", "protocol": "valid-ready", "role": "manager" }
+    {
+      "name": "imem",
+      "protocol": "valid-ready",
+      "role": "manager"
+    },
+    {
+      "name": "dmem",
+      "protocol": "valid-ready",
+      "role": "manager"
+    }
   ],
   "evidence": {
     "spec": "IP/cpu_m1/docs/spec.md",
@@ -163,7 +192,10 @@
     "illegal_munit_coverage": "tests/gates/gate_04_04_illegal_munit_coverage.py",
     "residual_triage": "tests/gates/gate_04_05_residual_triage.py",
     "ras_recovery_coverage": "tests/gates/gate_04_06_ras_recovery_coverage.py",
-    "lint_synth_ppa_signoff": ["tests/gates/gate_05_00_lint.py", "tests/gates/gate_05_01_synth_ppa.py"]
+    "lint_synth_ppa_signoff": [
+      "tests/gates/gate_05_00_lint.py",
+      "tests/gates/gate_05_01_synth_ppa.py"
+    ]
   },
   "risks": [
     "ADR-0001 FSM path is superseded for implementation; do not present it as active sign-off RTL",
@@ -177,5 +209,15 @@
     "FPGA-based PPA is required evidence for productization trend, not a substitute for functional sign-off"
   ],
   "owner_agent": "Claude Code",
-  "schema_ref": "../../../../doc/ip_flow_plan_of_record.md (ip.json schema)"
+  "schema_ref": "../../../../doc/ip_flow_plan_of_record.md (ip.json schema)",
+  "provenance_fork": {
+    "parent": "Magpie_M1 (cpu_m1)",
+    "parent_repo": "~/project/SOC/Magpie_M1",
+    "fork_tag": "m1-rtl-freeze-v1.0",
+    "fork_sha": "4e6e1d4",
+    "date": "2026-06-11",
+    "note": "Full-history clone. M1 Tier-2 evidence is NOT claimable by cpu_m1a; all gates/coverage/lockstep must be re-earned on this line. Physical path IP/cpu_m1/ retained to avoid churn in Makefiles/gates; identity = design_id cpu_m1a everywhere.",
+    "evaluation": "docs/reports/m1a_performance_evaluation.md",
+    "baseline": "docs/reports/m1_benchmark_baseline.md (CoreMark/MHz 2.47, CPI 1.29, GEMV 11.0 c/MAC)"
+  }
 }

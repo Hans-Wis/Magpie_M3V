@@ -1,0 +1,27 @@
+{
+  "artifacts": [
+    "IP/cpu_m1/ip.json",
+    "tests/gates/gate_00_identity_m1a.py",
+    "CLAUDE.md"
+  ],
+  "autonomy": "L0",
+  "data_quality": "full",
+  "design": "magpie_m1a",
+  "gate": "gate_00_identity_m1a",
+  "metrics": {
+    "baseline_coremark_per_mhz": 2.47,
+    "baseline_cpi": 1.29,
+    "baseline_gemv_i8_c_per_mac": 11.0,
+    "fork_sha": "4e6e1d4",
+    "fork_tag": "m1-rtl-freeze-v1.0"
+  },
+  "reviewed_by_codex": "none",
+  "run": {
+    "ended": "2026-06-11T21:53:39",
+    "host": "eda",
+    "id": "run-gate_00_identity_m1a",
+    "started": "2026-06-11T21:53:39"
+  },
+  "stage": "rtl",
+  "status": "pass"
+}
