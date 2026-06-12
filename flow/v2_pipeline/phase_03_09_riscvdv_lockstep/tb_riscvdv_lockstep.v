@@ -43,7 +43,7 @@ module tb_riscvdv_lockstep;
         .clk                (clk),
         .resetn             (resetn),
         .trap               (trap),
-        .mem_stall          (1'b0),
+        .mem_stall          (1'b0),  // 0-wait by design; stall-hold paths covered in the wrapper wait-state env (phase_02_01)
         .i_mem_addr         (i_mem_addr),
         .i_mem_en           (i_mem_en),
         .i_mem_rdata        (i_mem_rdata),

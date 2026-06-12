@@ -101,7 +101,10 @@ module bmu (
             `BMU_BSET   : result = op_a | bitmask;
             `BMU_CZEQZ  : result = (op_b == 32'b0) ? 32'b0 : op_a;  // czero.eqz
             `BMU_CZNEZ  : result = (op_b != 32'b0) ? 32'b0 : op_a;  // czero.nez
+            // verilator coverage_off
             default     : result = 32'h0;
+            // verilator coverage_on
+            // ^ CS-COV-1 exclusion: bmu_op only set to defined codes when is_bmu — coding standard CS-COV-1: defensive arm, unreachable by construction
         endcase
     end
 

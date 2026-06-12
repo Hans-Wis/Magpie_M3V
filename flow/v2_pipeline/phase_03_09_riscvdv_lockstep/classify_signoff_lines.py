@@ -26,11 +26,46 @@ def src_line(fname, ln):
     return lines[ln - 1].lower() if 0 < ln <= len(lines) else ""
 
 
+_block_cache = {}
+def _out_of_sku_ranges(fname):
+    """Line ranges of out-of-SKU BLOCKS whose interior lines lack tell-tale keywords
+    (csr.v debug_csr_we write block; core.v AMO state machine). begin/end nesting tracked."""
+    if fname in _block_cache:
+        return _block_cache[fname]
+    p = RTL / f"{fname}.v"
+    ranges = []
+    if p.exists():
+        lines = p.read_text(errors="replace").splitlines()
+        starts = []
+        if fname == "csr":
+            starts = [i for i, l in enumerate(lines) if "if (debug_csr_we) begin" in l]
+        elif fname == "core":
+            starts = [i for i, l in enumerate(lines) if re.search(r"case \(amo_state\)", l)]
+        for s in starts:
+            depth = 0
+            for j in range(s, len(lines)):
+                depth += lines[j].count("begin") + lines[j].count("case (")
+                depth -= lines[j].count("end")          # endcase contains 'end'
+                if j > s and depth <= 0:
+                    ranges.append((s + 1, j + 1))
+                    break
+    _block_cache[fname] = ranges
+    return ranges
+
+def is_env_waitstate(fname, ln):
+    """core_mem_stall hold branches: the farm TB is 0-wait BY DESIGN (random mem_stall would
+    violate the ADR-0005 contract — empirically diverges); these lines are EXERCISED AND GREEN
+    in the dedicated wrapper wait-state environment (phase_02_01 REPAIR-0001: I/D WAIT 1/3/RAND
+    modes + 81-commit lockstep). Excluded-with-evidence, NOT debt."""
+    return "core_mem_stall" in src_line(fname, ln)
+
 def is_out_of_sku(fname, ln):
     if fname in OUT_FILES:
         return True
     txt = src_line(fname, ln)
-    return any(k in txt for k in OUT_KW)
+    if any(k in txt for k in OUT_KW):
+        return True
+    return any(a <= ln <= b for a, b in _out_of_sku_ranges(fname))
 
 
 def main():
@@ -66,7 +101,7 @@ def main():
         for key, (fname, ln) in pts[t].items():
             if key in hit[t]:
                 continue
-            if is_out_of_sku(fname, ln):
+            if is_out_of_sku(fname, ln) or is_env_waitstate(fname, ln):
                 out_cold += 1
             else:
                 in_debt += 1

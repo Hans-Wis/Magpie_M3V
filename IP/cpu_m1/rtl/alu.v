@@ -64,7 +64,10 @@ module alu (
             `ALU_SLTU   : result = {31'b0, lt_u};
             `ALU_SEQ    : result = {31'b0, eq};
             `ALU_COPY_B : result = op_b;
+            // verilator coverage_off
             default     : result = 32'h0;
+            // verilator coverage_on
+            // ^ CS-COV-1 exclusion: alu_op is always a decoded legal code — coding standard CS-COV-1: defensive arm, unreachable by construction
         endcase
     end
 

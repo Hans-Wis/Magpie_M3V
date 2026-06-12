@@ -54,12 +54,56 @@ ILLEGALS = [
     0x68b55513,  # OP-IMM f3=101 binv-f7 rs2!=11000  -> reserved (not rev8)
     0x28b55513,  # OP-IMM f3=101 bset-f7 rs2!=00111  -> reserved (not orc.b)
     0x10b51513,  # OP-IMM f3=001 unknown f7 0001000  -> reserved
+    0xfeb50533,  # OP f7=1111111 (outside every group) -> idu outer default
+    0x1eb55513,  # OP-IMM f3=101 unknown f7 0001111    -> shift-right-row default
+    0x00b52063,  # BRANCH f3=010 (no such branch)      -> idu branch-alu default + illegal
+]
+# illegal 16-bit C encodings (cdec illegal legs: FP / RV64-only) — trap identically both sides
+C_ILLEGALS = [0x2000, 0xa000, 0x7002]  # c.fld(q0 f3=001) / c.fsd(q0 f3=101) / c.flwsp-class(q2)
+
+
+# line-coverage mopup snippets (each self-contained, state-restoring, lockstep-safe):
+MOPUP = [
+    # RV32C load/store group (cdec C.LW/C.SW/C.LWSP/C.SWSP) — sp-window scratch, x8 saved
+    # sp is NOT trustworthy mid-program (riscv-dv uses x2 as a general reg with random
+    # values -> misalign storm). All memory work happens in our own aligned scratch blob;
+    # sp/x8/x9 fully saved/restored there.
+    ["                  csrw mscratch, x8",
+     "                  la   x8, zbcov_scratch",
+     "                  sw   x9, 0(x8)",
+     "                  sw   sp, 4(x8)",
+     "                  addi sp, x8, 8",
+     "                  c.swsp x31, 0(sp)",
+     "                  c.lwsp x30, 0(sp)",
+     "                  sw   x31, 8(x8)",
+     "                  c.lw  x9, 8(x8)",
+     "                  c.sw  x9, 8(x8)",
+     "                  lw   sp, 4(x8)",
+     "                  lw   x9, 0(x8)",
+     "                  csrr x8, mscratch"],
+    # C.JAL (cdec C1 001) + RAS push/pop same-region (ras.v same-cycle attempt)
+    ["                  csrw mscratch, ra",
+     "                  c.jal 81191f",
+     "81191:            jal  ra, 81192f",
+     "81192:            jal  ra, 81193f",
+     "81193:            la   ra, 81194f",
+     "                  jalr x0, 0(ra)",
+     "81194:            csrr ra, mscratch"],
+    # CSR same-addr write->set-read forward (core.v CSR_OP_S id_csr_rdata leg)
+    ["                  csrw mscratch, x30",
+     "                  csrrs x31, mscratch, x0",
+     "                  csrrc x31, mscratch, x0"],
 ]
 
+EVERY = int(os.environ.get("M1_ZB_EVERY", "10"))
+PROBE_W = int(os.environ.get("M1_ZB_PROBE_W", "32"))   # .word probe spacing
+PROBE_H = int(os.environ.get("M1_ZB_PROBE_H", "64"))   # .hword probe spacing
 
-def inject_zb(fw: Path, every: int = 10) -> int:
+def inject_zb(fw: Path, every: int = None, rot0: int = 0) -> int:
+    every = every or EVERY
     lines = fw.read_text(encoding="utf-8").splitlines()
-    out, n, inj, in_main = [], 0, 0, False
+    out, n, inj, in_main = [], 0, rot0, False   # rot0: per-seed rotation offset so the
+    # full OPS/ILLEGALS/MOPUP rings cycle across the seed set (tail ops were under-cycled)
     def is_instr(s):
         t = s.strip()
         if not t or t.startswith((".", "#")):
@@ -82,9 +126,27 @@ def inject_zb(fw: Path, every: int = 10) -> int:
                 out.append(f"                  li   x31, {pb}")
                 out.append(f"                  {OPS[inj % len(OPS)]}")
                 # sparse reserved-encoding probes (decode-tightening lines): ~1 per 8 snippets
-                if inj % 8 == 7:
-                    out.append(f"                  .word {hex(ILLEGALS[(inj // 8) % len(ILLEGALS)])}  # reserved -> trap mcause=2, handler resumes")
+                # Low-density EXECUTED probes (1 per program, prepped trap): light the
+                # idu zicond-f3 default + cdec C-illegal legs. Trap count stays tiny.
+                if inj == 9:
+                    out.append("                  .word 0x0eb51533   # zicond f7, f3=001 -> reserved, traps")
+                if inj == 19:
+                    out.append("                  .hword 0x2000      # c.fld (FP, illegal in this SKU) -> traps")
+                    out.append("                  .hword 0x0001")
+                # RAS same-cycle push+pop attempt: ret on the jal fall-through (wrong path,
+                # pre-decode pop while the jal pushes; squashed before retire)
+                if inj % 16 == 13:
+                    out.append("                  csrw mscratch, ra")
+                    out.append(f"                  jal  ra, 82{inj}1f")
+                    out.append("                  jalr x0, 0(ra)     # wrong-path ret: IF pre-decode pop")
+                    out.append(f"82{inj}1:          csrr ra, mscratch")
+                # line-mopup snippets: ~1 per 5 snippets, rotating classes
+                if inj % 5 == 4:
+                    for m in MOPUP[(inj // 5) % len(MOPUP)]:
+                        out.append(m.replace("81191", f"81{inj}1").replace("81192", f"81{inj}2").replace("81193", f"81{inj}3").replace("81194", f"81{inj}4"))
                 inj += 1
+    out += ["", ".section .data", ".balign 8",
+            "zbcov_scratch:", ".word 0, 0, 0, 0   # inject_zb aligned scratch (sp-independent)"]
     fw.write_text("\n".join(out) + "\n", encoding="utf-8")
     return inj
 
@@ -97,9 +159,9 @@ def main() -> int:
     results = []
     for seed in seeds:
         work = runs / f"seed_{seed}"; work.mkdir(parents=True, exist_ok=True)
-        src = farm.generate_seed(seed, work, 8000)
+        src = farm.generate_seed(seed, work, int(os.environ.get("M1_ZB_INSTR", "8000")))
         farm.adapt_asm(src, work / "firmware.S")
-        nz = inject_zb(work / "firmware.S")
+        nz = inject_zb(work / "firmware.S", rot0=(seeds.index(seed) * 7) % 31)
         matched, ok, waived, msg = farm.sim_compare_seed(seed, work, max_cycles=5_000_000)
         results.append((seed, nz, matched, ok, msg))
         print(f"seed {seed}: zb_snippets={nz} matched={matched} ok={ok} :: {msg}")

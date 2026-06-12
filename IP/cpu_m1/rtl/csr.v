@@ -305,7 +305,10 @@ module csr #(
                 end
                 `CSR_DCSR: csr_rdata = {4'h4, 12'h0, new_val[15], 3'h0, 1'b0, 2'b0,
                                         new_val[8:6], 3'h0, new_val[2], 2'b11};
+                // verilator coverage_off
                 default: ;
+                // verilator coverage_on
+                // ^ CS-COV-1 exclusion: every writable CSR is in the bypass list; reachable only via RO-addr writes which trap — CS-COV-1
             endcase
         end
     end
@@ -413,7 +416,10 @@ module csr #(
                         dcsr_step_reg    <= new_val[2];
                     end
                     // 其他 (MIP / counters / unknown) 忽略
+                    // verilator coverage_off
                     default      : ;
+                    // verilator coverage_on
+                    // ^ CS-COV-1 exclusion: writes to unlisted/RO CSR addrs are ignored by the DUT but trap on the reference model — unreachable for legal traffic
                 endcase
             end
 

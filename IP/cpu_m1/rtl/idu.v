@@ -209,7 +209,10 @@ module idu #(
                 `F3_AND     : alu_op = `ALU_AND;
                 `F3_SLL     : alu_op = `ALU_SLL;
                 `F3_SRL_SRA : alu_op = is_sub_or_sra ? `ALU_SRA : `ALU_SRL;
+                // verilator coverage_off
                 default     : alu_op = `ALU_ADD;
+                // verilator coverage_on
+                // ^ CS-COV-1 exclusion: funct3 is 3-bit fully enumerated — coding standard CS-COV-1: defensive arm, unreachable by construction
             endcase
         end else if (is_op) begin
             case (funct3)
@@ -221,7 +224,10 @@ module idu #(
                 `F3_AND     : alu_op = `ALU_AND;
                 `F3_SLL     : alu_op = `ALU_SLL;
                 `F3_SRL_SRA : alu_op = is_sub_or_sra ? `ALU_SRA : `ALU_SRL;
+                // verilator coverage_off
                 default     : alu_op = `ALU_ADD;
+                // verilator coverage_on
+                // ^ CS-COV-1 exclusion: funct3 is 3-bit fully enumerated — coding standard CS-COV-1: defensive arm, unreachable by construction
             endcase
         end else if (is_branch) begin
             case (funct3)

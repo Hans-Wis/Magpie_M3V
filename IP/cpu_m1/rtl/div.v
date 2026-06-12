@@ -131,7 +131,10 @@ module div (
                     state <= IDLE;
                 end
 
+                // verilator coverage_off
                 default: state <= IDLE;
+                // verilator coverage_on
+                // ^ CS-COV-1 exclusion: FSM states fully enumerated — coding standard CS-COV-1: defensive arm, unreachable by construction
             endcase
         end
     end
