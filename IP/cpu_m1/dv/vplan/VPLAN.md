@@ -1,3 +1,7 @@
+> **M1A REV (2026-06-12, design_id=cpu_m1a)** — this document is INHERITED from frozen M1 with the
+> following deltas; the authoritative current-state evidence is `docs/reports/m1a_tier2_evidence_pack.md`.
+> V-Plan rows: ISA = RV32IMC+Zba/Zbb/Zbs/Zicond (misa 0x40001106); Zb stimulus = directed (phase_a2) + farm injection; new units bmu/dtcm rows per gate_a2/gate_a3.
+
 # cpu_m1 Verification Plan (V-Plan) — RV32IMC_Zicsr_Zifencei, M-mode
 
 Rev 0.2 (2026-06-11). Owner: PL (Claude). Authority = Spike per-commit lockstep + pytest gates.

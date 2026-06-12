@@ -1,3 +1,7 @@
+> **M1A REV (2026-06-12, design_id=cpu_m1a)** — this document is INHERITED from frozen M1 with the
+> following deltas; the authoritative current-state evidence is `docs/reports/m1a_tier2_evidence_pack.md`.
+> SKU-1 ISA extends to RV32IMC+Zb+Zicond per ADR-0026 (A2 gates green); perf baseline CoreMark/MHz 3.23 (O3+Zb)/2.74 (O2), MACSTREAM 3.63 c/MAC; ERRATA-0001 FIXED on this line.
+
 # cpu_m1 — Feature Freeze / SKU Contract Declaration
 
 Rev 1.0 · 2026-06-11 · Owner: PL (Claude) · design_id = `cpu_m1`

@@ -1,6 +1,6 @@
 # Magpie_M1A — Tier-2 Evidence Pack (commercial-quality campaign)
 
-Rev 0.9 (pre-acceptance) · 2026-06-12 · design_id = `cpu_m1a` · Authority = Spike per-commit
+Rev 1.0 (acceptance-ready) · 2026-06-12 · design_id = `cpu_m1a` · Authority = Spike per-commit
 lockstep + pytest gates · Plan: `m1a_commercial_quality_plan.md` (3-agent consensus) ·
 **Every row = FRESH M1A evidence unless marked INHERIT** (M1 evidence is never claimed —
 `gate_00_identity_m1a`). DV-lead/customer signature: PENDING at the final SHA lock.
@@ -45,7 +45,7 @@ probes covering the decode-tightening arms).
 |---|---|---|
 | Spyglass CDC | `cdc_verify_struct` 0 unwaived (fresh, incl bmu/dtcm/trigger in filelist) | ✅ |
 | Spyglass RDC | 0 unwaived (fresh) | ✅ |
-| Spyglass lint | run1: 2 errors (bbox trigger.v missing from filelist; pmp W122) + bmu W216 — fixed, VERIFIED GONE in run2; run2 newly linted trigger.v surfaced 2× W122 same class — fixed (explicit function args), directed regressions green; final clean re-run = last gate before SHA lock | 🟡 final rerun pending |
+| Spyglass lint | **CLEAN-ERRORS (0 errors)** final rerun 2026-06-12 10:33; fix trail: run1 found filelist bbox + pmp W122 + bmu W216 → fixed; run2 newly-linted trigger.v 2× W122 → fixed (explicit fn args); remaining warning families (W415a/STARC style) listed for waiver policy, not silent | ✅ |
 | DC multi-corner | **Fmax 699.30MHz ALL corners (WNS 0.00) ✅**; area 30397µm² = **+12.29% vs like-for-like M1 baseline 27069.84 (filelist-corrected) → ≤+15% PASS** (ADR base-number corrected — old 26.3k was the trigger-less filelist); power SLOW 13.63/TT 16.76 PASS, FF 18.31 noted (max-leakage corner, baseline not FF) | ✅ w/ documented baseline correction |
 
 ## §05/§09 Process & docs

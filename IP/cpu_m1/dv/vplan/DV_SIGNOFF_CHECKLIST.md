@@ -1,3 +1,7 @@
+> **M1A REV (2026-06-12, design_id=cpu_m1a)** — this document is INHERITED from frozen M1 with the
+> following deltas; the authoritative current-state evidence is `docs/reports/m1a_tier2_evidence_pack.md`.
+> Checklist authority for M1A = docs/reports/m1a_tier2_evidence_pack.md (row->artifact map, fresh evidence only).
+
 # cpu_m1 DV Sign-off Checklist — Tier-2 (Industrial), RV32IMC SKU-1
 
 Rev 0.2 (2026-06-11). Reconciled to current state after the Gemini+Grok customer-acceptance review.
