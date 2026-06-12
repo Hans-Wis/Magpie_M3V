@@ -6,7 +6,7 @@ Iterations/Sec   : 3
 ERROR! Must execute for at least 10 secs for a valid result!
 Iterations       : 10
 Compiler version : riscv64-unknown-elf-gcc 13.2.0 (riscv-tools 1.0.6)
-Compiler flags   : -O2 -march=rv32imc_zicsr_zifencei -mabi=ilp32 -nostdlib
+Compiler flags   : -O3 -funroll-loops -march=rv32imc_zba_zbb_zbs_zicond_zicsr_zifencei
 Memory location  : STACK
 seedcrc          : 0xe9f5
 [0]crclist       : 0xe714
@@ -16,8 +16,8 @@ seedcrc          : 0xe9f5
 Errors detected
 M1_BENCH: cycles=3097358 instret=2705950
 
-BENCH DONE: tb cycles=3125452
+BENCH DONE: tb cycles=3125584
 - tb_bench.v:109: Verilog $finish
 - S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 31ms; walltime 0.798 s; speed 39.191 ms/s
-- Verilator: cpu 0.797 s on 1 threads; allocated 17 MB
+- Verilator: $finish at 31ms; walltime 0.832 s; speed 37.564 ms/s
+- Verilator: cpu 0.832 s on 1 threads; allocated 17 MB

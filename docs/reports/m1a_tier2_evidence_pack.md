@@ -24,7 +24,7 @@ probes covering the decode-tightening arms).
 
 | row | evidence | verdict |
 |---|---|---|
-| riscv-arch-test | **148/148** fresh (`phase_p_archtest/summary*.json`, 2026-06-12) | ✅ |
+| riscv-arch-test | **74/74** fresh (`phase_p_archtest/summary.json`, 2026-06-12; an earlier 148 figure was a nested-totals double-count — caught by the Gemini acceptance audit, corrected) | ✅ |
 | Zb arch-test suite | NOT in the vendored arch-test — **documented deviation**; substitute = `phase_a2` directed (57-commit full lockstep, all 26 ops + misa.B) + illegal negatives (4 reserved encodings, mcause=2) + farm Zb injection at scale (31k+ commits with Zb in-stream) | ⬜ deviation |
 | Lockstep | A1 **102,150** + A2 **102,163** commits 0-div on the A2 ISA; A3 dtcm-in-the-loop full lockstep; through-trap/msip/bp_way1/xbound/muldiv/trap_irq directed re-run green on final RTL | ✅ |
 | Wrapper equivalence | **REPAIR-0001 complete** — tb_mem_wrapper fully repaired (4 inherited decays incl common-mode instr-reconstruction corruption), A/B(×6)/C/D + 81-commit harness lockstep green; cross-checked vs frozen M1 | ✅ (was not-run) |
@@ -43,8 +43,8 @@ probes covering the decode-tightening arms).
 
 | row | evidence | verdict |
 |---|---|---|
-| Spyglass CDC | `cdc_verify_struct` 0 unwaived (fresh, incl bmu/dtcm/trigger in filelist) | ✅ |
-| Spyglass RDC | 0 unwaived (fresh) | ✅ |
+| Spyglass CDC | **rerun 2026-06-12 10:41 with FULL filelist (trigger/bmu/dtcm confirmed read)**: 0 unsync crossings, 0 errors; 1 setup-class warning (`Propagate_Resets`: resetn) documented for the waiver policy (same class as M1's waived setup msgs) | ✅ |
+| Spyglass RDC | rerun with full filelist: 0 violations; 1 `Propagate_Resets` setup warning documented; X-prop subset all 0 | ✅ |
 | Spyglass lint | **CLEAN-ERRORS (0 errors)** final rerun 2026-06-12 10:33; fix trail: run1 found filelist bbox + pmp W122 + bmu W216 → fixed; run2 newly-linted trigger.v 2× W122 → fixed (explicit fn args); remaining warning families (W415a/STARC style) listed for waiver policy, not silent | ✅ |
 | DC multi-corner | **Fmax 699.30MHz ALL corners (WNS 0.00) ✅**; area 30397µm² = **+12.29% vs like-for-like M1 baseline 27069.84 (filelist-corrected) → ≤+15% PASS** (ADR base-number corrected — old 26.3k was the trigger-less filelist); power SLOW 13.63/TT 16.76 PASS, FF 18.31 noted (max-leakage corner, baseline not FF) | ✅ w/ documented baseline correction |
 
@@ -54,7 +54,7 @@ probes covering the decode-tightening arms).
 |---|---|
 | VPLAN / DV_SIGNOFF_CHECKLIST / FEATURE_FREEZE | re-issue with M1A ISA (RV32IMC+Zb+Zicond), perf baseline (CoreMark/MHz 3.23 O3+Zb; 2.74 O2), guardrails — STALE list per Gemini audit |
 | vcd_review_policy / exclusion discipline / signoff strategy | **INHERIT** with rev note (process unchanged) |
-| benchmarks | `m1_benchmark_baseline.md` + A1/A2 commit records (CoreMark matrix, MACSTREAM, GEMV) — all sim/ideal-mem caveated |
+| benchmarks | `m1_benchmark_baseline.md` + A1/A2 records; CoreMark log made SELF-CONSISTENT (flags string was hardcoded -O2 while the run was O3+Zb — Gemini audit catch; flags now passed at build, rerun reproduces 3097358 cycles = 3.23/MHz) |
 | SoC subsystem rows (CLINT/PLIC/UART/JTAG) | directed-only as on M1 — honest not-inherited status carried verbatim |
 | Final acceptance | Gemini corpus audit + Grok hold-list at a locked SHA + full gate regression + identity gate — LAST step |
 

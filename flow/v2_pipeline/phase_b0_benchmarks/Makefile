@@ -15,7 +15,7 @@ CM_SRCS = $(CM)/core_main.c $(CM)/core_list_join.c $(CM)/core_matrix.c \
           $(CM)/core_state.c $(CM)/core_util.c \
           $(PORT)/core_portme.c $(PORT)/ee_printf.c
 CFLAGS = $(OPT) -march=$(GCC_MARCH) -mabi=$(GCC_MABI) -nostdlib -nostartfiles -ffreestanding \
-         -I$(CM) -I$(PORT) -DITERATIONS=$(ITER) -DPERFORMANCE_RUN=1 -DTOTAL_DATA_SIZE=2000
+         -I$(CM) -I$(PORT) -DITERATIONS=$(ITER) -DCOMPILER_FLAGS='"$(OPT) -march=$(GCC_MARCH)"' -DPERFORMANCE_RUN=1 -DTOTAL_DATA_SIZE=2000
 
 RTL_DIR  = ../../../IP/cpu_m1/rtl
 RTL_SRCS = $(RTL_DIR)/rfu.v $(RTL_DIR)/alu.v $(RTL_DIR)/idu.v \

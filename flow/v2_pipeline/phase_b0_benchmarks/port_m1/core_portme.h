@@ -13,7 +13,9 @@
 #define HAS_PRINTF 0
 
 #define COMPILER_VERSION "riscv64-unknown-elf-gcc 13.2.0 (riscv-tools 1.0.6)"
-#define COMPILER_FLAGS "-O2 -march=rv32imc_zicsr_zifencei -mabi=ilp32 -nostdlib"
+#ifndef COMPILER_FLAGS
+#define COMPILER_FLAGS "see Makefile OPT/GCC_MARCH (passed via -DCOMPILER_FLAGS at build)"
+#endif
 #define FLAGS_STR COMPILER_FLAGS " (1-cycle imem/dmem bench TB)"
 #define MEM_LOCATION "STACK"
 
