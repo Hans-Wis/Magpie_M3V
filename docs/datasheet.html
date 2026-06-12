@@ -50,7 +50,7 @@ A2 Zba/Zbb/Zbs+Zicond 位元運算單元、A3 TCM 巨集已落地；<b>CoreMark/
 <tr><td>M 單元</td><td>DIV iterative FSM 含 <b>flush</b>（ERRATA-0002 修復）；md_start 受 operand_stall gate（ERRATA-0001 修復）；MUL stateless 天然免疫</td></tr>
 <tr><td>合規</td><td><b>riscv-arch-test 74/74</b>（IMC；Zb 無 ratified suite → documented deviation，以 directed + 31k+ Zb in-stream 注入替代）</td></tr>
 <tr><td>介面 / Debug / 中斷</td><td>同 M1：native valid/ready + AXI4-Lite master · External Debug v0.13.2 · CLINT，RTOS-capable</td></tr>
-<tr><td>製程 / PPA</td><td>TSMC 28HPC+ · <b>699.30 MHz WNS=0</b>（Fmax 護欄 ≥650 PASS）· 30.5 kµm²（+12.73% vs like-for-like 基線 27.07k，&lt;+15% 護欄 PASS）· 13.65 mW</td></tr>
+<tr><td>製程 / PPA</td><td>TSMC 28HPC+ · <b>699.30 MHz WNS=0</b>（Fmax 護欄 ≥650 PASS）· total cell area 30.5 kµm²（SLOW，+12.73% vs like-for-like 基線 27.07k，&lt;+15% 護欄 PASS）= <b>≈80.7k NAND2-eq gates</b>（35,398 cells；NAND2=0.378 µm²，ND2D1BWP40P140 LEF；不含 dtcm SRAM 巨集）· 13.65 mW</td></tr>
 <tr><td>效能</td><td><b>CoreMark/MHz 3.23</b>（O3+Zb，3,097,358 cycles，CRC-validated；vs M1 2.69 = <b>+20%</b>）</td></tr>
 </table>
 
@@ -123,7 +123,7 @@ A2 Zba/Zbb/Zbs+Zicond 位元運算單元、A3 TCM 巨集已落地；<b>CoreMark/
 <tr><td>CoreMark/MHz</td><td class="num">2.69</td><td class="num"><b>3.23</b>（O3+Zb）</td><td class="num">+20%</td></tr>
 <tr><td>MUL throughput</td><td>blocking（2-cy 佔住 M 單元）</td><td><b>1/cycle</b> pipelined</td><td>b2b mul 不 stall</td></tr>
 <tr><td>位元運算</td><td>多指令合成</td><td>26 ops 單拍（BMU）</td><td>指令數↓</td></tr>
-<tr><td>Fmax / 面積 / 功耗</td><td class="num">699.3 MHz / 28.2k µm² / 13.7–18.3 mW</td><td class="num">699.3 MHz / 30.5k µm² / 13.65 mW</td><td class="num">頻率不變 · +12.73% vs like-for-like 基線</td></tr>
+<tr><td>Fmax / 面積 / 功耗</td><td class="num">699.3 MHz / 29.3k µm²（≈77.4k gates）/ 13.7–18.3 mW</td><td class="num">699.3 MHz / 30.5k µm²（<b>≈80.7k gates</b>）/ 13.65 mW</td><td class="num">頻率不變 · +12.73%（≈+3.3k gates：BMU+A1+errata 修復）</td></tr>
 <tr><td>資料頻寬（A3）</td><td>4 B/c D-port</td><td>dtcm wide port <b>8 B/c</b>（Phase-B 介面）</td><td>×2（巨集就緒）</td></tr>
 </table>
 
