@@ -1,20 +1,20 @@
 {
   "contract": "M1A Tier-2-Narrow (RV32IMC+Zb core, FEATURE_FREEZE SKU + ADR-0026)",
   "design_id": "cpu_m1a",
-  "coverage_db": "coverage_merged/m1a_farm.dat (24 seeds: 8 base + 3 csr-pat + 3 ras-nested + 10 zb/illegal)",
-  "raw_hit": 13005,
-  "raw_total": 21688,
-  "raw_pct": 60.0,
-  "effective_hit": 13005,
-  "effective_denom": 13997,
+  "coverage_db": "coverage_merged/m1a_farm.dat (21 lockstep-clean seeds)",
+  "raw_hit": 12706,
+  "raw_total": 21214,
+  "raw_pct": 59.9,
+  "effective_hit": 12706,
+  "effective_denom": 13674,
   "effective_pct": 92.9,
   "defensible_bar_pct": 90.0,
   "exclusions": {
-    "out_of_sku": 5978,
+    "out_of_sku": 5827,
     "structural": 514,
     "address_bound": 1199
   },
-  "in_sku_genuine_debt": 992,
+  "in_sku_genuine_debt": 968,
   "m1_baseline_pct": 92.4,
   "dv_lead_signature": "PENDING"
 }

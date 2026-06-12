@@ -40,6 +40,7 @@ PATS = ["0x7fffffff", "0x80000000", "0xa5a5a5a5", "0x00000000", "0xffff0001", "0
 # DUT and Spike; the farm's adapt j18 handler advances mepc and the harness's proven sync-trap
 # machinery (6+/seed already) keeps lockstep. Exercises the decode-tightening lines at scale.
 ILLEGALS = [
+    0x00b52063,  # BRANCH f3=010 (reserved) — ring-FIRST: the 14-probe cap starves tail slots
     0x20b512b3,  # zba f7, f3=001         -> reserved
     0x40b53533,  # sub/sra f7, f3=011     -> reserved (zbb-neg arm)
     0x0ab50533,  # minmax f7, f3=000      -> reserved
@@ -56,10 +57,9 @@ ILLEGALS = [
     0x10b51513,  # OP-IMM f3=001 unknown f7 0001000  -> reserved
     0xfeb50533,  # OP f7=1111111 (outside every group) -> idu outer default
     0x1eb55513,  # OP-IMM f3=101 unknown f7 0001111    -> shift-right-row default
-    0x00b52063,  # BRANCH f3=010 (no such branch)      -> idu branch-alu default + illegal
 ]
 # illegal 16-bit C encodings (cdec illegal legs: FP / RV64-only) — trap identically both sides
-C_ILLEGALS = [0x2000, 0xa000, 0x7002]  # c.fld(q0 f3=001) / c.fsd(q0 f3=101) / c.flwsp-class(q2)
+C_ILLEGALS = [0x2000, 0xa000, 0x7002, 0x9c01]  # +c.subw (RV64-only C1 leg)  # c.fld(q0 f3=001) / c.fsd(q0 f3=101) / c.flwsp-class(q2)
 
 
 # line-coverage mopup snippets (each self-contained, state-restoring, lockstep-safe):
@@ -89,6 +89,15 @@ MOPUP = [
      "81193:            la   ra, 81194f",
      "                  jalr x0, 0(ra)",
      "81194:            csrr ra, mscratch"],
+    # DIV spec edges: INT_MIN/-1 overflow + div-by-zero (deterministic per spec)
+    ["                  li   x30, 0x80000000",
+     "                  li   x31, -1",
+     "                  div  x31, x30, x31",
+     "                  rem  x31, x30, x30",
+     "                  li   x31, 0",
+     "                  divu x31, x30, x31",
+     "                  li   x31, 0",
+     "                  rem  x31, x30, x31"],
     # CSR same-addr write->set-read forward (core.v CSR_OP_S id_csr_rdata leg)
     ["                  csrw mscratch, x30",
      "                  csrrs x31, mscratch, x0",
@@ -96,13 +105,14 @@ MOPUP = [
 ]
 
 EVERY = int(os.environ.get("M1_ZB_EVERY", "10"))
-PROBE_W = int(os.environ.get("M1_ZB_PROBE_W", "32"))   # .word probe spacing
-PROBE_H = int(os.environ.get("M1_ZB_PROBE_H", "64"))   # .hword probe spacing
+PROBE_W = int(os.environ.get("M1_ZB_PROBE_W", "8"))   # .word probe spacing
+PROBE_H = int(os.environ.get("M1_ZB_PROBE_H", "24"))   # .hword probe spacing
 
 def inject_zb(fw: Path, every: int = None, rot0: int = 0) -> int:
     every = every or EVERY
     lines = fw.read_text(encoding="utf-8").splitlines()
-    out, n, inj, in_main = [], 0, rot0, False   # rot0: per-seed rotation offset so the
+    out, n, inj, in_main = [], 0, rot0, False
+    nw, nh = 0, 0   # per-program probe caps (big programs would otherwise accumulate 100+ traps)   # rot0: per-seed rotation offset so the
     # full OPS/ILLEGALS/MOPUP rings cycle across the seed set (tail ops were under-cycled)
     def is_instr(s):
         t = s.strip()
@@ -126,13 +136,17 @@ def inject_zb(fw: Path, every: int = None, rot0: int = 0) -> int:
                 out.append(f"                  li   x31, {pb}")
                 out.append(f"                  {OPS[inj % len(OPS)]}")
                 # sparse reserved-encoding probes (decode-tightening lines): ~1 per 8 snippets
-                # Low-density EXECUTED probes (1 per program, prepped trap): light the
-                # idu zicond-f3 default + cdec C-illegal legs. Trap count stays tiny.
-                if inj == 9:
-                    out.append("                  .word 0x0eb51533   # zicond f7, f3=001 -> reserved, traps")
-                if inj == 19:
-                    out.append("                  .hword 0x2000      # c.fld (FP, illegal in this SKU) -> traps")
+                # EXECUTED reserved probes, ROTATING (all idu reserved arms + cdec C-illegal
+                # legs need distinct encodings). Density = the zb2-proven safe recipe
+                # (1/8 .word; .hword sparser — high densities overwhelm the trap-waiver
+                # machinery, measured). Both sides trap identically; handler resumes.
+                if inj % PROBE_W == 7 % PROBE_W and nw < 14:
+                    out.append(f"                  .word {hex(ILLEGALS[(inj // PROBE_W) % len(ILLEGALS)])}   # reserved -> trap, rotate arms")
+                    nw += 1
+                if inj % PROBE_H == 11 % PROBE_H and nh < 4:
+                    out.append(f"                  .hword {hex(C_ILLEGALS[(inj // PROBE_H) % len(C_ILLEGALS)])}  # C-illegal leg -> trap")
                     out.append("                  .hword 0x0001")
+                    nh += 1
                 # RAS same-cycle push+pop attempt: ret on the jal fall-through (wrong path,
                 # pre-decode pop while the jal pushes; squashed before retire)
                 if inj % 16 == 13:

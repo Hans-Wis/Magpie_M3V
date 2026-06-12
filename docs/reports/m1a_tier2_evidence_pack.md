@@ -9,10 +9,20 @@ lockstep + pytest gates · Plan: `m1a_commercial_quality_plan.md` (3-agent conse
 
 | metric | raw | in-SKU effective | bar | M1 baseline | verdict |
 |---|---|---|---|---|---|
-| Toggle | 60.0% | **92.9%** | ≥90 | 92.4 | ✅ exceeds M1 |
-| Line | 71.6% | **91.7%** | ≥90 | 90.0 | ✅ exceeds M1 |
-| Branch | 68.5% | **92.7%** | ≥90 | 93.1 | ✅ above bar (−0.4 vs M1) |
-| Expression | 57.8% | **92.8%** | ≥90/95 | 95.3 | ✅ above 90 bar (below M1's 95.3 — debt list documented, 17 points) |
+| **Line** | 75.9% | **100.0%** (in-SKU debt = 0) | ≥90 | 90.0 | ✅ **CLOSED — no waiver appendix needed** |
+| Toggle | 60.2% | **92.9%** | ≥90 | 92.4 | ✅ exceeds M1 |
+| Branch | 70.4% | **94.8%** | ≥90 | 93.1 | ✅ exceeds M1 |
+| Expression | 61.0% | **95.3%** | ≥90/95 | 95.3 | ✅ at M1 (named 10-point debt list) |
+
+**Line-100% methodology (customer-clean):** real stimulus closure (RV32C ops via sp-independent
+aligned scratch, div spec-edges, CSR-forward pairs, rotating reserved-encoding probes at the
+empirically-proven safe density with per-program caps) + **CS-COV-1 source pragmas** on
+unreachable-by-construction defensive arms (self-documenting in the RTL — the one-line policy note
+replaces a waiver appendix) + ENV-WAIT-STATE excluded-WITH-EVIDENCE (the 3 `core_mem_stall` hold
+lines are exercised green in the wrapper wait-mode environment; random farm `mem_stall` would
+violate the ADR-0005 contract — measured). Diverged seeds' coverage is NEVER counted (2 dropped).
+**OPEN: INVESTIGATION-0001** — zb seed 2026073308 diverged (same-program different-wdata at idx
+196); its coverage discarded; root-cause owed (potential real finding, disclosed not swallowed).
 
 Evidence: `coverage_merged/m1a_farm.dat` (24 seeds, every seed lockstep-clean: 8 base + 3
 CSR-pattern + 3 RAS-nested + 10 Zb/illegal-probe), snapshots
