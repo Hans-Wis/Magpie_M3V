@@ -41,6 +41,8 @@ PATS = ["0x7fffffff", "0x80000000", "0xa5a5a5a5", "0x00000000", "0xffff0001", "0
 # machinery (6+/seed already) keeps lockstep. Exercises the decode-tightening lines at scale.
 ILLEGALS = [
     0x00b52063,  # BRANCH f3=010 (reserved) — ring-FIRST: the 14-probe cap starves tail slots
+    0xfeb50533,  # OP outer-default: f7=1111111 matches no Zb group -> idu OP funct7 default
+    0x1eb55513,  # OP-IMM shift-right outer-default
     0x20b512b3,  # zba f7, f3=001         -> reserved
     0x40b53533,  # sub/sra f7, f3=011     -> reserved (zbb-neg arm)
     0x0ab50533,  # minmax f7, f3=000      -> reserved
@@ -55,8 +57,6 @@ ILLEGALS = [
     0x68b55513,  # OP-IMM f3=101 binv-f7 rs2!=11000  -> reserved (not rev8)
     0x28b55513,  # OP-IMM f3=101 bset-f7 rs2!=00111  -> reserved (not orc.b)
     0x10b51513,  # OP-IMM f3=001 unknown f7 0001000  -> reserved
-    0xfeb50533,  # OP f7=1111111 (outside every group) -> idu outer default
-    0x1eb55513,  # OP-IMM f3=101 unknown f7 0001111    -> shift-right-row default
 ]
 # illegal 16-bit C encodings (cdec illegal legs: FP / RV64-only) — trap identically both sides
 C_ILLEGALS = [0x2000, 0xa000, 0x7002, 0x9c01]  # +c.subw (RV64-only C1 leg)  # c.fld(q0 f3=001) / c.fsd(q0 f3=101) / c.flwsp-class(q2)
@@ -140,7 +140,7 @@ def inject_zb(fw: Path, every: int = None, rot0: int = 0) -> int:
                 # legs need distinct encodings). Density = the zb2-proven safe recipe
                 # (1/8 .word; .hword sparser — high densities overwhelm the trap-waiver
                 # machinery, measured). Both sides trap identically; handler resumes.
-                if inj % PROBE_W == 7 % PROBE_W and nw < 14:
+                if inj % PROBE_W == 7 % PROBE_W and nw < int(os.environ.get("M1_ZB_CAP","14")):
                     out.append(f"                  .word {hex(ILLEGALS[(inj // PROBE_W) % len(ILLEGALS)])}   # reserved -> trap, rotate arms")
                     nw += 1
                 if inj % PROBE_H == 11 % PROBE_H and nh < 4:

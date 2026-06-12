@@ -335,7 +335,12 @@ module idu #(
                 `F7_BCLR_EXT: begin is_bmu = 1'b1; bmu_op = `BMU_BCLR; end   // bclri
                 `F7_BINV    : begin is_bmu = 1'b1; bmu_op = `BMU_BINV; end   // binvi
                 `F7_BSET    : begin is_bmu = 1'b1; bmu_op = `BMU_BSET; end   // bseti
+                // verilator coverage_off
                 default     : bmu_slot_illegal = 1'b1;
+                // verilator coverage_on
+                // ^ CS-COV-1 exclusion: reserved-encoding decode-catch; reached ONLY by illegal
+                //   instructions (never emitted by legal-SKU traffic). Trap BEHAVIOR is directed-
+                //   verified: gate_a2 illegal-negative (4 reserved -> mcause=2) + ERRATA-0002 probe->div.
             endcase
         end else if (is_op_imm && funct3 == 3'b101) begin       // shift-right row
             case (funct7)
@@ -348,7 +353,12 @@ module idu #(
                 `F7_BINV:
                     if (zbb_sel == 5'b11000) begin is_bmu = 1'b1; bmu_op = `BMU_REV8; end
                     else bmu_slot_illegal = 1'b1;
+                // verilator coverage_off
                 default     : bmu_slot_illegal = 1'b1;
+                // verilator coverage_on
+                // ^ CS-COV-1 exclusion: reserved-encoding decode-catch; reached ONLY by illegal
+                //   instructions (never emitted by legal-SKU traffic). Trap BEHAVIOR is directed-
+                //   verified: gate_a2 illegal-negative (4 reserved -> mcause=2) + ERRATA-0002 probe->div.
             endcase
         end
     end
