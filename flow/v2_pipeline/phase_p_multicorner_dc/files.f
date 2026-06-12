@@ -1,6 +1,7 @@
 +incdir+../../../IP/cpu_m1/rtl
 ../../../IP/cpu_m1/rtl/rfu.v
 ../../../IP/cpu_m1/rtl/alu.v
+../../../IP/cpu_m1/rtl/bmu.v
 ../../../IP/cpu_m1/rtl/idu.v
 ../../../IP/cpu_m1/rtl/ifu.v
 ../../../IP/cpu_m1/rtl/lsu.v
