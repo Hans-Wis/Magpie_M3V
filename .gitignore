@@ -55,3 +55,8 @@ flow/v2_pipeline/phase_b0_benchmarks/coremark/
 flow/v2_pipeline/phase_b0_benchmarks/obj_dir/
 flow/v2_pipeline/phase_b0_benchmarks/*.elf
 flow/v2_pipeline/phase_b0_benchmarks/firmware.hex
+# Spyglass/VC-Formal tool working dirs (regenerable, large)
+flow/v2_pipeline/phase_05_00_lint/cpu_m1_phase_05_00_lint/
+flow/v2_pipeline/phase_p_cdc_rdc_xprop/cpu_m1_phase_p_cdc_rdc_xprop/
+flow/v2_pipeline/**/spyglass.vdb
+flow/v2_pipeline/**/.SG_SaveRestoreDB/

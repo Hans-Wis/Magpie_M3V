@@ -1,2 +1,0 @@
-SCHEMA@@CName@@CTag@@CMode@@CFrequency@@CDomain@@DCrossings@@RegPEdge@@LatchPEdge@@LibCellPEdge@@BBPEdge@@RegNEdge@@LatchNEdge@@LibCellNEdge@@BBNEdge@@CSource
-VALUE@@cpu_m1_top.clk@@SG_AUTO_TAG_1@@sys-clock@@-@@clk@@0@@7180@@0@@0@@1@@0@@0@@0@@0@@SDC/SGDC

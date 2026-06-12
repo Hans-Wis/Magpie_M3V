@@ -1,3 +1,0 @@
-current_mode@@@@0@@@@
-sgdc@@clock@@clock-nameclk@@clock -name clk@@@cdc_rdc_xprop.sgdc:2
-sgdc@@reset@@reset-nameresetn-value0-async@@reset -name resetn -value 0@@@cdc_rdc_xprop.sgdc:3
