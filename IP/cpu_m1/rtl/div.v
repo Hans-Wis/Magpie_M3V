@@ -20,6 +20,11 @@
 module div (
     input             clk,
     input             resetn,
+    input             flush,    // M1A ERRATA-0002 fix: kill an in-flight division on pipeline
+                                // flush (trap/redirect/debug). Without this, a WRONG-PATH-started
+                                // div keeps computing through the flush and its STALE result is
+                                // delivered to a re-issued div after the handler returns
+                                // (~35-cycle latency ~= handler length — measured, seed-reproducible).
     input             start,
     input      [ 2:0] md_op,
     input      [31:0] op_a,
@@ -62,6 +67,9 @@ module div (
     always @(posedge clk) begin
         if (!resetn) begin
             state <= IDLE;
+            done  <= 1'b0;
+        end else if (flush) begin
+            state <= IDLE;     // ERRATA-0002: discard the wrong-path computation entirely
             done  <= 1'b0;
         end else begin
             done <= 1'b0;

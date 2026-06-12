@@ -727,9 +727,14 @@ module core #(
         .result (mul_result)
     );
 
+    // ERRATA-0002: the div FSM must die on exactly the conditions that clear md_started —
+    // otherwise a wrong-path-started division survives the flush and poisons the re-issue.
+    wire md_flush = pc_redirect || debug_halt_enter || debug_mode;
+
     div u_div (
         .clk    (clk),
         .resetn (resetn),
+        .flush  (md_flush),
         .start  (md_start &&  id_md_is_div),
         .md_op  (id_md_op),
         .op_a   (rs1_val),
