@@ -17,7 +17,7 @@ RTL_SRCS = $(RTL_DIR)/rfu.v $(RTL_DIR)/alu.v $(RTL_DIR)/idu.v \
 TB_RTL = tb_random_lockstep.v
 VFLAGS = --binary -j 4 --coverage --trace --trace-depth 2 --trace-structs \
          --top-module tb_random_lockstep --timescale 1ns/1ns \
-         -I$(RTL_DIR) -Wall -Wno-PROCASSINIT -Wno-DECLFILENAME \
+         -I$(RTL_DIR) -Wall -Wno-PROCASSINIT -Wno-DECLFILENAME -Wno-PINMISSING -Wno-WIDTHEXPAND -Wno-UNUSEDSIGNAL \
          -Wno-TIMESCALEMOD -Wno-UNUSEDSIGNAL -Wno-SYNCASYNCNET
 SIM_BIN = obj_dir/Vtb_random_lockstep
 

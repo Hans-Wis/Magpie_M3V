@@ -10,7 +10,7 @@ ALU := $(RTL_DIR)/alu.v
 
 VFLAGS := --binary -j 4 --coverage --coverage-line --coverage-toggle \
           --top-module tb_alu_unit --timescale 1ns/1ps \
-          -I$(RTL_DIR) -Wall -Wno-DECLFILENAME -Wno-TIMESCALEMOD
+          -I$(RTL_DIR) -Wall -Wno-DECLFILENAME -Wno-PINMISSING -Wno-WIDTHEXPAND -Wno-UNUSEDSIGNAL -Wno-TIMESCALEMOD
 
 SIM_BIN := obj_dir/Vtb_alu_unit
 

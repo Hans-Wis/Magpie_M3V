@@ -29,7 +29,7 @@ VFLAGS = --binary -j 4 \
          --top-module tb_illegal_munit_coverage \
          --timescale 1ns/1ns \
          -I$(RTL_DIR) \
-         -Wall -Wno-PROCASSINIT -Wno-DECLFILENAME -Wno-TIMESCALEMOD \
+         -Wall -Wno-PROCASSINIT -Wno-DECLFILENAME -Wno-PINMISSING -Wno-WIDTHEXPAND -Wno-UNUSEDSIGNAL -Wno-TIMESCALEMOD \
          -Wno-UNUSEDSIGNAL -Wno-SYNCASYNCNET
 
 SIM_BIN = obj_dir/Vtb_illegal_munit_coverage

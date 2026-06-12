@@ -1,25 +1,25 @@
 {
-  "contract": "M1A Tier-2-Narrow, DUT-scoped",
+  "contract": "M1A Tier-2-Narrow, DUT-scoped, FINAL RTL (ERRATA-0002 fixed + idu reserved-decode pragmas)",
   "design_id": "cpu_m1a",
-  "coverage_db": "coverage_merged/m1a_farm.dat (21 lockstep-clean seeds; diverged seeds' coverage NEVER counted)",
+  "coverage_db": "coverage_merged/m1a_farm.dat (20 lockstep-clean seeds; diverged/watchdog seeds' coverage NEVER counted)",
   "defensible_bar_pct": 90.0,
   "metrics": {
     "line": {
       "raw_hit": 318,
-      "raw_total": 419,
-      "raw_pct": 75.9,
-      "out_of_sku_cold": 101,
+      "raw_total": 420,
+      "raw_pct": 75.7,
+      "out_of_sku_cold": 102,
       "in_sku_debt": 0,
       "effective_denom": 318,
       "effective_pct": 100.0
     },
     "branch": {
-      "raw_hit": 311,
-      "raw_total": 442,
-      "raw_pct": 70.4,
+      "raw_hit": 309,
+      "raw_total": 440,
+      "raw_pct": 70.2,
       "out_of_sku_cold": 114,
       "in_sku_debt": 17,
-      "effective_denom": 328,
+      "effective_denom": 326,
       "effective_pct": 94.8
     },
     "expr": {
@@ -32,11 +32,11 @@
       "effective_pct": 95.3
     }
   },
-  "line_100_methodology": "real stimulus (RV32C/div-edge/CSR-forward/reserved-probe injection at proven-safe density) + CS-COV-1 source pragmas on unreachable-by-construction defensive arms (self-documenting) + ENV-WAIT-STATE excluded-with-evidence (wrapper wait-mode env green) + block-context out-of-SKU classification",
   "m1_baseline": {
     "line": 90.0,
     "branch": 93.1,
     "expr": 95.3
   },
+  "line_100_note": "in-SKU debt=0 via real stimulus + CS-COV-1 source pragmas (defensive/reserved-decode arms, behavior directed-verified) + ENV-WAIT-STATE evidence; authoritative on the post-fix+pragma build",
   "dv_lead_signature": "PENDING"
 }
