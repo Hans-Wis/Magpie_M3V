@@ -166,6 +166,13 @@ def adapt_asm(src: Path, dst: Path) -> None:
     cause_reg = "x6"
     tmp_reg = "x15"
     for line in lines:
+        # M1A A2 misa-parity: riscv-dv init emits `csrw 0x301(misa), xN`. The DUT's misa is
+        # WARL READ-ONLY (write ignored, spec-legal); Spike's misa is WRITABLE and the init
+        # value clears B -> every injected Zb op traps illegal on Spike only (real divergence,
+        # found by inject_zb). Neutralize the write IDENTICALLY for both sides.
+        if re.search(r"csrw\s+0x301,", line):
+            out.append(line.replace(line.strip(), "nop  # adapt: misa write dropped (DUT misa is WARL read-only; Spike misa writable)"))
+            continue
         if skip_restore_until_mret:
             if line.strip().startswith("mret"):
                 skip_restore_until_mret = False

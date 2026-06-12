@@ -26,25 +26,26 @@ module bmu (
     wire [4:0] sh = op_b[4:0];
 
     // ---- count leading / trailing zeros, popcount ----
+    // (W216 lint fix: 6-bit loop vars instead of integer part-selects)
     function [5:0] f_clz;
         input [31:0] x;
-        integer i;
+        reg [5:0] k;
         begin
             f_clz = 6'd32;
-            for (i = 31; i >= 0; i = i - 1)
-                if (x[i] && f_clz == 6'd32)
-                    f_clz = 6'd31 - i[5:0];
+            for (k = 6'd0; k < 6'd32; k = k + 6'd1)
+                if (x[5'd31 - k[4:0]] && f_clz == 6'd32)
+                    f_clz = k;
         end
     endfunction
 
     function [5:0] f_ctz;
         input [31:0] x;
-        integer i;
+        reg [5:0] k;
         begin
             f_ctz = 6'd32;
-            for (i = 0; i <= 31; i = i + 1)
-                if (x[i] && f_ctz == 6'd32)
-                    f_ctz = i[5:0];
+            for (k = 6'd0; k < 6'd32; k = k + 6'd1)
+                if (x[k[4:0]] && f_ctz == 6'd32)
+                    f_ctz = k;
         end
     endfunction
 

@@ -24,10 +24,13 @@ module pmp #(
     localparam [1:0] PMP_A_NA4   = 2'b10;
     localparam [1:0] PMP_A_NAPOT = 2'b11;
 
+    // M1A lint fix (Spyglass W122): pass the bus explicitly — a hierarchical read inside
+    // a function is not inferred into @* sensitivity by all tools.
     function [31:0] addr_at;
+        input [32*8-1:0] bus;
         input integer idx;
         begin
-            addr_at = pmp_addr_i[idx*32 +: 32];
+            addr_at = bus[idx*32 +: 32];
         end
     endfunction
 
@@ -70,8 +73,8 @@ module pmp #(
         for (r = 0; r < 8; r = r + 1) begin
             if (!matched && (r < PMP_ENTRIES)) begin
                 cfg = pmp_cfg_i[r*8 +: 8];
-                this_addr = addr_at(r);
-                prev_addr = (r == 0) ? 32'h0 : addr_at(r - 1);
+                this_addr = addr_at(pmp_addr_i, r);
+                prev_addr = (r == 0) ? 32'h0 : addr_at(pmp_addr_i, r - 1);
                 tor_start = prev_addr << 2;
                 tor_end = this_addr << 2;
                 region_match = 1'b0;
