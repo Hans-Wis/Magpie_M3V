@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>Magpie_M1A — CPU IP Datasheet（效能線）</title>
+<style>
+  body{font-family:"Helvetica Neue",Arial,"Noto Sans TC",sans-serif;margin:0;background:#f4f6f8;color:#1c2733}
+  .page{max-width:1080px;margin:0 auto;background:#fff;padding:36px 48px;box-shadow:0 0 14px rgba(0,0,0,.08)}
+  h1{font-size:26px;margin:0 0 2px;color:#5b2a86}
+  h2{font-size:19px;border-left:5px solid #5b2a86;padding-left:10px;margin-top:34px;color:#3d1f5c}
+  h3{font-size:15px;color:#3d1f5c;margin-bottom:6px}
+  .sub{color:#5b7083;font-size:13px;margin-bottom:14px}
+  .banner{background:#f1eaf8;border:1px solid #5b2a86;border-radius:6px;padding:10px 14px;font-size:13.5px;margin:14px 0}
+  .hold{background:#fff7e0;border:1px solid #c9a227;border-radius:6px;padding:10px 14px;font-size:13.5px;margin:14px 0}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+  th,td{border:1px solid #ccd6dd;padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:#f3eef8;color:#3d1f5c}
+  td.ok{color:#0b6e4f;font-weight:600}
+  td.warn{color:#a06a00;font-weight:600}
+  td.num{font-variant-numeric:tabular-nums}
+  code,pre{font-family:ui-monospace,Consolas,monospace;font-size:12px}
+  pre{background:#1a1226;color:#e8dff5;border-radius:6px;padding:14px 16px;overflow-x:auto;line-height:1.5}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
+  .footnote{font-size:11.5px;color:#5b7083;margin-top:4px}
+  .newblk{fill:#f3e8ff;stroke:#5b2a86 !important}
+  svg text{font-family:Arial,sans-serif}
+</style>
+</head>
+<body><div class="page">
+
+<h1>Magpie_M1A — RV32IMC+Zb+Zicond 效能強化 CPU IP</h1>
+<div class="sub">Datasheet · 效能線（fork 自 Magpie_M1，ADR-0026）· tags <code>m1a-tier2-evidence-v1.0/.1/v1.1</code>+
+（最終 RTL = ERRATA-0002 修復 + line-100% 收斂版）· 2026-06-12 · design_id = <code>cpu_m1a</code> ·
+正確性權威 = Spike per-commit lockstep + pytest gates · 證據與 M1 線硬隔離（<code>gate_00_identity_m1a</code>）</div>
+
+<div class="banner">🎯 <b>定位</b>：M1 的效能改版線（mission：對標 ARM Cortex-M55 路線）。A1 管線化 MUL、
+A2 Zba/Zbb/Zbs+Zicond 位元運算單元、A3 TCM 巨集已落地；<b>CoreMark/MHz 2.69 → 3.23（O3+Zb，+20%）</b>。
+兩顆 HIGH 級 silent-wrong-result bug（ERRATA-0001/0002）皆在本線<b>發現、根因、修復＋永久回歸</b>。</div>
+<div class="hold">🔒 開放項：DV-lead 人工簽署（hold）；~21/264 legacy gate 斷言待為 A1/A2 新 RTL 重導
+（已揭露，非 RTL 缺陷、非簽核阻擋）；INVESTIGATION-0002（1 顆密注入 seed watchdog，line-100% 不依賴它）。</div>
+
+<h2>1. 產品總覽</h2>
+<table>
+<tr><th style="width:160px">項目</th><th>規格</th></tr>
+<tr><td>ISA</td><td><b>RV32IMC + Zba + Zbb + Zbs + Zicond</b> + Zicsr/Zifencei（misa.B=1，misa=<code>0x4000_1106</code>），M-mode only；選配 PMP</td></tr>
+<tr><td>管線</td><td>4-stage in-order（保留 M1 頻率資產）；BP + RAS + RV32C cross-boundary prefetch</td></tr>
+<tr><td><b>A1</b> MUL</td><td><b>issue-decoupled 管線化 MUL</b>：stateless 乘法器、lat 2 / throughput 1、load-like result-at-WB；重用 load-use hazard class——div 不再被 mul 阻塞</td></tr>
+<tr><td><b>A2</b> BMU</td><td>獨立位元運算單元（26 ops：sh1/2/3add、andn/orn/xnor、clz/ctz/cpop、min/max、sext/zext、rol/ror/rori、orc.b/rev8、bclr/bext/binv/bset+imm、czero.eqz/nez）；EX 單拍、一個 2:1 mux 上 WB 路徑；<b>decode 收緊</b>：保留編碼確實 trap（mcause=2，Spike parity）</td></tr>
+<tr><td><b>A3</b> TCM</td><td><code>dtcm.v</code> 雙 bank TCM 巨集、64-bit wide port（8 B/cycle，Phase-B 介面）；core RTL 不動</td></tr>
+<tr><td>M 單元</td><td>DIV iterative FSM 含 <b>flush</b>（ERRATA-0002 修復）；md_start 受 operand_stall gate（ERRATA-0001 修復）；MUL stateless 天然免疫</td></tr>
+<tr><td>合規</td><td><b>riscv-arch-test 74/74</b>（IMC；Zb 無 ratified suite → documented deviation，以 directed + 31k+ Zb in-stream 注入替代）</td></tr>
+<tr><td>介面 / Debug / 中斷</td><td>同 M1：native valid/ready + AXI4-Lite master · External Debug v0.13.2 · CLINT，RTOS-capable</td></tr>
+<tr><td>製程 / PPA</td><td>TSMC 28HPC+ · <b>699.30 MHz WNS=0</b>（Fmax 護欄 ≥650 PASS）· 30.5 kµm²（+12.73% vs like-for-like 基線 27.07k，&lt;+15% 護欄 PASS）· 13.65 mW</td></tr>
+<tr><td>效能</td><td><b>CoreMark/MHz 3.23</b>（O3+Zb，3,097,358 cycles，CRC-validated；vs M1 2.69 = <b>+20%</b>）</td></tr>
+</table>
+
+<h2>2. 架構圖（紫色 = M1A 新增/改造）</h2>
+<svg viewBox="0 0 1000 460" width="100%" role="img" aria-label="Magpie_M1A block diagram">
+<defs><marker id="ar2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 z" fill="#456"/></marker></defs>
+<style>.blk{fill:#eaf2f8;stroke:#0b3d62;stroke-width:1.4}.nb{fill:#f3e8ff;stroke:#5b2a86;stroke-width:1.6}.unit{fill:#fff;stroke:#467;stroke-width:1.1}.lbl{font-size:13px;fill:#0b3d62;font-weight:bold}.lblp{font-size:13px;fill:#5b2a86;font-weight:bold}.s{font-size:11px;fill:#234}.w{stroke:#456;stroke-width:1.3;fill:none;marker-end:url(#ar2)}</style>
+<!-- IF -->
+<rect class="blk" x="20" y="40" width="200" height="220" rx="6"/><text class="lbl" x="35" y="62">IF — 取指</text>
+<rect class="unit" x="35" y="75" width="170" height="30" rx="4"/><text class="s" x="45" y="94">ifu · PC gen / fetch</text>
+<rect class="unit" x="35" y="112" width="170" height="30" rx="4"/><text class="s" x="45" y="131">bp · branch predictor</text>
+<rect class="unit" x="35" y="149" width="170" height="30" rx="4"/><text class="s" x="45" y="168">ras · return addr stack</text>
+<rect class="unit" x="35" y="186" width="170" height="30" rx="4"/><text class="s" x="45" y="205">cdec · RV32C decomp + prefetch</text>
+<!-- ID/EX -->
+<rect class="blk" x="260" y="40" width="250" height="320" rx="6"/><text class="lbl" x="275" y="62">ID / EX — 解碼執行</text>
+<rect class="nb" x="275" y="75" width="105" height="30" rx="4"/><text class="s" x="283" y="94">idu · +Zb decode 收緊</text>
+<rect class="unit" x="390" y="75" width="105" height="30" rx="4"/><text class="s" x="400" y="94">rfu · 31×32 RF</text>
+<rect class="unit" x="275" y="112" width="105" height="30" rx="4"/><text class="s" x="285" y="131">alu</text>
+<rect class="nb" x="390" y="112" width="105" height="30" rx="4"/><text class="s" x="398" y="131">bmu · 26 Zb ops</text>
+<rect class="nb" x="275" y="149" width="105" height="30" rx="4"/><text class="s" x="283" y="168">mul · pipelined A1</text>
+<rect class="unit" x="390" y="149" width="105" height="30" rx="4"/><text class="s" x="400" y="168">div · FSM+flush</text>
+<rect class="unit" x="275" y="186" width="220" height="30" rx="4"/><text class="s" x="285" y="205">lsu · agen / byte lanes</text>
+<rect class="nb" x="275" y="223" width="220" height="30" rx="4"/><text class="s" x="285" y="242">forward + hazard（em_is_load ∨ is_mul：mul 重用 load-use class）</text>
+<rect class="unit" x="275" y="260" width="220" height="30" rx="4"/><text class="s" x="285" y="279">csr + trigger（misa.B=1 · debug v0.13.2）</text>
+<text class="s" x="275" y="320" fill="#0b6e4f">ex_result = is_bmu ? bmu : alu（單一 2:1 mux）</text>
+<text class="s" x="275" y="338" fill="#0b6e4f">md_flush → div；md_start ⊣ operand_stall</text>
+<!-- EX/MEM -->
+<rect class="blk" x="550" y="40" width="150" height="220" rx="6"/><text class="lbl" x="565" y="62">EX / MEM</text>
+<rect class="unit" x="565" y="75" width="120" height="30" rx="4"/><text class="s" x="575" y="94">EX/MEM regs</text>
+<rect class="nb" x="565" y="112" width="120" height="30" rx="4"/><text class="s" x="572" y="131">is_mul slot tag</text>
+<rect class="unit" x="565" y="149" width="120" height="30" rx="4"/><text class="s" x="575" y="168">D-port issue</text>
+<!-- WB -->
+<rect class="blk" x="740" y="40" width="110" height="220" rx="6"/><text class="lbl" x="755" y="62">WB</text>
+<rect class="nb" x="752" y="75" width="90" height="30" rx="4"/><text class="s" x="757" y="94">mul result@WB</text>
+<rect class="unit" x="752" y="112" width="90" height="30" rx="4"/><text class="s" x="762" y="131">RF write</text>
+<rect class="unit" x="752" y="149" width="90" height="30" rx="4"/><text class="s" x="759" y="168">commit trace</text>
+<!-- mem -->
+<rect class="blk" x="20" y="300" width="200" height="60" rx="6"/><text class="lbl" x="35" y="322">I-mem 介面</text><text class="s" x="35" y="342">valid/ready 或 M_AXI_I</text>
+<rect class="blk" x="550" y="300" width="150" height="60" rx="6"/><text class="lbl" x="565" y="322">D-mem 介面</text><text class="s" x="565" y="342">valid/ready 或 M_AXI_D</text>
+<rect class="nb" x="550" y="380" width="150" height="60" rx="6"/><text class="lblp" x="565" y="402">dtcm（A3）</text><text class="s" x="565" y="422">雙 bank · 64-bit wide port 8B/c</text>
+<rect class="blk" x="740" y="300" width="110" height="60" rx="6"/><text class="lbl" x="755" y="322">Debug</text><text class="s" x="755" y="342">JTAG DTM+DM</text>
+<rect class="blk" x="880" y="40" width="100" height="320" rx="6"/><text class="lbl" x="893" y="62">子系統</text>
+<text class="s" x="893" y="90">CLINT</text><text class="s" x="893" y="112">PLIC</text><text class="s" x="893" y="134">UART</text>
+<text class="s" x="893" y="156">Boot ROM</text><text class="s" x="893" y="178">BRAM/SRAM</text>
+<text class="s" x="893" y="222" fill="#a55">directed-only</text><text class="s" x="893" y="238" fill="#a55">SoC 範疇</text>
+<path class="w" d="M220,150 L260,150"/><path class="w" d="M510,150 L550,150"/><path class="w" d="M700,150 L740,150"/>
+<path class="w" d="M120,260 L120,300"/><path class="w" d="M625,260 L625,300"/><path class="w" d="M625,360 L625,380"/><path class="w" d="M795,260 L795,300"/>
+</svg>
+
+<h2>3. 驗證與簽核（最終 RTL = ERRATA-0002 修復 + pragma 收斂版）</h2>
+<table>
+<tr><th>驗證項</th><th>結果</th><th>數值 / 證據</th></tr>
+<tr><td>Spike per-commit lockstep</td><td class="ok">PASS</td><td class="num">最終 RTL <b>85k+ commits 0-div</b>（GOLD-4 ~40k + 單次 top-up 46,755）；A1、A2 各自 <b>102k+</b> on 當期 RTL；A3 dtcm-in-the-loop 全程 lockstep；9 個 directed phase 於最終 RTL 重跑全綠</td></tr>
+<tr><td>riscv-arch-test</td><td class="ok">74/74</td><td>IMC suites fresh on 最終 RTL；Zb 無 ratified suite → <b>documented deviation</b>（替代：phase_a2 directed 57-commit 全 lockstep + 4 reserved-encoding 負向測試 + 31k+ Zb in-stream 注入）</td></tr>
+<tr><td>ERRATA-0001 / 0002</td><td class="ok">FIXED</td><td>本線發現+根因+修復：operand_stall gate（A1 directed 抓到 mul→div dist-1）/ div flush（INVESTIGATION-0001 算術鐵證 ÷0x1880 vs ÷0x1310）；永久回歸：phase_a1 §9 + phase_a2 illegal probe→div quotient 斷言</td></tr>
+<tr><td>Code coverage（in-SKU effective）</td><td class="ok">達標</td><td class="num"><b>line 100.0%（債 0）</b> · branch 94.8% · expr 95.3% · toggle 92.9%（line/branch/toggle 皆 ≥ M1 凍結基線）；20 顆 lockstep-clean seeds；發散/watchdog seed 之 coverage 一律剔除</td></tr>
+<tr><td>Formal（VC Formal FPV）</td><td class="ok">40/40</td><td>core 22 + AXI4-Lite 18 PROVEN；<b>誠實缺口已記錄</b>：mul props 需 rebind（A1 重寫）、bmu 無 props（以 directed+farm 補）、misa.B</td></tr>
+<tr><td>Spyglass lint</td><td class="ok">0 errors</td><td>92 style warnings 列冊待 DV-lead waiver policy（W415a 46 / STARC 28 / W528 9 …）</td></tr>
+<tr><td>Spyglass CDC / RDC</td><td class="ok">0 / 0</td><td>full filelist（含 trigger/bmu/dtcm）；Propagate_Resets setup warning 已記錄；X-prop 子集 0</td></tr>
+<tr><td>DC 合成（TSMC 28HPC+）</td><td class="ok">護欄全 PASS</td><td class="num">SLOW <b>699.30 MHz WNS=0</b>（≥650 PASS）· 30,515 µm² = <b>+12.73%</b> vs like-for-like 27,069.84（≤+15% PASS）· 13.65 mW</td></tr>
+<tr><td>Wrapper 等效</td><td class="ok">PASS</td><td><b>REPAIR-0001</b>（本線完成的 4 項繼承腐化修復）+ A/B(×6)/C/D + 81-commit lockstep；與凍結 M1 交叉核對</td></tr>
+<tr><td>Benchmark</td><td class="ok">3.23/MHz</td><td>CoreMark O3+Zb 3,097,358 cycles，CRC-validated，flags 隨 build 傳遞（self-consistent，Gemini 稽核修正）</td></tr>
+<tr><td>Legacy gate 套件</td><td class="warn">調和中</td><td>~21/264 fail = (a) M1 時代 source-text 斷言已被 A1/A2 合法改寫 (b) fork 前單元-TB 編譯腐化（8 個已修）——<b>無一為 RTL 缺陷</b>；ADR-0026 D3 載明需為新 RTL 重導；核心重掙證據不受影響</td></tr>
+<tr><td>互審（producer≠approver）</td><td class="ok">8 catches</td><td>Codex×2（filelist/DC 基線）· Gemini×3（arch-test 重複計數 148→74、CDC 時序、CoreMark flags）· Zb-injector×1（misa-writability parity）· process×2（make stale-target）——全數修正結案</td></tr>
+</table>
+
+<h2>4. 效能 vs M1 基線</h2>
+<table>
+<tr><th>指標</th><th>M1（v1.1）</th><th>M1A</th><th>差異</th></tr>
+<tr><td>CoreMark/MHz</td><td class="num">2.69</td><td class="num"><b>3.23</b>（O3+Zb）</td><td class="num">+20%</td></tr>
+<tr><td>MUL throughput</td><td>blocking（2-cy 佔住 M 單元）</td><td><b>1/cycle</b> pipelined</td><td>b2b mul 不 stall</td></tr>
+<tr><td>位元運算</td><td>多指令合成</td><td>26 ops 單拍（BMU）</td><td>指令數↓</td></tr>
+<tr><td>Fmax / 面積 / 功耗</td><td class="num">699.3 MHz / 28.2k µm² / 13.7–18.3 mW</td><td class="num">699.3 MHz / 30.5k µm² / 13.65 mW</td><td class="num">頻率不變 · +12.73% vs like-for-like 基線</td></tr>
+<tr><td>資料頻寬（A3）</td><td>4 B/c D-port</td><td>dtcm wide port <b>8 B/c</b>（Phase-B 介面）</td><td>×2（巨集就緒）</td></tr>
+</table>
+
+<h2>5. 檔案結構與交付資料</h2>
+<div class="grid">
+<div>
+<h3>Repo 結構（fork 自 M1，identity 硬隔離）</h3>
+<pre>SOC/Magpie_M1A/                ← design_id = cpu_m1a
+├── IP/cpu_m1/                 ← 路徑沿用、identity 在 design_id
+│   ├── ip.json（provenance_fork）
+│   ├── rtl/                   ← 21 檔（M1 19 檔 + bmu.v + dtcm.v）
+│   ├── dv/tb/ · dv/sim/
+│   └── docs/
+├── tests/gates/               ← 264 gates（含 gate_00_identity_m1a
+│                                 強制 M1/M1A 證據不互認）
+├── flow/
+│   ├── v2_pipeline/           ← phase_a1_mul_directed ·
+│   │     phase_a2_zb_zicond · phase_a3_dtcm ·
+│   │     phase_03_09（farm+injectors）· licensed phases
+│   └── state/                 ← magpie_m1a.*（fork 時清空重掙）
+└── docs/
+    ├── adr/0026-m1a-performance-scope.md（rev2+修訂）
+    ├── reports/m1a_tier2_evidence_pack.md（row→artifact）
+    ├── reports/m1a_commercial_quality_plan.md（3-agent 共識）
+    └── datasheet.html（本檔）</pre>
+</div>
+<div>
+<h3>RTL 交付清單（vs M1 差異標示）</h3>
+<table>
+<tr><th>檔案</th><th>狀態</th></tr>
+<tr><td><code>bmu.v</code></td><td><b>新增</b>（A2，26-op 位元運算單元）</td></tr>
+<tr><td><code>dtcm.v</code></td><td><b>新增</b>(A3,雙 bank TCM 巨集)</td></tr>
+<tr><td><code>mul.v</code></td><td><b>重寫</b>(A1 stateless pipelined)</td></tr>
+<tr><td><code>idu.v</code></td><td><b>擴充</b>(Zb decode + 保留編碼收緊)</td></tr>
+<tr><td><code>core.v / hazard.v / div.v / csr.v</code></td><td><b>修改</b>(A1 slot tag · operand_stall · div flush · misa.B)</td></tr>
+<tr><td>其餘 13 檔</td><td>同 M1(ifu/bp/ras/cdec/rfu/alu/forward/lsu/trigger/pmp/tops/axil)</td></tr>
+</table>
+<h3>簽核交付件</h3>
+<table>
+<tr><td>Evidence pack</td><td><code>docs/reports/m1a_tier2_evidence_pack.md</code>(row→artifact、fresh-only、INHERIT 明標)</td></tr>
+<tr><td>ADR</td><td><code>docs/adr/0026-*.md</code>(scope rev2 + A3 KPI + PPA 基線修正)</td></tr>
+<tr><td>Coverage 快照</td><td><code>…/lbe_signoff_snapshot.json</code> · <code>toggle_signoff_snapshot.json</code> + <code>coverage_merged/m1a_farm.dat</code></td></tr>
+<tr><td>Benchmark</td><td><code>m1_benchmark_baseline.md</code> + A1/A2 紀錄(CoreMark log self-consistent)</td></tr>
+<tr><td>互審帳冊</td><td>evidence pack 內 mutual-review ledger(8 catches)</td></tr>
+</table>
+</div>
+</div>
+
+<h2>6. 誠實揭露</h2>
+<table>
+<tr><td>Zb 合規</td><td>riscv-arch-test 無 ratified B suite → documented deviation(directed + 注入規模替代)</td></tr>
+<tr><td>Formal 缺口</td><td>mul props 待 rebind、bmu 無 props、misa.B——記錄於 pack §03,以 lockstep 證據補位</td></tr>
+<tr><td>Legacy gates</td><td>~21/264 待斷言重導(非 RTL 缺陷;兩類:過時 source-text 斷言、fork 前 TB 腐化)</td></tr>
+<tr><td>INVESTIGATION-0002</td><td>1 顆密注入 coverage seed watchdog 超時(非 wdata 發散);coverage 已剔除;line-100% 不依賴</td></tr>
+<tr><td>SoC 子系統</td><td>directed-only,SoC-integrator 範疇(與 M1 同)</td></tr>
+<tr><td>開放 hold</td><td><b>DV-lead 人工簽署</b>(Grok SIGN-WITH-CONDITIONS 唯一 HOLD)</td></tr>
+</table>
+
+<div class="sub" style="margin-top:26px">© Magpie_M1A — M1 效能改版線(ADR-0026)·
+所有數值可由 repo 內 gate / log 重現;與 M1 證據永不混用(identity gate 強制)。</div>
+</div></body>
+</html>
