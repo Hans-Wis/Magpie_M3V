@@ -24,7 +24,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 PHASE = ROOT / "flow/v2_pipeline/phase_03_09_riscvdv_lockstep"
 SNAP = PHASE / "lbe_signoff_snapshot.json"
-DB = PHASE / "coverage_merged/farm_all3.dat"
+DB = PHASE / "coverage_merged/m1a_farm.dat"
 CLASSIFY = PHASE / "classify_signoff_lines.py"
 BAR = 90.0
 

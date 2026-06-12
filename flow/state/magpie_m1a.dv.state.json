@@ -1,25 +1,29 @@
 {
   "artifacts": [
-    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/riscvdv_lockstep_summary.json"
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/toggle_signoff_snapshot.json",
+    "flow/v2_pipeline/phase_03_09_riscvdv_lockstep/lbe_signoff_snapshot.json"
   ],
   "autonomy": "L0",
   "data_quality": "full",
   "design": "magpie_m1a",
-  "gate": "a2_lockstep_100k_complete",
+  "gate": "m1a_coverage_effective_signoff",
   "metrics": {
-    "a2_farm_total_commits": 102163,
-    "campaign_runs": 3,
-    "divergences": 0,
-    "isa": "rv32imc_zba_zbb_zbs_zicond_zicsr_zifencei",
-    "priv": "m",
-    "unresolved": 0
+    "bar": 90.0,
+    "branch_eff": 92.7,
+    "expr_eff": 92.8,
+    "farm_cov_commits_all_passing": true,
+    "gates": "04_10+04_11 9/9",
+    "line_eff": 91.7,
+    "m1_baseline": "92.4/90.0/93.1/95.3",
+    "seeds": 24,
+    "toggle_eff": 92.9
   },
   "reviewed_by_codex": "none",
   "run": {
-    "ended": "2026-06-12T00:23:48",
+    "ended": "2026-06-12T10:15:20",
     "host": "eda",
-    "id": "run-a2_lockstep_100k_complete",
-    "started": "2026-06-12T00:23:48"
+    "id": "run-m1a_coverage_effective_signoff",
+    "started": "2026-06-12T10:15:20"
   },
   "stage": "dv",
   "status": "pass"

@@ -1,36 +1,41 @@
 {
-  "contract": "Tier-2-Narrow (RV32IMC core-only, FEATURE_FREEZE SKU-1), DUT-scoped",
-  "coverage_db": "coverage_merged/farm_all3.dat (33 seeds, Verilator --coverage all)",
+  "contract": "M1A Tier-2-Narrow, DUT-scoped",
+  "design_id": "cpu_m1a",
+  "coverage_db": "coverage_merged/m1a_farm.dat",
   "defensible_bar_pct": 90.0,
   "metrics": {
     "line": {
-      "raw_hit": 224,
-      "raw_total": 342,
-      "raw_pct": 65.5,
-      "out_of_sku_cold": 93,
-      "in_sku_debt": 25,
-      "effective_denom": 249,
-      "effective_pct": 90.0
+      "raw_hit": 330,
+      "raw_total": 461,
+      "raw_pct": 71.6,
+      "out_of_sku_cold": 101,
+      "in_sku_debt": 30,
+      "effective_denom": 360,
+      "effective_pct": 91.7
     },
     "branch": {
-      "raw_hit": 283,
-      "raw_total": 416,
-      "raw_pct": 68.0,
-      "out_of_sku_cold": 112,
-      "in_sku_debt": 21,
-      "effective_denom": 304,
-      "effective_pct": 93.1
+      "raw_hit": 318,
+      "raw_total": 464,
+      "raw_pct": 68.5,
+      "out_of_sku_cold": 121,
+      "in_sku_debt": 25,
+      "effective_denom": 343,
+      "effective_pct": 92.7
     },
     "expr": {
-      "raw_hit": 184,
-      "raw_total": 312,
-      "raw_pct": 59.0,
-      "out_of_sku_cold": 119,
-      "in_sku_debt": 9,
-      "effective_denom": 193,
-      "effective_pct": 95.3
+      "raw_hit": 219,
+      "raw_total": 379,
+      "raw_pct": 57.8,
+      "out_of_sku_cold": 143,
+      "in_sku_debt": 17,
+      "effective_denom": 236,
+      "effective_pct": 92.8
     }
   },
-  "genuine_debt_focus": "RV32C decoder (cdec.v) compressed-instruction variety + few core/csr/div/ras corners",
+  "m1_baseline": {
+    "line": 90.0,
+    "branch": 93.1,
+    "expr": 95.3
+  },
   "dv_lead_signature": "PENDING"
 }
