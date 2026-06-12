@@ -1,7 +1,7 @@
 {
   "status": "PASS",
-  "target_commits": 70000,
-  "total_matched_commits": 71180,
+  "target_commits": 45000,
+  "total_matched_commits": 46755,
   "scope": {
     "included": [
       "RV32I arithmetic/logical/compare/shift",
@@ -21,220 +21,148 @@
   },
   "seeds": [
     {
-      "seed": 2026070401,
-      "matched_commits": 4765,
-      "dut_commits": 4765,
+      "seed": 2026074001,
+      "matched_commits": 1897,
+      "dut_commits": 1897,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070401 matched 4765 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074001 matched 1897 commits; sync_traps=6"
     },
     {
-      "seed": 2026070402,
-      "matched_commits": 4003,
-      "dut_commits": 4003,
+      "seed": 2026074002,
+      "matched_commits": 503,
+      "dut_commits": 503,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070402 matched 4003 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074002 matched 503 commits; sync_traps=6"
     },
     {
-      "seed": 2026070403,
-      "matched_commits": 2612,
-      "dut_commits": 2612,
+      "seed": 2026074003,
+      "matched_commits": 1864,
+      "dut_commits": 1864,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070403 matched 2612 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074003 matched 1864 commits; sync_traps=6"
     },
     {
-      "seed": 2026070404,
-      "matched_commits": 803,
-      "dut_commits": 803,
+      "seed": 2026074004,
+      "matched_commits": 3890,
+      "dut_commits": 3890,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070404 matched 803 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074004 matched 3890 commits; sync_traps=0"
     },
     {
-      "seed": 2026070405,
-      "matched_commits": 4480,
-      "dut_commits": 4480,
+      "seed": 2026074005,
+      "matched_commits": 3002,
+      "dut_commits": 3002,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070405 matched 4480 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074005 matched 3002 commits; sync_traps=6"
     },
     {
-      "seed": 2026070406,
-      "matched_commits": 2341,
-      "dut_commits": 2341,
+      "seed": 2026074006,
+      "matched_commits": 3926,
+      "dut_commits": 3926,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070406 matched 2341 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074006 matched 3926 commits; sync_traps=6"
     },
     {
-      "seed": 2026070407,
-      "matched_commits": 2208,
-      "dut_commits": 2208,
+      "seed": 2026074007,
+      "matched_commits": 3455,
+      "dut_commits": 3455,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070407 matched 2208 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074007 matched 3455 commits; sync_traps=6"
     },
     {
-      "seed": 2026070408,
-      "matched_commits": 1953,
-      "dut_commits": 1953,
+      "seed": 2026074008,
+      "matched_commits": 468,
+      "dut_commits": 468,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070408 matched 1953 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074008 matched 468 commits; sync_traps=6"
     },
     {
-      "seed": 2026070409,
-      "matched_commits": 688,
-      "dut_commits": 688,
+      "seed": 2026074009,
+      "matched_commits": 737,
+      "dut_commits": 737,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070409 matched 688 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074009 matched 737 commits; sync_traps=6"
     },
     {
-      "seed": 2026070410,
-      "matched_commits": 3355,
-      "dut_commits": 3355,
+      "seed": 2026074010,
+      "matched_commits": 3983,
+      "dut_commits": 3983,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070410 matched 3355 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074010 matched 3983 commits; sync_traps=6"
     },
     {
-      "seed": 2026070411,
-      "matched_commits": 860,
-      "dut_commits": 860,
+      "seed": 2026074011,
+      "matched_commits": 4803,
+      "dut_commits": 4803,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070411 matched 860 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074011 matched 4803 commits; sync_traps=6"
     },
     {
-      "seed": 2026070412,
-      "matched_commits": 3469,
-      "dut_commits": 3469,
+      "seed": 2026074012,
+      "matched_commits": 970,
+      "dut_commits": 970,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070412 matched 3469 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074012 matched 970 commits; sync_traps=6"
     },
     {
-      "seed": 2026070413,
-      "matched_commits": 708,
-      "dut_commits": 708,
+      "seed": 2026074013,
+      "matched_commits": 2717,
+      "dut_commits": 2717,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070413 matched 708 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074013 matched 2717 commits; sync_traps=6"
     },
     {
-      "seed": 2026070414,
-      "matched_commits": 4284,
-      "dut_commits": 4284,
+      "seed": 2026074014,
+      "matched_commits": 3272,
+      "dut_commits": 3272,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070414 matched 4284 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074014 matched 3272 commits; sync_traps=6"
     },
     {
-      "seed": 2026070415,
-      "matched_commits": 1863,
-      "dut_commits": 1863,
+      "seed": 2026074015,
+      "matched_commits": 2816,
+      "dut_commits": 2816,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070415 matched 1863 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074015 matched 2816 commits; sync_traps=6"
     },
     {
-      "seed": 2026070416,
-      "matched_commits": 4140,
-      "dut_commits": 4140,
+      "seed": 2026074016,
+      "matched_commits": 3838,
+      "dut_commits": 3838,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070416 matched 4140 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074016 matched 3838 commits; sync_traps=6"
     },
     {
-      "seed": 2026070417,
-      "matched_commits": 2514,
-      "dut_commits": 2514,
+      "seed": 2026074017,
+      "matched_commits": 2366,
+      "dut_commits": 2366,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070417 matched 2514 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074017 matched 2366 commits; sync_traps=6"
     },
     {
-      "seed": 2026070418,
-      "matched_commits": 2886,
-      "dut_commits": 2886,
+      "seed": 2026074018,
+      "matched_commits": 2248,
+      "dut_commits": 2248,
       "ok": true,
       "waived": false,
-      "message": "riscv-dv seed 2026070418 matched 2886 commits; sync_traps=6"
-    },
-    {
-      "seed": 2026070419,
-      "matched_commits": 2264,
-      "dut_commits": 2264,
-      "ok": true,
-      "waived": false,
-      "message": "riscv-dv seed 2026070419 matched 2264 commits; sync_traps=6"
-    },
-    {
-      "seed": 2026070420,
-      "matched_commits": 4565,
-      "dut_commits": 4565,
-      "ok": true,
-      "waived": false,
-      "message": "riscv-dv seed 2026070420 matched 4565 commits; sync_traps=6"
-    },
-    {
-      "seed": 2026070421,
-      "matched_commits": 3812,
-      "dut_commits": 3812,
-      "ok": true,
-      "waived": false,
-      "message": "riscv-dv seed 2026070421 matched 3812 commits; sync_traps=6"
-    },
-    {
-      "seed": 2026070422,
-      "matched_commits": 4739,
-      "dut_commits": 4739,
-      "ok": true,
-      "waived": false,
-      "message": "riscv-dv seed 2026070422 matched 4739 commits; sync_traps=6"
-    },
-    {
-      "seed": 2026070423,
-      "matched_commits": 725,
-      "dut_commits": 725,
-      "ok": true,
-      "waived": false,
-      "message": "riscv-dv seed 2026070423 matched 725 commits; sync_traps=6"
-    },
-    {
-      "seed": 2026070424,
-      "matched_commits": 1408,
-      "dut_commits": 1408,
-      "ok": true,
-      "waived": false,
-      "message": "riscv-dv seed 2026070424 matched 1408 commits; sync_traps=6"
-    },
-    {
-      "seed": 2026070425,
-      "matched_commits": 1208,
-      "dut_commits": 1208,
-      "ok": true,
-      "waived": false,
-      "message": "riscv-dv seed 2026070425 matched 1208 commits; sync_traps=6"
-    },
-    {
-      "seed": 2026070426,
-      "matched_commits": 2551,
-      "dut_commits": 2551,
-      "ok": true,
-      "waived": false,
-      "message": "riscv-dv seed 2026070426 matched 2551 commits; sync_traps=6"
-    },
-    {
-      "seed": 2026070427,
-      "matched_commits": 1976,
-      "dut_commits": 1976,
-      "ok": true,
-      "waived": false,
-      "message": "riscv-dv seed 2026070427 matched 1976 commits; sync_traps=6"
+      "message": "riscv-dv seed 2026074018 matched 2248 commits; sync_traps=6"
     }
   ],
   "waivers": [],
@@ -244,11 +172,11 @@
   "isa": "rv32imc_zba_zbb_zbs_zicond_zicsr_zifencei",
   "spike_isa": "rv32imc_zba_zbb_zbs_zicond_zicsr_zifencei_zicntr",
   "riscv_dv_path": "/home/edauser/project/SOC/Magpie_X6/vendored/riscv-dv",
-  "start_time": 1781193687.7787082,
-  "disk_free_start_kb": 645930516,
-  "disk_free_min_kb": 645576480,
-  "disk_free_end_kb": 645577620,
-  "passing_run_dirs_cleaned": 27,
-  "elapsed_sec": 1301.4729883670807,
-  "commits_per_sec": 54.691876540063596
+  "start_time": 1781251852.27283,
+  "disk_free_start_kb": 644121356,
+  "disk_free_min_kb": 644009072,
+  "disk_free_end_kb": 644079104,
+  "passing_run_dirs_cleaned": 18,
+  "elapsed_sec": 785.5161204338074,
+  "commits_per_sec": 59.521375543737015
 }
