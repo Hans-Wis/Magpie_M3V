@@ -6,6 +6,7 @@
 ../../../IP/cpu_m1/rtl/ifu.v
 ../../../IP/cpu_m1/rtl/lsu.v
 ../../../IP/cpu_m1/rtl/csr.v
+../../../IP/cpu_m1/rtl/trigger.v
 ../../../IP/cpu_m1/rtl/mul.v
 ../../../IP/cpu_m1/rtl/div.v
 ../../../IP/cpu_m1/rtl/forward.v

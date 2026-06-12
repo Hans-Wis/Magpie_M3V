@@ -72,6 +72,14 @@ bandwidth roofline (after C).
   + 100k lockstep per sub-phase); Zb* ALU mux timing erosion (mitigation: per-sub-phase DC smoke);
   vector-retire equivalence engineering (mitigation: hard ADR precondition before B).
 
+**PPA guardrail baseline correction (2026-06-12, from the DC run):** the "+15% area vs 26.3kµm²"
+absolute base came from the M1 trial whose DC filelist was MISSING trigger.v (black-boxed). The
+like-for-like baseline (same corrected filelist on frozen M1) is **27069.84µm²**; M1A measures
+30397.37µm² = **+12.29% → guardrail PASS**. Frequency 699.30MHz all corners (≥650 PASS); power
+SLOW 13.63 / TT 16.76mW PASS, FF corner 18.31mW vs the ≤18 figure noted as the max-leakage-corner
+caveat (M1's 15.85 baseline was not an FF number; per-corner comparison documented, not waived
+silently).
+
 **A3 KPI amendment (2026-06-12, post-acceptance, Grok-concurred):** the original "loadstream 1.78 →
 ≥3.5 B/c" KPI was **unachievable by the stated scope** — the 1.78 B/c limit is scalar ISSUE physics
 (8 lw + 8 consuming adds + loop = 18 cyc/32B at IPC 1.0; lw ceiling 4 B/c), not memory bandwidth.

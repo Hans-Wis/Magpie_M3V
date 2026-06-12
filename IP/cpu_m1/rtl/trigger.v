@@ -124,13 +124,21 @@ module trigger (
         end
     endfunction
 
+    // M1A lint fix (Spyglass W122, same class as pmp.v): module state is passed as
+    // explicit function inputs so every read is visible to @* sensitivity inference.
+    wire [31:0] trig_tdata1_sel = tdata1_r[tselect_r];
+    wire [31:0] trig_tdata2_sel = tdata2_r[tselect_r];
+
     function [31:0] read_csr;
         input [11:0] addr;
+        input [ 1:0] tsel;
+        input [31:0] td1_sel;
+        input [31:0] td2_sel;
         begin
             case (addr)
-                `CSR_TSELECT: read_csr = {30'h0, tselect_r};
-                `CSR_TDATA1 : read_csr = tdata1_r[tselect_r];
-                `CSR_TDATA2 : read_csr = tdata2_r[tselect_r];
+                `CSR_TSELECT: read_csr = {30'h0, tsel};
+                `CSR_TDATA1 : read_csr = td1_sel;
+                `CSR_TDATA2 : read_csr = td2_sel;
                 `CSR_TINFO  : read_csr = TINFO_MCONTROL6;
                 default     : read_csr = 32'h0;
             endcase
@@ -167,7 +175,7 @@ module trigger (
     assign mem_trigger_is_store = mem_hit2_st | mem_hit3_st;
 
     always @* begin
-        csr_rdata = read_csr(csr_raddr);
+        csr_rdata = read_csr(csr_raddr, tselect_r, trig_tdata1_sel, trig_tdata2_sel);
         if (csr_we && (csr_waddr == csr_raddr) && is_trigger_csr(csr_waddr)) begin
             if (csr_waddr == `CSR_TSELECT)
                 csr_rdata = (csr_wdata[31:2] == 30'h0) ? {30'h0, csr_wdata[1:0]} : {30'h0, tselect_r};
@@ -179,7 +187,7 @@ module trigger (
     end
 
     always @* begin
-        debug_csr_rdata = read_csr(debug_csr_raddr);
+        debug_csr_rdata = read_csr(debug_csr_raddr, tselect_r, trig_tdata1_sel, trig_tdata2_sel);
         if (debug_csr_we && (debug_csr_waddr == debug_csr_raddr) && is_trigger_csr(debug_csr_waddr)) begin
             if (debug_csr_waddr == `CSR_TSELECT)
                 debug_csr_rdata = (debug_csr_wdata[31:2] == 30'h0) ? {30'h0, debug_csr_wdata[1:0]} : {30'h0, tselect_r};
