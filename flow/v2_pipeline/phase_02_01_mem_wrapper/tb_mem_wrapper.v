@@ -24,7 +24,7 @@ module tb_mem_wrapper;
     wire        ibus_req;
     wire [31:0] ibus_addr;
     wire        ibus_ready;
-    reg  [31:0] ibus_rdata;
+    wire [31:0] ibus_rdata;
 
     wire        dbus_req;
     wire [31:0] dbus_addr;
@@ -32,7 +32,10 @@ module tb_mem_wrapper;
     wire [3:0]  dbus_wstrb;
     wire [31:0] dbus_wdata;
     wire        dbus_ready;
-    reg  [31:0] dbus_rdata;
+    wire [31:0] dbus_rdata;
+    // REPAIR-0001 combinational bus reads (contract-correct for all wait modes:
+    // addr is held stable while req, single outstanding)
+    // assigns placed after idx wires below via the second anchor
 
     wire        trap;
     wire [31:0] dbg_pc;
@@ -177,8 +180,15 @@ module tb_mem_wrapper;
     wire [31:0] top_i_word_idx = {{(32-ADDR_BITS){1'b0}}, ibus_addr[ADDR_BITS+1:2]};
     wire [31:0] top_d_word_idx = {{(32-ADDR_BITS){1'b0}}, dbus_addr[ADDR_BITS+1:2]};
 
+    assign ibus_rdata = (top_i_word_idx < MEM_WORDS) ? mem_top[top_i_word_idx] : 32'h0;
+    assign dbus_rdata = (top_d_word_idx < MEM_WORDS) ? mem_top[top_d_word_idx] : 32'h0;
+
     always @(posedge clk) begin
-        if (run_ref) begin
+        // REPAIR-0001: memory must respond whenever the core is out of reset — gating the
+        // RESPONSE on run_ref froze i_mem_rdata during the resetn->run_ref window, feeding
+        // the already-running core a stale/zero instruction (illegal at the first WB,
+        // 0-commit baseline). run_ref/run_top now gate only counting/asserting.
+        if (resetn) begin
             if (ref_i_mem_en && (ref_i_word_idx < MEM_WORDS))
                 ref_i_mem_rdata <= mem_ref[ref_i_word_idx];
 
@@ -193,12 +203,12 @@ module tb_mem_wrapper;
             end
         end
 
-        if (run_top) begin
-            if (ibus_req && ibus_ready && (top_i_word_idx < MEM_WORDS))
-                ibus_rdata <= mem_top[top_i_word_idx];
-
+        if (resetn) begin
+            // REPAIR-0001: reads are COMBINATIONAL (assigns below) — the wrapper consumes
+            // bus_rdata AT the fire/xfer cycle ("rdata_q <= bus_rdata when fire",
+            // cpu_m1_top.v header); a registered TB response is one cycle late and feeds
+            // the wrapper garbage on its first fetch. Writes stay registered on xfer.
             if (dbus_req && dbus_ready && (top_d_word_idx < MEM_WORDS)) begin
-                dbus_rdata <= mem_top[top_d_word_idx];
 
                 if (dbus_addr[31:28] == 4'h1) begin
                     if (dbus_we) begin
@@ -218,67 +228,53 @@ module tb_mem_wrapper;
     end
 
     function automatic [31:0] instr_at_pc_ref(input [31:0] pc);
+        // REPAIR-0001: same inverted-marker decay as instr_at_pc_top; same proven fix.
         reg [31:0] word0;
         reg [31:0] word1;
-        reg [31:0] idx;
-        reg [31:0] idx_next;
         reg [15:0] half0;
-        reg [15:0] half1;
         begin
-            idx = {20'b0, pc[ADDR_BITS+1:2]};
-            idx_next = idx + 1;
-            word0 = (idx < MEM_WORDS) ? mem_ref[idx] : 32'h0;
-            half0 = word0[15:0];
-            half1 = word0[31:16];
-            if (pc[1:0] == 2'b00) begin
-                if (half0[1:0] == 2'b11)
-                    instr_at_pc_ref = {16'h0, half0};
-                else if (pc[1] == 1'b0)
-                    instr_at_pc_ref = word0;
-                else begin
-                    word1 = (idx_next < MEM_WORDS) ? mem_ref[idx_next] : 32'h0;
+            word0 = mem_ref[{20'b0, pc[ADDR_BITS+1:2]}];
+            if (pc[1]) begin
+                half0 = word0[31:16];
+                if (half0[1:0] == 2'b11) begin
+                    word1 = mem_ref[{20'b0, pc[ADDR_BITS+1:2]} + 1];
                     instr_at_pc_ref = {word1[15:0], half0};
+                end else begin
+                    instr_at_pc_ref = {16'h0, half0};
                 end
             end else begin
-                if (half1[1:0] == 2'b11)
-                    instr_at_pc_ref = {16'h0, half1};
-                else begin
-                    word1 = (idx_next < MEM_WORDS) ? mem_ref[idx_next] : 32'h0;
-                    instr_at_pc_ref = {word1[15:0], half1};
-                end
+                half0 = word0[15:0];
+                if (half0[1:0] == 2'b11)
+                    instr_at_pc_ref = word0;
+                else
+                    instr_at_pc_ref = {16'h0, half0};
             end
         end
     endfunction
 
     function automatic [31:0] instr_at_pc_top(input [31:0] pc);
+        // REPAIR-0001: the decayed version had the 32/16-bit marker conditions INVERTED
+        // (a 32-bit instr returned truncated low-half). Replaced with the proven
+        // reconstruction used by every passing directed TB (tb_spike_lockstep lineage).
         reg [31:0] word0;
         reg [31:0] word1;
-        reg [31:0] idx;
-        reg [31:0] idx_next;
         reg [15:0] half0;
-        reg [15:0] half1;
         begin
-            idx = {20'b0, pc[ADDR_BITS+1:2]};
-            idx_next = idx + 1;
-            word0 = (idx < MEM_WORDS) ? mem_top[idx] : 32'h0;
-            half0 = word0[15:0];
-            half1 = word0[31:16];
-            if (pc[1:0] == 2'b00) begin
-                if (half0[1:0] == 2'b11)
-                    instr_at_pc_top = {16'h0, half0};
-                else if (pc[1] == 1'b0)
-                    instr_at_pc_top = word0;
-                else begin
-                    word1 = (idx_next < MEM_WORDS) ? mem_top[idx_next] : 32'h0;
+            word0 = mem_top[{20'b0, pc[ADDR_BITS+1:2]}];
+            if (pc[1]) begin
+                half0 = word0[31:16];
+                if (half0[1:0] == 2'b11) begin
+                    word1 = mem_top[{20'b0, pc[ADDR_BITS+1:2]} + 1];
                     instr_at_pc_top = {word1[15:0], half0};
+                end else begin
+                    instr_at_pc_top = {16'h0, half0};
                 end
             end else begin
-                if (half1[1:0] == 2'b11)
-                    instr_at_pc_top = {16'h0, half1};
-                else begin
-                    word1 = (idx_next < MEM_WORDS) ? mem_top[idx_next] : 32'h0;
-                    instr_at_pc_top = {word1[15:0], half1};
-                end
+                half0 = word0[15:0];
+                if (half0[1:0] == 2'b11)
+                    instr_at_pc_top = word0;
+                else
+                    instr_at_pc_top = {16'h0, half0};
             end
         end
     endfunction
@@ -333,8 +329,9 @@ module tb_mem_wrapper;
             misaligned_mtval[2] = 32'h0;
             misaligned_mtval[3] = 32'h0;
             repeat (6) @(posedge clk);
-            resetn = 1'b1;
-            @(posedge clk);
+            // REPAIR-0001: resetn is RELEASED BY THE CALLER together with run_* (same
+            // time slot, no clock in between) so both cores start fetching on the same
+            // cycle with LIVE memory — no garbage-fetch window, cycle-aligned compare.
         end
     endtask
 
@@ -347,6 +344,7 @@ module tb_mem_wrapper;
             load_firmware_top(1'b0);
             reset_and_prepare();
 
+            resetn  = 1'b1;
             run_ref = 1'b1;
             run_top = 1'b1;
             i_wait_mode = WAIT_MODE_0;
@@ -424,6 +422,7 @@ module tb_mem_wrapper;
         begin
             load_firmware_top(1'b0);
             reset_and_prepare();
+            resetn  = 1'b1;
             run_top = 1'b1;
             i_wait_mode = wait_i;
             d_wait_mode = wait_d;
@@ -485,6 +484,7 @@ module tb_mem_wrapper;
             load_firmware_top(1'b1);
             load_firmware_ref(1'b1);
             reset_and_prepare();
+            resetn  = 1'b1;
             run_top = 1'b1;
             i_wait_mode = WAIT_MODE_0;
             d_wait_mode = WAIT_MODE_0;
@@ -534,6 +534,7 @@ module tb_mem_wrapper;
         begin
             load_firmware_top(1'b0);
             reset_and_prepare();
+            resetn  = 1'b1;
             run_top = 1'b1;
             i_wait_mode = WAIT_MODE_RANDOM;
             d_wait_mode = WAIT_MODE_RANDOM;

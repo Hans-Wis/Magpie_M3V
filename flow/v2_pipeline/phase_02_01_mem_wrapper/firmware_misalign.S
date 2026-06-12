@@ -26,6 +26,9 @@ trap_handler:
     lw    x10, 0(x9)
     li    x11, 4
     blt   x10, x11, 1f
+    csrr  x12, mepc
+    addi  x12, x12, 4
+    csrw  mepc, x12
     mret
 1:
     slli  x12, x10, 3      # offset = event * 8
@@ -37,6 +40,12 @@ trap_handler:
     addi  x10, x10, 1
     sw    x10, 0(x9)
 
+    # REPAIR-0001: advance mepc past the faulting 32-bit access (spec-correct resume;
+    # the original handler mret'd back to the faulting instruction — it only terminated
+    # on an older core generation with skip-on-misalign semantics)
+    csrr  x12, mepc
+    addi  x12, x12, 4
+    csrw  mepc, x12
     mret
 
 .section .bss
