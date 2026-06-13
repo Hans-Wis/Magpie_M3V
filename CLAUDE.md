@@ -5,6 +5,8 @@
 > **M1 的 Tier-2 證據不得由本線宣稱**:flow/state 已清空,所有 gate/lockstep/coverage 在本線重新掙。identity gate = `tests/gates/gate_00_identity_m1a.py`。
 > **任務**:超越 Cortex-M55(DSP+edge-LLM)。藍圖=[`docs/reports/m1a_performance_evaluation.md`](docs/reports/m1a_performance_evaluation.md);實測基線=[`docs/reports/m1_benchmark_baseline.md`](docs/reports/m1_benchmark_baseline.md)(CoreMark/MHz 2.47、CPI 1.29、GEMV 11.0 c/MAC)。
 > **第一動作 = 開 ADR-0026(M1A scope)**:pipelined MUL(latency 2/throughput 1)→ Zba/Zbb/Zbs+Zicond → TCM/頻寬 → RVV Zve32x(VLEN=128, dual-beat)→ TC-GEMV。保 4-stage 脊椎(頻率資產);dual-issue 最後。
+>
+> 🧊 **DESIGN FREEZE(2026-06-13,User 裁示)**:M1A RTL 凍結於 tag `m1a-rtl-freeze-v1.0`(見 [`docs/M1A_DESIGN_FREEZE.md`](docs/M1A_DESIGN_FREEZE.md))。Phase A(MUL 解耦 / Zb* / dual-bank TCM)為本線最終交付的 scalar+memory 基線。**不得再動 `IP/cpu_m1/rtl/`**;本線只允許文件/Tier-2 簽核/不改 RTL 的證據重跑。**向量/ML 改版線 = Magpie_M1V**(`~/project/SOC/Magpie_M1V`,design_id=cpu_m1v,做 RVV Zve32x + TC-GEMV,證據與本線硬隔離)。ADR-0026 Phase B/C 的實作移交 M1V。
 > 以下為承襲自 M1 的 charter(規則/工具/flow 不變,凍結註記屬 M1 線):
 
 # CLAUDE.md — `SOC/Magpie_M1` CPU IP 開發線
