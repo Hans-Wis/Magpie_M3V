@@ -2,27 +2,31 @@
         `timescale 1ns / 1ns
         
         module tb_random_lockstep;
-~001315     reg         clk = 1'b0;
+~001139     reg         clk = 1'b0;
 %000005     reg         resetn = 1'b0;
+%000000     wire        dbg_dummy_halted;
+%000000     wire        dbg_dummy_mode;
+%000000     wire [31:0] dbg_dummy_acc_rdata;
+%000000     wire        dbg_dummy_acc_err;
 %000005     wire        trap;
-~000213     wire [31:0] i_mem_addr;
- 000036     wire        i_mem_en;
- 000134     reg  [31:0] i_mem_rdata;
- 000050     wire        d_mem_valid;
- 000102     wire [31:0] d_mem_addr;
- 000080     wire [31:0] d_mem_wdata;
- 000020     wire [ 3:0] d_mem_wstrb;
+~000203     wire [31:0] i_mem_addr;
+ 000024     wire        i_mem_en;
+ 000132     reg  [31:0] i_mem_rdata;
+ 000045     wire        d_mem_valid;
+ 000101     wire [31:0] d_mem_addr;
+ 000079     wire [31:0] d_mem_wdata;
+ 000019     wire [ 3:0] d_mem_wstrb;
  000021     reg  [31:0] d_mem_rdata;
 ~000200     wire [31:0] dbg_pc;
-~000136     wire [31:0] dbg_instr;
-~000195     wire [ 2:0] dbg_state;
+~000134     wire [31:0] dbg_instr;
+~000024     wire [ 2:0] dbg_state;
         
             localparam MEM_SIZE = 4096;
             reg [31:0] memory [0:MEM_SIZE-1];
 %000005     initial $readmemh("firmware.hex", memory);
         
-~000213     wire [11:0] i_word_idx = i_mem_addr[13:2];
- 000102     wire [11:0] d_word_idx = d_mem_addr[13:2];
+~000203     wire [11:0] i_word_idx = i_mem_addr[13:2];
+ 000101     wire [11:0] d_word_idx = d_mem_addr[13:2];
         
             core dut (
                 .clk                (clk),
@@ -37,17 +41,30 @@
                 .d_mem_wstrb        (d_mem_wstrb),
                 .d_mem_rdata        (d_mem_rdata),
                 .irq_external_pulse (1'b0),
+                .mtip               (1'b0),
+                .msip               (1'b0),
+                .meip               (1'b0),
+                .dm_halt_req        (1'b0),
+                .dm_resume_req      (1'b0),
+                .dm_hart_halted     (dbg_dummy_halted),
+                .debug_mode_o       (dbg_dummy_mode),
+                .dm_acc_en          (1'b0),
+                .dm_acc_write       (1'b0),
+                .dm_acc_regno       (16'h0),
+                .dm_acc_wdata       (32'h0),
+                .dm_acc_rdata       (dbg_dummy_acc_rdata),
+                .dm_acc_err         (dbg_dummy_acc_err),
                 .dbg_pc             (dbg_pc),
                 .dbg_instr          (dbg_instr),
                 .dbg_state          (dbg_state)
             );
         
- 002625     always #5 clk = ~clk;
+ 002273     always #5 clk = ~clk;
         
- 001315     always @(posedge clk) begin
- 000693         if (i_mem_en) i_mem_rdata <= memory[i_word_idx];
+ 001139     always @(posedge clk) begin
+ 000684         if (i_mem_en) i_mem_rdata <= memory[i_word_idx];
         
- 001246         if (d_mem_valid) begin
+ 001070         if (d_mem_valid) begin
  000069             d_mem_rdata <= memory[d_word_idx];
  000036             if (|d_mem_wstrb) begin
  000020                 if (d_mem_wstrb[0]) memory[d_word_idx][ 7: 0] <= d_mem_wdata[ 7: 0];
@@ -99,14 +116,14 @@
 %000005         watchdog = 0;
             end
         
- 001315     always @(posedge clk) begin
- 001315         watchdog <= watchdog + 1;
- 001315         if (watchdog > 400) begin
+ 001139     always @(posedge clk) begin
+ 001139         watchdog <= watchdog + 1;
+ 001139         if (watchdog > 400) begin
                     $display("FAIL: watchdog timeout");
                     $fatal(1);
                 end
         
-~001310         if (dut.ex_wb_valid_r && dut.ex_wb_illegal_r) begin
+~001134         if (dut.ex_wb_valid_r && dut.ex_wb_illegal_r) begin
 %000005             $display("[%0t ns] stop on illegal/ebreak pc=%08x commits=%0d",
 %000005                      $time, dut.ex_wb_pc_r, commit_count);
 %000005             if (commit_count < 8) begin
@@ -116,7 +133,7 @@
 %000005             $fclose(trace_fd);
 %000005             $display("PASS: random DUT trace wrote %0d commits before ebreak", commit_count);
 %000005             $finish;
-~000905         end else if (dut.wb_instr_retired && !dut.ex_wb_illegal_r) begin
+~000729         end else if (dut.wb_instr_retired && !dut.ex_wb_illegal_r) begin
                     /* verilator lint_off BLKSEQ */
  000405             commit_instr = instr_at_pc(dut.ex_wb_pc_r);
                     /* verilator lint_on BLKSEQ */

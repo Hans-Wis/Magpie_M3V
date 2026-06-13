@@ -3,29 +3,29 @@
 Report : area
 Design : cpu_m1_top
 Version: X-2025.06-SP2
-Date   : Tue Jun  9 23:21:20 2026
+Date   : Fri Jun 12 16:16:23 2026
 ****************************************
 
 Library(s) Used:
 
-    tcbn28hpcplusbwp40p140ssg0p81v0c (File: /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ssg0p81v0c.db)
+    tcbn28hpcplusbwp40p140ssg0p81v0c (File: /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ssg0p81v0c.db)
 
-Number of ports:                          487
-Number of nets:                         29951
-Number of cells:                        29226
-Number of combinational cells:          22425
-Number of sequential cells:              6799
+Number of ports:                          749
+Number of nets:                         36459
+Number of cells:                        35398
+Number of combinational cells:          28314
+Number of sequential cells:              7081
 Number of macros/black boxes:               0
-Number of buf/inv:                       2539
-Number of references:                     127
+Number of buf/inv:                       4253
+Number of references:                     145
 
-Combinational area:              14199.947926
-Buf/Inv area:                      659.862010
-Noncombinational area:           12869.891901
+Combinational area:              17053.721905
+Buf/Inv area:                     1104.012016
+Noncombinational area:           13461.713890
 Macro/Black Box area:                0.000000
 Net Interconnect area:      undefined  (Wire load has zero net area)
 
-Total cell area:                 27069.839827
+Total cell area:                 30515.435795
 Total area:                 undefined
 
 Hierarchical area distribution
@@ -36,10 +36,11 @@ Hierarchical area distribution
 Hierarchical cell                 Absolute    Percent  Combi-      Noncombi-   Black-
                                   Total       Total    national    national    boxes   Design
 --------------------------------  ----------  -------  ----------  ----------  ------  ---------
-cpu_m1_top                        27069.8398    100.0   6651.9180   3555.9720  0.0000  cpu_m1_top
-u_core/u_bp                       13276.8719     49.0   5837.8319   7439.0399  0.0000  bp
-u_core/u_rfu                       3585.0780     13.2   1710.1980   1874.8800  0.0000  rfu
+cpu_m1_top                        30515.4358    100.0   7793.2260   4147.7940  0.0000  cpu_m1_top
+u_core/u_bmu                       1117.9980      3.7   1117.9980      0.0000  0.0000  bmu
+u_core/u_bp                       13361.1659     43.8   5922.1259   7439.0399  0.0000  bp
+u_core/u_rfu                       4095.2520     13.4   2220.3720   1874.8800  0.0000  rfu
 --------------------------------  ----------  -------  ----------  ----------  ------  ---------
-Total                                                  14199.9479  12869.8919  0.0000
+Total                                                  17053.7219  13461.7139  0.0000
 
 1

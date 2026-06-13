@@ -29,7 +29,14 @@
             // Write port (同步)
 %000001     input         we,
 ~000017     input  [ 4:0] rd_idx,
- 000156     input  [31:0] rd_data
+ 000156     input  [31:0] rd_data,
+        
+            // Debug abstract GPR access (ADR-0021; active only while core is halted)
+%000000     input         dbg_acc_en,
+%000000     input         dbg_acc_write,
+%000000     input  [ 4:0] dbg_acc_idx,
+%000000     input  [31:0] dbg_acc_wdata,
+%000000     output [31:0] dbg_acc_rdata
         );
         
             reg [31:0] regs [0:31];
@@ -43,11 +50,14 @@
             // x0 read返回 0；其餘讀對應 entry
  029883     assign rs1_data = (rs1_idx == 5'd0) ? 32'h0 : regs[rs1_idx];
  023560     assign rs2_data = (rs2_idx == 5'd0) ? 32'h0 : regs[rs2_idx];
+~002145     assign dbg_acc_rdata = (dbg_acc_idx == 5'd0) ? 32'h0 : regs[dbg_acc_idx];
         
             // x0 storage held at 0 by reset (architectural x0=0); x0 writes ignored
  002144     always @(posedge clk) begin
 ~002143         if (!resetn)
 %000001             regs[0] <= 32'h0;
+~002143         else if (dbg_acc_en && dbg_acc_write && dbg_acc_idx != 5'd0)
+%000000             regs[dbg_acc_idx] <= dbg_acc_wdata;
 ~002108         else if (we && rd_idx != 5'd0)
  002108             regs[rd_idx] <= rd_data;
             end

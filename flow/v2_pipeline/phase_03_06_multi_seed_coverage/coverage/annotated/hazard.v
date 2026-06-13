@@ -21,30 +21,36 @@
             // ID/EX stage 狀態
 %000005     input         id_valid,
  000074     input  [ 4:0] id_rs1_idx,
- 000106     input  [ 4:0] id_rs2_idx,
+ 000104     input  [ 4:0] id_rs2_idx,
  000025     input         id_is_muldiv,
         
             // EX/MEM stage (新加，lab06b 4-stage 用)
- 000195     input         em_valid,
- 000215     input         em_rd_we,
- 000134     input  [ 4:0] em_rd_idx,
- 000031     input         em_is_load,
+ 000024     input         em_valid,
+ 000051     input         em_rd_we,
+ 000133     input  [ 4:0] em_rd_idx,
+ 000036     input         em_is_load,
         
             // EX/WB stage (lab06 同款，但 load forward OK 不用 stall)
- 000195     input         wb_valid,
- 000214     input         wb_rd_we,
+ 000024     input         wb_valid,
+ 000048     input         wb_rd_we,
  000133     input  [ 4:0] wb_rd_idx,
- 000031     input         wb_is_load,
+ 000029     input         wb_is_load,
         
             // M-unit 狀態
- 000031     input         md_busy,
+ 000019     input         md_busy,
         
- 000031     output        stall
+ 000019     output        stall,
+            // M1A A1: the producer-in-MEM-not-ready RAW component alone — core.v gates the DIV
+            // M-unit operand capture (md_start) on this, so a div never latches a stale operand
+            // while its producer (load OR pipelined mul) is still in EX/MEM. Single source of
+            // truth: same expression that drives the stall (no duplicated hazard logic).
+%000000     output        operand_stall
         );
         
-            // ---- Load-use: 只 stall「load 在 EX/MEM」這拍 (1 cycle stall) ----
+            // ---- Load-use (M1A: 含 pipelined MUL — em_is_load port 由 caller OR 進 is_mul):
+            //      只 stall「value-not-ready producer 在 EX/MEM」這拍 (1 cycle stall) ----
             // load 走到 EX/WB 後 wb_data mux 已包含 lsu_ld_result，可 forward
- 000033     wire load_use_match_em = (id_rs1_idx == em_rd_idx) || (id_rs2_idx == em_rd_idx);
+ 000032     wire load_use_match_em = (id_rs1_idx == em_rd_idx) || (id_rs2_idx == em_rd_idx);
 %000000     wire load_use_stall = id_valid && em_valid && em_is_load && em_rd_we &&
                                   (em_rd_idx != 5'd0) && load_use_match_em;
         
@@ -53,9 +59,10 @@
             /* verilator lint_on UNUSEDSIGNAL */
         
             // ---- Muldiv ----
- 000031     wire muldiv_stall = id_valid && id_is_muldiv && md_busy;
+ 000019     wire muldiv_stall = id_valid && id_is_muldiv && md_busy;
         
             assign stall = load_use_stall | muldiv_stall;
+            assign operand_stall = load_use_stall;
         
         endmodule
         

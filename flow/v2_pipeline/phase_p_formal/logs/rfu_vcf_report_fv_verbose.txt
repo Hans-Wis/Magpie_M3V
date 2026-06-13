@@ -9,7 +9,7 @@
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 23:11:22 - Jun 09
+      - update_time   : 10:16:55 - Jun 12
       - elapsed_time  : 00:00:00
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/rfu_assert_bind.sv:16
@@ -20,7 +20,7 @@
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 23:11:22 - Jun 09
+      - update_time   : 10:16:55 - Jun 12
       - elapsed_time  : 00:00:00
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/rfu_assert_bind.sv:18
@@ -31,24 +31,24 @@
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 23:11:23 - Jun 09
-      - elapsed_time  : 00:00:01
+      - update_time   : 10:16:55 - Jun 12
+      - elapsed_time  : 00:00:00
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/rfu_assert_bind.sv:19
       - engine        : e1
-      - safe_depth    : 45
+      - safe_depth    : 4
 
      > ID: [3] proven 
       - name          : rfu.rfu_assert_i.unnamed$$_3
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 23:11:24 - Jun 09
-      - elapsed_time  : 00:00:02
+      - update_time   : 10:16:56 - Jun 12
+      - elapsed_time  : 00:00:01
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/rfu_assert_bind.sv:24
       - engine        : e1
-      - safe_depth    : 233
+      - safe_depth    : 138
 
 
    > Constraint

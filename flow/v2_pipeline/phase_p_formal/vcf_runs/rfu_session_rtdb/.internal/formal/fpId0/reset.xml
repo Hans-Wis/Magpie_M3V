@@ -1,13 +1,17 @@
 <?xml version="1.0"?>
 <File version="1">
 	<State>
-		<Pair vector="1'b0" name="rfu_assert_i._SVAC_ended_reg_5" />
 		<Pair vector="1'b0" name="rfu_assert_i._SVAC_ended_reg_6" />
+		<Pair vector="1'b0" name="rfu_assert_i._SVAC_ended_reg_5" />
 		<Pair vector="1'b1" name="_BM_CLKGEN_.CSR0_2" />
 		<Pair vector="1024'b0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" name="regs" />
 	</State>
 	<Input>
 		<Pair vector="1'bx" name="clk" />
+		<Pair vector="1'bx" name="dbg_acc_en" />
+		<Pair vector="5'bx" name="dbg_acc_idx" />
+		<Pair vector="32'bx" name="dbg_acc_wdata" />
+		<Pair vector="1'bx" name="dbg_acc_write" />
 		<Pair vector="32'bx" name="rd_data" />
 		<Pair vector="5'bx" name="rd_idx" />
 		<Pair vector="1'b0" name="resetn" />

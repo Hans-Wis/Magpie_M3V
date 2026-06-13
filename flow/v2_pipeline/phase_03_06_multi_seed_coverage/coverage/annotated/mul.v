@@ -1,78 +1,77 @@
 //      // verilator_coverage annotation
         // =============================================================================
-        // mul.v — RV32M MUL / MULH / MULHSU / MULHU
+        // mul.v — RV32M MUL / MULH / MULHSU / MULHU (M1A pipelined, ADR-0026 A1)
         // -----------------------------------------------------------------------------
-        // 2-cycle latency from start to done：
-        //   cycle 0 (start=1)         : latch op_a, op_b (sign-extend to 33 bit)
-        //   cycle 1                   : compute product, latch result, done=1
-        //   cycle 2                   : done=0, ready for next start
+        // M1A rework (was: 3-cycle start/busy/done FSM that stalled the whole pipe via
+        // md_busy): the multiplier is now a STATELESS 2-stage pipelined unit that rides
+        // the instruction's own pipeline slot — "load-like result-at-WB":
         //
-        // Sign extension table:
+        //   issue (= the MUL advances ID/EX -> EX/MEM)  : latch sign-extended operands
+        //   the instruction's EX/MEM cycle              : product computed combinationally
+        //                                                 from the registers; `result` is
+        //                                                 consumed by core.v into
+        //                                                 ex_wb_md_result_r at the
+        //                                                 EX/MEM -> EX/WB boundary
+        //
+        // Latency 2 (issue -> writeback), THROUGHPUT 1 (back-to-back issue every cycle).
+        // No FSM: a flushed/squashed MUL simply never consumes `result` (slot-tagged by
+        // ex_mem_is_mul_r in core.v) — the wrong-path-stuck-FSM bug class is gone.
+        // Timing structure is unchanged vs the frozen M1 baseline: registered operands ->
+        // combinational 33x33 product -> one format mux -> a register (now core's
+        // ex_wb_md_result_r instead of an internal result reg).
+        //
+        // Sign extension table (unchanged):
         //   md_op    op_a       op_b       result selection
         //   ---------------------------------------------------
         //   MUL      signed     signed     product[31:0]   (low 32)
         //   MULH     signed     signed     product[63:32]  (high)
         //   MULHSU   signed     unsigned   product[63:32]
         //   MULHU    unsigned   unsigned   product[63:32]
-        //
-        // Vivado 會把 33×33 → 66 bit multiply 推到 DSP48 slice (xc7z020 有 220 個 DSP)
         // =============================================================================
         
         `include "def.vh"
         
         module mul (
- 001315     input             clk,
+ 001139     input             clk,
 %000005     input             resetn,
- 000012     input             start,
- 000063     input      [ 2:0] md_op,
-~000059     input      [31:0] op_a,
+ 000010     input             issue,    // capture operands: MUL advancing ID/EX -> EX/MEM
+ 000062     input      [ 2:0] md_op,
+~000058     input      [31:0] op_a,
 ~000080     input      [31:0] op_b,
-%000003     output     [31:0] result,
- 000012     output reg        done
+%000003     output     [31:0] result    // valid during the instruction's EX/MEM cycle
         );
         
- 000012     reg                busy;
-%000005     reg signed [32:0]  opa_r, opb_r;
-            /* verilator lint_off UNUSEDSIGNAL */  // 用 [63:32] 跟 [31:0]，bit 64/65 是 sign-ext 不取
-%000006     reg signed [65:0]  product;
-            /* verilator lint_on UNUSEDSIGNAL */
-%000004     reg                high_out;
+%000005     reg signed [32:0] opa_r, opb_r;
+%000004     reg               high_out;
+        
+%000006     wire signed [65:0] product_w = opa_r * opb_r;
         
             // -------------------------------------------------------------------------
-            // Sign-extension based on md_op
+            // Sign-extension based on md_op (sampled at issue)
             //   op_a unsigned : 只有 MULHU
             //   op_b unsigned : MULHU 跟 MULHSU
             // -------------------------------------------------------------------------
  000019     wire opa_unsigned = (md_op == `MD_MULHU);
  000047     wire opb_unsigned = (md_op == `MD_MULHU) || (md_op == `MD_MULHSU);
         
-~001286     wire signed [32:0] opa_ext = opa_unsigned ? {1'b0, op_a} : {op_a[31], op_a};
-~001239     wire signed [32:0] opb_ext = opb_unsigned ? {1'b0, op_b} : {op_b[31], op_b};
+~001122     wire signed [32:0] opa_ext = opa_unsigned ? {1'b0, op_a} : {op_a[31], op_a};
+~001086     wire signed [32:0] opb_ext = opb_unsigned ? {1'b0, op_b} : {op_b[31], op_b};
         
- 001315     always @(posedge clk) begin
- 001290         if (!resetn) begin
- 000025             busy     <= 1'b0;
- 000025             done     <= 1'b0;
+ 001139     always @(posedge clk) begin
+ 001114         if (!resetn) begin
+ 000025             opa_r    <= 33'sd0;
+ 000025             opb_r    <= 33'sd0;
  000025             high_out <= 1'b0;
- 001290         end else begin
- 001290             done <= 1'b0;
-        
- 001278             if (start && !busy) begin
-                        // Cycle 0: latch
- 000012                 opa_r    <= opa_ext;
- 000012                 opb_r    <= opb_ext;
- 000012                 high_out <= (md_op != `MD_MUL);
- 000012                 busy     <= 1'b1;
- 001266             end else if (busy) begin
-                        // Cycle 1: multiply, result available, signal done
- 000012                 product <= opa_r * opb_r;
- 000012                 done    <= 1'b1;
- 000012                 busy    <= 1'b0;
-                    end
+ 001102         end else if (issue) begin
+ 000012             opa_r    <= opa_ext;
+ 000012             opb_r    <= opb_ext;
+ 000012             high_out <= (md_op != `MD_MUL);
                 end
+                // no issue: hold — the in-flight MUL's product stays stable through
+                // core_mem_stall freezes (ADR-0005) until its EX/WB capture
             end
         
- 000727     assign result = high_out ? product[63:32] : product[31:0];
+ 000580     assign result = high_out ? product_w[63:32] : product_w[31:0];
         
         endmodule
         

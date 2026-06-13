@@ -1,15 +1,7 @@
-[3495 ns] mmio[00000024] <= 00000a0a pc=0000007e instr=0000006f
-[3615 ns] start illegal compressed case 1 word0=00016005
-[3655 ns] illegal compressed case 1 reached WB illegal pc=00000000 instr=00010113 cinstr=0437
-[3665 ns] illegal compressed case 1 asserted terminal trap
-[3765 ns] start illegal compressed case 2 word0=00011406
-[3805 ns] illegal compressed case 2 reached WB illegal pc=00000000 instr=00010113 cinstr=0437
-[3815 ns] illegal compressed case 2 asserted terminal trap
-[3915 ns] start illegal compressed case 3 word0=00012002
-[3955 ns] illegal compressed case 3 reached WB illegal pc=00000000 instr=00010113 cinstr=0437
-[3965 ns] illegal compressed case 3 asserted terminal trap
-PASS: illegal compressed trap and M-unit coverage completed
-- tb_illegal_munit_coverage.v:184: Verilog $finish
-- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 4us; walltime 0.073 s; speed 55.700 us/s
-- Verilator: cpu 0.073 s on 1 threads; allocated 28 MB
+[3335 ns] mmio[00000024] <= 00000a0a pc=0000007e instr=0000006f
+[3455 ns] start illegal compressed case 1 word0=00016005
+[6745 ns] mmio[00000024] <= 00000a0a pc=0000007e instr=0000006f
+FAIL: watchdog timeout
+[24015] %Fatal: tb_illegal_munit_coverage.v:122: Assertion failed in tb_illegal_munit_coverage
+%Error: tb_illegal_munit_coverage.v:122: Verilog $stop
+Aborting...

@@ -16,11 +16,11 @@
 -Mcrt0=
 -Mcrtn=
 -Mcsrc=
--Mdir=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/csrc
+-Mdir=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/csrc
 -Mexternalobj=
 -Mldflags= -rdynamic
 -Mobjects= /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libvirsim.so /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/liberrorinf.so /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libsnpsmalloc.so /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libvfs.so
--Mout=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/simv
+-Mout=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/simv
 -Msaverestoreobj=/soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/vcs_save_restore_new.o
 -Msyslibs=-ldl
 -Mvcsaceobjs=
@@ -44,7 +44,7 @@
 -Xvcstatic_extns=0x40000
 -Xvcstatic_extns=1
 -Xvcstatic_max_gen=4096
--Xvd_opts=-logdir,/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/verdi/elabcomLog
+-Xvd_opts=-logdir,/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/verdi/elabcomLog
 -Xvd_opts=-silent,-ssy,-ssv,-ssz,+disable_message+C00373,
 -Xverdi_elab_opts=-Xprefer_tech_lib
 -Xverdi_elab_opts=-saveLevel
@@ -56,7 +56,7 @@
 -kdb=common_elab
 -kdb=incopt
 -libfile_opt
--o /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/simv
+-o /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/simv
 -picarchive
 -q
 -scm
@@ -65,14 +65,14 @@
 -timescale=1ns/1ns
 -top
 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/bin/vcs1fe
-/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/simv
+/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/simv
 alu
-/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/alu.xml
+/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/alu.xml
 assert
-/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/undef_vcs.v
+/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/undef_vcs.v
 IP/cpu_m1/rtl/alu.v
 IP/cpu_m1/dv/formal/alu_assert_bind.sv
-226
+224
 which_declare=declare -f
 host_alias=x86_64-conda-linux-gnu
 build_alias=x86_64-conda-linux-gnu
@@ -83,11 +83,8 @@ XDG_RUNTIME_DIR=/run/user/1000
 XDG_DATA_DIRS=/usr/local/share:/usr/share:/home/edauser/.nix-profile/share:/nix/var/nix/profiles/default/share:/home/edauser/.nix-profile/share:/nix/var/nix/profiles/default/share
 XCELIUM_HOME=/soft/cadence/XCELIUM2509
 WV_HOME=/soft/synopsys/wv/X-2025.06
-WT_SESSION=07325e17-f2ea-40a1-a653-1b2976357314
-WT_PROFILE_ID={61c54bbd-c2c6-5271-96e7-009a87ff44bf}
-WSL_INTEROP=/run/WSL/1245_interop
+WSL_INTEROP=/run/WSL/112_interop
 WSL_DISTRO_NAME=AlmaLinux
-WSLENV=WT_SESSION:WT_PROFILE_ID:
 WSL2_GUI_APPS_ENABLED=1
 WAYLAND_DISPLAY=wayland-0
 W3264_NO_HOST_CHECK=1
@@ -141,7 +138,7 @@ TOOL_HOME=/soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64
 TARGET_ARCH=linux64
 SYS_HIDE_VERSION_WARNING=1
 SYN_HOME=/soft/synopsys/syn/X-2025.06-SP2
-SYNOPSYS_SIM_SETUP=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/synopsys_sim.setup
+SYNOPSYS_SIM_SETUP=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/synopsys_sim.setup
 SYNOPSYS_MEM_ENABLE_SBRK=1
 SYNOPSYS_LC_ROOT=/soft/synopsys/lc/X-2025.06-SP2
 SVI_ARCH=linux64
@@ -180,7 +177,7 @@ SNPS_VCF_DPV_CPP_DBG_CLICK_DIFF_WAVE_PHASE=1
 SNPS_VCF_DPV_CPP_DBG_ADD_VAR_TO_WAVEFORM=1
 SNPS_VCF_DPV_CPP_DBG_ACTIVE_TRACE=1
 SNPS_LP_INTERNAL_READ_DB_ATTRIBUTES=all
-SNPS_INTERNAL_WRITE_ABSTRACT_MODEL_PARENT_DIR=/home/edauser/project/SOC/Magpie_M1
+SNPS_INTERNAL_WRITE_ABSTRACT_MODEL_PARENT_DIR=/home/edauser/project/SOC/Magpie_M1A
 SNPS_INTERNAL_VCS_LINUX_OS=linux
 SNPS_DISABLE_SIMON_MEM_POOL=1
 SIZE=x86_64-conda-linux-gnu-size
@@ -271,16 +268,17 @@ CONDA_PREFIX=/home/edauser/miniforge3/envs/magpie_claude
 CONDA_EXE=/home/edauser/miniforge3/bin/conda
 CONDA_DEFAULT_ENV=magpie_claude
 CONDA_BUILD_SYSROOT=/home/edauser/miniforge3/envs/magpie_claude/x86_64-conda-linux-gnu/sysroot
-CODEX_THREAD_ID=019eacde-02cf-7760-a51a-7b734571b35a
+CODEX_THREAD_ID=019eb99d-539e-7c21-bb3c-c9fd3f167312
 CODEX_MANAGED_PACKAGE_ROOT=/home/edauser/.npm-global/lib/node_modules/@openai/codex
 CODEX_MANAGED_BY_NPM=1
 CODEX_CI=1
 CMAKE_PREFIX_PATH=/home/edauser/miniforge3/envs/magpie_claude:/home/edauser/miniforge3/envs/magpie_claude/x86_64-conda-linux-gnu/sysroot/usr
 CMAKE_ARGS=-DCMAKE_AR=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-ar -DCMAKE_CXX_COMPILER_AR=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ar -DCMAKE_C_COMPILER_AR=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ar -DCMAKE_RANLIB=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-ranlib -DCMAKE_CXX_COMPILER_RANLIB=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ranlib -DCMAKE_C_COMPILER_RANLIB=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ranlib -DCMAKE_LINKER=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-ld -DCMAKE_STRIP=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-strip -DCMAKE_BUILD_TYPE=Release
 CLAUDE_EFFORT=high
-CLAUDE_CODE_SESSION_ID=bb93bc90-4eb6-4f3e-be5e-aa8d9c94185c
-CLAUDE_CODE_EXECPATH=/home/edauser/.local/share/claude/versions/2.1.169
+CLAUDE_CODE_SESSION_ID=d7f02ea9-63d3-422f-8a91-afc038884df4
+CLAUDE_CODE_EXECPATH=/home/edauser/.local/share/claude/versions/2.1.173
 CLAUDE_CODE_ENTRYPOINT=cli
+CLAUDE_CODE_CHILD_SESSION=1
 CLAUDECODE=1
 CDS_ROOT=/soft/cadence/IC251
 CDS_Netlisting_Mode=Analog
@@ -297,20 +295,20 @@ BASH_FUNC_which%%=() {  ( alias;_ eval ${which_declare} ) | /usr/bin/which --tty
 AS=x86_64-conda-linux-gnu-as
 AR=x86_64-conda-linux-gnu-ar
 ANTHROPIC_MODEL=opus
-AI_AGENT=claude-code_2-1-169_agent
+AI_AGENT=claude-code_2-1-173_agent
 ADDR2LINE=x86_64-conda-linux-gnu-addr2line
 0
 0
 5
-1780913533 IP/cpu_m1/rtl/def.vh
+1781192327 IP/cpu_m1/rtl/def.vh
 1756893921 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/packages/snps_msv_nettype_pkg/AN.DB
-1781014236 IP/cpu_m1/dv/formal/alu_assert_bind.sv
-1779721130 IP/cpu_m1/rtl/alu.v
-1781016843 /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/undef_vcs.v
+1781185933 IP/cpu_m1/dv/formal/alu_assert_bind.sv
+1781185933 IP/cpu_m1/rtl/alu.v
+1781230607 /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/undef_vcs.v
 4
 1765663725 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libvirsim.so
 1765663697 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/liberrorinf.so
 1765663771 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libsnpsmalloc.so
 1765663716 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libvfs.so
-1781016844 /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/simv.daidir
+1781230609 /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/simv.daidir
 -1 partitionlib

@@ -1,10 +1,10 @@
 # Gate Counts 
-Number of Flat Instances = 1195
-Number of Operator = 1195
+Number of Flat Instances = 1283
+Number of Operator = 1283
 Number of Libcells = 0
 Number of Black-Box Instances = 0
 Number of FlipFlop BitWise = 1026
 Number of Latch Bitwise = 0
 Number of Nand BitWise = 0
-Number of Comb logic = 50
+Number of Comb logic = 64
 

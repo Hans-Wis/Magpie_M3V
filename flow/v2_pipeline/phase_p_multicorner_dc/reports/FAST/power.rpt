@@ -4,13 +4,13 @@ Report : power
         -analysis_effort low
 Design : cpu_m1_top
 Version: X-2025.06-SP2
-Date   : Tue Jun  9 23:23:47 2026
+Date   : Fri Jun 12 16:11:45 2026
 ****************************************
 
 
 Library(s) Used:
 
-    tcbn28hpcplusbwp40p140ffg0p88v125c (File: /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ffg0p88v125c.db)
+    tcbn28hpcplusbwp40p140ffg0p88v125c (File: /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ffg0p88v125c.db)
 
 
 Operating Conditions: ffg0p88v125c   Library: tcbn28hpcplusbwp40p140ffg0p88v125c
@@ -21,6 +21,7 @@ Design        Wire Load Model            Library
 cpu_m1_top             ZeroWireload      tcbn28hpcplusbwp40p140ffg0p88v125c
 bp                     ZeroWireload      tcbn28hpcplusbwp40p140ffg0p88v125c
 rfu                    ZeroWireload      tcbn28hpcplusbwp40p140ffg0p88v125c
+bmu                    ZeroWireload      tcbn28hpcplusbwp40p140ffg0p88v125c
 
 
 Global Operating Voltage = 0.88 
@@ -37,12 +38,12 @@ Attributes
 i - Including register clock pin internal power
 
 
-  Cell Internal Power  =  15.6087 mW   (98%)
-  Net Switching Power  = 269.7237 uW    (2%)
+  Cell Internal Power  =  16.2687 mW   (98%)
+  Net Switching Power  = 306.4050 uW    (2%)
                          ---------
-Total Dynamic Power    =  15.8784 mW  (100%)
+Total Dynamic Power    =  16.5751 mW  (100%)
 
-Cell Leakage Power     =   1.5910 mW
+Cell Leakage Power     =   1.7510 mW
 
 
                  Internal         Switching           Leakage            Total
@@ -51,10 +52,10 @@ Power Group      Power            Power               Power              Power  
 io_pad             0.0000            0.0000            0.0000            0.0000  (   0.00%)
 memory             0.0000            0.0000            0.0000            0.0000  (   0.00%)
 black_box          0.0000            0.0000            0.0000            0.0000  (   0.00%)
-clock_network     15.2517            0.0000            0.0000           15.2517  (  87.30%)  i
-register       4.5605e-02        1.8203e-02        8.0044e+05            0.8642  (   4.95%)
+clock_network     15.8872            0.0000            0.0000           15.8872  (  86.69%)  i
+register       4.5268e-02        1.8722e-02        8.3226e+05            0.8962  (   4.89%)
 sequential         0.0000            0.0000            0.0000            0.0000  (   0.00%)
-combinational      0.3120            0.2515        7.9055e+05            1.3541  (   7.75%)
+combinational      0.3369            0.2877        9.1874e+05            1.5433  (   8.42%)
 --------------------------------------------------------------------------------------------------
-Total             15.6093 mW         0.2697 mW     1.5910e+06 nW        17.4699 mW
+Total             16.2694 mW         0.3064 mW     1.7510e+06 nW        18.3268 mW
 1

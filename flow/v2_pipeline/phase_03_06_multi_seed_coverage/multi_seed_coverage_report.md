@@ -10,6 +10,6 @@ Total matched commits: 405
 
 Coverage files present: 5 / 5
 
-Line coverage from lcov info: 894 / 1130 (79.12%)
+Line coverage from lcov info: 1283 / 2151 (59.65%)
 
 Coverage status: measurement-only. This is not 100% line coverage closure; uncovered lines require later reason, directed closure, or waiver.

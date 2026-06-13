@@ -1,4 +1,4 @@
-2026_06_09_22:54:24 : Configuration
+2026_06_12_10:17:11 : Configuration
 FV_RUN_CONFIG_INFO :  Task : FPV, cmd : check_fv
 [Info] Configuration Details
 [Info] Orchestration/Effort : default
@@ -6,7 +6,7 @@ FV_RUN_CONFIG_INFO :  Task : FPV, cmd : check_fv
 [Info] Memory limit : 8GB
 [Info] Number of workers requested : 4
 [Info] FPV flow ver : v7 
-2026_06_09_22:54:24 : Verification Problem Current Stats
+2026_06_12_10:17:11 : Verification Problem Current Stats
 
   Summary Results
    Property Summary: FPV
@@ -18,7 +18,7 @@ FV_RUN_CONFIG_INFO :  Task : FPV, cmd : check_fv
    > Constraint
      - # found        : 1
 
-2026_06_09_22:54:25 : Verification Problem Current Stats
+2026_06_12_10:17:13 : Verification Problem Current Stats
 
   Summary Results
    Property Summary: FPV
@@ -48,10 +48,10 @@ Memory/time profile by engine
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
  Engine |   MinMem(MB) |   MaxMem(MB) |  NumJobs | NumStoppedJobs |  Time(secs) | NumSolvedGoals | NumSuccessGoals |  NumFailedGoals | NumBestDepthGoals | 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
-   INIT |           71 |           71 |        1 |              0 |           1 |              0 |               0 |               0 |                 0 | 
-     cc |           73 |           73 |        1 |              0 |           1 |              0 |               0 |               0 |                 0 | 
-     t0 |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
-     t1 |           82 |           82 |        1 |              0 |           0 |              6 |               6 |               0 |                 0 | 
+   INIT |           72 |           72 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     cc |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     t0 |           71 |           71 |        1 |              0 |           1 |              0 |               0 |               0 |                 0 | 
+     t1 |           82 |           82 |        1 |              0 |           1 |              6 |               6 |               0 |                 0 | 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Memory distribution

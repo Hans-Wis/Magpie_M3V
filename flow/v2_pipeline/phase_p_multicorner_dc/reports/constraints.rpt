@@ -1,10 +1,11 @@
+Warning: Design 'cpu_m1_top' has '1' unresolved references. For more detailed information, use the "link" command. (UID-341)
  
 ****************************************
 Report : constraint
         -all_violators
 Design : cpu_m1_top
 Version: X-2025.06-SP2
-Date   : Tue Jun  9 22:29:00 2026
+Date   : Fri Jun 12 10:13:14 2026
 ****************************************
 
 
@@ -547,9 +548,409 @@ Date   : Tue Jun  9 22:29:00 2026
                                 0.05           0.00 r        -0.05  (VIOLATED)
    primed_reg/next_state        0.05           0.00 r        -0.05  (VIOLATED)
    primed_reg/synch_enable      0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[2]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[2]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[3]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[3]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[4]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[4]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[5]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[5]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[6]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[6]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[7]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[7]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[8]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[8]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[9]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[9]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[10]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[10]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[11]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[11]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[12]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[12]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[13]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[13]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[14]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[14]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[15]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[15]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[16]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[16]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[17]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[17]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[18]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[18]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[19]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[19]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[20]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[20]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[21]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[21]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[22]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[22]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[23]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[23]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[24]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[24]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[25]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[25]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[26]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[26]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[27]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[27]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[28]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[28]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[29]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[29]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[30]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[30]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[31]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_addr_reg[31]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_valid_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_res_valid_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[0]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[1]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[2]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[2]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[3]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[3]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[4]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[4]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[5]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[5]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[6]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[6]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[7]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[7]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[8]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[8]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[9]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[9]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[10]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[10]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[11]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[11]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[12]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[12]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[13]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[13]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[14]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[14]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[15]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[15]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[16]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[16]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[17]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[17]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[18]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[18]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[19]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[19]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[20]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[20]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[21]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[21]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[22]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[22]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[23]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[23]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[24]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[24]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[25]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[25]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[26]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[26]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[27]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[27]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[28]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[28]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[29]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[29]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[30]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[30]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[31]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_result_r_reg[31]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_state_reg[0]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_state_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_state_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_state_reg[1]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[0]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[1]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[2]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[2]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[3]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[3]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[4]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[4]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[5]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[5]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[6]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[6]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[7]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[7]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[8]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[8]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[9]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[9]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[10]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[10]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[11]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[11]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[12]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[12]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[13]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[13]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[14]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[14]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[15]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[15]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[16]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[16]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[17]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[17]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[18]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[18]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[19]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[19]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[20]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[20]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[21]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[21]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[22]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[22]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[23]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[23]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[24]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[24]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[25]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[25]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[26]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[26]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[27]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[27]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[28]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[28]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[29]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[29]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[30]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[30]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[31]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/amo_wdata_r_reg[31]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
    u_core/cross_assemble_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/cross_assemble_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/debug_halt_pending_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/debug_halt_pending_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/debug_mode_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/debug_mode_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/debug_step_pending_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/debug_step_pending_reg/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_addr_lo_r_reg[0]/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
@@ -686,6 +1087,30 @@ Date   : Tue Jun  9 22:29:00 2026
    u_core/ex_mem_alu_result_r_reg[31]/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_alu_result_r_reg[31]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_is_lr_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_is_lr_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_is_sc_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_is_sc_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_op_r_reg[0]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_op_r_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_op_r_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_op_r_reg[1]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_op_r_reg[2]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_op_r_reg[2]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_op_r_reg[3]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_amo_op_r_reg[3]/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_bp_upd_pc_r_reg[1]/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
@@ -1395,9 +1820,17 @@ Date   : Tue Jun  9 22:29:00 2026
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_instr_r_reg[31]/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_is_amo_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_is_amo_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_is_branch_taken_r_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_is_branch_taken_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_is_dret_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_is_dret_r_reg/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_is_ebreak_r_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
@@ -1430,6 +1863,10 @@ Date   : Tue Jun  9 22:29:00 2026
    u_core/ex_mem_is_mret_r_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_is_mret_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_is_mul_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_is_mul_r_reg/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_is_store_r_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
@@ -1963,6 +2400,138 @@ Date   : Tue Jun  9 22:29:00 2026
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_pc_r_reg[31]/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_fault_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_fault_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[0]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[1]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[2]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[2]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[3]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[3]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[4]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[4]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[5]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[5]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[6]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[6]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[7]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[7]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[8]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[8]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[9]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[9]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[10]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[10]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[11]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[11]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[12]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[12]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[13]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[13]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[14]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[14]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[15]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[15]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[16]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[16]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[17]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[17]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[18]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[18]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[19]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[19]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[20]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[20]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[21]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[21]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[22]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[22]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[23]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[23]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[24]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[24]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[25]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[25]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[26]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[26]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[27]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[27]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[28]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[28]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[29]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[29]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[30]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[30]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[31]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_pmp_if_mtval_r_reg[31]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_pred_ras_r_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_pred_ras_r_reg/synch_enable
@@ -2262,6 +2831,18 @@ Date   : Tue Jun  9 22:29:00 2026
    u_core/ex_mem_store_wstrb_r_reg[3]/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_store_wstrb_r_reg[3]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_trigger_hit_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_trigger_hit_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_trigger_idx_r_reg[0]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_trigger_idx_r_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_trigger_idx_r_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_mem_trigger_idx_r_reg[1]/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_mem_valid_r_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
@@ -2863,9 +3444,17 @@ Date   : Tue Jun  9 22:29:00 2026
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_wb_instr_r_reg[31]/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_is_amo_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_is_amo_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_wb_is_branch_taken_r_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_wb_is_branch_taken_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_is_dret_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_is_dret_r_reg/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_wb_is_ebreak_r_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
@@ -3419,6 +4008,146 @@ Date   : Tue Jun  9 22:29:00 2026
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_wb_pc_r_reg[31]/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_data_fault_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_data_fault_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_data_store_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_data_store_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_fault_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_fault_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[0]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[1]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[2]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[2]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[3]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[3]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[4]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[4]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[5]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[5]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[6]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[6]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[7]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[7]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[8]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[8]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[9]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[9]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[10]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[10]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[11]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[11]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[12]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[12]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[13]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[13]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[14]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[14]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[15]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[15]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[16]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[16]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[17]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[17]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[18]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[18]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[19]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[19]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[20]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[20]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[21]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[21]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[22]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[22]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[23]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[23]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[24]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[24]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[25]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[25]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[26]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[26]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[27]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[27]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[28]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[28]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[29]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[29]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[30]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[30]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[31]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_pmp_if_mtval_r_reg[31]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_wb_rd_idx_r_reg[0]/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_wb_rd_idx_r_reg[0]/synch_enable
@@ -3442,6 +4171,18 @@ Date   : Tue Jun  9 22:29:00 2026
    u_core/ex_wb_rd_we_r_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_wb_rd_we_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_trigger_hit_r_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_trigger_hit_r_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_trigger_idx_r_reg[0]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_trigger_idx_r_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_trigger_idx_r_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/ex_wb_trigger_idx_r_reg[1]/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/ex_wb_valid_r_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
@@ -3719,6 +4460,136 @@ Date   : Tue Jun  9 22:29:00 2026
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/if_ex_pc_reg[31]/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_fault_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[0]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[1]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[2]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[2]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[3]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[3]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[4]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[4]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[5]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[5]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[6]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[6]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[7]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[7]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[8]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[8]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[9]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[9]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[10]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[10]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[11]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[11]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[12]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[12]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[13]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[13]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[14]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[14]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[15]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[15]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[16]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[16]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[17]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[17]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[18]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[18]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[19]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[19]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[20]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[20]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[21]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[21]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[22]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[22]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[23]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[23]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[24]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[24]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[25]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[25]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[26]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[26]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[27]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[27]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[28]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[28]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[29]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[29]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[30]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[30]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[31]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/if_ex_pmp_mtval_reg[31]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
    u_core/if_ex_pred_ras_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/if_ex_pred_ras_reg/synch_enable
@@ -3986,10 +4857,6 @@ Date   : Tue Jun  9 22:29:00 2026
    u_core/if_ex_valid_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/if_ex_valid_reg/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/md_active_is_div_reg/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/md_active_is_div_reg/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/md_result_q_reg[0]/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
@@ -20069,6 +20936,280 @@ Date   : Tue Jun  9 22:29:00 2026
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/u_csr/cycle_cnt_reg[63]/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dcsr_cause_reg_reg[0]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dcsr_cause_reg_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dcsr_cause_reg_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dcsr_cause_reg_reg[1]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dcsr_cause_reg_reg[2]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dcsr_cause_reg_reg[2]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dcsr_ebreakm_reg_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dcsr_ebreakm_reg_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dcsr_step_reg_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dcsr_step_reg_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[1]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[2]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[2]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[3]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[3]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[4]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[4]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[5]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[5]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[6]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[6]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[7]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[7]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[8]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[8]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[9]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[9]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[10]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[10]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[11]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[11]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[12]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[12]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[13]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[13]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[14]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[14]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[15]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[15]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[16]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[16]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[17]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[17]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[18]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[18]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[19]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[19]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[20]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[20]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[21]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[21]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[22]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[22]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[23]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[23]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[24]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[24]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[25]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[25]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[26]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[26]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[27]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[27]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[28]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[28]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[29]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[29]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[30]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[30]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[31]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dpc_reg_reg[31]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[0]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[0]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[1]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[1]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[2]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[2]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[3]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[3]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[4]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[4]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[5]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[5]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[6]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[6]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[7]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[7]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[8]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[8]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[9]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[9]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[10]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[10]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[11]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[11]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[12]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[12]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[13]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[13]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[14]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[14]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[15]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[15]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[16]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[16]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[17]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[17]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[18]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[18]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[19]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[19]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[20]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[20]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[21]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[21]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[22]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[22]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[23]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[23]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[24]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[24]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[25]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[25]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[26]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[26]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[27]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[27]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[28]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[28]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[29]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[29]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[30]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[30]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[31]/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/dscratch0_reg_reg[31]/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
    u_core/u_csr/ext_pending_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/u_csr/ext_pending_reg/synch_enable
@@ -20588,6 +21729,14 @@ Date   : Tue Jun  9 22:29:00 2026
    u_core/u_csr/mie_meie_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/u_csr/mie_meie_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/mie_msie_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/mie_msie_reg/synch_enable
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/mie_mtie_reg/next_state
+                                0.05           0.00 r        -0.05  (VIOLATED)
+   u_core/u_csr/mie_mtie_reg/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/u_csr/mscratch_reg[0]/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
@@ -21859,16 +23008,6 @@ Date   : Tue Jun  9 22:29:00 2026
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/u_ifu/pc_reg_reg[31]/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/busy_reg/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/busy_reg/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/done_pending_reg/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/done_pending_reg/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/done_reg/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
    u_core/u_mul/high_out_reg/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/u_mul/high_out_reg/synch_enable
@@ -22136,134 +23275,6 @@ Date   : Tue Jun  9 22:29:00 2026
    u_core/u_mul/opb_r_reg[32]/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/u_mul/opb_r_reg[32]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[0]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[0]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[1]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[1]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[2]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[2]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[3]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[3]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[4]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[4]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[5]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[5]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[6]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[6]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[7]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[7]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[8]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[8]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[9]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[9]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[10]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[10]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[11]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[11]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[12]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[12]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[13]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[13]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[14]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[14]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[15]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[15]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[16]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[16]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[17]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[17]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[18]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[18]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[19]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[19]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[20]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[20]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[21]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[21]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[22]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[22]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[23]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[23]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[24]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[24]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[25]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[25]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[26]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[26]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[27]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[27]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[28]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[28]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[29]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[29]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[30]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[30]/synch_enable
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[31]/next_state
-                                0.05           0.00 r        -0.05  (VIOLATED)
-   u_core/u_mul/result_reg[31]/synch_enable
                                 0.05           0.00 r        -0.05  (VIOLATED)
    u_core/u_ras/ptr_reg[0]/next_state
                                 0.05           0.00 r        -0.05  (VIOLATED)

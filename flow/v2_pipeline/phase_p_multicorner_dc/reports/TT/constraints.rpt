@@ -4,7 +4,7 @@ Report : constraint
         -all_violators
 Design : cpu_m1_top
 Version: X-2025.06-SP2
-Date   : Tue Jun  9 23:18:23 2026
+Date   : Fri Jun 12 16:08:22 2026
 ****************************************
 
 
@@ -13,11 +13,10 @@ Date   : Tue Jun  9 23:18:23 2026
                              Required        Actual
    Endpoint                 Path Delay     Path Delay        Slack
    -----------------------------------------------------------------
-   u_core/u_csr/cycle_cnt_reg[0]/D
-                                0.06           0.05 f        -0.01  (VIOLATED)
-   u_core/u_csr/instret_cnt_reg[0]/D
-                                0.06           0.06 f         0.00  (VIOLATED: increase significant digits)
+   u_core/md_started_reg/D      0.06           0.05 f         0.00  (VIOLATED: increase significant digits)
    primed_reg/D                 0.06           0.06 f         0.00  (VIOLATED: increase significant digits)
+   u_core/u_csr/cycle_cnt_reg[0]/D
+                                0.06           0.06 f         0.00  (VIOLATED: increase significant digits)
 
 
 1

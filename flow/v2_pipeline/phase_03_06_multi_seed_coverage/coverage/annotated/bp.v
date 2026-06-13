@@ -28,11 +28,11 @@
         `include "def.vh"
         
         module bp (
- 001315     input             clk,
+ 001139     input             clk,
 %000005     input             resetn,
         
             // ---- Read port (combinational, at IF) ----
-~000205     input      [31:0] if_pc,
+~000200     input      [31:0] if_pc,
 %000000     output            bp_predict_taken,
 %000000     output     [31:0] bp_predict_target,
         
@@ -67,7 +67,7 @@
             // -------------------------------------------------------------------------
             // Read path
             // -------------------------------------------------------------------------
- 000205     wire [IDX_BITS-1:0] rd_idx = if_pc[IDX_LSB +: IDX_BITS];
+ 000200     wire [IDX_BITS-1:0] rd_idx = if_pc[IDX_LSB +: IDX_BITS];
 ~000015     wire [TAG_BITS-1:0] rd_tag = if_pc[31 -: TAG_BITS];
         
 %000000     wire rd_hit0 = valid0[rd_idx] && (tag0[rd_idx] == rd_tag);
@@ -78,13 +78,13 @@
 %000000     wire predict_from_way0 = rd_hit0 && counter0[rd_idx][1];
 %000000     wire predict_from_way1 = rd_hit1 && counter1[rd_idx][1];
             assign bp_predict_taken  = predict_from_way0 | predict_from_way1;
-~001320     assign bp_predict_target = rd_hit1 ? target1[rd_idx] : target0[rd_idx];
+~001144     assign bp_predict_target = rd_hit1 ? target1[rd_idx] : target0[rd_idx];
         
             // -------------------------------------------------------------------------
             // Write path (sync)
             // -------------------------------------------------------------------------
  000200     wire [IDX_BITS-1:0] wr_idx = upd_pc[IDX_LSB +: IDX_BITS];
-~000014     wire [TAG_BITS-1:0] wr_tag = upd_pc[31 -: TAG_BITS];
+~000010     wire [TAG_BITS-1:0] wr_tag = upd_pc[31 -: TAG_BITS];
         
 %000000     wire wr_hit0 = valid0[wr_idx] && (tag0[wr_idx] == wr_tag);
 %000000     wire wr_hit1 = valid1[wr_idx] && (tag1[wr_idx] == wr_tag);
@@ -93,24 +93,24 @@
             //   - hit way0 → write way0
             //   - hit way1 → write way1
             //   - miss → LRU way
-~001320     wire wr_way = wr_hit1 ? 1'b1 :
-~001320                   wr_hit0 ? 1'b0 :
- 001320                             lru[wr_idx];
+~001144     wire wr_way = wr_hit1 ? 1'b1 :
+~001144                   wr_hit0 ? 1'b0 :
+ 001144                             lru[wr_idx];
 %000000     wire wr_hit = wr_hit0 | wr_hit1;
         
             // Counter next-value (per way, only target way actually updated)
-~001320     wire [1:0] cur_cnt = wr_way ? counter1[wr_idx] : counter0[wr_idx];
-~001320     wire [1:0] cnt_inc = (cur_cnt == 2'b11) ? 2'b11 : cur_cnt + 2'd1;
-~001315     wire [1:0] cnt_dec = (cur_cnt == 2'b00) ? 2'b00 : cur_cnt - 2'd1;
-~001320     wire [1:0] cnt_next  = wr_hit ? (upd_taken ? cnt_inc : cnt_dec)
-~001320                                   : (upd_taken ? 2'b10  : 2'b01);
+~001144     wire [1:0] cur_cnt = wr_way ? counter1[wr_idx] : counter0[wr_idx];
+~001144     wire [1:0] cnt_inc = (cur_cnt == 2'b11) ? 2'b11 : cur_cnt + 2'd1;
+~001139     wire [1:0] cnt_dec = (cur_cnt == 2'b00) ? 2'b00 : cur_cnt - 2'd1;
+~001144     wire [1:0] cnt_next  = wr_hit ? (upd_taken ? cnt_inc : cnt_dec)
+~001144                                   : (upd_taken ? 2'b10  : 2'b01);
         
             // LRU update：寫了 way 0 → way 1 變 LRU；寫了 way 1 → way 0 變 LRU
 %000005     wire lru_next = ~wr_way;
         
             integer i;
- 001315     always @(posedge clk) begin
- 001290         if (!resetn) begin
+ 001139     always @(posedge clk) begin
+ 001114         if (!resetn) begin
  000800             for (i = 0; i < N_SETS; i = i + 1) begin
  000800                 valid0[i]   <= 1'b0;
  000800                 valid1[i]   <= 1'b0;
@@ -122,7 +122,7 @@
  000800                 target1[i]  <= 32'h0;
  000800                 lru[i]      <= 1'b0;
                     end
-~001290         end else if (upd_valid) begin
+~001114         end else if (upd_valid) begin
                     // 沿用 lab08 設計：tag/target/valid 不 gate on upd_taken
 %000000             if (wr_way == 1'b1) begin
 %000000                 valid1[wr_idx]   <= 1'b1;

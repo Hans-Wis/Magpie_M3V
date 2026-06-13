@@ -28,7 +28,7 @@
         `include "def.vh"
         
         module ras (
- 001315     input             clk,
+ 001139     input             clk,
 %000005     input             resetn,
         
             // ---- Predict read (combinational) ----
@@ -48,20 +48,20 @@
         
             // ras_top = stack[ptr-1]，empty 時 (ptr=0) 輸出 0
 %000005     wire [PTR_BITS-1:0] top_idx = ptr - 3'd1;
-~001320     assign ras_top = (ptr == 0) ? 32'h0 : stack[top_idx];
+~001144     assign ras_top = (ptr == 0) ? 32'h0 : stack[top_idx];
         
             integer i;
- 001315     always @(posedge clk) begin
- 001290         if (!resetn) begin
+ 001139     always @(posedge clk) begin
+ 001114         if (!resetn) begin
  000025             ptr <= 3'd0;
  000200             for (i = 0; i < DEPTH; i = i + 1) stack[i] <= 32'h0;
- 001290         end else begin
+ 001114         end else begin
                     // Same-cycle push+pop = net push (取代 top)
                     // 只 push: ptr++ (wrap)，stack[ptr] <= val
                     // 只 pop:  ptr--
                     // Both 同時：先 pop 再 push → stack[ptr-1] <= val，ptr 不變
                     //          (即「replace top」semantics)
-~001290             if (push && pop) begin
+~001114             if (push && pop) begin
 %000000                 if (ptr != 0)
 %000000                     stack[top_idx] <= push_val;
                         else
@@ -70,7 +70,7 @@
 %000000             end else if (push) begin
 %000000                 stack[ptr] <= push_val;
 %000000                 ptr <= ptr + 3'd1;                    // 3-bit 加法自動 wrap (覆寫底)
-~001290             end else if (pop) begin
+~001114             end else if (pop) begin
 %000000                 if (ptr != 0) ptr <= ptr - 3'd1;
                         // empty 時 pop 是 no-op (預測結果是 garbage but 會 mispredict 被 recover)
                     end

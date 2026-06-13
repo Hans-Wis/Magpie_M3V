@@ -18,17 +18,25 @@
         `include "def.vh"
         
         module rfu (
- 001315     input         clk,
+ 001139     input         clk,
+%000005     input         resetn,         // active-low; holds x0 (regs[0]) at 0 architecturally
             // Read port 1
  000074     input  [ 4:0] rs1_idx,
 ~000063     output [31:0] rs1_data,
             // Read port 2
- 000106     input  [ 4:0] rs2_idx,
-~000077     output [31:0] rs2_data,
+ 000104     input  [ 4:0] rs2_idx,
+~000076     output [31:0] rs2_data,
             // Write port (同步)
- 000214     input         we,
+ 000048     input         we,
  000133     input  [ 4:0] rd_idx,
- 000094     input  [31:0] rd_data
+ 000094     input  [31:0] rd_data,
+        
+            // Debug abstract GPR access (ADR-0021; active only while core is halted)
+%000000     input         dbg_acc_en,
+%000000     input         dbg_acc_write,
+%000000     input  [ 4:0] dbg_acc_idx,
+%000000     input  [31:0] dbg_acc_wdata,
+%000000     output [31:0] dbg_acc_rdata
         );
         
             reg [31:0] regs [0:31];
@@ -40,12 +48,17 @@
             end
         
             // x0 read返回 0；其餘讀對應 entry
- 001004     assign rs1_data = (rs1_idx == 5'd0) ? 32'h0 : regs[rs1_idx];
- 001245     assign rs2_data = (rs2_idx == 5'd0) ? 32'h0 : regs[rs2_idx];
+ 000940     assign rs1_data = (rs1_idx == 5'd0) ? 32'h0 : regs[rs1_idx];
+ 001072     assign rs2_data = (rs2_idx == 5'd0) ? 32'h0 : regs[rs2_idx];
+%000005     assign dbg_acc_rdata = (dbg_acc_idx == 5'd0) ? 32'h0 : regs[dbg_acc_idx];
         
-            // x0 寫入忽略
- 001315     always @(posedge clk) begin
- 000943         if (we && rd_idx != 5'd0)
+            // x0 storage held at 0 by reset (architectural x0=0); x0 writes ignored
+ 001139     always @(posedge clk) begin
+ 001114         if (!resetn)
+ 000025             regs[0] <= 32'h0;
+~001114         else if (dbg_acc_en && dbg_acc_write && dbg_acc_idx != 5'd0)
+%000000             regs[dbg_acc_idx] <= dbg_acc_wdata;
+ 000742         else if (we && rd_idx != 5'd0)
  000372             regs[rd_idx] <= rd_data;
             end
         

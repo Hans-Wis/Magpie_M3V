@@ -13,11 +13,11 @@
 -Mcrt0=
 -Mcrtn=
 -Mcsrc=
--Mdir=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/csrc
+-Mdir=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/csrc
 -Mexternalobj=
 -Mldflags= -rdynamic
 -Mobjects= /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libvirsim.so /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/liberrorinf.so /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libsnpsmalloc.so /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libvfs.so
--Mout=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/simv
+-Mout=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/simv
 -Msaverestoreobj=/soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/vcs_save_restore_new.o
 -Msyslibs=-ldl
 -Mvcsaceobjs=
@@ -41,7 +41,7 @@
 -Xvcstatic_extns=0x40000
 -Xvcstatic_extns=1
 -Xvcstatic_max_gen=4096
--Xvd_opts=-logdir,/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/verdi/elabcomLog
+-Xvd_opts=-logdir,/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/verdi/elabcomLog
 -Xvd_opts=-silent,-ssy,-ssv,-ssz,+disable_message+C00373,
 -Xverdi_elab_opts=-Xprefer_tech_lib
 -Xverdi_elab_opts=-saveLevel
@@ -53,7 +53,7 @@
 -kdb=common_elab
 -kdb=incopt
 -libfile_opt
--o /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/simv
+-o /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/simv
 -picarchive
 -q
 -scm
@@ -62,14 +62,14 @@
 -timescale=1ns/1ns
 -top
 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/bin/vcs1fe
-/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/simv
+/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/simv
 axil_bridge_formal
-/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/axil_bridge_formal.xml
+/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/axil_bridge_formal.xml
 assert
-/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/undef_vcs.v
+/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/undef_vcs.v
 ../../../IP/cpu_m1/rtl/axil_bridge.v
 axil_bridge_formal.sv
-199
+197
 which_declare=declare -f
 host_alias=x86_64-conda-linux-gnu
 build_alias=x86_64-conda-linux-gnu
@@ -80,11 +80,8 @@ XDG_RUNTIME_DIR=/run/user/1000
 XDG_DATA_DIRS=/usr/local/share:/usr/share:/home/edauser/.nix-profile/share:/nix/var/nix/profiles/default/share
 XCELIUM_HOME=/soft/cadence/XCELIUM2509
 WV_HOME=/soft/synopsys/wv/X-2025.06
-WT_SESSION=07325e17-f2ea-40a1-a653-1b2976357314
-WT_PROFILE_ID={61c54bbd-c2c6-5271-96e7-009a87ff44bf}
-WSL_INTEROP=/run/WSL/1245_interop
+WSL_INTEROP=/run/WSL/112_interop
 WSL_DISTRO_NAME=AlmaLinux
-WSLENV=WT_SESSION:WT_PROFILE_ID:
 WSL2_GUI_APPS_ENABLED=1
 WAYLAND_DISPLAY=wayland-0
 W3264_NO_HOST_CHECK=1
@@ -128,7 +125,7 @@ TOOL_HOME=/soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64
 TARGET_ARCH=linux64
 SYS_HIDE_VERSION_WARNING=1
 SYN_HOME=/soft/synopsys/syn/X-2025.06-SP2
-SYNOPSYS_SIM_SETUP=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/synopsys_sim.setup
+SYNOPSYS_SIM_SETUP=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/synopsys_sim.setup
 SYNOPSYS_MEM_ENABLE_SBRK=1
 SYNOPSYS_LC_ROOT=/soft/synopsys/lc/X-2025.06-SP2
 SVI_ARCH=linux64
@@ -153,7 +150,7 @@ SNPS_VCST_INTERNAL_SDC_FILES=1
 SNPS_VCSG_CMDLINE= -batch -no_ui -no_init -out_dir vcformal_axil.out -output_log_file vcformal_axil.full.log -f vcformal_axil.tcl
 SNPS_SVI_VERDI_OPTS=/home/edauser/projec
 SNPS_LP_INTERNAL_READ_DB_ATTRIBUTES=all
-SNPS_INTERNAL_WRITE_ABSTRACT_MODEL_PARENT_DIR=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi
+SNPS_INTERNAL_WRITE_ABSTRACT_MODEL_PARENT_DIR=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi
 SNPS_INTERNAL_VCS_LINUX_OS=linux
 SNPS_DISABLE_SIMON_MEM_POOL=1
 SIZE=x86_64-conda-linux-gnu-size
@@ -177,7 +174,7 @@ NoDefaultCurrentDirectoryInExePath=1
 NPIL1_PATH=/soft/synopsys/vcs/X-2025.06-SP1/vcfca/verdi/share/NPI/L1/TCL
 NO_COLOR=1
 NOVAS_USER_ANNOTATION=1
-NOVAS_LIBSDIR=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/novas_libs
+NOVAS_LIBSDIR=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/novas_libs
 NOVAS_HOME=/soft/synopsys/vcs/X-2025.06-SP1/vcfca/verdi
 NM=x86_64-conda-linux-gnu-nm
 NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
@@ -241,16 +238,17 @@ CONDA_PREFIX=/home/edauser/miniforge3/envs/magpie_claude
 CONDA_EXE=/home/edauser/miniforge3/bin/conda
 CONDA_DEFAULT_ENV=magpie_claude
 CONDA_BUILD_SYSROOT=/home/edauser/miniforge3/envs/magpie_claude/x86_64-conda-linux-gnu/sysroot
-CODEX_THREAD_ID=019ead18-6271-75a1-94eb-3ab0e9753739
+CODEX_THREAD_ID=019eb99d-539e-7c21-bb3c-c9fd3f167312
 CODEX_MANAGED_PACKAGE_ROOT=/home/edauser/.npm-global/lib/node_modules/@openai/codex
 CODEX_MANAGED_BY_NPM=1
 CODEX_CI=1
 CMAKE_PREFIX_PATH=/home/edauser/miniforge3/envs/magpie_claude:/home/edauser/miniforge3/envs/magpie_claude/x86_64-conda-linux-gnu/sysroot/usr
 CMAKE_ARGS=-DCMAKE_AR=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-ar -DCMAKE_CXX_COMPILER_AR=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ar -DCMAKE_C_COMPILER_AR=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ar -DCMAKE_RANLIB=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-ranlib -DCMAKE_CXX_COMPILER_RANLIB=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ranlib -DCMAKE_C_COMPILER_RANLIB=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-gcc-ranlib -DCMAKE_LINKER=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-ld -DCMAKE_STRIP=/home/edauser/miniforge3/envs/magpie_claude/bin/x86_64-conda-linux-gnu-strip -DCMAKE_BUILD_TYPE=Release
 CLAUDE_EFFORT=high
-CLAUDE_CODE_SESSION_ID=bb93bc90-4eb6-4f3e-be5e-aa8d9c94185c
-CLAUDE_CODE_EXECPATH=/home/edauser/.local/share/claude/versions/2.1.169
+CLAUDE_CODE_SESSION_ID=d7f02ea9-63d3-422f-8a91-afc038884df4
+CLAUDE_CODE_EXECPATH=/home/edauser/.local/share/claude/versions/2.1.173
 CLAUDE_CODE_ENTRYPOINT=cli
+CLAUDE_CODE_CHILD_SESSION=1
 CLAUDECODE=1
 CDS_ROOT=/soft/cadence/IC251
 CDS_Netlisting_Mode=Analog
@@ -267,19 +265,19 @@ BASH_FUNC_which%%=() {  ( alias;_ eval ${which_declare} ) | /usr/bin/which --tty
 AS=x86_64-conda-linux-gnu-as
 AR=x86_64-conda-linux-gnu-ar
 ANTHROPIC_MODEL=opus
-AI_AGENT=claude-code_2-1-169_agent
+AI_AGENT=claude-code_2-1-173_agent
 ADDR2LINE=x86_64-conda-linux-gnu-addr2line
 0
 0
 4
 1756893921 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/packages/snps_msv_nettype_pkg/AN.DB
-1781020919 axil_bridge_formal.sv
-1781020433 ../../../IP/cpu_m1/rtl/axil_bridge.v
-1781021210 /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/undef_vcs.v
+1781185933 axil_bridge_formal.sv
+1781185933 ../../../IP/cpu_m1/rtl/axil_bridge.v
+1781230698 /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/undef_vcs.v
 4
 1765663725 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libvirsim.so
 1765663697 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/liberrorinf.so
 1765663771 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libsnpsmalloc.so
 1765663716 /soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx/linux64/lib/libvfs.so
-1781021210 /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/simv.daidir
+1781230699 /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_axi/vcformal_axil.out/vcst_rtdb/.internal/design/simv.daidir
 -1 partitionlib

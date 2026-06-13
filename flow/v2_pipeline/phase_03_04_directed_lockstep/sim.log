@@ -1,6 +1,6 @@
-[1345 ns] stop on illegal/ebreak pc=00000084 commits=40
+[1335 ns] stop on illegal/ebreak pc=00000084 commits=40
 PASS: expanded directed DUT trace wrote 40 commits before ebreak
-- tb_directed_lockstep.v:118: Verilog $finish
+- tb_directed_lockstep.v:135: Verilog $finish
 - S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 1us; walltime 0.001 s; speed 2.078 ms/s
+- Verilator: $finish at 1us; walltime 0.001 s; speed 1.024 ms/s
 - Verilator: cpu 0.001 s on 1 threads; allocated 17 MB

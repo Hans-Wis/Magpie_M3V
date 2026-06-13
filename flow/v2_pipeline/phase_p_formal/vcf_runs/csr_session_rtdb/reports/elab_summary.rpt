@@ -11,8 +11,11 @@
 
 
 Design Unit Name: 'csr', (IP/cpu_m1/rtl/csr.v:31)
-    Parameters (Total 1)
+    Parameters (Total 4)
+        RV32A = 0  (default: 0)
+        PMP_ENTRIES = 0  (default: 0)
         mstatus_mpp = 2'b11  (default: 2'b11)
+        MISA_EXT_BASE = 26'b00000000000001000100000110  (default: 26'b00000000000001000100000110)
     Instances (Total: 0)
 =============================================
 

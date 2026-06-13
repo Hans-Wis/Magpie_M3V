@@ -1,0 +1,174 @@
+(2026-06-12 10:17:09),0.000306487,0,start,845.207,13,RegisterApps : 
+(2026-06-12 10:17:09),0.0101051,0,start,1263.17,430,LicenseMgr Init : 
+(2026-06-12 10:17:10),0.015553,0,end,1268.43,431,LicenseMgr Init : 
+(2026-06-12 10:17:10),0.0157054,0,end,1339.15,432,RegisterApps : 
+(2026-06-12 10:17:10),0.0206007,0,start,1389.72,481,VCS Read Task : 
+(2026-06-12 10:17:11),0.0349674,0,end,1389.97,481,VCS Read Task : 
+(2026-06-12 10:17:11),0.0352547,0,start,1390.1,478,Load VCS Message: 
+(2026-06-12 10:17:11),0.0352569,0,end,1390.1,478,Load VCS Message: 
+(2026-06-12 10:17:11),0.0352573,0,start,1390.1,478,NLDM Creation : 
+(2026-06-12 10:17:11),0.0352577,0,start,1390.1,478,LoadCircuitModel : 
+(2026-06-12 10:17:11),0.0352744,0,start,1390.1,478,VsiLib_Restore : 
+(2026-06-12 10:17:11),0.035275,0,end,1390.1,478,VsiLib_Restore : 
+(2026-06-12 10:17:11),0.0352753,0,end,1390.1,478,LoadCircuitModel : 
+(2026-06-12 10:17:11),0.0352759,0,start,1390.1,478,BuildNetlist : 
+(2026-06-12 10:17:11),0.0352765,0,start,1390.1,478,NLDM Build : 
+(2026-06-12 10:17:11),0.0353638,0,start,1410.55,500,XMR_Resolution : Total:0 : 
+(2026-06-12 10:17:11),0.0353643,0,end,1410.55,500,XMR_Resolution : Success:0 : 
+(2026-06-12 10:17:11),0.0353659,0,end,1410.55,500,NLDM Build : 
+(2026-06-12 10:17:11),0.0353673,1,start,1410.55,500,Cell properties : 
+(2026-06-12 10:17:11),0.0353685,1,end,1410.55,500,Cell properties : 
+(2026-06-12 10:17:11),0.0353687,0,end,1410.55,500,BuildNetlist : 
+(2026-06-12 10:17:11),0.0353695,0,end,1410.55,500,NLDM Creation : 
+(2026-06-12 10:17:11),0.0353844,0,start,1410.55,500,PropertyLoad: Formal Property : 
+(2026-06-12 10:17:11),0.0353966,0,end,1410.55,500,PropertyLoad: Formal Property : 
+(2026-06-12 10:17:11),0.035397,0,start,1410.55,500,PropertyLoad: Formal Property : 
+(2026-06-12 10:17:11),0.0353973,0,end,1410.55,500,PropertyLoad: Formal Property : 
+(2026-06-12 10:17:11),0.0353976,0,start,1410.55,500,PropertyLoad: Formal Property : 
+(2026-06-12 10:17:11),0.0353979,0,end,1410.55,500,PropertyLoad: Formal Property : 
+(2026-06-12 10:17:11),0.0354003,0,start,1410.55,500,StaticCheck: StaticCheckProcess : 
+(2026-06-12 10:17:11),0.0354018,0,start,1410.55,500,StaticCheck: NldfgFlatDesign : 
+(2026-06-12 10:17:11),0.0354021,0,start,1410.55,500,StaticCheck: createFlatDesign : 
+(2026-06-12 10:17:11),0.0354283,0,end,1419.57,510,StaticCheck: createFlatDesign : 
+(2026-06-12 10:17:11),0.0354286,0,start,1419.57,510,StaticCheck: legalize : 
+(2026-06-12 10:17:11),0.0354301,0,end,1419.57,510,StaticCheck: legalize : 
+(2026-06-12 10:17:11),0.0354303,0,start,1419.57,510,StaticCheck: reduceBidirectionals : 
+(2026-06-12 10:17:11),0.0354307,0,end,1419.57,510,StaticCheck: reduceBidirectionals : 
+(2026-06-12 10:17:11),0.0354309,0,start,1419.57,510,StaticCheck: computeNetEquivalences : 
+(2026-06-12 10:17:11),0.0354314,0,end,1419.57,510,StaticCheck: computeNetEquivalences : 
+(2026-06-12 10:17:11),0.0354316,0,start,1419.57,510,StaticCheck: eliminateBidirectionals : 
+(2026-06-12 10:17:11),0.0354319,0,end,1419.57,510,StaticCheck: eliminateBidirectionals : 
+(2026-06-12 10:17:11),0.0354323,0,end,1419.57,510,StaticCheck: NldfgFlatDesign : 
+(2026-06-12 10:17:11),0.0354326,0,start,1419.57,510,StaticCheck: CombLoopCheck  : 
+(2026-06-12 10:17:11),0.0354328,0,start,1419.57,510,CombLoop : Topo Order 
+(2026-06-12 10:17:11),0.0354376,0,end,1419.57,510,CombLoop : Topo Order 
+(2026-06-12 10:17:11),0.035438,0,start,1419.57,510,CombLoop : Compute Segments 
+(2026-06-12 10:17:11),0.0354382,0,end,1419.57,510,CombLoop : Compute Segments 
+(2026-06-12 10:17:11),0.0354385,0,end,1419.57,510,StaticCheck: CombLoopCheck  : 
+(2026-06-12 10:17:11),0.0354388,0,start,1419.57,510,StaticCheck: MultiDriverCheck  : 
+(2026-06-12 10:17:11),0.0354399,0,end,1419.57,510,StaticCheck: MultiDriverCheck  : 
+(2026-06-12 10:17:11),0.0354405,0,end,1419.57,501,StaticCheck: StaticCheckProcess : 
+(2026-06-12 10:17:11),0.0354409,0,start,1419.57,501,createWordSplitBaseNetCacheUtil
+(2026-06-12 10:17:11),0.0354418,0,end,1419.57,501,createWordSplitBaseNetCacheUtil
+(2026-06-12 10:17:11),0.035442,0,start,1419.57,501,populate SSF data: 
+(2026-06-12 10:17:11),0.0354424,0,end,1419.57,501,populate SSF data: 
+(2026-06-12 10:17:11),0.0354426,0,start,1419.57,501,DumpGateCountStats : 
+(2026-06-12 10:17:11),0.0354453,0,end,1419.57,501,DumpGateCountStats : 
+(2026-06-12 10:17:11),0.0354456,0,start,1419.57,501,DataModelStats : 
+(2026-06-12 10:17:11),0.0354466,0,end,1419.57,501,DataModelStats : 
+(2026-06-12 10:17:11),0.0354497,1,start,1419.57,510,ModuleDesignPropagation : 
+(2026-06-12 10:17:11),0.0354501,1,end,1419.57,510,ModuleDesignPropagation : 
+(2026-06-12 10:17:11),0.0379409,0,start,1428.6,520,XMR_Resolution : Total:1 : 
+(2026-06-12 10:17:11),0.0379423,0,end,1428.6,520,XMR_Resolution : Success:1 : 
+(2026-06-12 10:17:11),0.0379431,0,start,1428.6,520,sim build substep: 
+(2026-06-12 10:17:11),0.0379724,0,end,1428.72,520,sim build substep: 
+(2026-06-12 10:17:11),0.0379728,0,start,1428.72,520,sim run substep: 
+(2026-06-12 10:17:11),0.0381384,0,end,1435.66,527,sim run substep: 
+(2026-06-12 10:17:11),0.0381552,0,start,1435.66,527,sim_save_reset : 
+(2026-06-12 10:17:11),0.0384456,0,end,1445.29,513,sim_save_reset : 
+(2026-06-12 10:17:11),0.0384517,0,start,1445.29,513,Check: check_fv : 
+(2026-06-12 10:17:11),0.0384548,0,start,1445.29,513,Check: BuildFormal : 
+(2026-06-12 10:17:11),0.0384552,0,start,1445.29,513,Check: Init : 
+(2026-06-12 10:17:11),0.0384555,0,end,1445.29,513,Check: Init : 
+(2026-06-12 10:17:11),0.0384557,0,start,1445.29,513,Check: ResetSetup : 
+(2026-06-12 10:17:11),0.038456,0,start,1445.29,513,Check: EnvInstrumentation : 
+(2026-06-12 10:17:11),0.0384569,0,end,1445.29,513,Check: EnvInstrumentation : 
+(2026-06-12 10:17:11),0.0384581,0,end,1445.29,513,Check: ResetSetup : 
+(2026-06-12 10:17:11),0.0384584,0,start,1445.29,513,Check: BotEotInstr : 
+(2026-06-12 10:17:11),0.0384587,0,end,1445.29,513,Check: BotEotInstr : 
+(2026-06-12 10:17:11),0.038459,0,start,1445.29,513,Check: VPSetup : 
+(2026-06-12 10:17:11),0.0384611,0,end,1445.29,513,Check: VPSetup : 
+(2026-06-12 10:17:11),0.0384613,0,start,1445.29,513,Check: VPReset : 
+(2026-06-12 10:17:11),0.0384623,0,end,1445.29,513,Check: VPReset : 
+(2026-06-12 10:17:11),0.0384625,0,start,1445.29,513,Check: InitApp : 
+(2026-06-12 10:17:11),0.0384753,0,end,1445.29,513,Check: InitApp : 
+(2026-06-12 10:17:11),0.0384756,0,start,1445.29,513,Check: FormalModel : 
+(2026-06-12 10:17:11),0.0384759,0,start,1445.29,513,DfgBuild: Setup : 
+(2026-06-12 10:17:11),0.0384761,0,start,1445.29,513,DfgBuild: ValidateNLDMOperators : 
+(2026-06-12 10:17:11),0.0384776,0,end,1445.29,513,DfgBuild: ValidateNLDMOperators : 
+(2026-06-12 10:17:11),0.0384779,0,end,1445.29,513,DfgBuild: Setup : 
+(2026-06-12 10:17:11),0.0384781,0,start,1445.29,513,DfgBuild: ReuseCheck : 
+(2026-06-12 10:17:11),0.0384785,0,end,1445.29,513,DfgBuild: ReuseCheck : 
+(2026-06-12 10:17:11),0.0384788,0,start,1445.29,513,DfgBuild: Flatten : 
+(2026-06-12 10:17:11),0.0385031,0,end,1453.3,522,DfgBuild: Flatten : 
+(2026-06-12 10:17:11),0.0385034,0,start,1453.3,522,DfgBuild: ClockSetup : 
+(2026-06-12 10:17:11),0.0385039,0,end,1453.3,522,DfgBuild: ClockSetup : 
+(2026-06-12 10:17:11),0.0385042,0,start,1453.3,522,DfgBuild: Modeling : 
+(2026-06-12 10:17:11),0.0385053,0,end,1453.3,522,DfgBuild: Modeling : 
+(2026-06-12 10:17:11),0.0385056,0,start,1453.3,522,DfgBuild: FlatRemodel : 
+(2026-06-12 10:17:11),0.0385078,0,end,1453.3,522,DfgBuild: FlatRemodel : 
+(2026-06-12 10:17:11),0.038508,0,start,1453.3,522,DfgBuild: NldfgBuild : 
+(2026-06-12 10:17:11),0.0385086,0,start,1453.3,522,NldfgBuild : Print statistics 
+(2026-06-12 10:17:11),0.038509,0,end,1453.3,522,NldfgBuild : Print statistics 
+(2026-06-12 10:17:11),0.0385092,0,start,1453.3,522,NldfgBuild : Reduce bidirectionals 
+(2026-06-12 10:17:11),0.0385096,0,end,1453.3,522,NldfgBuild : Reduce bidirectionals 
+(2026-06-12 10:17:11),0.0385098,0,start,1453.3,522,NldfgBuild : Cutpoint Insertion 
+(2026-06-12 10:17:11),0.038514,0,end,1453.3,522,NldfgBuild : Cutpoint Insertion 
+(2026-06-12 10:17:11),0.0385142,0,start,1453.3,522,NldfgBuild : Compute net equivalences 
+(2026-06-12 10:17:11),0.0385146,0,end,1453.3,522,NldfgBuild : Compute net equivalences 
+(2026-06-12 10:17:11),0.0385148,0,start,1453.3,522,NldfgBuild : Eliminate bidirectionals 
+(2026-06-12 10:17:11),0.0385151,0,end,1453.3,522,NldfgBuild : Eliminate bidirectionals 
+(2026-06-12 10:17:11),0.0385154,0,start,1453.3,522,NldfgBuild : Remove false combo loops 
+(2026-06-12 10:17:11),0.0385193,0,end,1453.3,522,NldfgBuild : Remove false combo loops 
+(2026-06-12 10:17:11),0.0385199,0,start,1453.3,522,NldfgBuild : Create dfg 
+(2026-06-12 10:17:11),0.0385201,0,start,1453.3,522,NldfgBuild : Create graph function 
+(2026-06-12 10:17:11),0.0385276,0,end,1453.3,522,NldfgBuild : Create graph function 
+(2026-06-12 10:17:11),0.0385279,0,start,1453.3,522,NldfgBuild : Create scopes 
+(2026-06-12 10:17:11),0.0385289,0,end,1453.3,522,NldfgBuild : Create scopes 
+(2026-06-12 10:17:11),0.0385291,0,start,1453.3,522,NldfgBuild : Initial setup 
+(2026-06-12 10:17:11),0.0385295,0,end,1453.3,522,NldfgBuild : Initial setup 
+(2026-06-12 10:17:11),0.0385297,0,start,1453.3,522,NldfgBuild : Create graph 
+(2026-06-12 10:17:11),0.0385341,0,end,1453.3,522,NldfgBuild : Create graph 
+(2026-06-12 10:17:11),0.0385344,0,start,1453.3,522,NldfgBuild : Create terminal sinks and sources 
+(2026-06-12 10:17:11),0.0385415,0,end,1453.3,522,NldfgBuild : Create terminal sinks and sources 
+(2026-06-12 10:17:11),0.0385419,0,start,1453.3,522,NldfgBuild : Compute dependencies 
+(2026-06-12 10:17:11),0.0385423,0,end,1453.3,522,NldfgBuild : Compute dependencies 
+(2026-06-12 10:17:11),0.0385425,0,start,1453.3,522,NldfgBuild : Compute combinational SCCs 
+(2026-06-12 10:17:11),0.0385432,0,end,1453.3,522,NldfgBuild : Compute combinational SCCs 
+(2026-06-12 10:17:11),0.0385434,0,start,1453.3,522,NldfgBuild : Compute templates 
+(2026-06-12 10:17:11),0.0385741,0,end,1453.3,523,NldfgBuild : Compute templates 
+(2026-06-12 10:17:11),0.0385744,0,start,1453.3,523,NldfgBuild : Eliminate combinational SCCs 
+(2026-06-12 10:17:11),0.0385747,0,end,1453.3,523,NldfgBuild : Eliminate combinational SCCs 
+(2026-06-12 10:17:11),0.038575,0,start,1453.3,523,NldfgBuild : Computing sequential SCCs 
+(2026-06-12 10:17:11),0.0385756,0,end,1453.3,523,NldfgBuild : Computing sequential SCCs 
+(2026-06-12 10:17:11),0.0385758,0,start,1453.3,523,NldfgBuild : Create simulator clocks, changeAts and Triggers 
+(2026-06-12 10:17:11),0.0385761,0,end,1453.3,523,NldfgBuild : Create simulator clocks, changeAts and Triggers 
+(2026-06-12 10:17:11),0.0385764,0,start,1453.3,523,NldfgBuild : SymSimulator Analysis and computation 
+(2026-06-12 10:17:11),0.0385982,0,end,1453.3,523,NldfgBuild : SymSimulator Analysis and computation 
+(2026-06-12 10:17:11),0.0385985,0,start,1453.3,523,NldfgBuild : Collect Aeps 
+(2026-06-12 10:17:11),0.0385991,0,end,1453.3,523,NldfgBuild : Collect Aeps 
+(2026-06-12 10:17:11),0.0385993,0,start,1453.3,523,NldfgBuild : Cleanup Simulator 
+(2026-06-12 10:17:11),0.0386,0,end,1453.3,523,NldfgBuild : Cleanup Simulator 
+(2026-06-12 10:17:11),0.0386003,0,start,1453.3,523,NldfgBuild : Cleanup Samplers 
+(2026-06-12 10:17:11),0.0386032,0,end,1453.3,523,NldfgBuild : Cleanup Samplers 
+(2026-06-12 10:17:11),0.0386034,0,end,1453.3,523,NldfgBuild : Create dfg 
+(2026-06-12 10:17:11),0.0386041,0,end,1453.3,523,DfgBuild: NldfgBuild : 
+(2026-06-12 10:17:11),0.0386043,0,start,1453.3,523,StaticCheck: StaticCheckProcess : 
+(2026-06-12 10:17:11),0.0386053,0,start,1453.3,523,StaticCheck: NldfgFlatDesign : 
+(2026-06-12 10:17:11),0.0386056,0,end,1453.3,523,StaticCheck: NldfgFlatDesign : 
+(2026-06-12 10:17:11),0.0386059,0,start,1453.3,523,StaticCheck: CombLoopCheck  : 
+(2026-06-12 10:17:11),0.0386061,0,start,1453.3,523,CombLoop : Topo Order 
+(2026-06-12 10:17:11),0.0386109,0,end,1453.3,523,CombLoop : Topo Order 
+(2026-06-12 10:17:11),0.0386113,0,start,1453.3,523,CombLoop : Compute Segments 
+(2026-06-12 10:17:11),0.0386115,0,end,1453.3,523,CombLoop : Compute Segments 
+(2026-06-12 10:17:11),0.0386118,0,end,1453.3,523,StaticCheck: CombLoopCheck  : 
+(2026-06-12 10:17:11),0.038612,0,start,1453.3,523,StaticCheck: MultiDriverCheck  : 
+(2026-06-12 10:17:11),0.038613,0,end,1453.3,523,StaticCheck: MultiDriverCheck  : 
+(2026-06-12 10:17:11),0.0386132,0,end,1453.3,523,StaticCheck: StaticCheckProcess : 
+(2026-06-12 10:17:11),0.0386136,0,start,1453.3,523,DfgBuild: DfgRemodel : 
+(2026-06-12 10:17:11),0.0386621,0,end,1453.3,522,DfgBuild: DfgRemodel : 
+(2026-06-12 10:17:11),0.038663,0,end,1453.3,513,Check: FormalModel : 
+(2026-06-12 10:17:11),0.0386633,0,end,1453.3,513,Check: BuildFormal : 
+(2026-06-12 10:17:11),0.0386636,0,start,1453.3,513,Check: GCDB : 
+(2026-06-12 10:17:11),0.0386661,0,end,1453.3,513,Check: GCDB : 
+(2026-06-12 10:17:11),0.0386802,0,start,1453.3,513,Check: Tanglewood : 
+(2026-06-12 10:17:11),0.0388628,0,start,1453.3,513,perf_diagnostics_alerts: report_fv : 
+(2026-06-12 10:17:11),0.0389156,0,end,1453.3,515,perf_diagnostics_alerts: report_fv : 
+(2026-06-12 10:17:11),0.0389206,0,start,1453.3,515,orc_perf_debug diagnostics: orc_perf_debug -mode lite : 
+(2026-06-12 10:17:11),0.0389252,0,end,1453.3,515,orc_perf_debug diagnostics: orc_perf_debug -mode lite : 
+(2026-06-12 10:17:11),0.0389279,0,end,1453.3,515,Check: Tanglewood : 
+(2026-06-12 10:17:11),0.0389282,0,end,1453.3,515,Check: check_fv : 
+(2026-06-12 10:17:13),0.0632905,0,start,1453.3,515,perf_diagnostics_alerts: report_fv : 
+(2026-06-12 10:17:13),0.0633411,0,end,1453.3,516,perf_diagnostics_alerts: report_fv : 
+(2026-06-12 10:17:13),0.0633422,0,start,1453.3,516,orc_perf_debug diagnostics: orc_perf_debug -mode lite : 
+(2026-06-12 10:17:13),0.0633683,0,end,1453.3,516,orc_perf_debug diagnostics: orc_perf_debug -mode lite : 

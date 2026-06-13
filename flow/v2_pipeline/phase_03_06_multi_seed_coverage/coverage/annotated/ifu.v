@@ -22,12 +22,14 @@
         
         `include "def.vh"
         
-        module ifu (
- 001315     input             clk,
+        module ifu #(
+            parameter [31:0] RESET_PC = `PC_RESET
+        ) (
+ 001139     input             clk,
 %000005     input             resetn,
         
- 000195     input             pc_stall,        // 1 = hold pc_reg
-%000000     input             pc_redirect,
+ 000029     input             pc_stall,        // 1 = hold pc_reg
+%000005     input             pc_redirect,
 %000000     input      [31:0] redirect_target,
         
 %000000     input             ras_predict_ret,
@@ -37,26 +39,26 @@
 %000000     input      [31:0] bp_predict_target,
         
             // Lab08d: PC 增量由 instr length 決定
- 000025     input             is_16bit,
+ 000023     input             is_16bit,
         
-~000205     output     [31:0] pc,               // pc_reg = current decode PC
-~000205     output     [31:0] next_pc            // combinational, = pc_reg next-cycle value
+~000200     output     [31:0] pc,               // pc_reg = current decode PC
+~000200     output     [31:0] next_pc            // combinational, = pc_reg next-cycle value
         );
         
-~000205     reg [31:0] pc_reg;
+~000200     reg [31:0] pc_reg;
             assign pc = pc_reg;
         
-~001275     wire [31:0] pc_inc = is_16bit ? 32'd2 : 32'd4;
+~001101     wire [31:0] pc_inc = is_16bit ? 32'd2 : 32'd4;
         
-~001320     assign next_pc = pc_redirect          ? redirect_target :
- 000885                      pc_stall             ? pc_reg :
-~000435                      ras_predict_ret      ? ras_predict_target :
-~000435                      bp_predict_taken     ? bp_predict_target :
- 000435                                             pc_reg + pc_inc;
+~001139     assign next_pc = pc_redirect          ? redirect_target :
+ 000714                      pc_stall             ? pc_reg :
+~000425                      ras_predict_ret      ? ras_predict_target :
+~000425                      bp_predict_taken     ? bp_predict_target :
+ 000425                                             pc_reg + pc_inc;
         
- 001315     always @(posedge clk) begin
- 001290         if (!resetn) pc_reg <= `PC_RESET;
- 001290         else         pc_reg <= next_pc;
+ 001139     always @(posedge clk) begin
+ 001114         if (!resetn) pc_reg <= RESET_PC;
+ 001114         else         pc_reg <= next_pc;
             end
         
         endmodule

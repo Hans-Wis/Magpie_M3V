@@ -1,4 +1,4 @@
-2026_06_09_22:54:13 : Configuration
+2026_06_12_10:17:00 : Configuration
 FV_RUN_CONFIG_INFO :  Task : FPV, cmd : check_fv
 [Info] Configuration Details
 [Info] Orchestration/Effort : default
@@ -6,7 +6,7 @@ FV_RUN_CONFIG_INFO :  Task : FPV, cmd : check_fv
 [Info] Memory limit : 8GB
 [Info] Number of workers requested : 4
 [Info] FPV flow ver : v7 
-2026_06_09_22:54:13 : Verification Problem Current Stats
+2026_06_12_10:17:00 : Verification Problem Current Stats
 
   Summary Results
    Property Summary: FPV
@@ -15,7 +15,7 @@ FV_RUN_CONFIG_INFO :  Task : FPV, cmd : check_fv
      - # found        : 8
      - # not_run      : 8
 
-2026_06_09_22:54:17 : Verification Problem Current Stats
+2026_06_12_10:17:03 : Verification Problem Current Stats
 
   Summary Results
    Property Summary: FPV
@@ -28,10 +28,10 @@ Solver jobs summary for verification task FPV (11 solver jobs)
     #scheduled     :     0 
     #running       :     0 
     #completed     :    11 
-        #normal        :     8 
+        #normal        :     9 
         #timeout       :     0 
         #memout        :     0 
-        #orc_killed    :     3 
+        #orc_killed    :     2 
         #sig_killed    :     0 
         #crash         :     0 
         #start_fail    :     0 
@@ -43,13 +43,13 @@ Memory/time profile by engine
  Engine |   MinMem(MB) |   MaxMem(MB) |  NumJobs | NumStoppedJobs |  Time(secs) | NumSolvedGoals | NumSuccessGoals |  NumFailedGoals | NumBestDepthGoals | 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
    INIT |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
-     b6 |          103 |          103 |        1 |              0 |           1 |              0 |               0 |               0 |                 0 | 
+     b6 |          100 |          100 |        1 |              0 |           1 |              0 |               0 |               0 |                 0 | 
      b8 |          165 |          165 |        1 |              0 |           1 |              0 |               0 |               0 |                 0 | 
      cc |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
-     e1 |           82 |           82 |        2 |              0 |           0 |              2 |               2 |               0 |                 0 | 
-     f5 |           71 |           72 |        2 |              0 |           1 |              0 |               0 |               0 |                 0 | 
+     e1 |           82 |           83 |        2 |              0 |           0 |              2 |               2 |               0 |                 0 | 
+     f5 |           73 |           74 |        2 |              0 |           0 |              0 |               0 |               0 |                 0 | 
      s1 |          142 |          142 |        1 |              0 |           1 |              0 |               0 |               0 |                 0 | 
-     t0 |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     t0 |           71 |           71 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
      t1 |           82 |           82 |        1 |              0 |           0 |              6 |               6 |               0 |                 0 | 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 

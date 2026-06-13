@@ -30,8 +30,8 @@ Info: SVAC-NC Finished
 Info: Invoking Simon...
 Info: Simon VCS Start
 =======================================================
-VCS CPU Time(s)     :0.07
-SIMON CPU Time(s)   :0.01
+VCS CPU Time(s)     :0.08
+SIMON CPU Time(s)   :0.02
 SIMON Total Time(s) :0.01
 Peak Memory(MB)     :415
 =======================================================
@@ -81,10 +81,9 @@ Run configuration:
 [Info] PROP_I_RESULT: FPV  forward.forward_assert_i.unnamed$$_5  t1  proven  property  00:00:00
 [Info] BITLEVEL_MODEL_STATS: Generated model with 101 gates, 25 inputs, 0 registers, 0 initial constraints, 0 constraints.
 [Info] BITLEVEL_MODEL_STATS: Generated model with 101 gates, 25 inputs, 0 registers, 0 initial constraints, 0 constraints.
-[Info] PROP_I_RESULT: FPV  forward.forward_assert_i.unnamed$$_6  checking  property  00:00:00
-[Info] PROP_I_RESULT: FPV  forward.forward_assert_i.unnamed$$_7  checking  property  00:00:00
-[Info] PROP_I_RESULT: FPV  forward.forward_assert_i.unnamed$$_6  e1  proven  property  00:00:00
-[Info] PROP_I_RESULT: FPV  forward.forward_assert_i.unnamed$$_7  e1  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  forward.forward_assert_i.unnamed$$_6  e1  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  forward.forward_assert_i.unnamed$$_7  checking  property  00:00:01
+[Info] PROP_I_RESULT: FPV  forward.forward_assert_i.unnamed$$_7  e1  proven  property  00:00:02
 [Info] PERF_DIAGNOSTICS_ALERTS_START
 
   Summary Results
@@ -98,10 +97,10 @@ Solver jobs summary for verification task FPV (11 solver jobs)
     #scheduled     :     0 
     #running       :     0 
     #completed     :    11 
-        #normal        :     8 
+        #normal        :     9 
         #timeout       :     0 
         #memout        :     0 
-        #orc_killed    :     3 
+        #orc_killed    :     2 
         #sig_killed    :     0 
         #crash         :     0 
         #start_fail    :     0 
@@ -120,20 +119,20 @@ foreach_in_collection prop [get_props -usage assert] {
 close $fp
 
 =======================================================
-Total Time(S)  :5.35
-CPU Time(S)    :1.82
+Total Time(S)  :5.53
+CPU Time(S)    :1.91
 Peak Memory(MB):2218
 ========================Formal=========================
-Engine Wall Time(S)    :3.27
+Engine Wall Time(S)    :3.36
 Engine Peak Memory(MB) :165
 =======================================================
 Session exit code is 3 (Abnormal termination - termination trapped by software)
 
 
-Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 223024 ..
+Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 585003 ..
 
 
---- pstack for process 223024 is dumped to 
+--- pstack for process 585003 is dumped to 
 
 #/lib64/libpthread.so.0 : ()+0x1298f
 #/lib64/libc.so.6 : gsignal()+0x10f
@@ -153,8 +152,8 @@ Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 223024 ..
 #/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : main()+0x530
 #/lib64/libc.so.6 : __libc_start_main()+0xe4
 #/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi() [0x7f77028]=======================================================
-Total Time(S)  :5.4
+Total Time(S)  :5.6
 CPU Time(S)    :1.9
 Peak Memory(MB):1444
-Current RSS(MB):989
+Current RSS(MB):988
 =======================================================

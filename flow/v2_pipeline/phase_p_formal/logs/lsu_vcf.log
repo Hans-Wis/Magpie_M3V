@@ -30,8 +30,8 @@ Info: SVAC-NC Finished
 Info: Invoking Simon...
 Info: Simon VCS Start
 =======================================================
-VCS CPU Time(s)     :0.05
-SIMON CPU Time(s)   :0.02
+VCS CPU Time(s)     :0.07
+SIMON CPU Time(s)   :0.03
 SIMON Total Time(s) :0.01
 Peak Memory(MB)     :415
 =======================================================
@@ -111,20 +111,20 @@ foreach_in_collection prop [get_props -usage assert] {
 close $fp
 
 =======================================================
-Total Time(S)  :3.43
-CPU Time(S)    :1.51
+Total Time(S)  :3.63
+CPU Time(S)    :1.60
 Peak Memory(MB):2218
 ========================Formal=========================
-Engine Wall Time(S)    :1.37
+Engine Wall Time(S)    :1.43
 Engine Peak Memory(MB) :82
 =======================================================
 Session exit code is 3 (Abnormal termination - termination trapped by software)
 
 
-Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 224015 ..
+Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 586008 ..
 
 
---- pstack for process 224015 is dumped to 
+--- pstack for process 586008 is dumped to 
 
 #/lib64/libpthread.so.0 : ()+0x1298f
 #/lib64/libc.so.6 : gsignal()+0x10f
@@ -144,8 +144,8 @@ Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 224015 ..
 #/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : main()+0x530
 #/lib64/libc.so.6 : __libc_start_main()+0xe4
 #/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi() [0x7f77028]=======================================================
-Total Time(S)  :3.5
-CPU Time(S)    :1.5
+Total Time(S)  :3.7
+CPU Time(S)    :1.6
 Peak Memory(MB):1444
-Current RSS(MB):989
+Current RSS(MB):988
 =======================================================

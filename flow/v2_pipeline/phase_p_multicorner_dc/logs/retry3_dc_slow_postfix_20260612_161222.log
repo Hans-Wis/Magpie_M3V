@@ -1,0 +1,1552 @@
+Info: [VCS_SAVE_RESTORE_INFO] ASLR (Address Space Layout Randomization) is detected on the machine. To enable $save functionality, ASLR will be switched off and simv re-executed.
+Please use '-no_save' simv switch to avoid this.
+
+                           Design Compiler Graphical 
+                                 DC Ultra (TM)
+                                  DFTMAX (TM)
+                              Power Compiler (TM)
+                                 DesignWare (R)
+                                 DC Expert (TM)
+                               Design Vision (TM)
+                               HDL Compiler (TM)
+                               VHDL Compiler (TM)
+                                  DFT Compiler
+                               Design Compiler(R)
+
+               Version X-2025.06-SP2 for linux64 - Aug 27, 2025 
+
+                    Copyright (c) 1988 - 2025 Synopsys, Inc.
+   This software and the associated documentation are proprietary to Synopsys,
+ Inc. This software may only be used in accordance with the terms and conditions
+ of a written license agreement with Synopsys, Inc. All other use, reproduction,
+   or distribution of this software is strictly prohibited.  Licensed Products
+     communicate with Synopsys servers for the purpose of providing software
+    updates, detecting software piracy and verifying that customers are using
+    Licensed Products in conformity with the applicable License Key for such
+  Licensed Products. Synopsys will use information gathered in connection with
+    this process to deliver software updates and pursue software pirates and
+                                   infringers.
+
+ Inclusivity & Diversity - Visit SolvNetPlus to read the "Synopsys Statement on
+            Inclusivity and Diversity" (Refer to article 000036315 at
+                        https://solvnetplus.synopsys.com)
+Initializing...
+Initializing gui preferences from file  /home/edauser/.synopsys_dc_gui/preferences.tcl
+Current time:       Fri Jun 12 16:12:23 2026
+Hostname:           eda
+CPU Model:          AMD RYZEN AI MAX+ 395 w/ Radeon 8060S
+CPU Details:        Cores = 24 : Sockets = 1 : Cache Size = 1024 KB : Freq = 2.99 GHz
+OS:                 Linux 6.6.114.1-microsoft-standard-WSL2
+RAM:                 94 GB (Free  87 GB)
+Swap:                24 GB (Free  22 GB)
+Work Filesystem:    / mounted to /dev/sdd
+Tmp Filesystem:     / mounted to /dev/sdd
+Work Disk:          1006 GB (Free 665 GB)
+Tmp Disk:           1006 GB (Free 665 GB)
+
+CPU Load: 7%, Ram Free: 87 GB, Swap Free: 22 GB, Work Disk Free: 665 GB, Tmp Disk Free: 665 GB
+set top_name cpu_m1_top
+cpu_m1_top
+set target_period_ns 1.43
+1.43
+set phase_dir "/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc"
+/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc
+set filelist_path [file join $phase_dir files.f]
+/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/files.f
+cd $phase_dir
+set corners {
+    {SLOW setup_fmax /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ssg0p81v0c.db}
+}
+
+    {SLOW setup_fmax /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ssg0p81v0c.db}
+
+proc timestamp {} {
+    return [clock format [clock seconds] -format "%Y-%m-%dT%H:%M:%S%z"]
+}
+proc format_float {value digits} {
+    if {$value eq "NA"} {
+        return "NA"
+    }
+    return [format "%.${digits}f" $value]
+}
+proc first_regexp_match {path pattern default_value} {
+    if {![file exists $path]} {
+        return $default_value
+    }
+    set fp [open $path r]
+    set text [read $fp]
+    close $fp
+    if {[regexp -line -- $pattern $text -> value]} {
+        return $value
+    }
+    return $default_value
+}
+proc run_corner {corner role target_library_path} {
+    global top_name target_period_ns filelist_path
+
+    global phase_dir
+
+    set run_dir [file join $phase_dir runs $corner]
+    set rpt_dir [file join $phase_dir reports $corner]
+    set db_dir [file join $phase_dir db $corner]
+    set work_dir [file join $phase_dir work $corner]
+    set log_dir [file join $phase_dir logs $corner]
+
+    file mkdir $run_dir $rpt_dir $db_dir $work_dir $log_dir
+
+    set prov_path [file join $run_dir provenance.log]
+    set prov [open $prov_path w]
+    puts $prov "timestamp=[timestamp]"
+    puts $prov "host=[exec hostname]"
+    puts $prov "dc_shell_version=[get_app_var sh_product_version]"
+    puts $prov "tool_path=[info nameofexecutable]"
+    puts $prov "mode=full_per_corner_resynthesis"
+    puts $prov "top=$top_name"
+    puts $prov "target_period_ns=$target_period_ns"
+    puts $prov "target_frequency_mhz=[format_float [expr {1000.0 / $target_period_ns}] 2]"
+    puts $prov "corner=$corner"
+    puts $prov "corner_role=$role"
+    puts $prov "target_library_path=$target_library_path"
+    puts $prov "search_path=. ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $target_library_path]"
+    puts $prov "target_library=$target_library_path"
+    puts $prov "link_library=* $target_library_path dw_foundation.sldb"
+    puts $prov "synthetic_library=dw_foundation.sldb"
+    puts $prov "hdlin_enable_vpp=true"
+    puts $prov "hdlin_infer_multibit=default_all"
+    puts $prov "rtl_filelist=$filelist_path"
+    puts $prov "constraints=mirrors flow/v2_pipeline/phase_05_01_synth_ppa/run_dc.tcl"
+    close $prov
+
+    set status_path [file join $run_dir status.txt]
+    if {![file exists $target_library_path]} {
+        set sfp [open $status_path w]
+        puts $sfp "status=missing_library"
+        puts $sfp "target_library_path=$target_library_path"
+        close $sfp
+        return [list $corner NA NA NA NA NA missing_library $target_library_path]
+    }
+
+    remove_design -all
+    define_design_lib WORK -path $work_dir
+
+    set_app_var search_path [list . ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $target_library_path]]
+    set_app_var target_library [list $target_library_path]
+    set_app_var link_library [concat "*" [list $target_library_path] [list dw_foundation.sldb]]
+    set_app_var synthetic_library [list dw_foundation.sldb]
+    set_app_var hdlin_enable_vpp true
+    set_app_var hdlin_infer_multibit default_all
+
+    set failed 0
+    set err_msg ""
+    if {[catch {
+        analyze -format verilog -vcs "-f $filelist_path"
+        elaborate $top_name
+        current_design $top_name
+        link
+        check_design > [file join $rpt_dir check_design.rpt]
+
+        create_clock -name clk -period $target_period_ns [get_ports clk]
+        set_clock_uncertainty 0.05 [get_clocks clk]
+        set_input_delay 0.10 -clock clk [remove_from_collection [all_inputs] [get_ports clk]]
+        set_output_delay 0.10 -clock clk [all_outputs]
+        set_driving_cell -lib_cell BUFFD1BWP40P140 [remove_from_collection [all_inputs] [get_ports clk]]
+        set_load 0.01 [all_outputs]
+
+        compile_ultra
+
+        report_qor > [file join $rpt_dir qor.rpt]
+        report_area -hierarchy > [file join $rpt_dir area.rpt]
+        report_timing -delay_type max -max_paths 20 -nworst 5 > [file join $rpt_dir timing.rpt]
+        report_timing -delay_type min -max_paths 20 -nworst 5 > [file join $rpt_dir timing_min.rpt]
+        report_power -analysis_effort low > [file join $rpt_dir power.rpt]
+        report_constraint -all_violators > [file join $rpt_dir constraints.rpt]
+        write -format ddc -hierarchy -output [file join $db_dir ${top_name}.ddc]
+        write -format verilog -hierarchy -output [file join $db_dir ${top_name}.mapped.v]
+    } err_msg]} {
+        set failed 1
+    }
+
+    if {$failed} {
+        set sfp [open $status_path w]
+        puts $sfp "status=failed"
+        puts $sfp "error=$err_msg"
+        puts $sfp "target_library_path=$target_library_path"
+        close $sfp
+        return [list $corner NA NA NA NA NA failed $target_library_path]
+    }
+
+    set qor_path [file join $rpt_dir qor.rpt]
+    set area_path [file join $rpt_dir area.rpt]
+    set power_path [file join $rpt_dir power.rpt]
+
+    set wns [first_regexp_match $qor_path {Design[ ]+WNS:[ ]+([-0-9.]+)} "NA"]
+    set tns [first_regexp_match $qor_path {Design[ ]+WNS:[ ]+[-0-9.]+[ ]+TNS:[ ]+([-0-9.]+)} "NA"]
+    set area [first_regexp_match $area_path {Total cell area:[ ]+([-0-9.]+)} "NA"]
+    set power [first_regexp_match $power_path {^[ ]*Total[ ]+[-0-9.eE+]+[ ]+mW[ ]+[-0-9.eE+]+[ ]+mW[ ]+[-0-9.eE+]+[ ]+nW[ ]+([-0-9.eE+]+)[ ]+mW} "NA"]
+
+    if {$wns eq "NA"} {
+        set fmax "NA"
+    } else {
+        set critical_period [expr {$target_period_ns - $wns}]
+        if {$critical_period <= 0.0} {
+            set fmax "NA"
+        } else {
+            set fmax [format_float [expr {1000.0 / $critical_period}] 2]
+        }
+    }
+
+    if {$area eq "0.000000" || $area eq "0"} {
+        set sfp [open $status_path w]
+        puts $sfp "status=failed_zero_area"
+        puts $sfp "target_library_path=$target_library_path"
+        puts $sfp "quality_error=zero_area_indicates_unmapped_or_missing_target_library"
+        close $sfp
+        return [list $corner NA NA NA NA NA failed_zero_area $target_library_path]
+    }
+
+    set sfp [open $status_path w]
+    puts $sfp "status=complete"
+    puts $sfp "target_library_path=$target_library_path"
+    puts $sfp "fmax_mhz=$fmax"
+    puts $sfp "wns_ns=$wns"
+    puts $sfp "tns_ns=$tns"
+    puts $sfp "area_um2=$area"
+    puts $sfp "power_mw=$power"
+    close $sfp
+
+    return [list $corner $fmax $wns $tns $area $power complete $target_library_path]
+}
+file mkdir [file join $phase_dir reports] [file join $phase_dir db] [file join $phase_dir work] [file join $phase_dir logs] [file join $phase_dir runs]
+set summary_path [file join $phase_dir qor_summary.tsv]
+/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/qor_summary.tsv
+set summary [open $summary_path w]
+file13
+puts $summary "corner\tfmax_mhz\twns_ns\ttns_ns\tarea_um2\tpower_mw\tstatus\ttarget_library_path"
+foreach corner_spec $corners {
+    lassign $corner_spec corner role target_library_path
+    set result [run_corner $corner $role $target_library_path]
+    puts $summary [join $result "\t"]
+    flush $summary
+}
+Information: Variable 'hdlin_enable_vpp' is obsolete and is being ignored. (INFO-100)
+Running PRESTO HDLC
+Compiling source file ../../../IP/cpu_m1/rtl/rfu.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/alu.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/bmu.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/idu.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/ifu.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/lsu.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/csr.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/trigger.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/mul.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/div.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/forward.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/hazard.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/bp.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/ras.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/cdec.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Compiling source file ../../../IP/cpu_m1/rtl/core.v
+Opening include file ../../../IP/cpu_m1/rtl/def.vh
+Opening include file ../../../IP/cpu_m1/rtl/pmp.v
+Compiling source file ../../../IP/cpu_m1/rtl/cpu_m1_top.v
+Presto compilation completed successfully.
+Loading db file '/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ssg0p81v0c.db'
+Loading db file '/soft/synopsys/syn/X-2025.06-SP2/libraries/syn/dw_foundation.sldb'
+Loading db file '/soft/synopsys/syn/X-2025.06-SP2/libraries/syn/gtech.db'
+Loading db file '/soft/synopsys/syn/X-2025.06-SP2/libraries/syn/standard.sldb'
+  Loading link library 'tcbn28hpcplusbwp40p140ssg0p81v0c'
+  Loading link library 'gtech'
+Running PRESTO HDLC
+
+Inferred memory devices in process in routine 'cpu_m1_top' in file
+	 ../../../IP/cpu_m1/rtl/cpu_m1_top.v'.
+==================================================================================
+|    Register Name    |   Type    | Width | Bus | MB |  Set  | Reset | ST | Line |
+==================================================================================
+|    i_addr_q_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 115  |
+|    i_rdata_q_reg    | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 115  |
+|     primed_reg      | Flip-flop |   1   |  N  | N  | None  | None  | N  | 115  |
+|     i_busy_reg      | Flip-flop |   1   |  N  | N  | None  | None  | N  | 115  |
+|    d_rdata_q_reg    | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 142  |
+|    d_wdata_q_reg    | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 142  |
+|    d_wstrb_q_reg    | Flip-flop |   4   |  Y  | Y  | None  | None  | N  | 142  |
+|     d_busy_reg      | Flip-flop |   1   |  N  | N  | None  | None  | N  | 142  |
+|    d_addr_q_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 142  |
+==================================================================================
+Presto compilation completed successfully. (cpu_m1_top)
+Module: cpu_m1_top, Ports: 330, Input: 124, Output: 206, Inout: 0
+Module: cpu_m1_top, Registers: 167, Async set/reset: 0, Sync set/reset: 0
+Information: Module cpu_m1_top report end. (ELAB-965)
+Elaborated 1 design.
+Current design is now 'cpu_m1_top'.
+Information: Building the design 'core' instantiated from design 'cpu_m1_top' with
+	the parameters "RESET_PC=32'h00000000,RV32A=0,PMP_ENTRIES=0". (HDL-193)
+
+Statistics for case statements in always block in file
+	'../../../IP/cpu_m1/rtl/core.v'
+=============================================================
+|    Line    |  full/ parallel  |       block location      |
+=============================================================
+|    564     |    auto/auto     | always block at line 563  |
+|    1077    |    auto/auto     | always block at line 1073 |
+|    1335    |    auto/auto     | always block at line 1314 |
+|    778     |    auto/auto     | always block at line 1314 |
+|    1560    |    auto/auto     | always block at line 1556 |
+=============================================================
+
+Inferred memory devices in process in routine 'core_00000000_0_0' in file
+	 ../../../IP/cpu_m1/rtl/core.v'.
+===============================================================================================
+|          Register Name           |   Type    | Width | Bus | MB |  Set  | Reset | ST | Line |
+===============================================================================================
+|            warmup_reg            | Flip-flop |   1   |  N  | N  | None  | None  | N  |  69  |
+|       redirect_warmup_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 150  |
+|        cross_assemble_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 313  |
+|           residue_reg            | Flip-flop |  16   |  Y  | Y  | None  | None  | N  | 313  |
+|       if_ex_pmp_fault_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 349  |
+|        if_ex_is_16bit_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 349  |
+|       if_ex_pmp_mtval_reg        | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 349  |
+|         if_ex_instr_reg          | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 349  |
+|           if_ex_pc_reg           | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 349  |
+|         if_ex_valid_reg          | Flip-flop |   1   |  N  | N  | None  | None  | N  | 349  |
+|       if_ex_pred_taken_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  | 349  |
+|        if_ex_pred_ras_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 349  |
+|      if_ex_pred_target_reg       | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 349  |
+|    if_ex_pred_ras_target_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 349  |
+|         md_result_q_reg          | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 695  |
+|          md_started_reg          | Flip-flop |   1   |  N  | N  | None  | None  | N  | 695  |
+|       md_result_valid_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 695  |
+|    ex_mem_bp_upd_target_r_reg    | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|      ex_mem_csr_wdata_r_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|      ex_mem_bp_upd_pc_r_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|    ex_mem_bp_upd_taken_r_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|       ex_mem_csr_op_r_reg        | Flip-flop |   2   |  Y  | Y  | None  | None  | N  | 1131 |
+|   ex_mem_pred_ras_target_r_reg   | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|        ex_mem_valid_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|        ex_mem_rd_we_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|       ex_mem_is_load_r_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|       ex_mem_is_mul_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|      ex_mem_is_store_r_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|       ex_mem_is_amo_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|      ex_mem_amo_is_lr_r_reg      | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|      ex_mem_amo_is_sc_r_reg      | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|       ex_mem_amo_op_r_reg        | Flip-flop |   4   |  Y  | Y  | None  | None  | N  | 1131 |
+|     ex_mem_store_wstrb_r_reg     | Flip-flop |   4   |  Y  | Y  | None  | None  | N  | 1131 |
+|       ex_mem_is_mret_r_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|       ex_mem_is_dret_r_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|    ex_mem_is_misaligned_r_reg    | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+| ex_mem_is_misaligned_store_r_reg | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|       ex_mem_csr_we_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|   ex_mem_is_branch_taken_r_reg   | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|       ex_mem_is_jal_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|       ex_mem_is_jalr_r_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|       ex_mem_illegal_r_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|      ex_mem_is_ecall_r_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|      ex_mem_is_ebreak_r_reg      | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|        ex_mem_instr_r_reg        | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|     ex_mem_mispredict_r_reg      | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|    ex_mem_bp_upd_valid_r_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|      ex_mem_pred_ras_r_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|     ex_mem_trigger_hit_r_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|     ex_mem_trigger_idx_r_reg     | Flip-flop |   2   |  Y  | Y  | None  | None  | N  | 1131 |
+|    ex_mem_pmp_if_fault_r_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1131 |
+|    ex_mem_pmp_if_mtval_r_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|         ex_mem_pc_r_reg          | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|     ex_mem_alu_result_r_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|      ex_mem_md_result_r_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|      ex_mem_pc_plus_4_r_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|     ex_mem_pc_plus_imm_r_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|      ex_mem_csr_rdata_r_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|       ex_mem_rd_idx_r_reg        | Flip-flop |   5   |  Y  | Y  | None  | None  | N  | 1131 |
+|       ex_mem_wb_sel_r_reg        | Flip-flop |   3   |  Y  | Y  | None  | None  | N  | 1131 |
+|      ex_mem_ls_funct3_r_reg      | Flip-flop |   3   |  Y  | Y  | None  | None  | N  | 1131 |
+|       ex_mem_addr_lo_r_reg       | Flip-flop |   2   |  Y  | Y  | None  | None  | N  | 1131 |
+|     ex_mem_store_wdata_r_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1131 |
+|      ex_mem_csr_addr_r_reg       | Flip-flop |  12   |  Y  | Y  | None  | None  | N  | 1131 |
+|         amo_result_r_reg         | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1314 |
+|         amo_res_addr_reg         | Flip-flop |  30   |  Y  | Y  | None  | None  | N  | 1314 |
+|          amo_state_reg           | Flip-flop |   2   |  Y  | Y  | None  | None  | N  | 1314 |
+|         amo_wdata_r_reg          | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1314 |
+|        amo_res_valid_reg         | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1314 |
+|    ex_wb_pmp_data_fault_r_reg    | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|     ex_wb_pmp_if_fault_r_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|     ex_wb_pmp_if_mtval_r_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1379 |
+|    ex_wb_pmp_data_store_r_reg    | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|        ex_wb_valid_r_reg         | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|          ex_wb_pc_r_reg          | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1379 |
+|      ex_wb_alu_result_r_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1379 |
+|      ex_wb_md_result_r_reg       | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1379 |
+|      ex_wb_pc_plus_4_r_reg       | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1379 |
+|     ex_wb_pc_plus_imm_r_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1379 |
+|      ex_wb_csr_rdata_r_reg       | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1379 |
+|        ex_wb_rd_idx_r_reg        | Flip-flop |   5   |  Y  | Y  | None  | None  | N  | 1379 |
+|        ex_wb_rd_we_r_reg         | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|        ex_wb_wb_sel_r_reg        | Flip-flop |   3   |  Y  | Y  | None  | None  | N  | 1379 |
+|       ex_wb_is_load_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|        ex_wb_is_amo_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|    ex_wb_is_misaligned_r_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+| ex_wb_is_misaligned_store_r_reg  | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|      ex_wb_ls_funct3_r_reg       | Flip-flop |   3   |  Y  | Y  | None  | None  | N  | 1379 |
+|       ex_wb_addr_lo_r_reg        | Flip-flop |   2   |  Y  | Y  | None  | None  | N  | 1379 |
+|       ex_wb_is_mret_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|       ex_wb_is_dret_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|        ex_wb_csr_we_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|       ex_wb_csr_addr_r_reg       | Flip-flop |  12   |  Y  | Y  | None  | None  | N  | 1379 |
+|        ex_wb_csr_op_r_reg        | Flip-flop |   2   |  Y  | Y  | None  | None  | N  | 1379 |
+|      ex_wb_csr_wdata_r_reg       | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1379 |
+|   ex_wb_is_branch_taken_r_reg    | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|        ex_wb_is_jal_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|       ex_wb_is_jalr_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|       ex_wb_illegal_r_reg        | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|       ex_wb_is_ecall_r_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|      ex_wb_is_ebreak_r_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|        ex_wb_instr_r_reg         | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 1379 |
+|     ex_wb_trigger_hit_r_reg      | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1379 |
+|     ex_wb_trigger_idx_r_reg      | Flip-flop |   2   |  Y  | Y  | None  | None  | N  | 1379 |
+|          debug_mode_reg          | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1684 |
+|      debug_halt_pending_reg      | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1684 |
+|      debug_step_pending_reg      | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1684 |
+|         trap_latched_reg         | Flip-flop |   1   |  N  | N  | None  | None  | N  | 1716 |
+===============================================================================================
+Presto compilation completed successfully. (core_00000000_0_0)
+Module: core_00000000_0_0, Ports: 328, Input: 123, Output: 205, Inout: 0
+Module: core_00000000_0_0, Registers: 1133, Async set/reset: 0, Sync set/reset: 0
+Information: Module core_00000000_0_0 report end. (ELAB-965)
+Information: Building the design 'cdec'. (HDL-193)
+
+Statistics for case statements in always block in file
+	'../../../IP/cpu_m1/rtl/cdec.v'
+===========================================================
+|    Line    |  full/ parallel  |      block location     |
+===========================================================
+|     95     |    auto/auto     | always block at line 91 |
+|     99     |    auto/auto     | always block at line 91 |
+|    119     |    auto/auto     | always block at line 91 |
+|    146     |    auto/auto     | always block at line 91 |
+|    163     |    auto/auto     | always block at line 91 |
+|    192     |    auto/auto     | always block at line 91 |
+===========================================================
+Presto compilation completed successfully. (cdec)
+Module: cdec, Ports: 49, Input: 16, Output: 33, Inout: 0
+Module: cdec, Registers: 0, Async set/reset: 0, Sync set/reset: 0
+Information: Module cdec report end. (ELAB-965)
+Information: Building the design 'bp'. (HDL-193)
+
+Inferred memory devices in process in routine 'bp' in file
+	 ../../../IP/cpu_m1/rtl/bp.v'.
+==================================================================================
+|    Register Name    |   Type    | Width | Bus | MB |  Set  | Reset | ST | Line |
+==================================================================================
+|      tag1_reg       | Flip-flop |  832  |  Y  | Y  | None  | None  | N  | 111  |
+|      tag0_reg       | Flip-flop |  832  |  Y  | Y  | None  | None  | N  | 111  |
+|     valid0_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 111  |
+|       lru_reg       | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 111  |
+|     valid1_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 111  |
+|     target0_reg     | Flip-flop | 1024  |  Y  | Y  | None  | None  | N  | 111  |
+|    counter0_reg     | Flip-flop |  64   |  Y  | Y  | None  | None  | N  | 111  |
+|     target1_reg     | Flip-flop | 1024  |  Y  | Y  | None  | None  | N  | 111  |
+|    counter1_reg     | Flip-flop |  64   |  Y  | Y  | None  | None  | N  | 111  |
+==================================================================================
+Statistics for MUX_OPs
+======================================================
+| block name/line  | Inputs | Outputs | # sel inputs |
+======================================================
+|      bp/72       |   32   |    4    |      5       |
+|      bp/72       |   32   |   52    |      5       |
+|      bp/80       |   32   |   64    |      5       |
+|      bp/88       |   32   |    3    |      5       |
+|      bp/88       |   32   |   52    |      5       |
+|      bp/101      |   32   |    4    |      5       |
+======================================================
+Presto compilation completed successfully. (bp)
+Module: bp, Ports: 133, Input: 100, Output: 33, Inout: 0
+Module: bp, Registers: 3936, Async set/reset: 0, Sync set/reset: 0
+Information: Module bp report end. (ELAB-965)
+Information: Building the design 'ras'. (HDL-193)
+
+Inferred memory devices in process in routine 'ras' in file
+	 ../../../IP/cpu_m1/rtl/ras.v'.
+==================================================================================
+|    Register Name    |   Type    | Width | Bus | MB |  Set  | Reset | ST | Line |
+==================================================================================
+|      stack_reg      | Flip-flop |  256  |  Y  | Y  | None  | None  | N  |  53  |
+|       ptr_reg       | Flip-flop |   3   |  Y  | Y  | None  | None  | N  |  53  |
+==================================================================================
+Statistics for MUX_OPs
+======================================================
+| block name/line  | Inputs | Outputs | # sel inputs |
+======================================================
+|      ras/50      |   8    |   32    |      3       |
+======================================================
+Presto compilation completed successfully. (ras)
+Module: ras, Ports: 68, Input: 36, Output: 32, Inout: 0
+Module: ras, Registers: 259, Async set/reset: 0, Sync set/reset: 0
+Information: Module ras report end. (ELAB-965)
+Information: Building the design 'ifu' instantiated from design 'core_00000000_0_0' with
+	the parameters "RESET_PC=32'h00000000". (HDL-193)
+
+Inferred memory devices in process in routine 'ifu_00000000' in file
+	 ../../../IP/cpu_m1/rtl/ifu.v'.
+==================================================================================
+|    Register Name    |   Type    | Width | Bus | MB |  Set  | Reset | ST | Line |
+==================================================================================
+|     pc_reg_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  |  58  |
+==================================================================================
+Presto compilation completed successfully. (ifu_00000000)
+Module: ifu_00000000, Ports: 167, Input: 103, Output: 64, Inout: 0
+Module: ifu_00000000, Registers: 32, Async set/reset: 0, Sync set/reset: 0
+Information: Module ifu_00000000 report end. (ELAB-965)
+Information: Building the design 'idu' instantiated from design 'core_00000000_0_0' with
+	the parameters "RV32A=0". (HDL-193)
+Warning:  ../../../IP/cpu_m1/rtl/idu.v:213: DEFAULT branch of CASE statement cannot be reached. (ELAB-311)
+Warning:  ../../../IP/cpu_m1/rtl/idu.v:228: DEFAULT branch of CASE statement cannot be reached. (ELAB-311)
+
+Statistics for case statements in always block in file
+	'../../../IP/cpu_m1/rtl/idu.v'
+============================================================
+|    Line    |  full/ parallel  |      block location      |
+============================================================
+|    177     |     auto/no      | always block at line 176 |
+|    203     |    auto/auto     | always block at line 199 |
+|    218     |    auto/auto     | always block at line 199 |
+|    233     |    auto/auto     | always block at line 199 |
+|    260     |    auto/auto     | always block at line 255 |
+|    263     |    auto/auto     | always block at line 255 |
+|    272     |    auto/auto     | always block at line 255 |
+|    280     |    auto/auto     | always block at line 255 |
+|    289     |    auto/auto     | always block at line 255 |
+|    296     |    auto/auto     | always block at line 255 |
+|    313     |    auto/auto     | always block at line 255 |
+|    322     |    auto/auto     | always block at line 255 |
+|    326     |    auto/auto     | always block at line 255 |
+|    341     |    auto/auto     | always block at line 255 |
+|    372     |     auto/no      | always block at line 371 |
+============================================================
+Presto compilation completed successfully. (idu_RV32A0)
+Module: idu_RV32A0, Ports: 168, Input: 32, Output: 136, Inout: 0
+Module: idu_RV32A0, Registers: 0, Async set/reset: 0, Sync set/reset: 0
+Information: Module idu_RV32A0 report end. (ELAB-965)
+Information: Building the design 'rfu'. (HDL-193)
+Warning:  ../../../IP/cpu_m1/rtl/rfu.v:46: The statements in initial blocks are ignored. (VER-281)
+
+Inferred memory devices in process in routine 'rfu' in file
+	 ../../../IP/cpu_m1/rtl/rfu.v'.
+==================================================================================
+|    Register Name    |   Type    | Width | Bus | MB |  Set  | Reset | ST | Line |
+==================================================================================
+|      regs_reg       | Flip-flop | 1024  |  Y  | Y  | None  | None  | N  |  55  |
+==================================================================================
+Statistics for MUX_OPs
+======================================================
+| block name/line  | Inputs | Outputs | # sel inputs |
+======================================================
+|      rfu/50      |   32   |   32    |      5       |
+|      rfu/51      |   32   |   32    |      5       |
+|      rfu/52      |   32   |   32    |      5       |
+======================================================
+Presto compilation completed successfully. (rfu)
+Module: rfu, Ports: 185, Input: 89, Output: 96, Inout: 0
+Module: rfu, Registers: 1024, Async set/reset: 0, Sync set/reset: 0
+Information: Module rfu report end. (ELAB-965)
+Information: Building the design 'forward'. (HDL-193)
+Presto compilation completed successfully. (forward)
+Module: forward, Ports: 218, Input: 154, Output: 64, Inout: 0
+Module: forward, Registers: 0, Async set/reset: 0, Sync set/reset: 0
+Information: Module forward report end. (ELAB-965)
+Information: Building the design 'bmu'. (HDL-193)
+
+Statistics for case statements in always block in file
+	'../../../IP/cpu_m1/rtl/bmu.v'
+===========================================================
+|    Line    |  full/ parallel  |      block location     |
+===========================================================
+|     77     |    auto/auto     | always block at line 76 |
+===========================================================
+Statistics for MUX_OPs
+======================================================
+| block name/line  | Inputs | Outputs | # sel inputs |
+======================================================
+|      bmu/99      |   32   |    1    |      5       |
+======================================================
+Presto compilation completed successfully. (bmu)
+Module: bmu, Ports: 101, Input: 69, Output: 32, Inout: 0
+Module: bmu, Registers: 0, Async set/reset: 0, Sync set/reset: 0
+Information: Module bmu report end. (ELAB-965)
+Information: Building the design 'alu'. (HDL-193)
+Warning:  ../../../IP/cpu_m1/rtl/alu.v:51: signed to unsigned assignment occurs. (VER-318)
+
+Statistics for case statements in always block in file
+	'../../../IP/cpu_m1/rtl/alu.v'
+===========================================================
+|    Line    |  full/ parallel  |      block location     |
+===========================================================
+|     54     |    auto/auto     | always block at line 53 |
+===========================================================
+Presto compilation completed successfully. (alu)
+Module: alu, Ports: 103, Input: 68, Output: 35, Inout: 0
+Module: alu, Registers: 0, Async set/reset: 0, Sync set/reset: 0
+Information: Module alu report end. (ELAB-965)
+Information: Building the design 'mul'. (HDL-193)
+Warning:  ../../../IP/cpu_m1/rtl/mul.v:56: unsigned to signed assignment occurs. (VER-318)
+Warning:  ../../../IP/cpu_m1/rtl/mul.v:57: unsigned to signed assignment occurs. (VER-318)
+Warning:  ../../../IP/cpu_m1/rtl/mul.v:73: signed to unsigned part selection occurs. (VER-318)
+
+Inferred memory devices in process in routine 'mul' in file
+	 ../../../IP/cpu_m1/rtl/mul.v'.
+==================================================================================
+|    Register Name    |   Type    | Width | Bus | MB |  Set  | Reset | ST | Line |
+==================================================================================
+|    high_out_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  |  59  |
+|      opa_r_reg      | Flip-flop |  33   |  Y  | Y  | None  | None  | N  |  59  |
+|      opb_r_reg      | Flip-flop |  33   |  Y  | Y  | None  | None  | N  |  59  |
+==================================================================================
+Presto compilation completed successfully. (mul)
+Module: mul, Ports: 102, Input: 70, Output: 32, Inout: 0
+Module: mul, Registers: 67, Async set/reset: 0, Sync set/reset: 0
+Information: Module mul report end. (ELAB-965)
+Information: Building the design 'div'. (HDL-193)
+Warning:  ../../../IP/cpu_m1/rtl/div.v:143: DEFAULT branch of CASE statement cannot be reached. (ELAB-311)
+
+Statistics for case statements in always block in file
+	'../../../IP/cpu_m1/rtl/div.v'
+===========================================================
+|    Line    |  full/ parallel  |      block location     |
+===========================================================
+|     77     |    auto/auto     | always block at line 67 |
+===========================================================
+
+Inferred memory devices in process in routine 'div' in file
+	 ../../../IP/cpu_m1/rtl/div.v'.
+==================================================================================
+|    Register Name    |   Type    | Width | Bus | MB |  Set  | Reset | ST | Line |
+==================================================================================
+|    sign_rem_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  |  67  |
+|    overflow_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  |  67  |
+|     divisor_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  |  67  |
+|    dividend_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  |  67  |
+|    sign_quot_reg    | Flip-flop |   1   |  N  | N  | None  | None  | N  |  67  |
+|   div_by_zero_reg   | Flip-flop |   1   |  N  | N  | None  | None  | N  |  67  |
+|    quotient_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  |  67  |
+|    remainder_reg    | Flip-flop |  32   |  Y  | Y  | None  | None  | N  |  67  |
+|     ret_rem_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  |  67  |
+|     orig_a_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  |  67  |
+|     result_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  |  67  |
+|      iter_reg       | Flip-flop |   6   |  Y  | Y  | None  | None  | N  |  67  |
+|      done_reg       | Flip-flop |   1   |  N  | N  | None  | None  | N  |  67  |
+|      state_reg      | Flip-flop |   2   |  Y  | Y  | None  | None  | N  |  67  |
+==================================================================================
+Presto compilation completed successfully. (div)
+Module: div, Ports: 104, Input: 71, Output: 33, Inout: 0
+Module: div, Registers: 206, Async set/reset: 0, Sync set/reset: 0
+Information: Module div report end. (ELAB-965)
+Information: Building the design 'lsu'. (HDL-193)
+
+Statistics for case statements in always block in file
+	'../../../IP/cpu_m1/rtl/lsu.v'
+===========================================================
+|    Line    |  full/ parallel  |      block location     |
+===========================================================
+|     57     |    auto/auto     | always block at line 56 |
+|     87     |    auto/auto     | always block at line 86 |
+|    100     |    auto/auto     | always block at line 99 |
+===========================================================
+Presto compilation completed successfully. (lsu)
+Module: lsu, Ports: 138, Input: 70, Output: 68, Inout: 0
+Module: lsu, Registers: 0, Async set/reset: 0, Sync set/reset: 0
+Information: Module lsu report end. (ELAB-965)
+Information: Building the design 'trigger'. (HDL-193)
+Warning:  ../../../IP/cpu_m1/rtl/trigger.v:211: signed to unsigned part selection occurs. (VER-318)
+
+Statistics for case statements in always block in file
+	'../../../IP/cpu_m1/rtl/trigger.v'
+============================================================
+|    Line    |  full/ parallel  |      block location      |
+============================================================
+|    138     |    auto/auto     | always block at line 177 |
+|    225     |    auto/auto     | always block at line 201 |
+|    241     |    auto/auto     | always block at line 201 |
+============================================================
+
+Inferred memory devices in process in routine 'trigger' in file
+	 ../../../IP/cpu_m1/rtl/trigger.v'.
+==================================================================================
+|    Register Name    |   Type    | Width | Bus | MB |  Set  | Reset | ST | Line |
+==================================================================================
+|    tdata2_r_reg     | Flip-flop |  128  |  Y  | Y  | None  | None  | N  | 201  |
+|   suppress_r_reg    | Flip-flop |   4   |  Y  | Y  | None  | None  | N  | 201  |
+|    tselect_r_reg    | Flip-flop |   2   |  Y  | Y  | None  | None  | N  | 201  |
+|    tdata1_r_reg     | Flip-flop |  128  |  Y  | Y  | None  | None  | N  | 201  |
+==================================================================================
+Statistics for MUX_OPs
+======================================================
+| block name/line  | Inputs | Outputs | # sel inputs |
+======================================================
+|   trigger/129    |   4    |   64    |      2       |
+======================================================
+Presto compilation completed successfully. (trigger)
+Module: trigger, Ports: 263, Input: 191, Output: 72, Inout: 0
+Module: trigger, Registers: 262, Async set/reset: 0, Sync set/reset: 0
+Information: Module trigger report end. (ELAB-965)
+Information: Building the design 'pmp' instantiated from design 'core_00000000_0_0' with
+	the parameters "PMP_ENTRIES=0". (HDL-193)
+Warning:  ../../../IP/cpu_m1/rtl/pmp.v:86: DEFAULT branch of CASE statement cannot be reached. (ELAB-311)
+Presto compilation completed successfully. (pmp_PMP_ENTRIES0)
+Module: pmp_PMP_ENTRIES0, Ports: 356, Input: 355, Output: 1, Inout: 0
+Module: pmp_PMP_ENTRIES0, Registers: 0, Async set/reset: 0, Sync set/reset: 0
+Information: Module pmp_PMP_ENTRIES0 report end. (ELAB-965)
+Information: Building the design 'csr' instantiated from design 'core_00000000_0_0' with
+	the parameters "RV32A=0,PMP_ENTRIES=0". (HDL-193)
+Warning:  ../../../IP/cpu_m1/rtl/csr.v:392: Statement unreachable (Branch condition impossible to meet).  (VER-61)
+Warning:  ../../../IP/cpu_m1/rtl/csr.v:397: Statement unreachable (Branch condition impossible to meet).  (VER-61)
+Warning:  ../../../IP/cpu_m1/rtl/csr.v:444: Statement unreachable (Branch condition impossible to meet).  (VER-61)
+Warning:  ../../../IP/cpu_m1/rtl/csr.v:449: Statement unreachable (Branch condition impossible to meet).  (VER-61)
+Warning:  ../../../IP/cpu_m1/rtl/csr.v:300: Statement unreachable (Branch condition impossible to meet).  (VER-61)
+Warning:  ../../../IP/cpu_m1/rtl/csr.v:302: Statement unreachable (Branch condition impossible to meet).  (VER-61)
+
+Statistics for case statements in always block in file
+	'../../../IP/cpu_m1/rtl/csr.v'
+============================================================
+|    Line    |  full/ parallel  |      block location      |
+============================================================
+|    238     |    auto/auto     | always block at line 237 |
+|    273     |    auto/auto     | always block at line 237 |
+|    321     |    auto/auto     | always block at line 320 |
+|    374     |    auto/auto     | always block at line 339 |
+|    427     |    auto/auto     | always block at line 339 |
+|    200     |    auto/auto     | always block at line 514 |
+============================================================
+
+Inferred memory devices in process in routine 'csr_RV32A0_PMP_ENTRIES0' in file
+	 ../../../IP/cpu_m1/rtl/csr.v'.
+===================================================================================
+|    Register Name     |   Type    | Width | Bus | MB |  Set  | Reset | ST | Line |
+===================================================================================
+|   mstatus_mpie_reg   | Flip-flop |   1   |  N  | N  | None  | None  | N  | 339  |
+|  dcsr_cause_reg_reg  | Flip-flop |   3   |  Y  | Y  | None  | None  | N  | 339  |
+|     dpc_reg_reg      | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 339  |
+|    mtval_reg_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 339  |
+|   ext_pending_reg    | Flip-flop |   1   |  N  | N  | None  | None  | N  | 339  |
+|  dcsr_step_reg_reg   | Flip-flop |   1   |  N  | N  | None  | None  | N  | 339  |
+| dcsr_ebreakm_reg_reg | Flip-flop |   1   |  N  | N  | None  | None  | N  | 339  |
+|  dscratch0_reg_reg   | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 339  |
+|    mcause_reg_reg    | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 339  |
+|     mie_msie_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  | 339  |
+|     mie_meie_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  | 339  |
+|     mie_mtie_reg     | Flip-flop |   1   |  N  | N  | None  | None  | N  | 339  |
+|     mscratch_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 339  |
+|     mepc_reg_reg     | Flip-flop |  32   |  Y  | Y  | None  | None  | N  | 339  |
+|    mtvec_base_reg    | Flip-flop |  30   |  Y  | Y  | None  | None  | N  | 339  |
+|   mstatus_mie_reg    | Flip-flop |   1   |  N  | N  | None  | None  | N  | 339  |
+|   instret_cnt_reg    | Flip-flop |  64   |  Y  | Y  | None  | None  | N  | 339  |
+|    cycle_cnt_reg     | Flip-flop |  64   |  Y  | Y  | None  | None  | N  | 339  |
+===================================================================================
+Presto compilation completed successfully. (csr_RV32A0_PMP_ENTRIES0)
+Module: csr_RV32A0_PMP_ENTRIES0, Ports: 946, Input: 341, Output: 605, Inout: 0
+Module: csr_RV32A0_PMP_ENTRIES0, Registers: 361, Async set/reset: 0, Sync set/reset: 0
+Information: Module csr_RV32A0_PMP_ENTRIES0 report end. (ELAB-965)
+Information: Building the design 'hazard'. (HDL-193)
+Presto compilation completed successfully. (hazard)
+Module: hazard, Ports: 31, Input: 29, Output: 2, Inout: 0
+Module: hazard, Registers: 0, Async set/reset: 0, Sync set/reset: 0
+Information: Module hazard report end. (ELAB-965)
+Current design is 'cpu_m1_top'.
+
+  Linking design 'cpu_m1_top'
+  Using the following designs and libraries:
+  --------------------------------------------------------------------------
+  * (18 designs)              /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/cpu_m1_top.db, etc
+  tcbn28hpcplusbwp40p140ssg0p81v0c (library) /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ssg0p81v0c.db
+  dw_foundation.sldb (library) /soft/synopsys/syn/X-2025.06-SP2/libraries/syn/dw_foundation.sldb
+
+Information: Summary of messages issued during linking: (LINK-1806)
+No messages were issued during linking.
+Warning: Design rule attributes from the driving cell will be set on the port 'resetn'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_ready'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[31]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[30]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[29]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[28]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[27]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[26]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[25]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[24]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[23]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[22]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[21]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[20]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[19]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[18]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[17]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[16]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[15]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[14]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[13]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[12]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[11]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[10]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[9]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[8]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[7]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[6]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[5]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[4]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[3]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[2]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[1]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'ibus_rdata[0]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_ready'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[31]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[30]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[29]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[28]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[27]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[26]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[25]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[24]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[23]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[22]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[21]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[20]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[19]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[18]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[17]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[16]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[15]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[14]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[13]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[12]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[11]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[10]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[9]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[8]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[7]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[6]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[5]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[4]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[3]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[2]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[1]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dbus_rdata[0]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'irq_external_pulse'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'mtip'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'msip'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'meip'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_halt_req'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_resume_req'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_en'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_write'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[15]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[14]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[13]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[12]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[11]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[10]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[9]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[8]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[7]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[6]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[5]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[4]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[3]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[2]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[1]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_regno[0]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[31]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[30]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[29]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[28]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[27]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[26]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[25]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[24]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[23]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[22]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[21]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[20]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[19]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[18]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[17]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[16]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[15]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[14]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[13]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[12]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[11]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[10]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[9]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[8]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[7]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[6]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[5]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[4]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[3]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[2]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[1]'. (UID-401)
+Warning: Design rule attributes from the driving cell will be set on the port 'dm_acc_wdata[0]'. (UID-401)
+Information: Performing leakage power optimization. (PWR-850)
+CPU Load: 7%, Ram Free: 86 GB, Swap Free: 22 GB, Work Disk Free: 665 GB, Tmp Disk Free: 665 GB
+Analyzing: "/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ssg0p81v0c.db"
+Library analysis succeeded.
+Information: Evaluating DesignWare library utilization. (UISN-27)
+
+============================================================================
+| DesignWare Building Block Library  |         Version         | Available |
+============================================================================
+| Basic DW Building Blocks           | X-2025.06-DWBB_202506.2 |     *     |
+| Licensed DW Building Blocks        | X-2025.06-DWBB_202506.2 |     *     |
+============================================================================
+
+====================================================================================================
+| Flow Information                                                                                 |
+----------------------------------------------------------------------------------------------------
+| Flow         | Design Compiler WLM                                                               |
+| Command Line | compile_ultra                                                                     |
+====================================================================================================
+| Design Information                                      | Value                                  |
+====================================================================================================
+| Number of Scenarios                                     | 0                                      |
+| Leaf Cell Count                                         | 15039                                  |
+| Number of User Hierarchies                              | 20                                     |
+| Sequential Cell Count                                   | 7447                                   |
+| Macro Count                                             | 0                                      |
+| Pad Count                                               | 0                                      |
+| Number of Power Domains                                 | 0                                      |
+| Number of Path Groups                                   | 2                                      |
+| Number of VT Class                                      | 0                                      |
+| Number of Clocks                                        | 1                                      |
+| Number of Dont Touch Cells                              | 1715                                   |
+| Number of Dont Touch Nets                               | 0                                      |
+| Number of Size Only Cells                               | 0                                      |
+| Design with Target Library Subset (with clock_path)     | false  (false )                        |
+| Design with UPF Data                                    | false                                  |
+====================================================================================================
+Information: Sequential output inversion is enabled.  SVF file must be used for formal verification. (OPT-1208)
+
+Information: There are 1371 potential problems in your design. Please run 'check_design' for more information. (LINT-99)
+
+Information: Uniquified 2 instances of design 'lsu'. (OPT-1056)
+Information: Uniquified 3 instances of design 'pmp_PMP_ENTRIES0'. (OPT-1056)
+  Simplifying Design 'cpu_m1_top'
+Information: The register 'u_core/ex_wb_is_load_r_reg' will be removed. (OPT-1207)
+Information: The register 'u_core/ex_wb_is_load_r_reg' will be removed. (OPT-1207)
+Information: The register 'u_core/ex_mem_bp_upd_pc_r_reg[0]' will be removed. (OPT-1207)
+Information: The register 'u_core/ex_mem_bp_upd_pc_r_reg[0]' will be removed. (OPT-1207)
+Information: Removing unused design 'pmp_PMP_ENTRIES0_2'. (OPT-1055)
+Information: Removing unused design 'pmp_PMP_ENTRIES0_0'. (OPT-1055)
+Information: Removing unused design 'pmp_PMP_ENTRIES0_1'. (OPT-1055)
+
+Loaded alib file './alib-52/tcbn28hpcplusbwp40p140ssg0p81v0c.db.alib'
+Module: DW01_NAND2, Ports: 3, Input: 2, Output: 1, Inout: 0
+Module: DW01_NAND2, Registers: 0, Async set/reset: 0, Sync set/reset: 0
+  Building model 'DW01_NAND2'
+Information: Ungrouping hierarchy u_core/u_cdec before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_core/u_ras before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_core/u_ifu before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_core/u_idu before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_core/u_forward before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_core/u_alu before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_core/u_div before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_core/u_lsu_id before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_core/u_hazard before Pass 1 (OPT-776)
+Information: Ungrouping hierarchy u_core/u_lsu_wb before Pass 1 (OPT-776)
+Information: Ungrouping 10 of 18 hierarchies before Pass 1 (OPT-775)
+CPU Load: 10%, Ram Free: 85 GB, Swap Free: 22 GB, Work Disk Free: 665 GB, Tmp Disk Free: 665 GB
+Information: State dependent leakage is now switched from on to off.
+
+  Beginning Pass 1 Mapping
+  ------------------------
+  Processing 'bp'
+Information: Added key list 'DesignWare' to design 'bp'. (DDB-72)
+  Processing 'core_00000000_0_0'
+Information: The register 'amo_wdata_r_reg[0]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[1]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[2]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[3]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[4]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[5]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[6]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[7]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[8]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[9]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[10]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[11]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[12]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[13]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[14]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[15]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[16]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[17]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[18]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[19]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[20]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[21]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[22]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[23]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[24]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[25]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[26]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[27]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[28]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[29]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[30]' will be removed. (OPT-1207)
+Information: The register 'amo_wdata_r_reg[31]' will be removed. (OPT-1207)
+Information: Added key list 'DesignWare' to design 'core_00000000_0_0'. (DDB-72)
+Information: The register 'ex_wb_is_amo_r_reg' is a constant and will be removed. (OPT-1206)
+Information: The register 'ex_wb_pmp_if_fault_r_reg' is a constant and will be removed. (OPT-1206)
+Information: The register 'ex_wb_pmp_data_fault_r_reg' is a constant and will be removed. (OPT-1206)
+Information: The register 'ex_mem_is_amo_r_reg' is a constant and will be removed. (OPT-1206)
+Information: The register 'ex_mem_amo_is_lr_r_reg' is a constant and will be removed. (OPT-1206)
+Information: The register 'ex_mem_amo_is_sc_r_reg' is a constant and will be removed. (OPT-1206)
+Information: The register 'ex_mem_trigger_idx_r_reg[1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'ex_mem_pmp_if_fault_r_reg' is a constant and will be removed. (OPT-1206)
+Information: The register 'if_ex_pmp_fault_reg' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_state_reg[1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_state_reg[0]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[2]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[3]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[4]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[5]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[6]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[7]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[8]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[9]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[10]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[11]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[12]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[13]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[14]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[15]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[16]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[17]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[18]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[19]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[20]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[21]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[22]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[23]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[24]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[25]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[26]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[27]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[28]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[29]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[30]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[31]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_result_r_reg[0]' is a constant and will be removed. (OPT-1206)
+Information: The register 'amo_res_valid_reg' is a constant and will be removed. (OPT-1206)
+Information: In design 'core_00000000_0_0', the register 'ex_mem_ls_funct3_r_reg[0]' is removed because it is merged to 'ex_mem_csr_op_r_reg[0]'. (OPT-1215)
+Information: In design 'core_00000000_0_0', the register 'ex_mem_ls_funct3_r_reg[1]' is removed because it is merged to 'ex_mem_csr_op_r_reg[1]'. (OPT-1215)
+Information: The register 'amo_res_addr_reg[2]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[3]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[4]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[5]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[31]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[29]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[6]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[7]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[8]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[9]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[10]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[11]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[12]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[13]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[15]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[16]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[14]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[17]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[18]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[19]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[20]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[21]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[22]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[23]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[24]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[25]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[26]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[27]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[28]' will be removed. (OPT-1207)
+Information: The register 'amo_res_addr_reg[30]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_amo_op_r_reg[3]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_amo_op_r_reg[2]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_amo_op_r_reg[0]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_amo_op_r_reg[1]' will be removed. (OPT-1207)
+ Implement Synthetic for 'core_00000000_0_0'.
+Information: The register 'u_ras/stack_reg[7][31]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][30]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][29]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][28]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][27]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][26]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][25]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][24]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][23]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][22]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][21]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][20]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][19]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][18]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][17]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][16]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][15]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][14]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][13]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][12]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][11]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][10]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][9]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][8]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][7]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][6]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][5]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][4]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][3]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][2]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][1]' will be removed. (OPT-1207)
+Information: The register 'u_ras/stack_reg[7][0]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[0]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[1]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[2]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[3]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[4]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[5]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[6]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[7]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[8]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[9]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[10]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[11]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[12]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[13]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[14]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[15]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[16]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[17]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[18]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[19]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[20]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[21]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[22]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[23]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[24]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[25]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[26]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[27]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[28]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[29]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[30]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_if_mtval_r_reg[31]' will be removed. (OPT-1207)
+Information: The register 'ex_wb_pmp_data_store_r_reg' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[0]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[0]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[1]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[1]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[2]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[2]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[3]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[3]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[4]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[4]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[5]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[5]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[6]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[6]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[7]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[7]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[8]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[8]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[9]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[9]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[10]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[10]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[11]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[11]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[12]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[12]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[13]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[13]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[14]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[14]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[15]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[15]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[16]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[16]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[17]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[17]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[18]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[18]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[19]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[19]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[20]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[20]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[21]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[21]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[22]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[22]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[23]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[23]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[24]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[24]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[25]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[25]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[26]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[26]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[27]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[27]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[28]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[28]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[29]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[29]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[30]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[30]' will be removed. (OPT-1207)
+Information: The register 'if_ex_pmp_mtval_reg[31]' will be removed. (OPT-1207)
+Information: The register 'ex_mem_pmp_if_mtval_r_reg[31]' will be removed. (OPT-1207)
+  Processing 'csr_RV32A0_PMP_ENTRIES0'
+Information: Added key list 'DesignWare' to design 'csr_RV32A0_PMP_ENTRIES0'. (DDB-72)
+Information: The register 'dpc_reg_reg[0]' is a constant and will be removed. (OPT-1206)
+ Implement Synthetic for 'csr_RV32A0_PMP_ENTRIES0'.
+  Processing 'rfu'
+  Processing 'trigger'
+Information: Added key list 'DesignWare' to design 'trigger'. (DDB-72)
+Information: The register 'tdata1_r_reg[0][31]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][3]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][4]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][5]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][7]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][8]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][9]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][10]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][11]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][13]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][14]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][15]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][19]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][20]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][21]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][23]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][24]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][25]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][26]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[0][28]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][31]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][3]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][4]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][5]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][7]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][8]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][9]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][10]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][11]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][13]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][14]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][15]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][19]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][20]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][21]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][23]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][24]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][25]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][26]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[1][28]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][31]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][3]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][4]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][5]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][7]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][8]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][9]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][10]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][11]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][13]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][14]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][15]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][19]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][20]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][21]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][23]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][24]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][25]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][26]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[2][28]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][31]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][3]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][4]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][5]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][7]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][8]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][9]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][10]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][11]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][13]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][14]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][15]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][19]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][20]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][21]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][23]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][24]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][25]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][26]' is a constant and will be removed. (OPT-1206)
+Information: The register 'tdata1_r_reg[3][28]' is a constant and will be removed. (OPT-1206)
+Information: In design 'trigger', the register 'tdata1_r_reg[0][30]' is removed because it is merged to 'tdata1_r_reg[0][29]'. (OPT-1215)
+Information: In design 'trigger', the register 'tdata1_r_reg[1][30]' is removed because it is merged to 'tdata1_r_reg[1][29]'. (OPT-1215)
+Information: In design 'trigger', the register 'tdata1_r_reg[2][30]' is removed because it is merged to 'tdata1_r_reg[2][29]'. (OPT-1215)
+Information: In design 'trigger', the register 'tdata1_r_reg[3][30]' is removed because it is merged to 'tdata1_r_reg[3][29]'. (OPT-1215)
+  Processing 'bmu'
+ Implement Synthetic for 'bmu'.
+Information: Added key list 'DesignWare' to design 'bmu'. (DDB-72)
+  Processing 'cpu_m1_top'
+  Processing 'mul'
+ Implement Synthetic for 'mul'.
+Memory usage for J1 task 702 Mbytes -- main task 598 Mbytes.
+Memory usage for J2 task 654 Mbytes -- main task 598 Mbytes.
+Memory usage for J3 task 599 Mbytes -- main task 598 Mbytes.
+Memory usage for J4 task 605 Mbytes -- main task 598 Mbytes.
+Memory usage for J5 task 598 Mbytes -- main task 598 Mbytes.
+Memory usage for J6 task 598 Mbytes -- main task 598 Mbytes.
+Memory usage for J7 task 598 Mbytes -- main task 598 Mbytes.
+CPU Load: 11%, Ram Free: 86 GB, Swap Free: 22 GB, Work Disk Free: 665 GB, Tmp Disk Free: 665 GB
+
+  Updating timing information
+Information: The register 'u_core/u_rfu/regs_reg[0][31]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][30]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][29]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][28]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][27]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][26]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][25]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][24]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][23]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][22]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][21]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][20]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][19]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][18]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][17]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][16]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][15]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][14]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][13]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][12]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][11]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][10]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][9]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][8]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][7]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][6]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][5]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][4]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][3]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][2]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][1]' will be removed. (OPT-1207)
+Information: The register 'u_core/u_rfu/regs_reg[0][0]' will be removed. (OPT-1207)
+Information: Updating design information... (UID-85)
+Information: The library cell 'TIELBWP40P140' in the library 'tcbn28hpcplusbwp40p140ssg0p81v0c' is not characterized for internal power. (PWR-536)
+Information: The library cell 'TIEHBWP40P140' in the library 'tcbn28hpcplusbwp40p140ssg0p81v0c' is not characterized for internal power. (PWR-536)
+Information: The target library(s) contains cell(s), other than black boxes, that are not characterized for internal power. (PWR-24)
+Information: Complementing port 'dbg_instr[4]' in design 'core_00000000_0_0'.
+	 The new name of the port is 'dbg_instr[4]_BAR'. (OPT-319)
+Information: Complementing port 'dbg_state[0]' in design 'core_00000000_0_0'.
+	 The new name of the port is 'dbg_state[0]_BAR'. (OPT-319)
+Information: Complementing port 'debug_halt_enter' in design 'csr_RV32A0_PMP_ENTRIES0'.
+	 The new name of the port is 'debug_halt_enter_BAR'. (OPT-319)
+Information: Complementing port 'fire_valid' in design 'trigger'.
+	 The new name of the port is 'fire_valid_BAR'. (OPT-319)
+Information: The register 'u_core/u_trigger/tdata1_r_reg[3][2]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_core/u_trigger/tdata1_r_reg[2][2]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_core/u_trigger/tdata1_r_reg[0][1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_core/u_trigger/tdata1_r_reg[0][0]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_core/u_trigger/tdata1_r_reg[1][1]' is a constant and will be removed. (OPT-1206)
+Information: The register 'u_core/u_trigger/tdata1_r_reg[1][0]' is a constant and will be removed. (OPT-1206)
+
+  Beginning Mapping Optimizations  (Ultra High effort)
+  -------------------------------
+Information: Updating design information... (UID-85)
+Information: Ungrouping hierarchy u_core/u_mul 'mul' #insts = 174. (OPT-777)
+Information: Ungrouping hierarchy u_core/u_trigger 'trigger' #insts = 1152. (OPT-777)
+Information: Ungrouping hierarchy u_core/u_csr 'csr_RV32A0_PMP_ENTRIES0' #insts = 2007. (OPT-777)
+Information: Ungrouping hierarchy u_core 'core_00000000_0_0' #insts = 14209. (OPT-777)
+Information: Added key list 'DesignWare' to design 'cpu_m1_top'. (DDB-72)
+  Mapping Optimization (Phase 1)
+  Mapping Optimization (Phase 2)
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:01:40   56351.6      0.02       0.4       0.0                           8200.0771
+    0:01:45   56276.5      0.04       1.1       0.0                           8189.1694
+
+  Beginning Constant Register Removal
+  -----------------------------------
+    0:01:47   56617.5      0.01       0.2       0.0                           8270.0371
+    0:01:51   56617.5      0.01       0.2       0.0                           8270.0371
+
+  Beginning Global Optimizations
+  ------------------------------
+  Numerical Synthesis (Phase 1)
+  Numerical Synthesis (Phase 2)
+  Global Optimization (Phase 1)
+  Global Optimization (Phase 2)
+  Global Optimization (Phase 3)
+  Global Optimization (Phase 4)
+  Global Optimization (Phase 5)
+  Global Optimization (Phase 6)
+  Global Optimization (Phase 7)
+  Global Optimization (Phase 8)
+  Global Optimization (Phase 9)
+  Global Optimization (Phase 10)
+  Global Optimization (Phase 11)
+  Global Optimization (Phase 12)
+  Global Optimization (Phase 13)
+  Global Optimization (Phase 14)
+  Global Optimization (Phase 15)
+  Global Optimization (Phase 16)
+  Global Optimization (Phase 17)
+  Global Optimization (Phase 18)
+  Global Optimization (Phase 19)
+  Global Optimization (Phase 20)
+  Global Optimization (Phase 21)
+  Global Optimization (Phase 22)
+  Global Optimization (Phase 23)
+  Global Optimization (Phase 24)
+  Global Optimization (Phase 25)
+  Global Optimization (Phase 26)
+  Global Optimization (Phase 27)
+  Global Optimization (Phase 28)
+  Global Optimization (Phase 29)
+  Global Optimization (Phase 30)
+  Global Optimization (Phase 31)
+  Mapping 'cpu_m1_top_DP_OP_542_137_7863_3'
+
+  Beginning Isolate Ports
+  -----------------------
+
+  Beginning Delay Optimization
+  ----------------------------
+    0:02:07   31923.6      0.21       6.1       7.9                           3916.4353
+    0:02:08   32027.8      0.00       0.0       7.9                           3937.7725
+    0:02:08   32027.8      0.00       0.0       7.9                           3937.7725
+    0:02:10   31979.9      0.00       0.0       7.9                           3934.5210
+    0:02:14   31929.0      0.00       0.0       7.9                           3924.7913
+    0:02:20   31878.1      0.00       0.0       7.9                           3918.2637
+
+  Beginning WLM Backend Optimization
+  --------------------------------------
+    0:02:28   31674.8      0.00       0.0       7.9                           3885.3545
+    0:02:31   31537.4      0.00       0.0       7.9                           3867.9749
+    0:02:31   31537.4      0.00       0.0       7.9                           3867.9749
+    0:02:31   31537.4      0.00       0.0       7.9                           3867.9749
+    0:02:31   31537.4      0.00       0.0       7.9                           3867.9749
+    0:02:31   31537.4      0.00       0.0       7.9                           3867.9749
+    0:02:37   30746.6      0.00       0.0       7.9                           3696.1086
+    0:02:37   30746.6      0.00       0.0       7.9                           3696.1086
+    0:02:37   30746.6      0.00       0.0       7.9                           3696.1086
+    0:02:37   30746.6      0.00       0.0       7.9                           3696.1086
+    0:02:37   30746.6      0.00       0.0       7.9                           3696.1086
+    0:02:37   30746.6      0.00       0.0       7.9                           3696.1086
+
+
+  Beginning Design Rule Fixing  (max_transition)  (max_capacitance)
+  ----------------------------
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:02:37   30746.6      0.00       0.0       7.9                           3696.1086
+  Global Optimization (Phase 32)
+  Global Optimization (Phase 33)
+  Global Optimization (Phase 34)
+    0:02:38   30747.3      0.00       0.0       0.0                           3696.1301
+    0:02:45   30998.6      0.00       0.0       0.0                           3320.0964
+    0:02:45   30998.6      0.00       0.0       0.0                           3320.0964
+    0:02:45   30998.6      0.00       0.0       0.0                           3320.0964
+    0:02:45   30998.6      0.00       0.0       0.0                           3320.0964
+    0:02:45   30998.6      0.00       0.0       0.0                           3320.0964
+    0:02:45   30998.6      0.00       0.0       0.0                           3320.0964
+
+                                  TOTAL                                                
+   ELAPSED            WORST NEG   SETUP    DESIGN                              LEAKAGE 
+    TIME      AREA      SLACK     COST    RULE COST         ENDPOINT            POWER  
+  --------- --------- --------- --------- --------- ------------------------- ---------
+    0:02:46   30998.6      0.00       0.0       0.0                           3320.0964
+    0:02:58   30622.5      0.00       0.0       0.0                           3252.2061
+    0:02:58   30622.5      0.00       0.0       0.0                           3252.2061
+    0:03:00   30619.8      0.01       0.1       0.0                           3249.3853
+    0:03:03   30591.7      0.01       0.5       0.0                           3244.8909
+    0:03:04   30579.1      0.01       0.3       0.0                           3242.0066
+    0:03:04   30579.1      0.01       0.3       0.0                           3242.0066
+    0:03:04   30586.4      0.01       0.3       0.0                           3243.4529
+    0:03:04   30588.4      0.01       0.2       0.0                           3244.0461
+    0:03:04   30595.3      0.01       0.2       0.0                           3245.2200
+    0:03:04   30599.1      0.01       0.0       0.0                           3245.9373
+    0:03:05   30602.8      0.00       0.0       0.0                           3246.9683
+    0:03:05   30604.3      0.00       0.0       0.0                           3247.2437
+    0:03:05   30604.3      0.00       0.0       0.0                           3247.2437
+    0:03:05   30604.3      0.00       0.0       0.0                           3247.2437
+    0:03:05   30604.3      0.00       0.0       0.0                           3247.2437
+    0:03:05   30604.3      0.00       0.0       0.0                           3247.2437
+    0:03:05   30604.3      0.00       0.0       0.0                           3247.2437
+    0:03:05   30604.3      0.00       0.0       0.0                           3247.2437
+    0:03:08   30515.7      0.00       0.0       0.0                           3232.7700
+CPU Load: 11%, Ram Free: 85 GB, Swap Free: 22 GB, Work Disk Free: 665 GB, Tmp Disk Free: 665 GB
+Loading db file '/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ssg0p81v0c.db'
+
+
+Note: Symbol # after min delay cost means estimated hold TNS across all active scenarios 
+
+
+  Optimization Complete
+  ---------------------
+Warning: Design 'cpu_m1_top' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+     Net 'u_core/u_rfu/clk': 7081 load(s), 1 driver(s)
+Information: State dependent leakage is now switched from off to on.
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+CPU Load: 11%, Ram Free: 85 GB, Swap Free: 22 GB, Work Disk Free: 665 GB, Tmp Disk Free: 665 GB
+Information: Total number of MV cells in the design.
+----------------------------------------------------------------------------------------------------
+ MV Cells                                           Total Number                                   
+----------------------------------------------------------------------------------------------------
+ Level Shifter:                                     0                                             
+ Enable Level Shifter:                              0                                             
+ Isolation Cell:                                    0                                             
+ Retention Cell:                                    0                                             
+ Retention Clamp Cell:                              0                                             
+ Switch Cell:                                       0                                             
+ Always-On Cell:                                    0                                             
+ Repeater Cell:                                     0                                             
+
+----------------------------------------------------------------------------------------------------
+Unmapped MV Cells 
+----------------------------------------------------------------------------------------------------
+0 Isolation Cells are unmapped 
+0 Retention Clamp Cells are unmapped 
+----------------------------------------------------------------------------------------------------
+Writing ddc file '/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/db/SLOW/cpu_m1_top.ddc'.
+Writing verilog file '/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/db/SLOW/cpu_m1_top.mapped.v'.
+Warning: Verilog 'assign' or 'tran' statements are written out. (VO-4)
+close $summary
+quit
+
+Memory usage for this session 732 Mbytes.
+Memory usage for this session including child processes 732 Mbytes.
+CPU usage for this session 241 seconds ( 0.07 hours ).
+Elapsed time for this session 242 seconds ( 0.07 hours ).
+
+Thank you...

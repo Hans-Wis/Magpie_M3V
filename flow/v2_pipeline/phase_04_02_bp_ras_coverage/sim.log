@@ -5,7 +5,7 @@
 [995 ns] mmio[00000010] <= 00000505
 [1295 ns] mmio[00000014] <= 00000606
 PASS: directed BP/RAS coverage completed
-- tb_bp_ras_coverage.v:151: Verilog $finish
+- tb_bp_ras_coverage.v:168: Verilog $finish
 - S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 9us; walltime 0.030 s; speed 306.198 us/s
-- Verilator: cpu 0.030 s on 1 threads; allocated 28 MB
+- Verilator: $finish at 9us; walltime 0.283 s; speed 32.049 us/s
+- Verilator: cpu 0.283 s on 1 threads; allocated 35 MB

@@ -1,0 +1,23 @@
+{
+  "seed": 2026075307,
+  "message": "watchdog timeout",
+  "mismatch_index": 0,
+  "dut": {
+    "idx": "0",
+    "pc": "00001000",
+    "instr": "f14022f3",
+    "rd": "5",
+    "wdata": "00000000",
+    "csr": "f14"
+  },
+  "spike": {
+    "idx": "0",
+    "pc": "00001000",
+    "instr": "f14022f3",
+    "rd": "5",
+    "wdata": "00000000"
+  },
+  "last_20_dut": [],
+  "last_20_spike": [],
+  "repro": "/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_03_09_riscvdv_lockstep/zb/seed_2026075307"
+}

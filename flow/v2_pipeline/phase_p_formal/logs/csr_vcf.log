@@ -30,9 +30,9 @@ Info: SVAC-NC Finished
 Info: Invoking Simon...
 Info: Simon VCS Start
 =======================================================
-VCS CPU Time(s)     :0.06
-SIMON CPU Time(s)   :0.02
-SIMON Total Time(s) :0.02
+VCS CPU Time(s)     :0.09
+SIMON CPU Time(s)   :0.05
+SIMON Total Time(s) :0.04
 Peak Memory(MB)     :415
 =======================================================
 Info: Simon VCS Finished
@@ -42,14 +42,14 @@ Verdi KDB elaboration done and the database successfully generated: 0 error(s), 
 [Info] DB_COPT045: Vcs analyzer task has finished.
 [Info] PROP_I_COLLECT: Collecting Source Properties from the view:csr.
 # Gate Counts 
-Number of Flat Instances = 1430
-Number of Operator = 1430
+Number of Flat Instances = 3793
+Number of Operator = 3793
 Number of Libcells = 0
 Number of Black-Box Instances = 0
-Number of FlipFlop BitWise = 292
+Number of FlipFlop BitWise = 683
 Number of Latch Bitwise = 0
 Number of Nand BitWise = 0
-Number of Comb logic = 245
+Number of Comb logic = 551
 
 1
 create_clock clk -period 10
@@ -80,14 +80,14 @@ Run configuration:
 [Info] Number of workers requested : 4
 [Info] FPV flow ver : v7 
 [Info] PERF_DIAGNOSTICS_ALERTS_END
-[Info] BITLEVEL_MODEL_STATS: Generated model with 1 gates, 0 inputs, 2 registers, 0 initial constraints, 0 constraints.
-[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_0  t1  proven  property  00:00:00
-[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_1  t1  proven  property  00:00:00
-[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_2  t1  proven  property  00:00:00
-[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_3  t1  proven  property  00:00:00
-[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_4  t1  proven  property  00:00:00
-[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_5  t1  proven  property  00:00:00
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_0  t1  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_1  t1  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_2  t1  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_3  t1  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_4  t1  proven  property  00:00:01
+[Info] PROP_I_RESULT: FPV  csr.csr_assert_i.unnamed$$_5  t1  proven  property  00:00:01
 [Info] BITLEVEL_MODEL_STATS: Generated model with 0 gates, 0 inputs, 0 registers, 0 initial constraints, 0 constraints.
+[Info] BITLEVEL_MODEL_STATS: Generated model with 1 gates, 0 inputs, 2 registers, 0 initial constraints, 0 constraints.
 [Info] PERF_DIAGNOSTICS_ALERTS_START
 
   Summary Results
@@ -126,20 +126,20 @@ foreach_in_collection prop [get_props -usage assert] {
 close $fp
 
 =======================================================
-Total Time(S)  :3.49
-CPU Time(S)    :1.57
-Peak Memory(MB):2226
+Total Time(S)  :3.81
+CPU Time(S)    :1.74
+Peak Memory(MB):2227
 ========================Formal=========================
-Engine Wall Time(S)    :1.44
+Engine Wall Time(S)    :1.47
 Engine Peak Memory(MB) :82
 =======================================================
 Session exit code is 3 (Abnormal termination - termination trapped by software)
 
 
-Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 225055 ..
+Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 586991 ..
 
 
---- pstack for process 225055 is dumped to 
+--- pstack for process 586991 is dumped to 
 
 #/lib64/libpthread.so.0 : ()+0x1298f
 #/lib64/libc.so.6 : gsignal()+0x10f
@@ -159,8 +159,8 @@ Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 225055 ..
 #/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : main()+0x530
 #/lib64/libc.so.6 : __libc_start_main()+0xe4
 #/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi() [0x7f77028]=======================================================
-Total Time(S)  :3.5
-CPU Time(S)    :1.6
+Total Time(S)  :3.8
+CPU Time(S)    :1.8
 Peak Memory(MB):1453
-Current RSS(MB):998
+Current RSS(MB):999
 =======================================================

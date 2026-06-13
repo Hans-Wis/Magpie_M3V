@@ -20,54 +20,55 @@
         module forward (
             // ID/EX stage 想要的 rs index
  000074     input  [ 4:0] id_rs1_idx,
- 000106     input  [ 4:0] id_rs2_idx,
+ 000104     input  [ 4:0] id_rs2_idx,
         
             // 從 RFU 組合讀出的「舊」值
 ~000063     input  [31:0] rfu_rs1_data,
-~000077     input  [31:0] rfu_rs2_data,
+~000076     input  [31:0] rfu_rs2_data,
         
             // EX/MEM stage 的寫回資訊 (1 cycle ahead)
- 000195     input         em_valid,
- 000215     input         em_rd_we,
- 000134     input  [ 4:0] em_rd_idx,
- 000096     input  [31:0] em_fwd_val,      // = alu_result 或 pc_plus_4 / pc_plus_imm / csr / md
- 000031     input         em_is_load,      // load 在 ex_mem 不能 forward (alu_result = addr)
+ 000024     input         em_valid,
+ 000051     input         em_rd_we,
+ 000133     input  [ 4:0] em_rd_idx,
+ 000097     input  [31:0] em_fwd_val,      // = alu_result 或 pc_plus_4 / pc_plus_imm / csr / md
+ 000036     input         em_is_load,      // value-not-ready-in-MEM class: load (alu_result=addr)
+                                             // OR M1A pipelined MUL (product lands at WB) — caller ORs both
         
             // EX/WB stage 的寫回資訊 (2 cycles ahead, 但 load 可以 forward 因為 wb_data 已 mux)
- 000195     input         wb_valid,
- 000214     input         wb_rd_we,
+ 000024     input         wb_valid,
+ 000048     input         wb_rd_we,
  000133     input  [ 4:0] wb_rd_idx,
  000094     input  [31:0] wb_data,
- 000031     input         wb_is_load,
+ 000029     input         wb_is_load,
         
             // Forwarded operand 給 ALU 用
-~000059     output [31:0] rs1_val,
+~000058     output [31:0] rs1_val,
 ~000080     output [31:0] rs2_val
         );
         
             // EX/MEM forward (priority 1, closer)
- 000209     wire em_fwd_ok  = em_valid && em_rd_we && !em_is_load && (em_rd_idx != 5'd0);
+ 000065     wire em_fwd_ok  = em_valid && em_rd_we && !em_is_load && (em_rd_idx != 5'd0);
  000016     wire em_fwd_rs1 = em_fwd_ok && (id_rs1_idx == em_rd_idx);
- 000014     wire em_fwd_rs2 = em_fwd_ok && (id_rs2_idx == em_rd_idx);
+ 000013     wire em_fwd_rs2 = em_fwd_ok && (id_rs2_idx == em_rd_idx);
         
             // EX/WB forward (priority 2, further)
             // load 在 WB 可以 forward 因為 wb_data mux 已含 lsu sign-ext 結果
             // (代價：critical path 11.7 ns @ 85 MHz)
- 000211     wire wb_fwd_ok  = wb_valid && wb_rd_we && (wb_rd_idx != 5'd0);
+ 000048     wire wb_fwd_ok  = wb_valid && wb_rd_we && (wb_rd_idx != 5'd0);
 %000006     wire wb_fwd_rs1 = wb_fwd_ok && !em_fwd_rs1 && (id_rs1_idx == wb_rd_idx);
- 000010     wire wb_fwd_rs2 = wb_fwd_ok && !em_fwd_rs2 && (id_rs2_idx == wb_rd_idx);
+%000009     wire wb_fwd_rs2 = wb_fwd_ok && !em_fwd_rs2 && (id_rs2_idx == wb_rd_idx);
         
             /* verilator lint_off UNUSEDSIGNAL */
             wire _unused_wb_is_load = wb_is_load;
             /* verilator lint_on UNUSEDSIGNAL */
         
- 001304     assign rs1_val = em_fwd_rs1 ? em_fwd_val :
-~001298                      wb_fwd_rs1 ? wb_data    :
- 001298                                   rfu_rs1_data;
+ 001128     assign rs1_val = em_fwd_rs1 ? em_fwd_val :
+~001122                      wb_fwd_rs1 ? wb_data    :
+ 001122                                   rfu_rs1_data;
         
- 001306     assign rs2_val = em_fwd_rs2 ? em_fwd_val :
- 001296                      wb_fwd_rs2 ? wb_data    :
- 001296                                   rfu_rs2_data;
+ 001131     assign rs2_val = em_fwd_rs2 ? em_fwd_val :
+~001122                      wb_fwd_rs2 ? wb_data    :
+ 001122                                   rfu_rs2_data;
         
         endmodule
         

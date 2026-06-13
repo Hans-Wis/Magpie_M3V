@@ -3,29 +3,29 @@
 Report : area
 Design : cpu_m1_top
 Version: X-2025.06-SP2
-Date   : Tue Jun  9 23:18:22 2026
+Date   : Fri Jun 12 16:08:22 2026
 ****************************************
 
 Library(s) Used:
 
     tcbn28hpcplusbwp40p140tt0p9v25c (File: /home/edauser/project/SOC/Magpie_X3/APR/ref/db/tcbn28hpcplusbwp40p140tt0p9v25c.db)
 
-Number of ports:                          487
-Number of nets:                         29047
-Number of cells:                        28265
-Number of combinational cells:          21464
-Number of sequential cells:              6799
+Number of ports:                          749
+Number of nets:                         35377
+Number of cells:                        34303
+Number of combinational cells:          27219
+Number of sequential cells:              7081
 Number of macros/black boxes:               0
-Number of buf/inv:                       2221
-Number of references:                     108
+Number of buf/inv:                       3501
+Number of references:                     107
 
-Combinational area:              13862.393893
-Buf/Inv area:                      586.782008
-Noncombinational area:           12928.355894
+Combinational area:              16855.019899
+Buf/Inv area:                      910.980013
+Noncombinational area:           13397.831896
 Macro/Black Box area:                0.000000
 Net Interconnect area:      undefined  (Wire load has zero net area)
 
-Total cell area:                 26790.749787
+Total cell area:                 30252.851795
 Total area:                 undefined
 
 Hierarchical area distribution
@@ -36,10 +36,11 @@ Hierarchical area distribution
 Hierarchical cell                 Absolute    Percent  Combi-      Noncombi-   Black-
                                   Total       Total    national    national    boxes   Design
 --------------------------------  ----------  -------  ----------  ----------  ------  ---------
-cpu_m1_top                        26790.7498    100.0   6420.9600   3614.4360  0.0000  cpu_m1_top
-u_core/u_bp                       13209.2099     49.3   5770.1699   7439.0399  0.0000  bp
-u_core/u_rfu                       3546.1440     13.2   1671.2640   1874.8800  0.0000  rfu
+cpu_m1_top                        30252.8518    100.0   7734.1320   4083.9120  0.0000  cpu_m1_top
+u_core/u_bmu                       1093.6800      3.6   1093.6800      0.0000  0.0000  bmu
+u_core/u_bp                       13283.2979     43.9   5844.2579   7439.0399  0.0000  bp
+u_core/u_rfu                       4057.8300     13.4   2182.9500   1874.8800  0.0000  rfu
 --------------------------------  ----------  -------  ----------  ----------  ------  ---------
-Total                                                  13862.3939  12928.3559  0.0000
+Total                                                  16855.0199  13397.8319  0.0000
 
 1

@@ -1,4 +1,4 @@
-2026_06_09_22:54:19 : Configuration
+2026_06_12_10:17:06 : Configuration
 FV_RUN_CONFIG_INFO :  Task : FPV, cmd : check_fv
 [Info] Configuration Details
 [Info] Orchestration/Effort : default
@@ -6,7 +6,7 @@ FV_RUN_CONFIG_INFO :  Task : FPV, cmd : check_fv
 [Info] Memory limit : 8GB
 [Info] Number of workers requested : 4
 [Info] FPV flow ver : v7 
-2026_06_09_22:54:19 : Verification Problem Current Stats
+2026_06_12_10:17:06 : Verification Problem Current Stats
 
   Summary Results
    Property Summary: FPV
@@ -15,7 +15,7 @@ FV_RUN_CONFIG_INFO :  Task : FPV, cmd : check_fv
      - # found        : 1
      - # not_run      : 1
 
-2026_06_09_22:54:21 : Verification Problem Current Stats
+2026_06_12_10:17:08 : Verification Problem Current Stats
 
   Summary Results
    Property Summary: FPV
@@ -42,9 +42,9 @@ Memory/time profile by engine
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
  Engine |   MinMem(MB) |   MaxMem(MB) |  NumJobs | NumStoppedJobs |  Time(secs) | NumSolvedGoals | NumSuccessGoals |  NumFailedGoals | NumBestDepthGoals | 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
-   INIT |           72 |           72 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+   INIT |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
      cc |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
-     t0 |           72 |           72 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
+     t0 |           73 |           73 |        1 |              0 |           0 |              0 |               0 |               0 |                 0 | 
      t1 |           82 |           82 |        1 |              0 |           0 |              1 |               1 |               0 |                 0 | 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ Memory distribution
 ---------------------------------
        0GB - 8GB |            4 | 
 ---------------------------------
-Avg. Memory among completed jobs : 74 MB 
+Avg. Memory among completed jobs : 75 MB 
 Max. Memory among completed jobs : 82 MB 
 
 

@@ -28,7 +28,7 @@ grid-prefetch-pct : 0
 all-results : #t
 skip-lower-depth-msg-ext : 3
 tr-init-batch-size : 10
-engine-score-file : "/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/rfu_session_rtdb/.internal/formal/fpId0/fv_eng_score"
+engine-score-file : "/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/rfu_session_rtdb/.internal/formal/fpId0/fv_eng_score"
 coverage-as-vac : #t
 cdpl-log-filter : #f
 app-name : "fpv"

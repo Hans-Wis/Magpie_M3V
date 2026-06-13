@@ -1,4 +1,2 @@
 corner	fmax_mhz	wns_ns	tns_ns	area_um2	power_mw	status	target_library_path
-TT	699.30	0.00	0.00	26790.749787	16.1030	complete	/home/edauser/project/SOC/Magpie_X3/APR/ref/db/tcbn28hpcplusbwp40p140tt0p9v25c.db
-SLOW	699.30	0.00	0.00	27069.839827	13.0798	complete	/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ssg0p81v0c.db
-FAST	699.30	0.00	0.00	26800.829889	17.4699	complete	/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ffg0p88v125c.db
+SLOW	699.30	0.00	0.00	30515.435795	13.6487	complete	/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ssg0p81v0c.db

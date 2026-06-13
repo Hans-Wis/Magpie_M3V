@@ -36,9 +36,9 @@ axil_bridge_formal.sv, 94
   Initial Assignment at Declaration for "f_past_valid" is ignored by synthesis
 
 =======================================================
-VCS CPU Time(s)     :0.11
-SIMON CPU Time(s)   :0.12
-SIMON Total Time(s) :0.05
+VCS CPU Time(s)     :0.09
+SIMON CPU Time(s)   :0.09
+SIMON Total Time(s) :0.04
 Peak Memory(MB)     :415
 =======================================================
 Info: Simon VCS Finished
@@ -96,60 +96,42 @@ Run configuration:
 [Info] PERF_DIAGNOSTICS_ALERTS_END
 [Info] BITLEVEL_MODEL_STATS: Generated model with 1594 gates, 110 inputs, 298 registers, 0 initial constraints, 2 constraints.
 [Info] BITLEVEL_MODEL_STATS: Generated model with 929 gates, 110 inputs, 271 registers, 0 initial constraints, 2 constraints.
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_10  checking  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_14  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_15  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_20  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_3  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_4  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_13  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_18  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_19  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_7  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_8  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_10  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_9  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_5  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_6  s1  non_vacuous:2  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_17  s1  non_vacuous:3  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_12  s1  non_vacuous:3  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_16  s1  non_vacuous:3  vacuity  00:00:01
+[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_11  s1  non_vacuous:3  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_10  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_11  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_11  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_12  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_12  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_13  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_13  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_14  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_14  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_15  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_15  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_16  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_16  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_17  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_17  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_18  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_18  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_19  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_19  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_20  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_20  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_3  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_3  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_4  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_4  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_5  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_5  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_6  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_6  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_7  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_7  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_8  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_8  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_9  checking  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_9  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_10  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_14  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_18  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_19  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_3  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_4  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_7  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_8  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_9  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_15  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_20  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_5  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_6  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_13  b8  non_vacuous:2  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_11  b8  non_vacuous:3  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_16  b8  non_vacuous:3  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_17  b8  non_vacuous:3  vacuity  00:00:01
-[Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_12  b8  non_vacuous:3  vacuity  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_14  e2  proven  property  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_15  e2  proven  property  00:00:01
 [Info] PROP_I_RESULT: FPV  axil_bridge_formal.unnamed$$_16  e2  proven  property  00:00:01
@@ -202,20 +184,20 @@ report_fv -list > formal_results.txt
 report_fv > formal_summary.txt
 exit
 =======================================================
-Total Time(S)  :7.01
-CPU Time(S)    :3.36
+Total Time(S)  :6.09
+CPU Time(S)    :2.73
 Peak Memory(MB):2223
 ========================Formal=========================
-Engine Wall Time(S)    :3.38
+Engine Wall Time(S)    :2.91
 Engine Peak Memory(MB) :153
 =======================================================
 Session exit code is 3 (Abnormal termination - termination trapped by software)
 
 
-Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 282289 ..
+Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 588843 ..
 
 
---- pstack for process 282289 is dumped to 
+--- pstack for process 588843 is dumped to 
 
 #/lib64/libpthread.so.0 : ()+0x1298f
 #/lib64/libc.so.6 : gsignal()+0x10f
@@ -254,8 +236,8 @@ Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 282289 ..
 #/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : main()+0x530
 #/lib64/libc.so.6 : __libc_start_main()+0xe4
 #/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi() [0x7f77028]=======================================================
-Total Time(S)  :7.1
-CPU Time(S)    :3.5
+Total Time(S)  :6.2
+CPU Time(S)    :2.8
 Peak Memory(MB):1449
-Current RSS(MB):999
+Current RSS(MB):998
 =======================================================

@@ -1,7 +1,7 @@
 rc file Version 1.0
 
 [Design]
-COMPILE_PATH=/home/edauser/project/SOC/Magpie_M1
+COMPILE_PATH=/home/edauser/project/SOC/Magpie_M1A
 VCS_HOME=/soft/synopsys/vcs/X-2025.06-SP1/vcfca/vcs-mx
 VERDI_HOME=/soft/synopsys/vcs/X-2025.06-SP1/vcfca/verdi
 SystemC=FALSE
@@ -9,7 +9,7 @@ UUM=FALSE
 KDB=TRUE
 USE_NOVAS_HOME=FALSE
 COSIM=FALSE
-ENV="SYNOPSYS_SIM_SETUP=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/synopsys_sim.setup" 
+ENV="SYNOPSYS_SIM_SETUP=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/synopsys_sim.setup" 
 TOP=alu 
 ELAB=TRUE
 COMMON_ELAB=TRUE

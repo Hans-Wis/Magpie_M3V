@@ -24,48 +24,51 @@
         // 註：原本還有 `zero` 輸出 (result == 0)，但 core.v 用 alu_result[0] 即可判斷
         // branch / SLT，因此 zero 已移除。如需 BEQ/BNE 額外提醒，可重新加入。
         module alu (
-~000059     input  [31:0] op_a,
- 000100     input  [31:0] op_b,
+~000058     input  [31:0] op_a,
+ 000098     input  [31:0] op_b,
  000058     input  [ 3:0] alu_op,
- 000103     output reg [31:0] result,
+ 000102     output reg [31:0] result,
             // lab08e v2: fast branch path — expose comparators directly so core.v
             // can bypass the 32-bit result case mux (saves ~2 LUT6 on branch_taken path)
- 000023     output wire       cmp_eq,
- 000061     output wire       cmp_lt_s,
- 000065     output wire       cmp_lt_u
+ 000024     output wire       cmp_eq,
+ 000060     output wire       cmp_lt_s,
+ 000062     output wire       cmp_lt_u
         );
         
             // 預先算各種候選結果，最後一個 case mux 選一個
  000100     wire [31:0] sum   = op_a + op_b;
- 000107     wire [31:0] diff  = op_a - op_b;
- 000061     wire        lt_s  = ($signed(op_a) < $signed(op_b));
- 000065     wire        lt_u  = (op_a < op_b);
- 000023     wire        eq    = (op_a == op_b);
+ 000105     wire [31:0] diff  = op_a - op_b;
+ 000060     wire        lt_s  = ($signed(op_a) < $signed(op_b));
+ 000062     wire        lt_u  = (op_a < op_b);
+ 000024     wire        eq    = (op_a == op_b);
         
             assign cmp_eq   = eq;
             assign cmp_lt_s = lt_s;
             assign cmp_lt_u = lt_u;
         
- 000100     wire [ 4:0] shamt = op_b[4:0];
- 000041     wire [31:0] sll_o = op_a << shamt;
-~000041     wire [31:0] srl_o = op_a >> shamt;
-~000041     wire [31:0] sra_o = $signed(op_a) >>> shamt;
+ 000098     wire [ 4:0] shamt = op_b[4:0];
+ 000040     wire [31:0] sll_o = op_a << shamt;
+~000040     wire [31:0] srl_o = op_a >> shamt;
+~000040     wire [31:0] sra_o = $signed(op_a) >>> shamt;
         
- 001320     always @* begin
- 001320         case (alu_op)
- 000450             `ALU_ADD    : result = sum;
-%000003             `ALU_SUB    : result = diff;
- 000130             `ALU_AND    : result = op_a & op_b;
- 000158             `ALU_OR     : result = op_a | op_b;
- 000334             `ALU_XOR    : result = op_a ^ op_b;
- 000037             `ALU_SLL    : result = sll_o;
+ 001144     always @* begin
+ 001144         case (alu_op)
+ 000301             `ALU_ADD    : result = sum;
+%000002             `ALU_SUB    : result = diff;
+ 000127             `ALU_AND    : result = op_a & op_b;
+ 000159             `ALU_OR     : result = op_a | op_b;
+ 000343             `ALU_XOR    : result = op_a ^ op_b;
+ 000022             `ALU_SLL    : result = sll_o;
  000129             `ALU_SRL    : result = srl_o;
  000017             `ALU_SRA    : result = sra_o;
- 000023             `ALU_SLT    : result = {31'b0, lt_s};
- 000034             `ALU_SLTU   : result = {31'b0, lt_u};
+ 000017             `ALU_SLT    : result = {31'b0, lt_s};
+ 000022             `ALU_SLTU   : result = {31'b0, lt_u};
 %000000             `ALU_SEQ    : result = {31'b0, eq};
 %000005             `ALU_COPY_B : result = op_b;
-%000000             default     : result = 32'h0;
+                    // verilator coverage_off
+                    default     : result = 32'h0;
+                    // verilator coverage_on
+                    // ^ CS-COV-1 exclusion: alu_op is always a decoded legal code — coding standard CS-COV-1: defensive arm, unreachable by construction
                 endcase
             end
         

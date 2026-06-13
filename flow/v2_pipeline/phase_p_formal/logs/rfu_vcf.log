@@ -31,13 +31,13 @@ Info: Invoking Simon...
 Info: Simon VCS Start
 
 Warning-[SM_IGN_INITIAL] Ignoring Initial block
-IP/cpu_m1/rtl/rfu.v, 37
+IP/cpu_m1/rtl/rfu.v, 44
   Initial block is ignored for synthesis
 
 =======================================================
-VCS CPU Time(s)     :0.09
-SIMON CPU Time(s)   :0.02
-SIMON Total Time(s) :0.02
+VCS CPU Time(s)     :0.08
+SIMON CPU Time(s)   :0.00
+SIMON Total Time(s) :0.01
 Peak Memory(MB)     :415
 =======================================================
 Info: Simon VCS Finished
@@ -47,14 +47,14 @@ Verdi KDB elaboration done and the database successfully generated: 0 error(s), 
 [Info] DB_COPT045: Vcs analyzer task has finished.
 [Info] PROP_I_COLLECT: Collecting Source Properties from the view:rfu.
 # Gate Counts 
-Number of Flat Instances = 1195
-Number of Operator = 1195
+Number of Flat Instances = 1283
+Number of Operator = 1283
 Number of Libcells = 0
 Number of Black-Box Instances = 0
 Number of FlipFlop BitWise = 1026
 Number of Latch Bitwise = 0
 Number of Nand BitWise = 0
-Number of Comb logic = 50
+Number of Comb logic = 64
 
 1
 create_clock clk -period 10
@@ -85,14 +85,14 @@ Run configuration:
 [Info] Number of workers requested : 4
 [Info] FPV flow ver : v7 
 [Info] PERF_DIAGNOSTICS_ALERTS_END
-[Info] BITLEVEL_MODEL_STATS: Generated model with 6242 gates, 38 inputs, 1026 registers, 0 initial constraints, 0 constraints.
+[Info] BITLEVEL_MODEL_STATS: Generated model with 6364 gates, 77 inputs, 1026 registers, 0 initial constraints, 0 constraints.
 [Info] PROP_I_RESULT: FPV  rfu.rfu_assert_i.unnamed$$_0  t1  proven  property  00:00:00
 [Info] PROP_I_RESULT: FPV  rfu.rfu_assert_i.unnamed$$_1  t1  proven  property  00:00:00
-[Info] BITLEVEL_MODEL_STATS: Generated model with 70 gates, 0 inputs, 0 registers, 0 initial constraints, 0 constraints.
-[Info] PROP_I_RESULT: FPV  rfu.rfu_assert_i.unnamed$$_2  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  rfu.rfu_assert_i.unnamed$$_3  checking  property  00:00:01
-[Info] PROP_I_RESULT: FPV  rfu.rfu_assert_i.unnamed$$_2  e1  proven  property  00:00:01
-[Info] PROP_I_RESULT: FPV  rfu.rfu_assert_i.unnamed$$_3  e1  proven  property  00:00:02
+[Info] BITLEVEL_MODEL_STATS: Generated model with 352 gates, 77 inputs, 33 registers, 0 initial constraints, 0 constraints.
+[Info] PROP_I_RESULT: FPV  rfu.rfu_assert_i.unnamed$$_2  checking  property  00:00:00
+[Info] PROP_I_RESULT: FPV  rfu.rfu_assert_i.unnamed$$_3  checking  property  00:00:00
+[Info] PROP_I_RESULT: FPV  rfu.rfu_assert_i.unnamed$$_2  e1  proven  property  00:00:00
+[Info] PROP_I_RESULT: FPV  rfu.rfu_assert_i.unnamed$$_3  e1  proven  property  00:00:01
 [Info] PERF_DIAGNOSTICS_ALERTS_START
 
   Summary Results
@@ -131,20 +131,20 @@ foreach_in_collection prop [get_props -usage assert] {
 close $fp
 
 =======================================================
-Total Time(S)  :6.75
-CPU Time(S)    :2.08
-Peak Memory(MB):2221
+Total Time(S)  :5.84
+CPU Time(S)    :1.70
+Peak Memory(MB):2222
 ========================Formal=========================
-Engine Wall Time(S)    :3.78
-Engine Peak Memory(MB) :192
+Engine Wall Time(S)    :3.55
+Engine Peak Memory(MB) :198
 =======================================================
 Session exit code is 3 (Abnormal termination - termination trapped by software)
 
 
-Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 240717 ..
+Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 583997 ..
 
 
---- pstack for process 240717 is dumped to 
+--- pstack for process 583997 is dumped to 
 
 #/lib64/libpthread.so.0 : ()+0x1298f
 #/lib64/libc.so.6 : gsignal()+0x10f
@@ -164,8 +164,8 @@ Capturing stack trace for signal [ SIGABRT (Abort) ] for pid : 240717 ..
 #/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi : main()+0x530
 #/lib64/libc.so.6 : __libc_start_main()+0xe4
 #/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/vcst/bin/svi() [0x7f77028]=======================================================
-Total Time(S)  :6.8
-CPU Time(S)    :2.1
+Total Time(S)  :5.9
+CPU Time(S)    :1.7
 Peak Memory(MB):1448
-Current RSS(MB):998
+Current RSS(MB):997
 =======================================================

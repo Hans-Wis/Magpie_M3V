@@ -2,9 +2,9 @@
 <SVI_SIMON>
   <option data="full_hier"/>
   <option data="vcstaticStabilityMode"/>
-  <option data="circWriteFile=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/alu.scm"/>
-  <option data="outputWorkDir=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design"/>
-  <option data="vsiLogDir=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/logs"/>
+  <option data="circWriteFile=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/alu.scm"/>
+  <option data="outputWorkDir=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design"/>
+  <option data="vsiLogDir=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/logs"/>
   <option data="noRemoveConstants"/>
   <option data="2valued"/>
   <option data="preserveSigs"/>
@@ -55,11 +55,11 @@
 <SVI_VCS>
   <option data="hsc=."/>
   <option data="elab_summary_report_max_inst=5"/>
-  <option data="elab_summary_sam_file=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/reports/elab_summary_sam.rpt"/>
-  <option data="elab_summary_file=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/reports/elab_summary.rpt"/>
-  <option data="in_design_file=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/inDesign.rpt"/>
+  <option data="elab_summary_sam_file=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/reports/elab_summary_sam.rpt"/>
+  <option data="elab_summary_file=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/reports/elab_summary.rpt"/>
+  <option data="in_design_file=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/inDesign.rpt"/>
   <option data="top=alu"/>
-  <option data="portCoercionsLog=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/port_coercions.rpt"/>
+  <option data="portCoercionsLog=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/port_coercions.rpt"/>
 </SVI_VCS>
 <SVI_NEW_SVAC>
   <option data="svacTop=alu"/>
@@ -69,8 +69,8 @@
   <option data="svacLatchedVacuity=1"/>
   <option data="svacOutputXmlIcd=1"/>
   <option data="removeVcsAutomata=1"/>
-  <option data="svacIcdFileName=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/svac.icd"/>
-  <option data="svacUqsFileName=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/svac.uqs"/>
+  <option data="svacIcdFileName=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/svac.icd"/>
+  <option data="svacUqsFileName=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/svac.uqs"/>
   <option data="svacPureLiveness=1"/>
   <option data="svacImmediateAssert=1"/>
   <option data="svacWitness=1"/>
@@ -81,8 +81,8 @@
   <option data="svacAltSuffixImplication=.*"/>
   <option data="svacEnableAlternateLivenessEnc=.*"/>
   <option data="svacAllowAssertOffKill=0"/>
-  <option data="svacSvaDecomposeSpecFile=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/svacDecompose.spec"/>
-  <option data="svacSvaDecomposeLogFile=/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/svacDecompose.log"/>
+  <option data="svacSvaDecomposeSpecFile=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/svacDecompose.spec"/>
+  <option data="svacSvaDecomposeLogFile=/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/svacDecompose.log"/>
   <option data="svacRewriteAsyncReset=0"/>
   <option data="svacRepOptCntrThreshold=40"/>
   <option data="svacUseDfgExpr=1"/>

@@ -1,4 +1,4 @@
-;; Tanglewood started at Tue Jun  9 22:54:04 2026 with pid 221846.
+;; Tanglewood started at Fri Jun 12 10:16:49 2026 with pid 583805.
 ;; version QSCT 6185366 Mon Aug 18 15:33:13 2025
 ;; mode client
 ;; using cdpl T-2022.03-SP3-6 
@@ -23,7 +23,7 @@
 (tw-option-set! exe-dir "/soft/synopsys/vcs/X-2025.06-SP1/vcfca/linux64/ctg/bin")
 (tw-option-set! orc-strategy "default")
 (tw-option-set! app-name "fpv")
-(tw-option-set! engine-score-file "/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/formal/fpId0/fv_eng_score")
+(tw-option-set! engine-score-file "/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/formal/fpId0/fv_eng_score")
 (tw-option-set! cdpl-log-filter #f)
 (tw-option-set! cdpl-log-compress #t)
 (tw-option-set! grid-prefetch-pct 0)
@@ -50,9 +50,9 @@
 (tw-option-set! interactive-mode #t)
 (tw-option-set! full-interactive-mode #t)
 (tw:log-load-bfse "ENGINE-DB" "/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/ctg/tcl/tw_eng_db.enc")
-(tw:log-load-bfse "SCORE-FILE" "/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/formal/fpId0/fv_eng_score")
+(tw:log-load-bfse "SCORE-FILE" "/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/formal/fpId0/fv_eng_score")
 (tw-option-set! coverage-as-vac #t)
-(acquire-dfg-vp 0 "/home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/formal/fpId0" '())
+(acquire-dfg-vp 0 "/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/formal/fpId0" '())
 (tw-option-set! rma-extended-mode 17)
 (tw:log-load-bfse "RECIPE" "/soft/synopsys/vcs/X-2025.06-SP1/vcfca/auxx/ctg/orc/fv_pv_default_v7.scme")
 (tw-option-set! edb-dbase-id 50000)
@@ -80,4 +80,4 @@
 ;; 50    2          0         
 ;; 
 (tw-quit)
-;; Tanglewood stopped at Tue Jun  9 22:54:05 2026 after 1.929s (0.464  0.104)
+;; Tanglewood stopped at Fri Jun 12 10:16:50 2026 after 1.782s (0.469  0.09)

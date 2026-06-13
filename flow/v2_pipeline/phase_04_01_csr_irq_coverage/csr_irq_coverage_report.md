@@ -12,16 +12,16 @@ Merged coverage: `flow/v2_pipeline/phase_04_01_csr_irq_coverage/coverage/coverag
 
 | Metric | Base | Merged | Delta | Target | Status |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Line | 818/1054 (77.61%) | 1214/1432 (84.78%) | +396 lines | 100% | not-closed |
-| Toggle | 7500/12246 (61.24%) | 10738/20252 (53.02%) | +3238 toggles | >=85% | not-closed |
+| Line | 1207/2071 (58.28%) | 1329/2071 (64.17%) | +122 lines | 100% | not-closed |
+| Toggle | 9096/20356 (44.68%) | 9565/20356 (46.99%) | +469 toggles | >=85% | not-closed |
 | Functional | not implemented | not implemented | 0 bins | >=95% | coverplan-required |
 
 ## CSR Module Delta
 
 | Metric | Base | Merged | Delta |
 | --- | ---: | ---: | ---: |
-| CSR line | 43/137 (47.25%) | 117/137 (85.40%) | +74 lines |
-| CSR toggle | 208/2518 (16.15%) | 473/2518 (18.78%) | +265 toggles |
+| CSR line | 88/278 (31.65%) | 131/278 (47.12%) | +43 lines |
+| CSR toggle | 403/3772 (10.68%) | 567/3772 (15.03%) | +164 toggles |
 
 ## Directed Behavior Checked
 

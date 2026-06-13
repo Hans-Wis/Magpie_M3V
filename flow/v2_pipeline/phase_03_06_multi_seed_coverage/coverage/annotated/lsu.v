@@ -32,9 +32,9 @@
         module lsu (
             // 來自 core.v 的請求 (只看 addr 低 2 bit 做 byte/half lane 對齊；
             //   整個 addr 由 core.v 自己驅動 mem_addr，本模組不參與)
- 000193     input  [ 1:0] addr_lo,
+ 000192     input  [ 1:0] addr_lo,
 ~000080     input  [31:0] wdata_raw,
- 000125     input  [ 2:0] funct3,
+ 000124     input  [ 2:0] funct3,
  000028     input         is_store,
         
             // 來自 memory 的回應
@@ -54,29 +54,29 @@
  000080     reg [31:0] wdata_aligned;
  000176     reg [ 3:0] wstrb;
         
- 002640     always @* begin
- 002640         case (funct3)
- 000912             `F3_SB: begin
- 000912                 wdata_aligned = {4{wdata_raw[7:0]}};
- 000912                 wstrb         = 4'b0001 << addr_lo;
+ 002288     always @* begin
+ 002288         case (funct3)
+ 000640             `F3_SB: begin
+ 000640                 wdata_aligned = {4{wdata_raw[7:0]}};
+ 000640                 wstrb         = 4'b0001 << addr_lo;
                     end
- 000267             `F3_SH: begin
- 000267                 wdata_aligned = {2{wdata_raw[15:0]}};
- 000267                 wstrb         = 4'b0011 << {addr_lo[1], 1'b0};
+ 000240             `F3_SH: begin
+ 000240                 wdata_aligned = {2{wdata_raw[15:0]}};
+ 000240                 wstrb         = 4'b0011 << {addr_lo[1], 1'b0};
                     end
- 000164             `F3_SW: begin
- 000164                 wdata_aligned = wdata_raw;
- 000164                 wstrb         = 4'b1111;
+ 000144             `F3_SW: begin
+ 000144                 wdata_aligned = wdata_raw;
+ 000144                 wstrb         = 4'b1111;
                     end
- 001297             default: begin
- 001297                 wdata_aligned = wdata_raw;
- 001297                 wstrb         = 4'b0000;
+ 001264             default: begin
+ 001264                 wdata_aligned = wdata_raw;
+ 001264                 wstrb         = 4'b0000;
                     end
                 endcase
             end
         
             assign mem_wdata = wdata_aligned;
- 001288     assign mem_wstrb = is_store ? wstrb : 4'b0000;
+ 001116     assign mem_wstrb = is_store ? wstrb : 4'b0000;
         
             // -------------------------------------------------------------------------
             // Load path: 從 mem_rdata 抽出 byte / half / word 並 sign-ext
@@ -84,27 +84,27 @@
  000054     reg [ 7:0] byte_sel;
  000045     reg [15:0] half_sel;
         
- 002640     always @* begin
- 002640         case (addr_lo)
- 001230             2'b00: byte_sel = mem_rdata[ 7: 0];
- 000592             2'b01: byte_sel = mem_rdata[15: 8];
- 000450             2'b10: byte_sel = mem_rdata[23:16];
- 000368             2'b11: byte_sel = mem_rdata[31:24];
+ 002288     always @* begin
+ 002288         case (addr_lo)
+ 001103             2'b00: byte_sel = mem_rdata[ 7: 0];
+ 000515             2'b01: byte_sel = mem_rdata[15: 8];
+ 000373             2'b10: byte_sel = mem_rdata[23:16];
+ 000297             2'b11: byte_sel = mem_rdata[31:24];
                 endcase
             end
         
- 002640     always @* begin
- 002640         half_sel = addr_lo[1] ? mem_rdata[31:16] : mem_rdata[15:0];
+ 002288     always @* begin
+ 002288         half_sel = addr_lo[1] ? mem_rdata[31:16] : mem_rdata[15:0];
             end
         
- 002640     always @* begin
- 002640         case (funct3)
- 000912             `F3_LB : ld_result = {{24{byte_sel[7]}}, byte_sel};
- 000386             `F3_LBU: ld_result = {24'b0,             byte_sel};
- 000267             `F3_LH : ld_result = {{16{half_sel[15]}}, half_sel};
- 000302             `F3_LHU: ld_result = {16'b0,              half_sel};
- 000164             `F3_LW : ld_result = mem_rdata;
- 000609             default: ld_result = mem_rdata;
+ 002288     always @* begin
+ 002288         case (funct3)
+ 000640             `F3_LB : ld_result = {{24{byte_sel[7]}}, byte_sel};
+ 000388             `F3_LBU: ld_result = {24'b0,             byte_sel};
+ 000240             `F3_LH : ld_result = {{16{half_sel[15]}}, half_sel};
+ 000296             `F3_LHU: ld_result = {16'b0,              half_sel};
+ 000144             `F3_LW : ld_result = mem_rdata;
+ 000580             default: ld_result = mem_rdata;
                 endcase
             end
         

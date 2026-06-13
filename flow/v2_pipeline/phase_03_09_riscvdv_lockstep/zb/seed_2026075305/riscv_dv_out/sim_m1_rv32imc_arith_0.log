@@ -1,0 +1,913 @@
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering LB
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering LH
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering LW
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering LBU
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering LHU
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SB
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SH
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SW
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SLL
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SLLI
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SRL
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SRLI
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SRA
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SRAI
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering ADD
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering ADDI
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering NOP
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SUB
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering LUI
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering AUIPC
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering XOR
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering XORI
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering OR
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering ORI
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering AND
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering ANDI
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SLT
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SLTI
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SLTU
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering SLTIU
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering BEQ
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering BNE
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering BLT
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering BGE
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering BLTU
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering BGEU
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering JAL
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering JALR
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering FENCE
+2026-06-12 16:34:27,920 riscv_instr.py 119 INFO Registering FENCE_I
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering SFENCE_VMA
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering ECALL
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering EBREAK
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering URET
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering SRET
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering MRET
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering DRET
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering WFI
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering CSRRW
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering CSRRS
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering CSRRC
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering CSRRWI
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering CSRRSI
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering CSRRCI
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering MUL
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering MULH
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering MULHSU
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering MULHU
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering DIV
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering DIVU
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering REM
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering REMU
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_LW
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_SW
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_LWSP
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_SWSP
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_ADDI4SPN
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_ADDI
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_ADDI16SP
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_LI
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_LUI
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_SUB
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_ADD
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_NOP
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_MV
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_ANDI
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_XOR
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_OR
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_AND
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_BEQZ
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_BNEZ
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_SRLI
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_SRAI
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_SLLI
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_J
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_JAL
+2026-06-12 16:34:27,921 riscv_instr.py 119 INFO Registering C_JR
+2026-06-12 16:34:27,922 riscv_instr.py 119 INFO Registering C_JALR
+2026-06-12 16:34:27,922 riscv_instr.py 119 INFO Registering C_EBREAK
+2026-06-12 16:34:28,375 riscv_instr_gen_config.py 475 INFO min_stack_len_per_program value = 8
+2026-06-12 16:34:28,376 riscv_instr_base_test.py 78 INFO riscv_instr_gen_config is randomized
+2026-06-12 16:34:28,380 riscv_utils.py 70 INFO 
++-----+---------------------------------+---------------+--------+---------------------------------------------------------------------------+
+|     | Name                            | Type          |   Size | Value                                                                     |
+|-----+---------------------------------+---------------+--------+---------------------------------------------------------------------------|
+|   0 | tname                           | <class 'str'> |     54 | riscv_instr_gen_config                                                    |
+|   1 | main_program_instr_cnt          | <class 'str'> |     71 | 4438                                                                      |
+|   2 | sub_program_instr_cnt           | <class 'str'> |     70 | []                                                                        |
+|   3 | debug_program_instr_cnt         | <class 'str'> |     72 | 0                                                                         |
+|   4 | debug_sub_program_instr_cnt     | <class 'str'> |     76 | []                                                                        |
+|   5 | data_page_pattern               | <class 'str'> |     66 | 0                                                                         |
+|   6 | vreg_init_method                | <class 'str'> |     65 | 1                                                                         |
+|   7 | max_directed_instr_stream_seq   | <class 'str'> |     78 | 20                                                                        |
+|   8 | m_mode_exception_delegation     | <class 'str'> |     76 | {}                                                                        |
+|   9 | s_mode_exception_delegation     | <class 'str'> |     76 | {}                                                                        |
+|  10 | m_mode_interrupt_delegation     | <class 'str'> |     76 | {}                                                                        |
+|  11 | s_mode_interrupt_delegation     | <class 'str'> |     76 | {}                                                                        |
+|  12 | init_privileged_mode            | <class 'str'> |     69 | 3                                                                         |
+|  13 | mstatus                         | <class 'str'> |     56 | 1964658591                                                                |
+|  14 | mie                             | <class 'str'> |     52 | 478373892                                                                 |
+|  15 | sstatus                         | <class 'str'> |     56 | 1350916010                                                                |
+|  16 | sie                             | <class 'str'> |     52 | 2093488206                                                                |
+|  17 | ustatus                         | <class 'str'> |     56 | 214990026                                                                 |
+|  18 | uie                             | <class 'str'> |     52 | 2074154386                                                                |
+|  19 | mstatus_mprv                    | <class 'str'> |     61 | 0                                                                         |
+|  20 | mstatus_mxr                     | <class 'str'> |     60 | 0                                                                         |
+|  21 | mstatus_sum                     | <class 'str'> |     60 | 0                                                                         |
+|  22 | mstatus_tvm                     | <class 'str'> |     60 | 0                                                                         |
+|  23 | mstatus_fs                      | <class 'str'> |     59 | 0                                                                         |
+|  24 | mstatus_vs                      | <class 'str'> |     59 | 1                                                                         |
+|  25 | mtvec_mode                      | <class 'str'> |     59 | 0                                                                         |
+|  26 | tvec_alignment                  | <class 'str'> |     63 | 2                                                                         |
+|  27 | fcsr_rm                         | <class 'str'> |     56 | 2                                                                         |
+|  28 | enable_sfence                   | <class 'str'> |     62 | 0                                                                         |
+|  29 | gpr                             | <class 'str'> |     52 | [31, 30, 22, 28]                                                          |
+|  30 | scratch_reg                     | <class 'str'> |     60 | 6                                                                         |
+|  31 | pmp_reg                         | <class 'str'> |     56 | 20                                                                        |
+|  32 | sp                              | <class 'str'> |     51 | 16                                                                        |
+|  33 | tp                              | <class 'str'> |     51 | 7                                                                         |
+|  34 | ra                              | <class 'str'> |     51 | 31                                                                        |
+|  35 | check_misa_init_val             | <class 'str'> |     68 | 0                                                                         |
+|  36 | check_xstatus                   | <class 'str'> |     62 | 1                                                                         |
+|  37 | virtual_addr_translation_on     | <class 'str'> |     76 | 0                                                                         |
+|  38 | stack_len                       | <class 'str'> |     58 | 5000                                                                      |
+|  39 | kernel_stack_len                | <class 'str'> |     65 | 4000                                                                      |
+|  40 | kernel_program_instr_cnt        | <class 'str'> |     73 | 400                                                                       |
+|  41 | invalid_priv_mode_csrs          | <class 'str'> |     71 | []                                                                        |
+|  42 | num_of_sub_program              | <class 'str'> |     67 | 0                                                                         |
+|  43 | instr_cnt                       | <class 'str'> |     58 | 8000                                                                      |
+|  44 | num_of_tests                    | <class 'str'> |     61 | 1                                                                         |
+|  45 | no_data_page                    | <class 'str'> |     61 | 0                                                                         |
+|  46 | no_branch_jump                  | <class 'str'> |     63 | 0                                                                         |
+|  47 | no_load_store                   | <class 'str'> |     62 | 0                                                                         |
+|  48 | no_csr_instr                    | <class 'str'> |     61 | 0                                                                         |
+|  49 | no_ebreak                       | <class 'str'> |     58 | 1                                                                         |
+|  50 | no_dret                         | <class 'str'> |     56 | 1                                                                         |
+|  51 | no_fence                        | <class 'str'> |     57 | 0                                                                         |
+|  52 | no_wfi                          | <class 'str'> |     55 | 1                                                                         |
+|  53 | enable_unaligned_load_store     | <class 'str'> |     76 | 1                                                                         |
+|  54 | illegal_instr_ratio             | <class 'str'> |     68 | 0                                                                         |
+|  55 | hint_instr_ratio                | <class 'str'> |     65 | 0                                                                         |
+|  56 | num_of_harts                    | <class 'str'> |     61 | 1                                                                         |
+|  57 | fix_sp                          | <class 'str'> |     55 | 0                                                                         |
+|  58 | use_push_data_section           | <class 'str'> |     70 | 0                                                                         |
+|  59 | boot_mode_opts                  | <class 'str'> |     63 | m                                                                         |
+|  60 | enable_page_table_exception     | <class 'str'> |     76 | 0                                                                         |
+|  61 | no_directed_instr               | <class 'str'> |     66 | 0                                                                         |
+|  62 | asm_test_suffix                 | <class 'str'> |     64 |                                                                           |
+|  63 | enable_interrupt                | <class 'str'> |     65 | 0                                                                         |
+|  64 | enable_nested_interrupt         | <class 'str'> |     72 | 0                                                                         |
+|  65 | enable_timer_irq                | <class 'str'> |     65 | 0                                                                         |
+|  66 | bare_program_mode               | <class 'str'> |     66 | 0                                                                         |
+|  67 | enable_illegal_csr_instruction  | <class 'str'> |     79 | 0                                                                         |
+|  68 | enable_access_invalid_csr_level | <class 'str'> |     80 | 0                                                                         |
+|  69 | enable_misaligned_instr         | <class 'str'> |     72 | 0                                                                         |
+|  70 | enable_dummy_csr_write          | <class 'str'> |     71 | 0                                                                         |
+|  71 | randomize_csr                   | <class 'str'> |     62 | 0                                                                         |
+|  72 | allow_sfence_exception          | <class 'str'> |     71 | 0                                                                         |
+|  73 | no_delegation                   | <class 'str'> |     62 | 1                                                                         |
+|  74 | force_m_delegation              | <class 'str'> |     67 | 0                                                                         |
+|  75 | force_s_delegation              | <class 'str'> |     67 | 0                                                                         |
+|  76 | support_supervisor_mode         | <class 'str'> |     72 | 0                                                                         |
+|  77 | disable_compressed_instr        | <class 'str'> |     73 | 0                                                                         |
+|  78 | require_signature_addr          | <class 'str'> |     71 | 0                                                                         |
+|  79 | signature_addr                  | <class 'str'> |     63 | 3735928559                                                                |
+|  80 | gen_debug_section               | <class 'str'> |     66 | 0                                                                         |
+|  81 | enable_ebreak_in_debug_rom      | <class 'str'> |     75 | 0                                                                         |
+|  82 | set_dcsr_ebreak                 | <class 'str'> |     64 | 0                                                                         |
+|  83 | num_debug_sub_program           | <class 'str'> |     70 | 0                                                                         |
+|  84 | enable_debug_single_step        | <class 'str'> |     73 | 0                                                                         |
+|  85 | single_step_iterations          | <class 'str'> |     71 | 1704425422                                                                |
+|  86 | set_mstatus_tw                  | <class 'str'> |     63 | 0                                                                         |
+|  87 | set_mstatus_mprv                | <class 'str'> |     65 | 0                                                                         |
+|  88 | min_stack_len_per_program       | <class 'str'> |     74 | 8                                                                         |
+|  89 | max_stack_len_per_program       | <class 'str'> |     74 | 64                                                                        |
+|  90 | max_branch_step                 | <class 'str'> |     64 | 20                                                                        |
+|  91 | reserved_regs                   | <class 'str'> |     62 | [7, 16, 6]                                                                |
+|  92 | enable_floating_point           | <class 'str'> |     70 | 0                                                                         |
+|  93 | enable_vector_extension         | <class 'str'> |     72 | 0                                                                         |
+|  94 | vector_instr_only               | <class 'str'> |     66 | 0                                                                         |
+|  95 | enable_b_extension              | <class 'str'> |     67 | 0                                                                         |
+|  96 | enable_bitmanip_groups          | <class 'str'> |     71 | ['ZBB', 'ZBS', 'ZBP', 'ZBE', 'ZBF', 'ZBC', 'ZBR', 'ZBM', 'ZBT', 'ZB_TMP'] |
+|  97 | dist_control_mode               | <class 'str'> |     66 | 0                                                                         |
+|  98 | category_dist                   | <class 'str'> |     62 | {}                                                                        |
+|  99 | march_isa                       | <class 'str'> |     58 | []                                                                        |
+| 100 | supported_interrupt_mode        | <class 'str'> |     73 | [0]                                                                       |
+| 101 | XLEN                            | <class 'str'> |     53 | 32                                                                        |
+| 102 | SATP_MODE                       | <class 'str'> |     58 | 0                                                                         |
+| 103 | init_privil_mode                | <class 'str'> |     65 | 3                                                                         |
+| 104 | tvec_ceil                       | <class 'str'> |     58 | 4                                                                         |
++-----+---------------------------------+---------------+--------+---------------------------------------------------------------------------+
+2026-06-12 16:34:28,503 riscv_instr_base_test.py 70 INFO All directed instruction is applied
+2026-06-12 16:34:28,503 riscv_asm_program_gen.py 611 INFO Generating privileged mode routing for MACHINE_MODE
+2026-06-12 16:34:28,516 riscv_privileged_common_seq.py 139 INFO self.mstatus_val: 0x1a00
+2026-06-12 16:34:28,598 riscv_instr_sequence.py 75 INFO Start generating 4438 instruction
+2026-06-12 16:35:13,698 riscv_instr_sequence.py 85 INFO Finishing instruction generation
+2026-06-12 16:35:13,698 riscv_asm_program_gen.py 248 INFO Randomizing call stack..done
+2026-06-12 16:35:13,709 riscv_instr_sequence.py 188 INFO Processing branch instruction[0]:bgeu        s3, a4, 1289 # 0 -> 6
+2026-06-12 16:35:13,709 riscv_instr_sequence.py 188 INFO Processing branch instruction[2]:bge         t6, gp, -667 # 2 -> 10
+2026-06-12 16:35:13,709 riscv_instr_sequence.py 188 INFO Processing branch instruction[4]:bge         a6, t5, -330 # 4 -> 5
+2026-06-12 16:35:13,709 riscv_instr_sequence.py 188 INFO Processing branch instruction[13]:bgeu        s9, s7, -971 # 13 -> 20
+2026-06-12 16:35:13,709 riscv_instr_sequence.py 188 INFO Processing branch instruction[23]:bgeu        t6, a6, -1480 # 23 -> 43
+2026-06-12 16:35:13,709 riscv_instr_sequence.py 188 INFO Processing branch instruction[28]:bltu        a1, s2, 1484 # 28 -> 31
+2026-06-12 16:35:13,709 riscv_instr_sequence.py 188 INFO Processing branch instruction[31]:c.beqz      a2, -2 # 31 -> 43
+2026-06-12 16:35:13,709 riscv_instr_sequence.py 188 INFO Processing branch instruction[32]:bne         zero, t3, -2046 # 32 -> 33
+2026-06-12 16:35:13,709 riscv_instr_sequence.py 188 INFO Processing branch instruction[40]:bgeu        s3, t5, 133 # 40 -> 50
+2026-06-12 16:35:13,710 riscv_instr_sequence.py 188 INFO Processing branch instruction[43]:c.beqz      s0, -2 # 43 -> 55
+2026-06-12 16:35:13,710 riscv_instr_sequence.py 188 INFO Processing branch instruction[47]:c.bnez      a3, -2 # 47 -> 49
+2026-06-12 16:35:13,710 riscv_instr_sequence.py 188 INFO Processing branch instruction[55]:bgeu        t3, a0, 575 # 55 -> 56
+2026-06-12 16:35:13,710 riscv_instr_sequence.py 188 INFO Processing branch instruction[72]:bne         t5, tp, 1102 # 72 -> 84
+2026-06-12 16:35:13,710 riscv_instr_sequence.py 188 INFO Processing branch instruction[74]:beq         s4, a0, 385 # 74 -> 80
+2026-06-12 16:35:13,710 riscv_instr_sequence.py 188 INFO Processing branch instruction[81]:blt         a7, s4, -1604 # 81 -> 98
+2026-06-12 16:35:13,710 riscv_instr_sequence.py 188 INFO Processing branch instruction[90]:bltu        t2, zero, -1952 # 90 -> 97
+2026-06-12 16:35:13,710 riscv_instr_sequence.py 188 INFO Processing branch instruction[101]:beq         a2, gp, 62 # 101 -> 114
+2026-06-12 16:35:13,710 riscv_instr_sequence.py 188 INFO Processing branch instruction[112]:bne         a0, t6, 105 # 112 -> 120
+2026-06-12 16:35:13,710 riscv_instr_sequence.py 188 INFO Processing branch instruction[114]:bltu        s3, s9, 1499 # 114 -> 124
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[115]:bltu        s2, s2, -1907 # 115 -> 117
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[121]:bge         s11, s6, -721 # 121 -> 122
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[125]:c.bnez      a0, -2 # 125 -> 129
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[129]:beq         s4, s9, 456 # 129 -> 137
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[131]:c.bnez      a3, -2 # 131 -> 141
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[133]:bgeu        t0, a3, -1648 # 133 -> 151
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[134]:c.beqz      a5, -2 # 134 -> 144
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[141]:c.bnez      a0, -2 # 141 -> 149
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[144]:bne         s0, s3, -697 # 144 -> 160
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[152]:bltu        ra, a0, -1705 # 152 -> 161
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[153]:c.bnez      a3, -2 # 153 -> 161
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[154]:beq         tp, s3, -787 # 154 -> 171
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[160]:bltu        t1, s5, 1195 # 160 -> 168
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[169]:beq         a6, t2, 1004 # 169 -> 179
+2026-06-12 16:35:13,711 riscv_instr_sequence.py 188 INFO Processing branch instruction[179]:bne         s7, t0, -540 # 179 -> 197
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[183]:bge         t4, s0, 1674 # 183 -> 203
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[189]:bgeu        t4, a3, -1305 # 189 -> 198
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[190]:c.bnez      a3, 84 # 190 -> 196
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[194]:c.beqz      a4, -2 # 194 -> 200
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[195]:bgeu        s5, s4, -1517 # 195 -> 197
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[197]:bge         a2, s10, 40 # 197 -> 204
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[203]:blt         a4, gp, 734 # 203 -> 215
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[206]:beq         s6, s2, 1625 # 206 -> 218
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[212]:bne         t0, a2, -88 # 212 -> 214
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[216]:bltu        t6, a3, -15 # 216 -> 224
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[226]:beq         t1, a4, 1457 # 226 -> 227
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[237]:beq         t6, s10, -41 # 237 -> 241
+2026-06-12 16:35:13,712 riscv_instr_sequence.py 188 INFO Processing branch instruction[244]:c.bnez      a0, -2 # 244 -> 254
+2026-06-12 16:35:13,713 riscv_instr_sequence.py 188 INFO Processing branch instruction[257]:c.bnez      a4, 32 # 257 -> 265
+2026-06-12 16:35:13,713 riscv_instr_sequence.py 188 INFO Processing branch instruction[259]:bne         a0, t0, -2001 # 259 -> 275
+2026-06-12 16:35:13,713 riscv_instr_sequence.py 188 INFO Processing branch instruction[261]:c.beqz      a0, 36 # 261 -> 273
+2026-06-12 16:35:13,713 riscv_instr_sequence.py 188 INFO Processing branch instruction[262]:bne         a4, a7, -852 # 262 -> 263
+2026-06-12 16:35:13,713 riscv_instr_sequence.py 188 INFO Processing branch instruction[266]:bge         t5, ra, -163 # 266 -> 276
+2026-06-12 16:35:13,713 riscv_instr_sequence.py 188 INFO Processing branch instruction[268]:c.beqz      a5, 58 # 268 -> 271
+2026-06-12 16:35:13,713 riscv_instr_sequence.py 188 INFO Processing branch instruction[285]:c.bnez      a0, -2 # 285 -> 295
+2026-06-12 16:35:13,713 riscv_instr_sequence.py 188 INFO Processing branch instruction[293]:bltu        sp, s2, 450 # 293 -> 294
+2026-06-12 16:35:13,713 riscv_instr_sequence.py 188 INFO Processing branch instruction[299]:bge         a6, s7, -1434 # 299 -> 307
+2026-06-12 16:35:13,713 riscv_instr_sequence.py 188 INFO Processing branch instruction[311]:bne         a1, t4, 28 # 311 -> 324
+2026-06-12 16:35:13,713 riscv_instr_sequence.py 188 INFO Processing branch instruction[320]:bge         s9, a0, 465 # 320 -> 328
+2026-06-12 16:35:13,714 riscv_instr_sequence.py 188 INFO Processing branch instruction[334]:blt         a4, zero, -890 # 334 -> 341
+2026-06-12 16:35:13,714 riscv_instr_sequence.py 188 INFO Processing branch instruction[352]:blt         s6, t2, -1393 # 352 -> 353
+2026-06-12 16:35:13,714 riscv_instr_sequence.py 188 INFO Processing branch instruction[353]:bltu        a2, a1, -585 # 353 -> 365
+2026-06-12 16:35:13,714 riscv_instr_sequence.py 188 INFO Processing branch instruction[359]:blt         tp, s11, 7 # 359 -> 371
+2026-06-12 16:35:13,714 riscv_instr_sequence.py 188 INFO Processing branch instruction[362]:bgeu        s6, ra, 1090 # 362 -> 378
+2026-06-12 16:35:13,714 riscv_instr_sequence.py 188 INFO Processing branch instruction[368]:beq         a6, a6, 1526 # 368 -> 375
+2026-06-12 16:35:13,714 riscv_instr_sequence.py 188 INFO Processing branch instruction[377]:bne         a2, s10, -1135 # 377 -> 380
+2026-06-12 16:35:13,714 riscv_instr_sequence.py 188 INFO Processing branch instruction[380]:c.bnez      a0, -2 # 380 -> 386
+2026-06-12 16:35:13,714 riscv_instr_sequence.py 188 INFO Processing branch instruction[383]:blt         s1, zero, -331 # 383 -> 391
+2026-06-12 16:35:13,714 riscv_instr_sequence.py 188 INFO Processing branch instruction[387]:c.beqz      a4, -2 # 387 -> 397
+2026-06-12 16:35:13,714 riscv_instr_sequence.py 188 INFO Processing branch instruction[396]:c.beqz      a3, 112 # 396 -> 404
+2026-06-12 16:35:13,715 riscv_instr_sequence.py 188 INFO Processing branch instruction[405]:bltu        s1, a7, -903 # 405 -> 406
+2026-06-12 16:35:13,715 riscv_instr_sequence.py 188 INFO Processing branch instruction[416]:beq         s4, s8, 1827 # 416 -> 417
+2026-06-12 16:35:13,715 riscv_instr_sequence.py 188 INFO Processing branch instruction[427]:bge         ra, t2, 1947 # 427 -> 447
+2026-06-12 16:35:13,715 riscv_instr_sequence.py 188 INFO Processing branch instruction[435]:bne         s10, zero, -417 # 435 -> 445
+2026-06-12 16:35:13,715 riscv_instr_sequence.py 188 INFO Processing branch instruction[438]:bne         s7, t1, 36 # 438 -> 439
+2026-06-12 16:35:13,715 riscv_instr_sequence.py 188 INFO Processing branch instruction[441]:bltu        zero, t0, -387 # 441 -> 449
+2026-06-12 16:35:13,715 riscv_instr_sequence.py 188 INFO Processing branch instruction[446]:bltu        a0, s11, -1252 # 446 -> 448
+2026-06-12 16:35:13,715 riscv_instr_sequence.py 188 INFO Processing branch instruction[461]:bgeu        s11, s2, -1560 # 461 -> 468
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[485]:bltu        t2, a0, -1812 # 485 -> 502
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[487]:bgeu        s1, t4, -796 # 487 -> 493
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[506]:bltu        s4, s10, 683 # 506 -> 508
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[509]:bne         s9, a7, 1529 # 509 -> 517
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[510]:bge         a6, t1, -557 # 510 -> 518
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[525]:bge         sp, a2, 534 # 525 -> 538
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[528]:bne         zero, s7, -256 # 528 -> 529
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[530]:bge         s8, s7, 560 # 530 -> 542
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[535]:c.beqz      s1, -2 # 535 -> 539
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[546]:c.bnez      a3, 8 # 546 -> 564
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[548]:c.bnez      a0, -2 # 548 -> 558
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[550]:bltu        a1, a1, 483 # 550 -> 559
+2026-06-12 16:35:13,716 riscv_instr_sequence.py 188 INFO Processing branch instruction[552]:c.bnez      a0, 22 # 552 -> 562
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[553]:c.bnez      a0, -2 # 553 -> 559
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[567]:beq         gp, a4, 330 # 567 -> 583
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[577]:c.bnez      a0, 104 # 577 -> 595
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[583]:bltu        s7, tp, 1339 # 583 -> 590
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[591]:blt         s10, s8, 901 # 591 -> 608
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[593]:c.beqz      a0, 94 # 593 -> 594
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[595]:c.beqz      a4, -2 # 595 -> 601
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[598]:c.beqz      a0, -2 # 598 -> 607
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[599]:bltu        s9, tp, -1924 # 599 -> 609
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[609]:bge         a2, a0, 1860 # 609 -> 611
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[616]:bgeu        t2, s6, -844 # 616 -> 626
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[622]:c.beqz      a0, 106 # 622 -> 630
+2026-06-12 16:35:13,717 riscv_instr_sequence.py 188 INFO Processing branch instruction[623]:beq         s8, s0, 144 # 623 -> 625
+2026-06-12 16:35:13,718 riscv_instr_sequence.py 188 INFO Processing branch instruction[634]:bge         s2, s11, 1704 # 634 -> 638
+2026-06-12 16:35:13,718 riscv_instr_sequence.py 188 INFO Processing branch instruction[642]:c.bnez      a0, 20 # 642 -> 650
+2026-06-12 16:35:13,718 riscv_instr_sequence.py 188 INFO Processing branch instruction[653]:beq         s9, ra, 847 # 653 -> 654
+2026-06-12 16:35:13,718 riscv_instr_sequence.py 188 INFO Processing branch instruction[655]:bltu        t2, a2, -1555 # 655 -> 663
+2026-06-12 16:35:13,718 riscv_instr_sequence.py 188 INFO Processing branch instruction[668]:bgeu        a4, zero, 1789 # 668 -> 678
+2026-06-12 16:35:13,718 riscv_instr_sequence.py 188 INFO Processing branch instruction[672]:c.beqz      a3, -2 # 672 -> 673
+2026-06-12 16:35:13,718 riscv_instr_sequence.py 188 INFO Processing branch instruction[676]:bgeu        zero, s1, -1092 # 676 -> 688
+2026-06-12 16:35:13,718 riscv_instr_sequence.py 188 INFO Processing branch instruction[681]:c.bnez      a0, -2 # 681 -> 682
+2026-06-12 16:35:13,718 riscv_instr_sequence.py 188 INFO Processing branch instruction[702]:c.beqz      a0, 118 # 702 -> 709
+2026-06-12 16:35:13,718 riscv_instr_sequence.py 188 INFO Processing branch instruction[708]:blt         t2, a7, 421 # 708 -> 718
+2026-06-12 16:35:13,718 riscv_instr_sequence.py 188 INFO Processing branch instruction[715]:c.bnez      a0, -2 # 715 -> 727
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[716]:blt         s8, gp, 1199 # 716 -> 728
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[723]:bgeu        a4, s10, 1419 # 723 -> 743
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[740]:bne         sp, a1, 1712 # 740 -> 748
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[741]:c.beqz      a0, 84 # 741 -> 744
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[753]:beq         a1, s10, 385 # 753 -> 761
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[767]:bge         a5, zero, 93 # 767 -> 780
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[771]:bge         a1, t6, -1508 # 771 -> 789
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[777]:beq         a3, sp, -74 # 777 -> 790
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[792]:c.beqz      a3, -2 # 792 -> 804
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[794]:c.bnez      a3, -2 # 794 -> 806
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[795]:bge         s1, s1, -635 # 795 -> 797
+2026-06-12 16:35:13,719 riscv_instr_sequence.py 188 INFO Processing branch instruction[799]:beq         s9, zero, 1489 # 799 -> 807
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[811]:c.bnez      a0, -2 # 811 -> 820
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[818]:bgeu        t1, s1, 1137 # 818 -> 838
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[821]:bge         s6, a5, -1615 # 821 -> 831
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[825]:c.bnez      a3, -2 # 825 -> 828
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[830]:bge         zero, ra, 1418 # 830 -> 847
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[849]:blt         a6, s4, 1358 # 849 -> 859
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[852]:c.bnez      a3, -2 # 852 -> 859
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[853]:bgeu        gp, s4, 1315 # 853 -> 865
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[859]:bgeu        s7, s6, -501 # 859 -> 866
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[867]:bne         s8, s3, -706 # 867 -> 868
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[870]:bgeu        a7, sp, -1162 # 870 -> 878
+2026-06-12 16:35:13,720 riscv_instr_sequence.py 188 INFO Processing branch instruction[871]:bltu        a4, a5, 1844 # 871 -> 881
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[878]:beq         zero, s2, -1912 # 878 -> 884
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[884]:blt         a4, s2, 101 # 884 -> 885
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[889]:blt         gp, a1, 984 # 889 -> 897
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[895]:bge         s10, a3, 801 # 895 -> 901
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[899]:c.beqz      a0, 50 # 899 -> 907
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[900]:bgeu        zero, s11, 1588 # 900 -> 910
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[902]:bne         t6, ra, -87 # 902 -> 904
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[905]:c.beqz      a0, 46 # 905 -> 913
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[907]:blt         ra, a6, -527 # 907 -> 911
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[914]:beq         t0, s1, -1635 # 914 -> 930
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[921]:c.beqz      a0, -2 # 921 -> 922
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[923]:blt         s6, s2, 640 # 923 -> 924
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[930]:blt         s11, s6, 142 # 930 -> 932
+2026-06-12 16:35:13,721 riscv_instr_sequence.py 188 INFO Processing branch instruction[937]:bne         t5, a2, -1539 # 937 -> 945
+2026-06-12 16:35:13,722 riscv_instr_sequence.py 188 INFO Processing branch instruction[947]:bltu        tp, s0, -1859 # 947 -> 951
+2026-06-12 16:35:13,722 riscv_instr_sequence.py 188 INFO Processing branch instruction[951]:c.beqz      a0, 44 # 951 -> 968
+2026-06-12 16:35:13,722 riscv_instr_sequence.py 188 INFO Processing branch instruction[971]:blt         s7, t5, 121 # 971 -> 981
+2026-06-12 16:35:13,722 riscv_instr_sequence.py 188 INFO Processing branch instruction[973]:c.bnez      a3, -2 # 973 -> 985
+2026-06-12 16:35:13,722 riscv_instr_sequence.py 188 INFO Processing branch instruction[985]:c.bnez      a3, -2 # 985 -> 993
+2026-06-12 16:35:13,722 riscv_instr_sequence.py 188 INFO Processing branch instruction[990]:bge         zero, s1, 468 # 990 -> 993
+2026-06-12 16:35:13,722 riscv_instr_sequence.py 188 INFO Processing branch instruction[996]:bne         a6, s1, -1781 # 996 -> 1004
+2026-06-12 16:35:13,722 riscv_instr_sequence.py 188 INFO Processing branch instruction[999]:blt         s7, tp, -664 # 999 -> 1007
+2026-06-12 16:35:13,722 riscv_instr_sequence.py 188 INFO Processing branch instruction[1006]:bge         a4, t0, 1830 # 1006 -> 1024
+2026-06-12 16:35:13,722 riscv_instr_sequence.py 188 INFO Processing branch instruction[1010]:c.bnez      a0, 24 # 1010 -> 1011
+2026-06-12 16:35:13,722 riscv_instr_sequence.py 188 INFO Processing branch instruction[1015]:c.bnez      a0, 6 # 1015 -> 1031
+2026-06-12 16:35:13,723 riscv_instr_sequence.py 188 INFO Processing branch instruction[1050]:bltu        s9, t3, 946 # 1050 -> 1059
+2026-06-12 16:35:13,723 riscv_instr_sequence.py 188 INFO Processing branch instruction[1056]:bge         s8, t4, -2033 # 1056 -> 1066
+2026-06-12 16:35:13,723 riscv_instr_sequence.py 188 INFO Processing branch instruction[1071]:c.beqz      a0, -2 # 1071 -> 1091
+2026-06-12 16:35:13,723 riscv_instr_sequence.py 188 INFO Processing branch instruction[1081]:c.bnez      a3, 58 # 1081 -> 1088
+2026-06-12 16:35:13,723 riscv_instr_sequence.py 188 INFO Processing branch instruction[1085]:c.bnez      a1, -2 # 1085 -> 1093
+2026-06-12 16:35:13,723 riscv_instr_sequence.py 188 INFO Processing branch instruction[1092]:bge         a6, t4, -1435 # 1092 -> 1098
+2026-06-12 16:35:13,723 riscv_instr_sequence.py 188 INFO Processing branch instruction[1096]:bge         tp, a1, 1446 # 1096 -> 1097
+2026-06-12 16:35:13,723 riscv_instr_sequence.py 188 INFO Processing branch instruction[1112]:c.beqz      a1, -2 # 1112 -> 1118
+2026-06-12 16:35:13,723 riscv_instr_sequence.py 188 INFO Processing branch instruction[1117]:c.beqz      a0, -2 # 1117 -> 1124
+2026-06-12 16:35:13,723 riscv_instr_sequence.py 188 INFO Processing branch instruction[1120]:bne         s8, t2, -1044 # 1120 -> 1130
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1123]:blt         s2, s5, 771 # 1123 -> 1124
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1124]:c.bnez      a0, 58 # 1124 -> 1137
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1125]:bne         tp, tp, 274 # 1125 -> 1127
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1135]:blt         s10, a3, -207 # 1135 -> 1145
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1149]:c.bnez      a0, 92 # 1149 -> 1161
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1153]:bne         t3, s9, 1153 # 1153 -> 1165
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1155]:bgeu        s5, t1, -1908 # 1155 -> 1156
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1156]:bge         s6, a7, -369 # 1156 -> 1166
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1159]:c.bnez      a3, -2 # 1159 -> 1160
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1172]:bltu        t1, a2, 911 # 1172 -> 1179
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1180]:bge         t3, s5, -781 # 1180 -> 1192
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1189]:bgeu        a6, s11, -303 # 1189 -> 1199
+2026-06-12 16:35:13,724 riscv_instr_sequence.py 188 INFO Processing branch instruction[1194]:bgeu        sp, a6, -2034 # 1194 -> 1202
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1195]:bne         tp, s2, 331 # 1195 -> 1215
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1208]:bge         s10, t0, -897 # 1208 -> 1211
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1231]:c.beqz      a0, 62 # 1231 -> 1237
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1233]:c.beqz      a0, 78 # 1233 -> 1237
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1237]:c.beqz      a0, 90 # 1237 -> 1255
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1244]:beq         a0, a3, -413 # 1244 -> 1245
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1246]:bge         s6, s10, 1282 # 1246 -> 1254
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1253]:bne         s10, a6, -1435 # 1253 -> 1269
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1256]:bne         zero, a7, 1439 # 1256 -> 1264
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1258]:c.beqz      a0, 116 # 1258 -> 1268
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1265]:bge         a3, a4, 1309 # 1265 -> 1267
+2026-06-12 16:35:13,725 riscv_instr_sequence.py 188 INFO Processing branch instruction[1266]:c.beqz      a0, 36 # 1266 -> 1267
+2026-06-12 16:35:13,726 riscv_instr_sequence.py 188 INFO Processing branch instruction[1268]:bgeu        s7, s10, -1115 # 1268 -> 1285
+2026-06-12 16:35:13,726 riscv_instr_sequence.py 188 INFO Processing branch instruction[1280]:c.bnez      a2, -2 # 1280 -> 1292
+2026-06-12 16:35:13,726 riscv_instr_sequence.py 188 INFO Processing branch instruction[1292]:blt         a5, ra, -1066 # 1292 -> 1304
+2026-06-12 16:35:13,726 riscv_instr_sequence.py 188 INFO Processing branch instruction[1304]:bge         a1, a2, 1990 # 1304 -> 1312
+2026-06-12 16:35:13,726 riscv_instr_sequence.py 188 INFO Processing branch instruction[1306]:bltu        s2, a1, -1646 # 1306 -> 1307
+2026-06-12 16:35:13,726 riscv_instr_sequence.py 188 INFO Processing branch instruction[1308]:c.bnez      a0, 110 # 1308 -> 1318
+2026-06-12 16:35:13,726 riscv_instr_sequence.py 188 INFO Processing branch instruction[1319]:blt         tp, s5, -419 # 1319 -> 1326
+2026-06-12 16:35:13,726 riscv_instr_sequence.py 188 INFO Processing branch instruction[1320]:c.bnez      a0, 30 # 1320 -> 1328
+2026-06-12 16:35:13,726 riscv_instr_sequence.py 188 INFO Processing branch instruction[1336]:bltu        s7, ra, -1352 # 1336 -> 1349
+2026-06-12 16:35:13,726 riscv_instr_sequence.py 188 INFO Processing branch instruction[1343]:bne         a2, a0, 665 # 1343 -> 1352
+2026-06-12 16:35:13,726 riscv_instr_sequence.py 188 INFO Processing branch instruction[1344]:bne         t2, a4, 493 # 1344 -> 1346
+2026-06-12 16:35:13,727 riscv_instr_sequence.py 188 INFO Processing branch instruction[1368]:bne         zero, s6, 449 # 1368 -> 1374
+2026-06-12 16:35:13,727 riscv_instr_sequence.py 188 INFO Processing branch instruction[1369]:c.bnez      a2, 126 # 1369 -> 1379
+2026-06-12 16:35:13,727 riscv_instr_sequence.py 188 INFO Processing branch instruction[1389]:bge         a3, t3, 118 # 1389 -> 1395
+2026-06-12 16:35:13,727 riscv_instr_sequence.py 188 INFO Processing branch instruction[1393]:bltu        t0, a1, 1130 # 1393 -> 1400
+2026-06-12 16:35:13,727 riscv_instr_sequence.py 188 INFO Processing branch instruction[1396]:bge         s11, a3, -1939 # 1396 -> 1398
+2026-06-12 16:35:13,727 riscv_instr_sequence.py 188 INFO Processing branch instruction[1399]:c.bnez      s1, -2 # 1399 -> 1407
+2026-06-12 16:35:13,727 riscv_instr_sequence.py 188 INFO Processing branch instruction[1402]:bge         a1, gp, 1081 # 1402 -> 1414
+2026-06-12 16:35:13,727 riscv_instr_sequence.py 188 INFO Processing branch instruction[1407]:bgeu        a2, s10, -1254 # 1407 -> 1408
+2026-06-12 16:35:13,727 riscv_instr_sequence.py 188 INFO Processing branch instruction[1428]:bltu        a4, s7, -1913 # 1428 -> 1431
+2026-06-12 16:35:13,727 riscv_instr_sequence.py 188 INFO Processing branch instruction[1429]:bltu        s0, a3, -225 # 1429 -> 1430
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1441]:bltu        s4, s5, 462 # 1441 -> 1454
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1445]:bgeu        s3, sp, 1862 # 1445 -> 1453
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1447]:bge         s4, s5, 1141 # 1447 -> 1463
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1461]:c.bnez      a2, 60 # 1461 -> 1469
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1465]:bgeu        t5, sp, 124 # 1465 -> 1474
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1469]:bltu        t0, s2, 495 # 1469 -> 1486
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1471]:bge         a0, s0, 1492 # 1471 -> 1481
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1477]:c.beqz      a1, -2 # 1477 -> 1489
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1492]:bltu        a1, gp, 112 # 1492 -> 1494
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1493]:c.beqz      a0, 112 # 1493 -> 1505
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1497]:bge         s7, a2, 487 # 1497 -> 1498
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1498]:blt         s0, s7, 360 # 1498 -> 1508
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1504]:beq         s7, a4, 53 # 1504 -> 1508
+2026-06-12 16:35:13,728 riscv_instr_sequence.py 188 INFO Processing branch instruction[1507]:c.bnez      s1, 24 # 1507 -> 1527
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1516]:c.beqz      s0, 36 # 1516 -> 1524
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1518]:blt         s11, gp, -721 # 1518 -> 1519
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1523]:bgeu        s3, t0, 516 # 1523 -> 1541
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1525]:bltu        t4, sp, 1480 # 1525 -> 1531
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1529]:bne         tp, s6, 1988 # 1529 -> 1537
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1537]:bge         ra, s2, 730 # 1537 -> 1544
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1542]:bltu        s4, s7, -1129 # 1542 -> 1552
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1543]:c.beqz      a0, -2 # 1543 -> 1544
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1546]:bge         s4, t1, -1559 # 1546 -> 1554
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1557]:blt         s4, a7, -1101 # 1557 -> 1561
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1561]:bge         a6, s11, 569 # 1561 -> 1570
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1563]:bge         a5, zero, 2022 # 1563 -> 1565
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1564]:blt         s5, t4, -1422 # 1564 -> 1574
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1565]:bgeu        a7, t4, -1140 # 1565 -> 1582
+2026-06-12 16:35:13,729 riscv_instr_sequence.py 188 INFO Processing branch instruction[1569]:c.beqz      a0, 82 # 1569 -> 1576
+2026-06-12 16:35:13,730 riscv_instr_sequence.py 188 INFO Processing branch instruction[1582]:bgeu        a0, s4, 1092 # 1582 -> 1583
+2026-06-12 16:35:13,730 riscv_instr_sequence.py 188 INFO Processing branch instruction[1587]:bge         s1, s7, 1018 # 1587 -> 1590
+2026-06-12 16:35:13,730 riscv_instr_sequence.py 188 INFO Processing branch instruction[1591]:bltu        s6, zero, 1730 # 1591 -> 1611
+2026-06-12 16:35:13,730 riscv_instr_sequence.py 188 INFO Processing branch instruction[1592]:c.beqz      a0, -2 # 1592 -> 1605
+2026-06-12 16:35:13,730 riscv_instr_sequence.py 188 INFO Processing branch instruction[1611]:beq         t2, a5, -816 # 1611 -> 1617
+2026-06-12 16:35:13,730 riscv_instr_sequence.py 188 INFO Processing branch instruction[1619]:bge         s5, sp, 1638 # 1619 -> 1631
+2026-06-12 16:35:13,730 riscv_instr_sequence.py 188 INFO Processing branch instruction[1621]:bgeu        a1, s2, 862 # 1621 -> 1623
+2026-06-12 16:35:13,730 riscv_instr_sequence.py 188 INFO Processing branch instruction[1626]:blt         a4, t0, -2002 # 1626 -> 1636
+2026-06-12 16:35:13,730 riscv_instr_sequence.py 188 INFO Processing branch instruction[1629]:c.beqz      a2, -2 # 1629 -> 1645
+2026-06-12 16:35:13,730 riscv_instr_sequence.py 188 INFO Processing branch instruction[1641]:bne         s5, t2, 1414 # 1641 -> 1649
+2026-06-12 16:35:13,730 riscv_instr_sequence.py 188 INFO Processing branch instruction[1652]:blt         ra, a4, 652 # 1652 -> 1658
+2026-06-12 16:35:13,731 riscv_instr_sequence.py 188 INFO Processing branch instruction[1655]:blt         s11, sp, 1042 # 1655 -> 1656
+2026-06-12 16:35:13,731 riscv_instr_sequence.py 188 INFO Processing branch instruction[1670]:c.bnez      s0, -2 # 1670 -> 1680
+2026-06-12 16:35:13,731 riscv_instr_sequence.py 188 INFO Processing branch instruction[1685]:blt         t4, s5, -1094 # 1685 -> 1693
+2026-06-12 16:35:13,731 riscv_instr_sequence.py 188 INFO Processing branch instruction[1689]:bgeu        s3, s4, -1428 # 1689 -> 1699
+2026-06-12 16:35:13,731 riscv_instr_sequence.py 188 INFO Processing branch instruction[1692]:bltu        t4, a2, -1096 # 1692 -> 1693
+2026-06-12 16:35:13,731 riscv_instr_sequence.py 188 INFO Processing branch instruction[1697]:c.beqz      a0, -2 # 1697 -> 1704
+2026-06-12 16:35:13,731 riscv_instr_sequence.py 188 INFO Processing branch instruction[1711]:blt         tp, s3, 1828 # 1711 -> 1723
+2026-06-12 16:35:13,731 riscv_instr_sequence.py 188 INFO Processing branch instruction[1717]:beq         s8, tp, -788 # 1717 -> 1725
+2026-06-12 16:35:13,731 riscv_instr_sequence.py 188 INFO Processing branch instruction[1729]:c.bnez      s1, -2 # 1729 -> 1741
+2026-06-12 16:35:13,731 riscv_instr_sequence.py 188 INFO Processing branch instruction[1740]:bne         sp, s10, -1582 # 1740 -> 1748
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1750]:bge         gp, t4, 201 # 1750 -> 1768
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1753]:beq         gp, sp, -1774 # 1753 -> 1761
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1755]:blt         a3, t4, -1602 # 1755 -> 1763
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1756]:bge         s7, a5, 861 # 1756 -> 1758
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1758]:bltu        a1, s4, 372 # 1758 -> 1770
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1762]:bne         s8, s0, 1619 # 1762 -> 1782
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1766]:c.bnez      a0, 68 # 1766 -> 1776
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1768]:beq         s11, s11, 889 # 1768 -> 1776
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1770]:blt         zero, zero, -792 # 1770 -> 1780
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1784]:blt         a5, s1, -829 # 1784 -> 1801
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1798]:c.beqz      a3, 46 # 1798 -> 1814
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1800]:bge         t5, s2, 1011 # 1800 -> 1807
+2026-06-12 16:35:13,732 riscv_instr_sequence.py 188 INFO Processing branch instruction[1802]:blt         a4, s10, 40 # 1802 -> 1810
+2026-06-12 16:35:13,733 riscv_instr_sequence.py 188 INFO Processing branch instruction[1861]:blt         a7, s10, -889 # 1861 -> 1865
+2026-06-12 16:35:13,733 riscv_instr_sequence.py 188 INFO Processing branch instruction[1862]:c.beqz      a3, 36 # 1862 -> 1868
+2026-06-12 16:35:13,733 riscv_instr_sequence.py 188 INFO Processing branch instruction[1869]:bgeu        s8, zero, 667 # 1869 -> 1877
+2026-06-12 16:35:13,733 riscv_instr_sequence.py 188 INFO Processing branch instruction[1874]:bge         tp, gp, -1125 # 1874 -> 1875
+2026-06-12 16:35:13,733 riscv_instr_sequence.py 188 INFO Processing branch instruction[1879]:c.beqz      a0, 0 # 1879 -> 1892
+2026-06-12 16:35:13,733 riscv_instr_sequence.py 188 INFO Processing branch instruction[1882]:blt         zero, a1, -1819 # 1882 -> 1900
+2026-06-12 16:35:13,733 riscv_instr_sequence.py 188 INFO Processing branch instruction[1886]:blt         t0, s3, 662 # 1886 -> 1887
+2026-06-12 16:35:13,733 riscv_instr_sequence.py 188 INFO Processing branch instruction[1887]:beq         s5, s3, -2002 # 1887 -> 1897
+2026-06-12 16:35:13,733 riscv_instr_sequence.py 188 INFO Processing branch instruction[1890]:beq         a0, zero, -1275 # 1890 -> 1902
+2026-06-12 16:35:13,733 riscv_instr_sequence.py 188 INFO Processing branch instruction[1894]:beq         s5, a4, 1072 # 1894 -> 1895
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1902]:beq         a0, a4, 975 # 1902 -> 1914
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1904]:c.bnez      s0, -2 # 1904 -> 1910
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1908]:bgeu        a5, s6, -645 # 1908 -> 1915
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1911]:bge         a4, a4, 909 # 1911 -> 1914
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1916]:bgeu        s6, s1, -466 # 1916 -> 1918
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1922]:bne         a2, a0, 325 # 1922 -> 1923
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1928]:blt         s9, t1, -1069 # 1928 -> 1938
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1931]:bne         t1, t2, -934 # 1931 -> 1940
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1935]:beq         a5, s7, -84 # 1935 -> 1952
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1937]:c.beqz      a2, -2 # 1937 -> 1945
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1959]:bge         a3, s10, -1427 # 1959 -> 1969
+2026-06-12 16:35:13,734 riscv_instr_sequence.py 188 INFO Processing branch instruction[1971]:bltu        s6, a2, 303 # 1971 -> 1977
+2026-06-12 16:35:13,735 riscv_instr_sequence.py 188 INFO Processing branch instruction[1973]:bgeu        s0, s1, -1423 # 1973 -> 1985
+2026-06-12 16:35:13,735 riscv_instr_sequence.py 188 INFO Processing branch instruction[1980]:c.beqz      a3, -2 # 1980 -> 1988
+2026-06-12 16:35:13,735 riscv_instr_sequence.py 188 INFO Processing branch instruction[2005]:bne         s10, a4, 1800 # 2005 -> 2008
+2026-06-12 16:35:13,735 riscv_instr_sequence.py 188 INFO Processing branch instruction[2012]:blt         s4, s7, 1693 # 2012 -> 2019
+2026-06-12 16:35:13,735 riscv_instr_sequence.py 188 INFO Processing branch instruction[2013]:c.bnez      a2, 62 # 2013 -> 2021
+2026-06-12 16:35:13,735 riscv_instr_sequence.py 188 INFO Processing branch instruction[2022]:bge         a1, s1, 993 # 2022 -> 2024
+2026-06-12 16:35:13,735 riscv_instr_sequence.py 188 INFO Processing branch instruction[2025]:bne         t6, s0, 1116 # 2025 -> 2038
+2026-06-12 16:35:13,735 riscv_instr_sequence.py 188 INFO Processing branch instruction[2030]:blt         s8, t1, 1938 # 2030 -> 2031
+2026-06-12 16:35:13,735 riscv_instr_sequence.py 188 INFO Processing branch instruction[2042]:c.beqz      a0, -2 # 2042 -> 2062
+2026-06-12 16:35:13,735 riscv_instr_sequence.py 188 INFO Processing branch instruction[2043]:c.bnez      a5, 56 # 2043 -> 2051
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2051]:c.bnez      a3, 110 # 2051 -> 2063
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2060]:c.beqz      a3, 100 # 2060 -> 2061
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2064]:bltu        s4, t0, -466 # 2064 -> 2070
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2094]:c.bnez      a2, -2 # 2094 -> 2110
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2099]:bge         s6, a6, -863 # 2099 -> 2100
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2103]:bge         t6, t2, -2002 # 2103 -> 2110
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2109]:beq         s0, s4, -1983 # 2109 -> 2127
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2111]:bne         s11, a7, -34 # 2111 -> 2119
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2117]:c.bnez      a0, -2 # 2117 -> 2118
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2121]:bne         t5, tp, 90 # 2121 -> 2131
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2125]:bgeu        a1, s11, -1675 # 2125 -> 2137
+2026-06-12 16:35:13,736 riscv_instr_sequence.py 188 INFO Processing branch instruction[2126]:bge         s0, a7, 1258 # 2126 -> 2130
+2026-06-12 16:35:13,737 riscv_instr_sequence.py 188 INFO Processing branch instruction[2139]:beq         t5, s4, 567 # 2139 -> 2149
+2026-06-12 16:35:13,737 riscv_instr_sequence.py 188 INFO Processing branch instruction[2159]:bgeu        s11, s5, -1012 # 2159 -> 2161
+2026-06-12 16:35:13,737 riscv_instr_sequence.py 188 INFO Processing branch instruction[2169]:bltu        s0, a1, 922 # 2169 -> 2179
+2026-06-12 16:35:13,737 riscv_instr_sequence.py 188 INFO Processing branch instruction[2171]:bge         t5, gp, 1463 # 2171 -> 2180
+2026-06-12 16:35:13,737 riscv_instr_sequence.py 188 INFO Processing branch instruction[2177]:bltu        ra, a7, -859 # 2177 -> 2189
+2026-06-12 16:35:13,737 riscv_instr_sequence.py 188 INFO Processing branch instruction[2184]:bgeu        t0, a3, -1375 # 2184 -> 2196
+2026-06-12 16:35:13,737 riscv_instr_sequence.py 188 INFO Processing branch instruction[2188]:bgeu        t6, t5, 332 # 2188 -> 2198
+2026-06-12 16:35:13,737 riscv_instr_sequence.py 188 INFO Processing branch instruction[2190]:bge         t3, gp, 64 # 2190 -> 2196
+2026-06-12 16:35:13,737 riscv_instr_sequence.py 188 INFO Processing branch instruction[2198]:bne         t5, a0, 1851 # 2198 -> 2205
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2209]:c.bnez      a4, -2 # 2209 -> 2211
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2213]:bltu        a2, a0, -1995 # 2213 -> 2221
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2219]:c.bnez      a0, -2 # 2219 -> 2225
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2221]:c.bnez      s1, -2 # 2221 -> 2222
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2226]:c.beqz      a0, -2 # 2226 -> 2234
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2235]:c.bnez      s0, 102 # 2235 -> 2237
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2246]:bgeu        sp, s1, -1109 # 2246 -> 2250
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2247]:bgeu        a5, a6, 1715 # 2247 -> 2250
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2258]:bltu        t0, s1, -807 # 2258 -> 2274
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2260]:bne         t2, a1, -657 # 2260 -> 2269
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2261]:blt         s7, a6, -1106 # 2261 -> 2271
+2026-06-12 16:35:13,738 riscv_instr_sequence.py 188 INFO Processing branch instruction[2263]:c.beqz      a0, -2 # 2263 -> 2280
+2026-06-12 16:35:13,739 riscv_instr_sequence.py 188 INFO Processing branch instruction[2275]:blt         s8, s2, 1320 # 2275 -> 2283
+2026-06-12 16:35:13,739 riscv_instr_sequence.py 188 INFO Processing branch instruction[2281]:bne         s10, s10, 1735 # 2281 -> 2294
+2026-06-12 16:35:13,739 riscv_instr_sequence.py 188 INFO Processing branch instruction[2306]:bne         s8, tp, 152 # 2306 -> 2316
+2026-06-12 16:35:13,739 riscv_instr_sequence.py 188 INFO Processing branch instruction[2313]:bge         s1, a3, 1523 # 2313 -> 2314
+2026-06-12 16:35:13,739 riscv_instr_sequence.py 188 INFO Processing branch instruction[2322]:beq         s9, ra, -1454 # 2322 -> 2330
+2026-06-12 16:35:13,739 riscv_instr_sequence.py 188 INFO Processing branch instruction[2332]:blt         a7, a4, -1300 # 2332 -> 2344
+2026-06-12 16:35:13,739 riscv_instr_sequence.py 188 INFO Processing branch instruction[2336]:bne         a4, a3, 1486 # 2336 -> 2354
+2026-06-12 16:35:13,739 riscv_instr_sequence.py 188 INFO Processing branch instruction[2349]:blt         a3, s8, 1407 # 2349 -> 2356
+2026-06-12 16:35:13,739 riscv_instr_sequence.py 188 INFO Processing branch instruction[2354]:bgeu        gp, s8, -206 # 2354 -> 2362
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2365]:bltu        s3, a6, -1112 # 2365 -> 2366
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2367]:bge         a2, s7, -248 # 2367 -> 2377
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2368]:bgeu        tp, s11, 1575 # 2368 -> 2388
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2369]:c.bnez      a0, -2 # 2369 -> 2370
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2371]:bne         t6, a6, 1394 # 2371 -> 2379
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2372]:bgeu        a4, s0, 1419 # 2372 -> 2380
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2378]:blt         s9, a6, 291 # 2378 -> 2381
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2384]:bgeu        t3, t0, -1931 # 2384 -> 2396
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2386]:bne         sp, sp, 562 # 2386 -> 2398
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2391]:beq         a6, gp, 1476 # 2391 -> 2392
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2392]:bne         t4, gp, -1825 # 2392 -> 2409
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2397]:blt         s3, s2, -440 # 2397 -> 2405
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2403]:bltu        a1, t6, 1168 # 2403 -> 2404
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2412]:bne         s10, t0, -174 # 2412 -> 2430
+2026-06-12 16:35:13,740 riscv_instr_sequence.py 188 INFO Processing branch instruction[2419]:c.bnez      a3, -2 # 2419 -> 2426
+2026-06-12 16:35:13,741 riscv_instr_sequence.py 188 INFO Processing branch instruction[2438]:blt         s5, s8, -267 # 2438 -> 2448
+2026-06-12 16:35:13,741 riscv_instr_sequence.py 188 INFO Processing branch instruction[2441]:blt         t0, zero, -1703 # 2441 -> 2443
+2026-06-12 16:35:13,741 riscv_instr_sequence.py 188 INFO Processing branch instruction[2446]:blt         s2, gp, 994 # 2446 -> 2458
+2026-06-12 16:35:13,741 riscv_instr_sequence.py 188 INFO Processing branch instruction[2449]:c.beqz      a0, 118 # 2449 -> 2459
+2026-06-12 16:35:13,741 riscv_instr_sequence.py 188 INFO Processing branch instruction[2450]:blt         t2, s1, -1313 # 2450 -> 2470
+2026-06-12 16:35:13,741 riscv_instr_sequence.py 188 INFO Processing branch instruction[2464]:blt         s7, a2, -1447 # 2464 -> 2474
+2026-06-12 16:35:13,741 riscv_instr_sequence.py 188 INFO Processing branch instruction[2470]:bge         s7, s11, -1245 # 2470 -> 2486
+2026-06-12 16:35:13,741 riscv_instr_sequence.py 188 INFO Processing branch instruction[2473]:blt         t2, s9, 1051 # 2473 -> 2486
+2026-06-12 16:35:13,741 riscv_instr_sequence.py 188 INFO Processing branch instruction[2478]:c.bnez      a1, 94 # 2478 -> 2486
+2026-06-12 16:35:13,741 riscv_instr_sequence.py 188 INFO Processing branch instruction[2489]:blt         a0, a5, -1276 # 2489 -> 2498
+2026-06-12 16:35:13,741 riscv_instr_sequence.py 188 INFO Processing branch instruction[2493]:bge         a4, gp, -599 # 2493 -> 2503
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2512]:c.beqz      a0, -2 # 2512 -> 2513
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2514]:c.beqz      a0, -2 # 2514 -> 2518
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2525]:bne         a1, a4, -612 # 2525 -> 2527
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2526]:c.bnez      a2, 68 # 2526 -> 2533
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2530]:bge         s4, a1, 212 # 2530 -> 2538
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2541]:beq         ra, s2, 62 # 2541 -> 2547
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2545]:beq         t0, t5, -475 # 2545 -> 2546
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2546]:bne         s1, t5, -60 # 2546 -> 2552
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2551]:blt         a2, s10, 1509 # 2551 -> 2559
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2555]:bgeu        a1, s1, 359 # 2555 -> 2571
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2570]:beq         a6, zero, -945 # 2570 -> 2573
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2573]:bge         tp, s0, -279 # 2573 -> 2583
+2026-06-12 16:35:13,742 riscv_instr_sequence.py 188 INFO Processing branch instruction[2578]:bgeu        s11, a1, 575 # 2578 -> 2595
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2580]:blt         t5, tp, 1849 # 2580 -> 2586
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2592]:bltu        t3, a2, -1955 # 2592 -> 2600
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2595]:blt         s1, s2, 1347 # 2595 -> 2607
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2599]:c.beqz      a3, -2 # 2599 -> 2600
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2608]:c.beqz      a0, 108 # 2608 -> 2617
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2615]:beq         s2, tp, 477 # 2615 -> 2616
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2626]:bne         a4, sp, -44 # 2626 -> 2636
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2635]:beq         a1, a0, 1802 # 2635 -> 2642
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2642]:bgeu        sp, zero, -1527 # 2642 -> 2646
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2643]:c.bnez      a0, -2 # 2643 -> 2653
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2650]:bgeu        a7, a7, -1028 # 2650 -> 2652
+2026-06-12 16:35:13,743 riscv_instr_sequence.py 188 INFO Processing branch instruction[2651]:c.beqz      a0, -2 # 2651 -> 2658
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2664]:bltu        a2, t6, 90 # 2664 -> 2665
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2668]:bge         s3, a5, -818 # 2668 -> 2688
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2670]:bgeu        s1, t5, 960 # 2670 -> 2672
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2673]:c.bnez      a3, 72 # 2673 -> 2683
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2674]:bge         t3, t4, 216 # 2674 -> 2682
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2680]:bgeu        s10, s5, -344 # 2680 -> 2686
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2682]:beq         s11, ra, 1043 # 2682 -> 2683
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2685]:bltu        sp, t3, -2041 # 2685 -> 2703
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2689]:bgeu        t5, a5, 771 # 2689 -> 2697
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2690]:beq         s1, tp, -1532 # 2690 -> 2703
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2701]:blt         s10, s1, 323 # 2701 -> 2713
+2026-06-12 16:35:13,744 riscv_instr_sequence.py 188 INFO Processing branch instruction[2726]:c.beqz      a3, 38 # 2726 -> 2738
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2739]:blt         t3, a6, -1400 # 2739 -> 2747
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2741]:bltu        s2, t2, 345 # 2741 -> 2754
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2744]:bltu        s4, s3, 1362 # 2744 -> 2754
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2748]:bge         s5, t5, 485 # 2748 -> 2754
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2750]:bne         s11, a1, -1721 # 2750 -> 2766
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2755]:bgeu        s3, a1, -1763 # 2755 -> 2775
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2765]:bgeu        s2, a6, 1970 # 2765 -> 2773
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2771]:bltu        t5, zero, 1085 # 2771 -> 2775
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2773]:bltu        s1, gp, 2042 # 2773 -> 2783
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2774]:bge         a1, zero, -143 # 2774 -> 2781
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2779]:c.beqz      a0, -2 # 2779 -> 2781
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2782]:beq         a6, s7, -1096 # 2782 -> 2783
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2784]:bge         a1, a3, 1206 # 2784 -> 2794
+2026-06-12 16:35:13,745 riscv_instr_sequence.py 188 INFO Processing branch instruction[2785]:bge         zero, s0, -963 # 2785 -> 2786
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2786]:bgeu        t3, s0, 765 # 2786 -> 2798
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2790]:bgeu        s10, sp, -254 # 2790 -> 2802
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2791]:c.beqz      a0, -2 # 2791 -> 2799
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2796]:blt         t5, s5, -464 # 2796 -> 2806
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2798]:c.bnez      a0, 2 # 2798 -> 2805
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2799]:bgeu        a3, a0, 1239 # 2799 -> 2800
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2800]:bltu        s10, s6, -1315 # 2800 -> 2808
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2802]:bgeu        a6, t4, 676 # 2802 -> 2804
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2814]:bltu        a4, t4, 1020 # 2814 -> 2823
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2816]:bne         a5, s11, 1298 # 2816 -> 2817
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2821]:bgeu        s8, s9, 1802 # 2821 -> 2839
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2827]:bltu        a2, t5, -798 # 2827 -> 2835
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2834]:c.bnez      a0, -2 # 2834 -> 2846
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2835]:c.beqz      a2, -2 # 2835 -> 2843
+2026-06-12 16:35:13,746 riscv_instr_sequence.py 188 INFO Processing branch instruction[2837]:blt         t2, s11, -919 # 2837 -> 2843
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2841]:blt         a1, zero, 589 # 2841 -> 2858
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2847]:bge         t0, a0, 528 # 2847 -> 2850
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2855]:bge         ra, a6, 153 # 2855 -> 2856
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2858]:beq         s5, t3, 453 # 2858 -> 2862
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2863]:beq         ra, t0, -1756 # 2863 -> 2869
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2871]:beq         a2, s9, 1458 # 2871 -> 2884
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2873]:beq         s8, a1, -1094 # 2873 -> 2885
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2876]:blt         t2, s10, 1777 # 2876 -> 2885
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2877]:blt         a1, s1, -1795 # 2877 -> 2880
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2890]:bge         t0, gp, -1087 # 2890 -> 2897
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2891]:beq         s4, s4, -1959 # 2891 -> 2901
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2904]:blt         zero, s11, 1995 # 2904 -> 2912
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2905]:beq         zero, a1, -875 # 2905 -> 2913
+2026-06-12 16:35:13,747 riscv_instr_sequence.py 188 INFO Processing branch instruction[2906]:bne         s1, s4, -992 # 2906 -> 2916
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2908]:c.bnez      a0, 98 # 2908 -> 2920
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2914]:bgeu        sp, tp, -358 # 2914 -> 2921
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2916]:c.bnez      a0, 98 # 2916 -> 2928
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2922]:bge         t0, t0, 1182 # 2922 -> 2932
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2933]:beq         s2, s4, -1916 # 2933 -> 2950
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2938]:blt         a3, gp, -203 # 2938 -> 2940
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2939]:bgeu        s8, s4, -1056 # 2939 -> 2955
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2940]:blt         s3, a5, 324 # 2940 -> 2948
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2943]:bge         zero, s9, -1794 # 2943 -> 2961
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2948]:c.bnez      a0, 84 # 2948 -> 2950
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2955]:c.beqz      a0, -2 # 2955 -> 2965
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2969]:c.bnez      a0, -2 # 2969 -> 2989
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2975]:bge         a0, s10, 1374 # 2975 -> 2976
+2026-06-12 16:35:13,748 riscv_instr_sequence.py 188 INFO Processing branch instruction[2977]:bne         a4, a4, -465 # 2977 -> 2978
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[2979]:beq         a6, sp, 137 # 2979 -> 2980
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[2982]:c.beqz      a0, -2 # 2982 -> 2990
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[2986]:bgeu        a0, s5, -1219 # 2986 -> 2994
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[2988]:bltu        s7, s0, -838 # 2988 -> 2994
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[2993]:c.bnez      a0, -2 # 2993 -> 2999
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[3001]:c.beqz      a3, -2 # 3001 -> 3013
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[3004]:c.beqz      a4, 16 # 3004 -> 3017
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[3011]:bne         zero, s7, 1059 # 3011 -> 3019
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[3012]:bne         a2, s8, 322 # 3012 -> 3020
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[3015]:c.beqz      a0, 108 # 3015 -> 3035
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[3021]:blt         t0, s10, -1692 # 3021 -> 3022
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[3022]:bltu        s1, gp, -1946 # 3022 -> 3028
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[3034]:bge         s5, a1, -351 # 3034 -> 3035
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[3036]:bgeu        a2, t6, 474 # 3036 -> 3037
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[3040]:bltu        t6, gp, 779 # 3040 -> 3050
+2026-06-12 16:35:13,749 riscv_instr_sequence.py 188 INFO Processing branch instruction[3042]:c.bnez      a2, -2 # 3042 -> 3050
+2026-06-12 16:35:13,750 riscv_instr_sequence.py 188 INFO Processing branch instruction[3049]:bne         t4, s4, 2003 # 3049 -> 3067
+2026-06-12 16:35:13,750 riscv_instr_sequence.py 188 INFO Processing branch instruction[3084]:c.beqz      a0, -2 # 3084 -> 3100
+2026-06-12 16:35:13,750 riscv_instr_sequence.py 188 INFO Processing branch instruction[3093]:c.beqz      a0, 24 # 3093 -> 3105
+2026-06-12 16:35:13,750 riscv_instr_sequence.py 188 INFO Processing branch instruction[3097]:beq         t3, a6, -486 # 3097 -> 3105
+2026-06-12 16:35:13,750 riscv_instr_sequence.py 188 INFO Processing branch instruction[3115]:bne         zero, s4, 1476 # 3115 -> 3119
+2026-06-12 16:35:13,750 riscv_instr_sequence.py 188 INFO Processing branch instruction[3119]:bgeu        s1, s3, 1998 # 3119 -> 3128
+2026-06-12 16:35:13,750 riscv_instr_sequence.py 188 INFO Processing branch instruction[3125]:bne         t6, s4, -1801 # 3125 -> 3127
+2026-06-12 16:35:13,750 riscv_instr_sequence.py 188 INFO Processing branch instruction[3148]:blt         a3, zero, -830 # 3148 -> 3155
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3150]:c.bnez      a0, -2 # 3150 -> 3151
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3156]:bne         s9, a4, 1041 # 3156 -> 3159
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3164]:bge         a0, s6, 1581 # 3164 -> 3166
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3171]:bge         t6, t0, 1548 # 3171 -> 3179
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3173]:bge         t5, s2, -695 # 3173 -> 3183
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3175]:blt         t4, t4, 1550 # 3175 -> 3182
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3176]:c.bnez      a2, 58 # 3176 -> 3188
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3180]:bne         t6, t3, 1555 # 3180 -> 3190
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3186]:c.beqz      a3, 18 # 3186 -> 3196
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3207]:blt         s4, zero, 690 # 3207 -> 3224
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3209]:blt         a2, a4, 257 # 3209 -> 3215
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3216]:c.bnez      a3, -2 # 3216 -> 3228
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3219]:bne         s6, a3, -921 # 3219 -> 3237
+2026-06-12 16:35:13,751 riscv_instr_sequence.py 188 INFO Processing branch instruction[3221]:c.beqz      a0, -2 # 3221 -> 3222
+2026-06-12 16:35:13,752 riscv_instr_sequence.py 188 INFO Processing branch instruction[3226]:c.beqz      a4, -2 # 3226 -> 3229
+2026-06-12 16:35:13,752 riscv_instr_sequence.py 188 INFO Processing branch instruction[3228]:beq         t5, gp, -455 # 3228 -> 3245
+2026-06-12 16:35:13,752 riscv_instr_sequence.py 188 INFO Processing branch instruction[3239]:bne         a4, a2, 522 # 3239 -> 3247
+2026-06-12 16:35:13,752 riscv_instr_sequence.py 188 INFO Processing branch instruction[3246]:bge         s3, zero, 1550 # 3246 -> 3254
+2026-06-12 16:35:13,752 riscv_instr_sequence.py 188 INFO Processing branch instruction[3247]:beq         a2, a1, -1321 # 3247 -> 3253
+2026-06-12 16:35:13,752 riscv_instr_sequence.py 188 INFO Processing branch instruction[3271]:blt         t3, a6, 548 # 3271 -> 3273
+2026-06-12 16:35:13,752 riscv_instr_sequence.py 188 INFO Processing branch instruction[3279]:bge         s1, tp, 623 # 3279 -> 3280
+2026-06-12 16:35:13,752 riscv_instr_sequence.py 188 INFO Processing branch instruction[3282]:c.bnez      a0, 66 # 3282 -> 3289
+2026-06-12 16:35:13,752 riscv_instr_sequence.py 188 INFO Processing branch instruction[3312]:bltu        t2, a3, 1060 # 3312 -> 3320
+2026-06-12 16:35:13,753 riscv_instr_sequence.py 188 INFO Processing branch instruction[3326]:bltu        a3, t6, -1921 # 3326 -> 3327
+2026-06-12 16:35:13,753 riscv_instr_sequence.py 188 INFO Processing branch instruction[3334]:bne         s6, sp, -1826 # 3334 -> 3344
+2026-06-12 16:35:13,753 riscv_instr_sequence.py 188 INFO Processing branch instruction[3346]:beq         t1, s0, 2031 # 3346 -> 3353
+2026-06-12 16:35:13,753 riscv_instr_sequence.py 188 INFO Processing branch instruction[3349]:bge         s7, t6, 1393 # 3349 -> 3353
+2026-06-12 16:35:13,753 riscv_instr_sequence.py 188 INFO Processing branch instruction[3353]:blt         s8, ra, -1276 # 3353 -> 3365
+2026-06-12 16:35:13,753 riscv_instr_sequence.py 188 INFO Processing branch instruction[3357]:bne         s6, ra, -2008 # 3357 -> 3369
+2026-06-12 16:35:13,753 riscv_instr_sequence.py 188 INFO Processing branch instruction[3370]:bge         t2, s4, -738 # 3370 -> 3378
+2026-06-12 16:35:13,753 riscv_instr_sequence.py 188 INFO Processing branch instruction[3379]:beq         t3, t5, -993 # 3379 -> 3381
+2026-06-12 16:35:13,753 riscv_instr_sequence.py 188 INFO Processing branch instruction[3381]:bgeu        a0, s9, 1212 # 3381 -> 3401
+2026-06-12 16:35:13,753 riscv_instr_sequence.py 188 INFO Processing branch instruction[3397]:bne         s5, s5, -818 # 3397 -> 3410
+2026-06-12 16:35:13,753 riscv_instr_sequence.py 188 INFO Processing branch instruction[3403]:beq         s2, zero, -1756 # 3403 -> 3413
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3411]:bge         gp, s1, 358 # 3411 -> 3412
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3422]:c.beqz      a0, 28 # 3422 -> 3432
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3427]:beq         ra, s1, -1353 # 3427 -> 3437
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3428]:c.beqz      a3, -2 # 3428 -> 3436
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3432]:c.beqz      a5, -2 # 3432 -> 3448
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3439]:blt         a7, a2, 1596 # 3439 -> 3448
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3443]:bltu        t5, t5, 487 # 3443 -> 3450
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3458]:c.beqz      a3, 4 # 3458 -> 3459
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3464]:bltu        s2, s3, -545 # 3464 -> 3481
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3471]:c.beqz      a5, 112 # 3471 -> 3481
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3473]:bne         s10, ra, -1684 # 3473 -> 3485
+2026-06-12 16:35:13,754 riscv_instr_sequence.py 188 INFO Processing branch instruction[3482]:bne         t5, t1, -1429 # 3482 -> 3486
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3486]:bge         s0, a7, 1130 # 3486 -> 3496
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3489]:bge         zero, s3, -1848 # 3489 -> 3491
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3491]:blt         a6, t3, -781 # 3491 -> 3499
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3503]:beq         t5, a3, -744 # 3503 -> 3509
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3506]:bltu        s6, s7, 479 # 3506 -> 3514
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3510]:bltu        s10, t6, 1981 # 3510 -> 3530
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3516]:blt         s8, zero, 1219 # 3516 -> 3529
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3517]:beq         a6, sp, 1870 # 3517 -> 3520
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3523]:bge         t0, s2, 31 # 3523 -> 3533
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3527]:bne         a7, gp, 566 # 3527 -> 3528
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3533]:beq         s11, t2, -40 # 3533 -> 3534
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3536]:bge         a3, a3, 1965 # 3536 -> 3544
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3538]:bge         s1, a4, 1019 # 3538 -> 3554
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3540]:c.beqz      a0, -2 # 3540 -> 3549
+2026-06-12 16:35:13,755 riscv_instr_sequence.py 188 INFO Processing branch instruction[3544]:bge         a5, a2, 1198 # 3544 -> 3556
+2026-06-12 16:35:13,756 riscv_instr_sequence.py 188 INFO Processing branch instruction[3547]:bge         s9, ra, 369 # 3547 -> 3559
+2026-06-12 16:35:13,756 riscv_instr_sequence.py 188 INFO Processing branch instruction[3553]:bltu        t1, s11, 1000 # 3553 -> 3571
+2026-06-12 16:35:13,756 riscv_instr_sequence.py 188 INFO Processing branch instruction[3563]:c.bnez      s1, 80 # 3563 -> 3569
+2026-06-12 16:35:13,756 riscv_instr_sequence.py 188 INFO Processing branch instruction[3586]:bgeu        a5, gp, 382 # 3586 -> 3596
+2026-06-12 16:35:13,756 riscv_instr_sequence.py 188 INFO Processing branch instruction[3589]:bge         s1, s11, 1472 # 3589 -> 3597
+2026-06-12 16:35:13,756 riscv_instr_sequence.py 188 INFO Processing branch instruction[3592]:bgeu        a3, a1, -975 # 3592 -> 3593
+2026-06-12 16:35:13,756 riscv_instr_sequence.py 188 INFO Processing branch instruction[3599]:beq         s3, t3, -1637 # 3599 -> 3601
+2026-06-12 16:35:13,756 riscv_instr_sequence.py 188 INFO Processing branch instruction[3609]:bgeu        a3, t1, 25 # 3609 -> 3617
+2026-06-12 16:35:13,756 riscv_instr_sequence.py 188 INFO Processing branch instruction[3612]:bltu        a0, s9, 354 # 3612 -> 3619
+2026-06-12 16:35:13,756 riscv_instr_sequence.py 188 INFO Processing branch instruction[3624]:bge         a3, s10, -1172 # 3624 -> 3634
+2026-06-12 16:35:13,756 riscv_instr_sequence.py 188 INFO Processing branch instruction[3626]:beq         s11, t1, 1831 # 3626 -> 3634
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3629]:bltu        t1, s2, -18 # 3629 -> 3639
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3635]:beq         s0, s3, -1474 # 3635 -> 3636
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3646]:c.beqz      a3, 82 # 3646 -> 3647
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3648]:beq         a6, t1, 1071 # 3648 -> 3649
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3652]:c.bnez      a0, 100 # 3652 -> 3672
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3660]:bge         zero, sp, 1370 # 3660 -> 3670
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3666]:bltu        t2, a0, -1255 # 3666 -> 3674
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3669]:bltu        sp, t0, -1739 # 3669 -> 3679
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3675]:beq         s7, a7, 766 # 3675 -> 3683
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3677]:beq         s0, t0, -1768 # 3677 -> 3678
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3682]:blt         s10, sp, -471 # 3682 -> 3688
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3687]:beq         gp, s11, 614 # 3687 -> 3695
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3701]:blt         t6, t2, -221 # 3701 -> 3703
+2026-06-12 16:35:13,757 riscv_instr_sequence.py 188 INFO Processing branch instruction[3705]:bgeu        s2, t0, 88 # 3705 -> 3708
+2026-06-12 16:35:13,758 riscv_instr_sequence.py 188 INFO Processing branch instruction[3712]:bgeu        s6, a5, -738 # 3712 -> 3719
+2026-06-12 16:35:13,758 riscv_instr_sequence.py 188 INFO Processing branch instruction[3733]:c.beqz      a3, 76 # 3733 -> 3742
+2026-06-12 16:35:13,758 riscv_instr_sequence.py 188 INFO Processing branch instruction[3734]:beq         s6, s3, 2043 # 3734 -> 3747
+2026-06-12 16:35:13,758 riscv_instr_sequence.py 188 INFO Processing branch instruction[3737]:bgeu        s10, s8, 1525 # 3737 -> 3745
+2026-06-12 16:35:13,758 riscv_instr_sequence.py 188 INFO Processing branch instruction[3746]:bgeu        s4, s3, 2043 # 3746 -> 3763
+2026-06-12 16:35:13,758 riscv_instr_sequence.py 188 INFO Processing branch instruction[3762]:beq         t4, zero, 1141 # 3762 -> 3769
+2026-06-12 16:35:13,758 riscv_instr_sequence.py 188 INFO Processing branch instruction[3767]:c.beqz      a0, 0 # 3767 -> 3785
+2026-06-12 16:35:13,758 riscv_instr_sequence.py 188 INFO Processing branch instruction[3783]:bltu        zero, gp, -1249 # 3783 -> 3799
+2026-06-12 16:35:13,758 riscv_instr_sequence.py 188 INFO Processing branch instruction[3788]:blt         t3, t6, 243 # 3788 -> 3790
+2026-06-12 16:35:13,758 riscv_instr_sequence.py 188 INFO Processing branch instruction[3790]:bge         s5, t4, -92 # 3790 -> 3796
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3795]:bltu        s3, sp, 1501 # 3795 -> 3807
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3796]:bne         s8, s10, 896 # 3796 -> 3808
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3801]:bge         a5, t4, -1361 # 3801 -> 3813
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3825]:bgeu        a0, t0, 276 # 3825 -> 3829
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3833]:c.bnez      a0, 10 # 3833 -> 3845
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3851]:beq         s9, s3, -1780 # 3851 -> 3858
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3855]:bgeu        s11, ra, 1014 # 3855 -> 3865
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3856]:c.beqz      s0, 96 # 3856 -> 3857
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3859]:c.beqz      a0, -2 # 3859 -> 3872
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3875]:bltu        t6, s6, 1635 # 3875 -> 3879
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3878]:bne         a2, a4, 280 # 3878 -> 3887
+2026-06-12 16:35:13,759 riscv_instr_sequence.py 188 INFO Processing branch instruction[3879]:beq         s7, s8, -217 # 3879 -> 3885
+2026-06-12 16:35:13,760 riscv_instr_sequence.py 188 INFO Processing branch instruction[3888]:bne         s4, s5, -363 # 3888 -> 3890
+2026-06-12 16:35:13,760 riscv_instr_sequence.py 188 INFO Processing branch instruction[3902]:blt         s4, t6, -1344 # 3902 -> 3910
+2026-06-12 16:35:13,760 riscv_instr_sequence.py 188 INFO Processing branch instruction[3904]:c.beqz      a0, 26 # 3904 -> 3912
+2026-06-12 16:35:13,760 riscv_instr_sequence.py 188 INFO Processing branch instruction[3909]:c.beqz      a0, 2 # 3909 -> 3926
+2026-06-12 16:35:13,760 riscv_instr_sequence.py 188 INFO Processing branch instruction[3915]:c.bnez      a2, 8 # 3915 -> 3927
+2026-06-12 16:35:13,760 riscv_instr_sequence.py 188 INFO Processing branch instruction[3919]:bgeu        t5, tp, 100 # 3919 -> 3929
+2026-06-12 16:35:13,760 riscv_instr_sequence.py 188 INFO Processing branch instruction[3929]:beq         a3, t5, 1254 # 3929 -> 3936
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[3954]:bgeu        tp, s0, 1390 # 3954 -> 3966
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[3968]:bne         a5, t3, 734 # 3968 -> 3988
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[3969]:blt         s9, ra, -315 # 3969 -> 3970
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[3970]:c.bnez      a0, -2 # 3970 -> 3978
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[3973]:c.bnez      a0, -2 # 3973 -> 3981
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[3977]:bne         s1, s3, -563 # 3977 -> 3995
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[3979]:bge         s11, s7, -642 # 3979 -> 3987
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[3988]:bgeu        s11, s0, 567 # 3988 -> 3989
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[3989]:bge         a2, s0, 682 # 3989 -> 3992
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[3991]:bne         tp, a2, 459 # 3991 -> 4007
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[3998]:bne         s11, t0, -109 # 3998 -> 4008
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[4000]:c.beqz      a0, -2 # 4000 -> 4006
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[4004]:c.bnez      a0, 124 # 4004 -> 4005
+2026-06-12 16:35:13,761 riscv_instr_sequence.py 188 INFO Processing branch instruction[4005]:bge         s6, s8, -263 # 4005 -> 4015
+2026-06-12 16:35:13,762 riscv_instr_sequence.py 188 INFO Processing branch instruction[4019]:c.beqz      a3, 14 # 4019 -> 4021
+2026-06-12 16:35:13,762 riscv_instr_sequence.py 188 INFO Processing branch instruction[4020]:bltu        s4, t5, -1711 # 4020 -> 4032
+2026-06-12 16:35:13,762 riscv_instr_sequence.py 188 INFO Processing branch instruction[4026]:beq         t6, s9, 1857 # 4026 -> 4030
+2026-06-12 16:35:13,762 riscv_instr_sequence.py 188 INFO Processing branch instruction[4032]:c.beqz      a0, -2 # 4032 -> 4042
+2026-06-12 16:35:13,762 riscv_instr_sequence.py 188 INFO Processing branch instruction[4046]:bgeu        sp, a7, 387 # 4046 -> 4066
+2026-06-12 16:35:13,762 riscv_instr_sequence.py 188 INFO Processing branch instruction[4060]:bge         a6, a3, -989 # 4060 -> 4067
+2026-06-12 16:35:13,762 riscv_instr_sequence.py 188 INFO Processing branch instruction[4069]:bgeu        a3, a2, 183 # 4069 -> 4085
+2026-06-12 16:35:13,762 riscv_instr_sequence.py 188 INFO Processing branch instruction[4097]:bltu        t6, a3, -943 # 4097 -> 4109
+2026-06-12 16:35:13,763 riscv_instr_sequence.py 188 INFO Processing branch instruction[4104]:blt         s0, s9, 596 # 4104 -> 4105
+2026-06-12 16:35:13,763 riscv_instr_sequence.py 188 INFO Processing branch instruction[4131]:bgeu        s0, t6, -451 # 4131 -> 4144
+2026-06-12 16:35:13,763 riscv_instr_sequence.py 188 INFO Processing branch instruction[4135]:c.beqz      a1, -2 # 4135 -> 4144
+2026-06-12 16:35:13,763 riscv_instr_sequence.py 188 INFO Processing branch instruction[4136]:beq         s2, a5, 2001 # 4136 -> 4144
+2026-06-12 16:35:13,763 riscv_instr_sequence.py 188 INFO Processing branch instruction[4143]:c.beqz      a0, 122 # 4143 -> 4149
+2026-06-12 16:35:13,763 riscv_instr_sequence.py 188 INFO Processing branch instruction[4154]:c.beqz      a0, 12 # 4154 -> 4155
+2026-06-12 16:35:13,763 riscv_instr_sequence.py 188 INFO Processing branch instruction[4156]:c.bnez      a0, -2 # 4156 -> 4174
+2026-06-12 16:35:13,763 riscv_instr_sequence.py 188 INFO Processing branch instruction[4169]:bltu        t6, t4, 850 # 4169 -> 4172
+2026-06-12 16:35:13,763 riscv_instr_sequence.py 188 INFO Processing branch instruction[4172]:bgeu        a1, a4, 1575 # 4172 -> 4180
+2026-06-12 16:35:13,763 riscv_instr_sequence.py 188 INFO Processing branch instruction[4173]:bltu        t3, a3, -306 # 4173 -> 4185
+2026-06-12 16:35:13,764 riscv_instr_sequence.py 188 INFO Processing branch instruction[4178]:c.beqz      a2, -2 # 4178 -> 4188
+2026-06-12 16:35:13,764 riscv_instr_sequence.py 188 INFO Processing branch instruction[4179]:beq         a4, t4, -708 # 4179 -> 4186
+2026-06-12 16:35:13,764 riscv_instr_sequence.py 188 INFO Processing branch instruction[4184]:bne         a5, a3, -234 # 4184 -> 4190
+2026-06-12 16:35:13,764 riscv_instr_sequence.py 188 INFO Processing branch instruction[4193]:c.bnez      s0, -2 # 4193 -> 4201
+2026-06-12 16:35:13,764 riscv_instr_sequence.py 188 INFO Processing branch instruction[4200]:bne         s8, zero, 797 # 4200 -> 4202
+2026-06-12 16:35:13,764 riscv_instr_sequence.py 188 INFO Processing branch instruction[4202]:beq         tp, s1, 1217 # 4202 -> 4204
+2026-06-12 16:35:13,764 riscv_instr_sequence.py 188 INFO Processing branch instruction[4211]:blt         t2, s0, -951 # 4211 -> 4212
+2026-06-12 16:35:13,764 riscv_instr_sequence.py 188 INFO Processing branch instruction[4215]:c.beqz      a0, -2 # 4215 -> 4225
+2026-06-12 16:35:13,764 riscv_instr_sequence.py 188 INFO Processing branch instruction[4223]:bne         t1, t2, -979 # 4223 -> 4224
+2026-06-12 16:35:13,764 riscv_instr_sequence.py 188 INFO Processing branch instruction[4237]:beq         t5, a7, -1046 # 4237 -> 4254
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4249]:blt         gp, s6, 1210 # 4249 -> 4257
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4252]:beq         zero, s11, -1365 # 4252 -> 4260
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4254]:bne         a5, a2, -985 # 4254 -> 4264
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4255]:blt         a4, a6, -990 # 4255 -> 4257
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4257]:blt         t6, t2, 965 # 4257 -> 4258
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4258]:c.beqz      a3, -2 # 4258 -> 4270
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4260]:c.beqz      a0, 16 # 4260 -> 4273
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4264]:bge         s4, t1, 560 # 4264 -> 4276
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4265]:bltu        s4, a2, -1303 # 4265 -> 4283
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4283]:c.bnez      a0, 84 # 4283 -> 4293
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4298]:blt         a4, s5, 969 # 4298 -> 4308
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4303]:c.beqz      a0, 104 # 4303 -> 4309
+2026-06-12 16:35:13,765 riscv_instr_sequence.py 188 INFO Processing branch instruction[4305]:bge         s6, zero, 434 # 4305 -> 4312
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4310]:bge         s7, a7, -1857 # 4310 -> 4313
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4320]:bgeu        t1, s1, -716 # 4320 -> 4324
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4326]:bne         s5, a6, -128 # 4326 -> 4332
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4331]:c.bnez      a2, 86 # 4331 -> 4332
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4335]:bltu        s1, a1, 1095 # 4335 -> 4343
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4346]:c.beqz      a0, 48 # 4346 -> 4347
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4352]:beq         a0, zero, -1302 # 4352 -> 4368
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4362]:bltu        s4, a1, 837 # 4362 -> 4372
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4364]:bne         sp, gp, -1411 # 4364 -> 4372
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4365]:c.bnez      a0, -2 # 4365 -> 4382
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4369]:bgeu        s0, a2, 1893 # 4369 -> 4381
+2026-06-12 16:35:13,766 riscv_instr_sequence.py 188 INFO Processing branch instruction[4373]:bgeu        sp, t4, -1093 # 4373 -> 4381
+2026-06-12 16:35:13,767 riscv_instr_sequence.py 188 INFO Processing branch instruction[4393]:bge         t4, t0, 1596 # 4393 -> 4400
+2026-06-12 16:35:13,767 riscv_instr_sequence.py 188 INFO Processing branch instruction[4397]:bltu        a5, ra, 1457 # 4397 -> 4399
+2026-06-12 16:35:13,767 riscv_instr_sequence.py 188 INFO Processing branch instruction[4399]:blt         s10, a5, 1883 # 4399 -> 4400
+2026-06-12 16:35:13,767 riscv_instr_sequence.py 188 INFO Processing branch instruction[4403]:bge         gp, a4, -1371 # 4403 -> 4411
+2026-06-12 16:35:13,767 riscv_instr_sequence.py 188 INFO Processing branch instruction[4407]:bltu        a1, s4, 1068 # 4407 -> 4416
+2026-06-12 16:35:13,767 riscv_instr_sequence.py 188 INFO Processing branch instruction[4413]:bge         sp, s10, 1663 # 4413 -> 4421
+2026-06-12 16:35:13,767 riscv_instr_sequence.py 188 INFO Processing branch instruction[4423]:bltu        a0, s3, 1112 # 4423 -> 4437
+2026-06-12 16:35:13,767 riscv_instr_sequence.py 188 INFO Processing branch instruction[4426]:bne         s3, s0, -852 # 4426 -> 4436
+2026-06-12 16:35:13,767 riscv_instr_sequence.py 188 INFO Processing branch instruction[4427]:beq         s3, s1, -400 # 4427 -> 4428
+2026-06-12 16:35:13,767 riscv_instr_sequence.py 188 INFO Processing branch instruction[4434]:beq         s2, a3, -971 # 4434 -> 4437
+2026-06-12 16:35:13,767 riscv_instr_sequence.py 201 INFO Finished post-processing instructions
+2026-06-12 16:35:13,767 riscv_asm_program_gen.py 117 INFO Post-processing main program...done
+2026-06-12 16:35:13,898 riscv_instr_sequence.py 291 INFO Injecting 0 illegal instructions, ratio 0/100
+2026-06-12 16:35:13,898 riscv_instr_sequence.py 303 INFO Injecting 0 HINT instructions, ratio 0/100
+2026-06-12 16:35:13,898 riscv_asm_program_gen.py 119 INFO Generating main program instruction stream...done
+2026-06-12 16:35:13,898 riscv_asm_program_gen.py 134 INFO Main/sub program generation...done
+2026-06-12 16:35:13,899 riscv_data_page_gen.py 57 INFO Generate data section: region_0 size:0x4096 xwr:0x8
+2026-06-12 16:35:13,900 riscv_data_page_gen.py 57 INFO Generate data section: region_1 size:0x4096 xwr:0x8
+2026-06-12 16:35:13,902 riscv_data_page_gen.py 57 INFO Generate data section: s_region_0 size:0x4096 xwr:0x8
+2026-06-12 16:35:13,903 riscv_data_page_gen.py 57 INFO Generate data section: s_region_1 size:0x4096 xwr:0x8
+2026-06-12 16:35:13,906 riscv_asm_program_gen.py 1063 INFO /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_03_09_riscvdv_lockstep/zb/seed_2026075305/riscv_dv_out/asm_test/m1_rv32imc_arith_0.S is generated
+2026-06-12 16:35:13,906 riscv_instr_base_test.py 73 INFO TEST GENERATED USING SEED VALUE = 2026075305
+2026-06-12 16:35:13,906 riscv_instr_base_test.py 74 INFO TEST GENERATION DONE
+2026-06-12 16:35:13,925 riscv_instr_base_test.py 90 INFO Total execution time: 46s

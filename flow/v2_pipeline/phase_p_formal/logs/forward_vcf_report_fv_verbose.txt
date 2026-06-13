@@ -9,7 +9,7 @@
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 22:54:15 - Jun 09
+      - update_time   : 10:17:01 - Jun 12
       - elapsed_time  : 00:00:00
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/forward_assert_bind.sv:25
@@ -20,7 +20,7 @@
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 22:54:15 - Jun 09
+      - update_time   : 10:17:01 - Jun 12
       - elapsed_time  : 00:00:00
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/forward_assert_bind.sv:26
@@ -31,7 +31,7 @@
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 22:54:15 - Jun 09
+      - update_time   : 10:17:01 - Jun 12
       - elapsed_time  : 00:00:00
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/forward_assert_bind.sv:28
@@ -42,7 +42,7 @@
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 22:54:15 - Jun 09
+      - update_time   : 10:17:01 - Jun 12
       - elapsed_time  : 00:00:00
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/forward_assert_bind.sv:29
@@ -53,7 +53,7 @@
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 22:54:15 - Jun 09
+      - update_time   : 10:17:01 - Jun 12
       - elapsed_time  : 00:00:00
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/forward_assert_bind.sv:30
@@ -64,7 +64,7 @@
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 22:54:15 - Jun 09
+      - update_time   : 10:17:01 - Jun 12
       - elapsed_time  : 00:00:00
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/forward_assert_bind.sv:31
@@ -75,24 +75,23 @@
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 22:54:15 - Jun 09
-      - elapsed_time  : 00:00:00
+      - update_time   : 10:17:02 - Jun 12
+      - elapsed_time  : 00:00:01
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/forward_assert_bind.sv:33
       - engine        : e1
-      - safe_depth    : 19
 
      > ID: [7] proven 
       - name          : forward.forward_assert_i.unnamed$$_7
       - language      : SVA
       - type          : assert
       - usage         : assert
-      - update_time   : 22:54:16 - Jun 09
-      - elapsed_time  : 00:00:01
+      - update_time   : 10:17:03 - Jun 12
+      - elapsed_time  : 00:00:02
       - converge_time : 00:00:00
       - location      : IP/cpu_m1/dv/formal/forward_assert_bind.sv:34
       - engine        : e1
-      - safe_depth    : 1021
+      - safe_depth    : 999
 
 
 

@@ -22,62 +22,76 @@
         
         `include "def.vh"
         
-        module idu (
-~000136     input  [31:0] instr,
+        module idu #(
+            parameter RV32A = 0
+        ) (
+~000134     input  [31:0] instr,
         
             // Register indices
- 000136     output [ 4:0] rd_idx,
+ 000134     output [ 4:0] rd_idx,
  000074     output [ 4:0] rs1_idx,
- 000106     output [ 4:0] rs2_idx,
+ 000104     output [ 4:0] rs2_idx,
         
             // Sign-extended immediate
  000091     output reg [31:0] imm,
         
             // ALU control
  000058     output reg [ 3:0] alu_op,
- 000070     output            alu_b_use_imm,
+ 000069     output            alu_b_use_imm,
+        
+            // M1A A2 (ADR-0026): BMU (Zba/Zbb/Zbs/Zicond) control — single-cycle EX unit
+%000000     output reg        is_bmu,
+%000000     output reg [ 4:0] bmu_op,
         
             // Write-back control
- 000038     output            rd_we,
+ 000036     output            rd_we,
  000053     output reg [ 2:0] wb_sel,         // 000=ALU 001=PC+imm 010=PC+4 011=LSU 100=CSR
         
             // Branch / jump control
 %000000     output            is_branch,
 %000000     output            branch_invert,   // 1 = BNE/BGE/BGEU
- 000062     output      [1:0] br_type,         // funct3[2:1]: 00=eq 10=lt_s 11=lt_u (valid when is_branch)
+ 000061     output      [1:0] br_type,         // funct3[2:1]: 00=eq 10=lt_s 11=lt_u (valid when is_branch)
 %000000     output            is_jal,
-%000001     output            is_jalr,
+%000000     output            is_jalr,
         
             // Memory control
  000029     output            is_load,
  000028     output            is_store,
- 000063     output [ 2:0]     ls_funct3,
+ 000062     output [ 2:0]     ls_funct3,
+        
+            // RV32A atomics (optional, ADR-0023)
+%000000     output            is_amo,
+%000000     output            amo_is_lr,
+%000000     output            amo_is_sc,
+~000042     output [ 3:0]     amo_op,
         
             // CSR / MRET (lab05 新加)
 %000000     output            is_csr,
- 000063     output [ 1:0]     csr_op,         // CSR_OP_W/S/C (def.vh)
- 000062     output            csr_uses_imm,    // 0 = use rs1, 1 = use zimm
- 000106     output [11:0]     csr_addr,
+ 000062     output [ 1:0]     csr_op,         // CSR_OP_W/S/C (def.vh)
+ 000061     output            csr_uses_imm,    // 0 = use rs1, 1 = use zimm
+ 000104     output [11:0]     csr_addr,
 ~000074     output [31:0]     csr_zimm,
 %000000     output            is_mret,
+%000000     output            is_dret,
         
             // M extension (lab06 新加)
  000025     output            is_muldiv,       // 1 = RV32M 指令 (mul/div family)
- 000063     output [ 2:0]     md_op,           // = funct3 (MD_MUL/MULH/.../REMU)
- 000062     output            md_is_div,       // 1 = 走 div unit; 0 = 走 mul unit
+ 000062     output [ 2:0]     md_op,           // = funct3 (MD_MUL/MULH/.../REMU)
+ 000061     output            md_is_div,       // 1 = 走 div unit; 0 = 走 mul unit
         
             // Exception
- 000013     output            illegal
+~000014     output            illegal
         );
         
             // -------------------------------------------------------------------------
             // 拆 instruction field
             // -------------------------------------------------------------------------
-~000076     wire [ 6:0] opcode = instr[ 6: 0];
- 000063     wire [ 2:0] funct3 = instr[14:12];
+~000074     wire [ 6:0] opcode = instr[ 6: 0];
+ 000062     wire [ 2:0] funct3 = instr[14:12];
             /* verilator lint_off UNUSEDSIGNAL */
- 000087     wire [ 6:0] funct7 = instr[31:25]; // RV32I 只實際讀 funct7[5] (SUB/SRA bit)
+ 000085     wire [ 6:0] funct7 = instr[31:25]; // RV32I 只實際讀 funct7[5] (SUB/SRA bit)
             /* verilator lint_on UNUSEDSIGNAL */
+ 000064     wire [ 4:0] funct5 = instr[31:27];
         
             assign rd_idx  = instr[11: 7];
             assign rs1_idx = instr[19:15];
@@ -86,11 +100,11 @@
             // -------------------------------------------------------------------------
             // 五種 immediate 格式 (RISC-V spec)
             // -------------------------------------------------------------------------
- 000106     wire [31:0] imm_i = {{20{instr[31]}}, instr[31:20]};
- 000136     wire [31:0] imm_s = {{20{instr[31]}}, instr[31:25], instr[11:7]};
-~000136     wire [31:0] imm_b = {{19{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
-~000106     wire [31:0] imm_u = {instr[31:12], 12'b0};
-~000106     wire [31:0] imm_j = {{11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1'b0};
+ 000104     wire [31:0] imm_i = {{20{instr[31]}}, instr[31:20]};
+ 000134     wire [31:0] imm_s = {{20{instr[31]}}, instr[31:25], instr[11:7]};
+~000134     wire [31:0] imm_b = {{19{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
+~000104     wire [31:0] imm_u = {instr[31:12], 12'b0};
+~000104     wire [31:0] imm_j = {{11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1'b0};
         
             // -------------------------------------------------------------------------
             // 主分類 (基於 opcode)
@@ -98,9 +112,10 @@
 %000005     wire is_lui    = (opcode == `OPC_LUI);
 %000005     wire is_auipc  = (opcode == `OPC_AUIPC);
  000068     wire is_op_imm = (opcode == `OPC_OP_IMM);
- 000062     wire is_op     = (opcode == `OPC_OP);
+ 000061     wire is_op     = (opcode == `OPC_OP);
 %000005     wire is_system = (opcode == `OPC_SYSTEM);
 %000000     wire is_fence  = (opcode == `OPC_FENCE);
+%000000     wire is_amo_opcode = (opcode == `OPC_AMO);
         
             assign is_jal    = (opcode == `OPC_JAL);
             assign is_jalr   = (opcode == `OPC_JALR) && (funct3 == 3'b000);
@@ -108,14 +123,37 @@
             assign is_load   = (opcode == `OPC_LOAD);
             assign is_store  = (opcode == `OPC_STORE);
         
+ 000069     wire amo_funct5_valid =
+                (funct5 == `AMO_F5_ADD)  || (funct5 == `AMO_F5_SWAP) ||
+                (funct5 == `AMO_F5_LR)   || (funct5 == `AMO_F5_SC)   ||
+                (funct5 == `AMO_F5_XOR)  || (funct5 == `AMO_F5_OR)   ||
+                (funct5 == `AMO_F5_AND)  || (funct5 == `AMO_F5_MIN)  ||
+                (funct5 == `AMO_F5_MAX)  || (funct5 == `AMO_F5_MINU) ||
+                (funct5 == `AMO_F5_MAXU);
+            assign is_amo    = (RV32A != 0) && is_amo_opcode && (funct3 == `F3_LW) &&
+                               amo_funct5_valid && ((funct5 != `AMO_F5_LR) || (rs2_idx == 5'd0));
+            assign amo_is_lr = is_amo && (funct5 == `AMO_F5_LR);
+            assign amo_is_sc = is_amo && (funct5 == `AMO_F5_SC);
+            assign amo_op    =
+~001142         (funct5 == `AMO_F5_SWAP) ? `AMO_OP_SWAP :
+~001133         (funct5 == `AMO_F5_XOR)  ? `AMO_OP_XOR  :
+ 001101         (funct5 == `AMO_F5_OR)   ? `AMO_OP_OR   :
+~001096         (funct5 == `AMO_F5_AND)  ? `AMO_OP_AND  :
+~001095         (funct5 == `AMO_F5_MIN)  ? `AMO_OP_MIN  :
+~001094         (funct5 == `AMO_F5_MAX)  ? `AMO_OP_MAX  :
+~001091         (funct5 == `AMO_F5_MINU) ? `AMO_OP_MINU :
+~001088         (funct5 == `AMO_F5_MAXU) ? `AMO_OP_MAXU :
+ 001088                                     `AMO_OP_ADD;
+        
             // -------------------------------------------------------------------------
             // SYSTEM opcode (lab05) 區分三類：
             //   * funct3 != 0 → CSR* (6 種，funct3 = 1/2/3/5/6/7)
-            //   * 完整 32-bit instr 等於 INSTR_MRET → MRET
+            //   * 完整 32-bit instr 等於 INSTR_MRET/INSTR_DRET → MRET/DRET
             //   * 其他 (ECALL/EBREAK/WFI/SFENCE.VMA/...) → illegal → ST_TRAP
             // -------------------------------------------------------------------------
             assign is_csr  = is_system && (funct3 != 3'b000);
             assign is_mret = (instr == `INSTR_MRET);
+            assign is_dret = (instr == `INSTR_DRET);
         
             assign csr_op       = funct3[1:0];           // 01=W, 10=S, 11=C
             assign csr_uses_imm = funct3[2];             // 0=use rs1, 1=use zimm
@@ -136,14 +174,15 @@
             // -------------------------------------------------------------------------
             // Immediate mux
             // -------------------------------------------------------------------------
- 001320     always @* begin
- 001320         case (1'b1)
+ 001144     always @* begin
+ 001144         case (1'b1)
  000010             is_lui, is_auipc            : imm = imm_u;
 %000000             is_jal                      : imm = imm_j;
- 000409             is_jalr, is_load, is_op_imm : imm = imm_i;
- 000037             is_store                    : imm = imm_s;
+ 000268             is_jalr, is_load, is_op_imm : imm = imm_i;
+%000000             is_amo                      : imm = 32'h0;
+ 000033             is_store                    : imm = imm_s;
 %000000             is_branch                   : imm = imm_b;
- 000864             default                     : imm = 32'h0;
+ 000833             default                     : imm = 32'h0;
                 endcase
             end
         
@@ -156,34 +195,40 @@
             //                            需要 rs1+imm 的 case
             //   * LUI        : ALU 用 COPY_B (op_b = imm_u → result = imm)
             // -------------------------------------------------------------------------
- 000068     wire is_sub_or_sra = funct7[5]; // F7_SUB_SRA bit (用 bit 5 一條判斷取代 7-bit 比較)
+ 000064     wire is_sub_or_sra = funct7[5]; // F7_SUB_SRA bit (用 bit 5 一條判斷取代 7-bit 比較)
         
- 001320     always @* begin
- 001320         alu_op = `ALU_ADD;  // 預設加法 (load/store/jalr/auipc 都用 ADD)
+ 001144     always @* begin
+ 001144         alu_op = `ALU_ADD;  // 預設加法 (load/store/jalr/auipc 都用 ADD)
         
- 000361         if (is_op_imm) begin
- 000361             case (funct3)
- 000274                 `F3_ADD_SUB : alu_op = `ALU_ADD;   // ADDI (沒有 SUBI)
- 000017                 `F3_SLT     : alu_op = `ALU_SLT;
- 000013                 `F3_SLTU    : alu_op = `ALU_SLTU;
+ 000232         if (is_op_imm) begin
+ 000232             case (funct3)
+ 000158                 `F3_ADD_SUB : alu_op = `ALU_ADD;   // ADDI (沒有 SUBI)
+ 000012                 `F3_SLT     : alu_op = `ALU_SLT;
+ 000011                 `F3_SLTU    : alu_op = `ALU_SLTU;
 %000006                 `F3_XOR     : alu_op = `ALU_XOR;
-%000006                 `F3_OR      : alu_op = `ALU_OR;
- 000011                 `F3_AND     : alu_op = `ALU_AND;
- 000014                 `F3_SLL     : alu_op = `ALU_SLL;
-~000191                 `F3_SRL_SRA : alu_op = is_sub_or_sra ? `ALU_SRA : `ALU_SRL;
-%000000                 default     : alu_op = `ALU_ADD;
+%000005                 `F3_OR      : alu_op = `ALU_OR;
+%000009                 `F3_AND     : alu_op = `ALU_AND;
+ 000012                 `F3_SLL     : alu_op = `ALU_SLL;
+~000132                 `F3_SRL_SRA : alu_op = is_sub_or_sra ? `ALU_SRA : `ALU_SRL;
+                        // verilator coverage_off
+                        default     : alu_op = `ALU_ADD;
+                        // verilator coverage_on
+                        // ^ CS-COV-1 exclusion: funct3 is 3-bit fully enumerated — coding standard CS-COV-1: defensive arm, unreachable by construction
                     endcase
- 000816         end else if (is_op) begin
- 000816             case (funct3)
-~000803                 `F3_ADD_SUB : alu_op = is_sub_or_sra ? `ALU_SUB : `ALU_ADD;
-%000006                 `F3_SLT     : alu_op = `ALU_SLT;
- 000021                 `F3_SLTU    : alu_op = `ALU_SLTU;
- 000328                 `F3_XOR     : alu_op = `ALU_XOR;
- 000152                 `F3_OR      : alu_op = `ALU_OR;
- 000119                 `F3_AND     : alu_op = `ALU_AND;
- 000023                 `F3_SLL     : alu_op = `ALU_SLL;
-~000803                 `F3_SRL_SRA : alu_op = is_sub_or_sra ? `ALU_SRA : `ALU_SRL;
-%000000                 default     : alu_op = `ALU_ADD;
+ 000782         end else if (is_op) begin
+ 000782             case (funct3)
+~000771                 `F3_ADD_SUB : alu_op = is_sub_or_sra ? `ALU_SUB : `ALU_ADD;
+%000005                 `F3_SLT     : alu_op = `ALU_SLT;
+ 000011                 `F3_SLTU    : alu_op = `ALU_SLTU;
+ 000337                 `F3_XOR     : alu_op = `ALU_XOR;
+ 000154                 `F3_OR      : alu_op = `ALU_OR;
+ 000118                 `F3_AND     : alu_op = `ALU_AND;
+ 000010                 `F3_SLL     : alu_op = `ALU_SLL;
+~000771                 `F3_SRL_SRA : alu_op = is_sub_or_sra ? `ALU_SRA : `ALU_SRL;
+                        // verilator coverage_off
+                        default     : alu_op = `ALU_ADD;
+                        // verilator coverage_on
+                        // ^ CS-COV-1 exclusion: funct3 is 3-bit fully enumerated — coding standard CS-COV-1: defensive arm, unreachable by construction
                     endcase
 %000000         end else if (is_branch) begin
 %000000             case (funct3)
@@ -192,14 +237,135 @@
 %000000                 `F3_BLTU, `F3_BGEU : alu_op = `ALU_SLTU;
 %000000                 default            : alu_op = `ALU_SEQ;
                     endcase
-~000138         end else if (is_lui) begin
+~000125         end else if (is_lui) begin
 %000005             alu_op = `ALU_COPY_B; // result = imm_u
                 end
                 // 其他 case (load/store/jalr/auipc/jal/fence) → ALU_ADD (default)
             end
         
+            // -------------------------------------------------------------------------
+            // M1A A2: BMU decode (Zba/Zbb/Zbs/Zicond) + OP/OP-IMM reserved-space tightening
+            //   Encoding truth source: flow/v2_pipeline/phase_a2_zb_zicond/toolchain_probe.S
+            //   disasm (gcc 13.2) + Spike retire log. Undecoded funct7 slots in the OP space
+            //   and the OP-IMM shift rows (f3=001/101) are ILLEGAL (negative-tested) — note
+            //   the M1 baseline silently wrong-decoded these reserved encodings as base ops.
+            // -------------------------------------------------------------------------
+ 000104     wire [4:0] zbb_sel = rs2_idx;   // OP-IMM f3=001 unary selector / rs2 pattern checks
+        
+%000000     reg bmu_slot_illegal;           // reserved encoding inside an otherwise-known opcode
+ 001144     always @* begin
+ 001144         is_bmu = 1'b0;
+ 001144         bmu_op = `BMU_SH1ADD;
+ 001144         bmu_slot_illegal = 1'b0;
+ 000782         if (is_op) begin
+ 000782             case (funct7)
+ 000771                 `F7_DEFAULT, `F7_MULDIV: ;                       // base RV32I / M — legal, not BMU
+ 000011                 `F7_SUB_SRA: begin                               // SUB/SRA base + Zbb andn/orn/xnor
+ 000011                     case (funct3)
+ 000011                         3'b000, 3'b101: ;                        // SUB / SRA (base)
+%000000                         3'b111: begin is_bmu = 1'b1; bmu_op = `BMU_ANDN; end
+%000000                         3'b110: begin is_bmu = 1'b1; bmu_op = `BMU_ORN;  end
+%000000                         3'b100: begin is_bmu = 1'b1; bmu_op = `BMU_XNOR; end
+%000000                         default: bmu_slot_illegal = 1'b1;
+                            endcase
+                        end
+%000000                 `F7_ZBA: begin
+%000000                     case (funct3)
+%000000                         3'b010: begin is_bmu = 1'b1; bmu_op = `BMU_SH1ADD; end
+%000000                         3'b100: begin is_bmu = 1'b1; bmu_op = `BMU_SH2ADD; end
+%000000                         3'b110: begin is_bmu = 1'b1; bmu_op = `BMU_SH3ADD; end
+%000000                         default: bmu_slot_illegal = 1'b1;
+                            endcase
+                        end
+%000000                 `F7_MINMAX: begin
+%000000                     case (funct3)
+%000000                         3'b100: begin is_bmu = 1'b1; bmu_op = `BMU_MIN;  end
+%000000                         3'b101: begin is_bmu = 1'b1; bmu_op = `BMU_MINU; end
+%000000                         3'b110: begin is_bmu = 1'b1; bmu_op = `BMU_MAX;  end
+%000000                         3'b111: begin is_bmu = 1'b1; bmu_op = `BMU_MAXU; end
+%000000                         default: bmu_slot_illegal = 1'b1;       // clmul* (Zbc) not implemented
+                            endcase
+                        end
+%000000                 `F7_ROT: begin
+%000000                     case (funct3)
+%000000                         3'b001: begin is_bmu = 1'b1; bmu_op = `BMU_ROL; end
+%000000                         3'b101: begin is_bmu = 1'b1; bmu_op = `BMU_ROR; end
+%000000                         default: bmu_slot_illegal = 1'b1;
+                            endcase
+                        end
+%000000                 `F7_BCLR_EXT: begin
+%000000                     case (funct3)
+%000000                         3'b001: begin is_bmu = 1'b1; bmu_op = `BMU_BCLR; end
+%000000                         3'b101: begin is_bmu = 1'b1; bmu_op = `BMU_BEXT; end
+%000000                         default: bmu_slot_illegal = 1'b1;
+                            endcase
+                        end
+%000000                 `F7_BINV:
+%000000                     if (funct3 == 3'b001) begin is_bmu = 1'b1; bmu_op = `BMU_BINV; end
+%000000                     else bmu_slot_illegal = 1'b1;
+%000000                 `F7_BSET:
+%000000                     if (funct3 == 3'b001) begin is_bmu = 1'b1; bmu_op = `BMU_BSET; end
+%000000                     else bmu_slot_illegal = 1'b1;
+%000000                 `F7_ZEXTH:
+~000782                     if (funct3 == 3'b100 && zbb_sel == 5'b00000) begin
+%000000                         is_bmu = 1'b1; bmu_op = `BMU_ZEXTH;
+%000000                     end else bmu_slot_illegal = 1'b1;
+%000000                 `F7_ZICOND: begin
+%000000                     case (funct3)
+%000000                         3'b101: begin is_bmu = 1'b1; bmu_op = `BMU_CZEQZ; end
+%000000                         3'b111: begin is_bmu = 1'b1; bmu_op = `BMU_CZNEZ; end
+%000000                         default: bmu_slot_illegal = 1'b1;
+                            endcase
+                        end
+%000000                 default: bmu_slot_illegal = 1'b1;               // any other funct7 in OP = reserved
+                    endcase
+ 000324         end else if (is_op_imm && funct3 == 3'b001) begin       // shift-left row
+ 000012             case (funct7)
+ 000012                 `F7_DEFAULT: ;                                   // SLLI (base)
+%000000                 `F7_ROT: begin                                   // unary Zbb (rs2 field selects)
+%000000                     is_bmu = 1'b1;
+%000000                     case (zbb_sel)
+%000000                         5'b00000: bmu_op = `BMU_CLZ;
+%000000                         5'b00001: bmu_op = `BMU_CTZ;
+%000000                         5'b00010: bmu_op = `BMU_CPOP;
+%000000                         5'b00100: bmu_op = `BMU_SEXTB;
+%000000                         5'b00101: bmu_op = `BMU_SEXTH;
+%000000                         default : begin is_bmu = 1'b0; bmu_slot_illegal = 1'b1; end
+                            endcase
+                        end
+%000000                 `F7_BCLR_EXT: begin is_bmu = 1'b1; bmu_op = `BMU_BCLR; end   // bclri
+%000000                 `F7_BINV    : begin is_bmu = 1'b1; bmu_op = `BMU_BINV; end   // binvi
+%000000                 `F7_BSET    : begin is_bmu = 1'b1; bmu_op = `BMU_BSET; end   // bseti
+                        // verilator coverage_off
+                        default     : bmu_slot_illegal = 1'b1;
+                        // verilator coverage_on
+                        // ^ CS-COV-1 exclusion: reserved-encoding decode-catch; reached ONLY by illegal
+                        //   instructions (never emitted by legal-SKU traffic). Trap BEHAVIOR is directed-
+                        //   verified: gate_a2 illegal-negative (4 reserved -> mcause=2) + ERRATA-0002 probe->div.
+                    endcase
+ 000331         end else if (is_op_imm && funct3 == 3'b101) begin       // shift-right row
+ 000019             case (funct7)
+ 000019                 `F7_DEFAULT, `F7_SUB_SRA: ;                      // SRLI / SRAI (base)
+%000000                 `F7_ROT     : begin is_bmu = 1'b1; bmu_op = `BMU_ROR;  end   // rori
+%000000                 `F7_BCLR_EXT: begin is_bmu = 1'b1; bmu_op = `BMU_BEXT; end   // bexti
+%000000                 `F7_BSET:
+%000000                     if (zbb_sel == 5'b00111) begin is_bmu = 1'b1; bmu_op = `BMU_ORCB; end
+%000000                     else bmu_slot_illegal = 1'b1;
+%000000                 `F7_BINV:
+%000000                     if (zbb_sel == 5'b11000) begin is_bmu = 1'b1; bmu_op = `BMU_REV8; end
+%000000                     else bmu_slot_illegal = 1'b1;
+                        // verilator coverage_off
+                        default     : bmu_slot_illegal = 1'b1;
+                        // verilator coverage_on
+                        // ^ CS-COV-1 exclusion: reserved-encoding decode-catch; reached ONLY by illegal
+                        //   instructions (never emitted by legal-SKU traffic). Trap BEHAVIOR is directed-
+                        //   verified: gate_a2 illegal-negative (4 reserved -> mcause=2) + ERRATA-0002 probe->div.
+                    endcase
+                end
+            end
+        
             // BRANCH operand 也是 rs2，不是 imm
-            assign alu_b_use_imm = is_op_imm | is_lui | is_auipc | is_load | is_store
+            assign alu_b_use_imm = is_op_imm | is_lui | is_auipc | is_load | is_store | is_amo
                                  | is_jal     | is_jalr;
         
             assign branch_invert = is_branch && (funct3 == `F3_BNE ||
@@ -211,23 +377,23 @@
             // Write-back 控制
             // -------------------------------------------------------------------------
             assign rd_we = is_op | is_op_imm | is_lui | is_auipc
-                         | is_jal | is_jalr | is_load | is_csr;
+                         | is_jal | is_jalr | is_load | is_csr | is_amo;
         
- 001320     always @* begin
- 001320         case (1'b1)
+ 001144     always @* begin
+ 001144         case (1'b1)
 %000005             is_auipc       : wb_sel = `WB_SEL_PCIMM; // pc + imm
-%000001             is_jal, is_jalr: wb_sel = `WB_SEL_PC4;   // pc + 4 (link)
- 000047             is_load        : wb_sel = `WB_SEL_LSU;
+%000000             is_jal, is_jalr: wb_sel = `WB_SEL_PC4;   // pc + 4 (link)
+ 000036             is_load, is_amo: wb_sel = `WB_SEL_LSU;
 %000000             is_csr         : wb_sel = `WB_SEL_CSR;   // csr_rdata (lab05)
- 000732             is_muldiv      : wb_sel = `WB_SEL_MD;    // mul/div (lab06)
- 000535             default        : wb_sel = `WB_SEL_ALU;   // LUI / OP / OP-IMM
+ 000715             is_muldiv      : wb_sel = `WB_SEL_MD;    // mul/div (lab06)
+ 000388             default        : wb_sel = `WB_SEL_ALU;   // LUI / OP / OP-IMM
                 endcase
             end
         
             // -------------------------------------------------------------------------
             // 記憶體存取
             // -------------------------------------------------------------------------
-            assign ls_funct3 = funct3;
+~001144     assign ls_funct3 = is_amo ? `F3_LW : funct3;
         
             // -------------------------------------------------------------------------
             // 例外
@@ -236,12 +402,18 @@
             //   * ECALL / EBREAK / WFI / 其他 SYSTEM 變種 : illegal → ST_TRAP
             //   * 未知 opcode : illegal
             // -------------------------------------------------------------------------
-~000011     wire known_opcode =
-                is_lui | is_auipc | is_jal | is_jalr | is_branch
-              | is_load | is_store | is_op_imm | is_op | is_fence
-              | is_csr | is_mret;
+ 000052     wire branch_funct3_valid =
+                (funct3 == `F3_BEQ)  || (funct3 == `F3_BNE)  ||
+                (funct3 == `F3_BLT)  || (funct3 == `F3_BGE)  ||
+                (funct3 == `F3_BLTU) || (funct3 == `F3_BGEU);
         
-            assign illegal = !known_opcode;
+%000009     wire known_base_opcode =
+                is_lui | is_auipc | is_jal | (is_branch && branch_funct3_valid)
+              | is_load | is_store | is_op_imm | is_op | is_fence | is_amo
+              | is_jalr | is_csr | is_mret;
+%000009     wire known_opcode = known_base_opcode | is_dret;
+        
+            assign illegal = !known_opcode | bmu_slot_illegal;   // M1A A2: reserved OP/OP-IMM-shift slots trap (Spike parity)
         
         endmodule
         

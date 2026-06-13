@@ -14,5 +14,5 @@ DISAMBIG_CONCAT=TRUE
 
 OVERWRITE_PREDECLARATION_IN_LIB=TRUE
 
-DEFAULT : /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/worklib
+DEFAULT : /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_formal/vcf_runs/alu_session_rtdb/.internal/design/worklib
 
