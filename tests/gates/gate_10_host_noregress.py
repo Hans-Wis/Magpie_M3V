@@ -1,37 +1,28 @@
-"""gate_10_host_noregress — freeze guard for the M3V host core.
+"""gate_10_host_integrity — cpu_m1 host integrity (Phase 2 governance).
 
-M3V's `IP/cpu_m1/` is the FROZEN M1A scalar host (tag m1a-rtl-freeze-v1.0). ADR-0031 requires it to
-stay byte-identical: all net-new work lands under `IP/npu/`. This gate mechanically enforces the
-freeze so any accidental edit to the host RTL (or a mis-scoped NPU change touching it) trips CI.
+SUPERSEDED byte-identical freeze: per ADR-0032 (User directive 2026-07-03), cpu_m1 is now
+MODIFIABLE in M3V, but every change must be FULLY VERIFIED. The behavioral guarantee therefore
+moved from "source byte-identical to the freeze tag" to "host config produces byte-identical
+Spike commit traces" — enforced by the lockstep re-run + gate_02_host_equivalence (trace-diff vs
+the `m3v-pre-phase2-cpu` tag), not by this file.
 
-Check: `git diff m1a-rtl-freeze-v1.0 -- IP/cpu_m1/rtl` must be empty, and the host RTL must exist.
+This gate now only checks the host RTL is present and that its modification is governed by an ADR
+(so a change can never land without the parameterization/verification contract in place).
 """
 
-import shutil
-import subprocess
 from pathlib import Path
 
-import pytest
-
 ROOT = Path(__file__).resolve().parents[2]
-FREEZE_TAG = "m1a-rtl-freeze-v1.0"
-
-
-def _git(*args):
-    return subprocess.run(["git", "-C", str(ROOT), *args], capture_output=True, text=True)
-
-
-@pytest.mark.skipif(not shutil.which("git"), reason="no git — not-run")
-def test_frozen_host_rtl_byte_identical_to_freeze_tag():
-    tag = _git("rev-parse", "--verify", f"{FREEZE_TAG}^{{commit}}")
-    assert tag.returncode == 0, f"freeze tag {FREEZE_TAG} not found in M3V repo"
-    diff = _git("diff", "--stat", FREEZE_TAG, "--", "IP/cpu_m1/rtl")
-    assert diff.returncode == 0, f"git diff failed:\n{diff.stderr}"
-    assert diff.stdout.strip() == "", (
-        "FROZEN host RTL under IP/cpu_m1/rtl/ diverged from the freeze tag:\n" + diff.stdout
-    )
 
 
 def test_host_rtl_present():
     core = ROOT / "IP/cpu_m1/rtl/core.v"
-    assert core.is_file(), "frozen host core.v missing — IP/cpu_m1/rtl must be intact"
+    assert core.is_file(), "cpu_m1 host core.v missing — IP/cpu_m1/rtl must be intact"
+
+
+def test_cpu_m1_modification_is_adr_governed():
+    adr = ROOT / "docs/adr/0032-cpu-param-phase2.md"
+    assert adr.is_file(), "cpu_m1 is modifiable only under ADR-0032 (parameterization + full verification)"
+    txt = adr.read_text(encoding="utf-8")
+    assert "host trace-diff" in txt.lower() or "byte-identical commit traces" in txt.lower(), \
+        "ADR-0032 must define the host-equivalence (commit-trace) acceptance bar"
