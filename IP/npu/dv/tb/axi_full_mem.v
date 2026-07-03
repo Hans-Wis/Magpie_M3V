@@ -2,14 +2,14 @@
 // Supports INCR read bursts (single-outstanding). Word i initialised to a known
 // pattern 0xC0DE0000 | i so the DMA copy can be checked exactly.
 `default_nettype none
-module axi_full_mem #(parameter integer WORDS = 4096) (
+module axi_full_mem #(parameter integer WORDS = 4096, parameter ERR_MODE = 0) (
     input  wire clk, input wire resetn,
     input  wire        arvalid, output reg  arready, input wire [31:0] araddr,
     input  wire [7:0]  arlen,   input wire [2:0] arsize, input wire [1:0] arburst,
     output reg         rvalid,  input  wire rready, output reg [31:0] rdata,
     output reg         rlast,   output wire [1:0] rresp
 );
-    assign rresp = 2'b00;
+    assign rresp = ERR_MODE ? 2'b10 : 2'b00;   // SLVERR when ERR_MODE (for DMA error test)
     reg [31:0] mem [0:WORDS-1];
     integer i;
     initial for (i = 0; i < WORDS; i = i + 1) mem[i] = 32'hC0DE0000 | i[15:0];

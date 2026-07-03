@@ -24,9 +24,10 @@ module npu_dma #(
     input  wire        go,                 // 1-cycle pulse: start transfer
     input  wire [31:0] src_addr,           // shared-mem byte address (word-aligned)
     input  wire [BUF_AW-1:0] dst_word,     // local buffer start (word index)
-    input  wire [16:0] len_beats,          // number of 32-bit words to move (1..65536)
+    input  wire [16:0] len_beats,          // number of 32-bit words to move (0..65536; 0 = no-op)
     output reg         busy,
     output reg         done,               // sticky until next go
+    output reg         err,                // sticky: any read beat returned SLVERR/DECERR
 
     // ---- AXI4-full read master ----
     output reg         m_arvalid,
@@ -67,7 +68,7 @@ module npu_dma #(
 
     always @(posedge clk) begin
         if (!resetn) begin
-            state <= S_IDLE; busy <= 1'b0; done <= 1'b0;
+            state <= S_IDLE; busy <= 1'b0; done <= 1'b0; err <= 1'b0;
             m_arvalid <= 1'b0;
         end else begin
             case (state)
@@ -75,8 +76,8 @@ module npu_dma #(
                             cur_addr  <= {src_addr[31:2], 2'b00};
                             remaining <= len_beats;
                             buf_addr  <= dst_word;
-                            busy <= 1'b1; done <= 1'b0;
-                            state <= S_AR;
+                            busy <= 1'b1; done <= 1'b0; err <= 1'b0;
+                            state <= (len_beats == 17'd0) ? S_DONE : S_AR;  // LEN=0 = no-op, no burst
                         end
                 S_AR: begin
                             m_araddr <= cur_addr;
@@ -89,6 +90,7 @@ module npu_dma #(
                             end
                         end
                 S_R: if (m_rvalid) begin
+                            if (m_rresp[1]) err <= 1'b1;          // latch SLVERR/DECERR
                             buf_addr <= buf_addr + 1'b1;          // advance local write ptr
                             if (m_rlast) begin
                                 remaining <= remaining - {8'b0, beats_in_burst};

@@ -64,7 +64,7 @@ module tb_npu_dma;
         .s_axi_rvalid(m0_rvalid),.s_axi_rready(m0_rready),.s_axi_rdata(m0_rdata),.s_axi_rresp(m0_rresp),
         .npu_start(npu_start),.npu_config(npu_config),.npu_busy(1'b0),.npu_done(1'b0),
         .dma_src(dma_src),.dma_dst(dma_dst),.dma_len(dma_len),.dma_go(dma_go),
-        .dma_busy(dma_busy),.dma_done(dma_done)
+        .dma_busy(dma_busy),.dma_done(dma_done),.dma_err(1'b0)
     );
 
     npu_dma #(.BUF_AW(12)) dma (

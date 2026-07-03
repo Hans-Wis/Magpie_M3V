@@ -37,8 +37,11 @@ module axil_1to2 #(
     input  wire        m1_rvalid,  output wire m1_rready, input wire [31:0] m1_rdata, input wire [1:0] m1_rresp
 );
     // ---------------- write route ----------------
-    reg  w_busy, w_sel;                       // sel: 0=NPU, 1=pass
-    wire w_dec   = (s_awaddr[31:28] == NPU_HI) ? 1'b0 : 1'b1;
+    // The write route is determined by AWADDR. W may legally arrive before AW, so W must NOT be
+    // forwarded until the route is known (either AW is present this cycle, or already latched).
+    reg  w_busy, w_sel;                       // sel: 0=NPU, 1=pass ; latched at AW accept
+    wire w_dec   = (s_awaddr[31:28] == NPU_HI) ? 1'b0 : 1'b1;   // valid only when s_awvalid
+    wire w_known = w_busy | s_awvalid;        // is the write route known yet?
     wire w_route = w_busy ? w_sel : w_dec;
 
     always @(posedge clk) begin
@@ -57,9 +60,10 @@ module axil_1to2 #(
     assign m0_awaddr = s_awaddr; assign m1_awaddr = s_awaddr;
     assign m0_awprot = s_awprot; assign m1_awprot = s_awprot;
 
-    assign m0_wvalid = s_wvalid & (w_route == 1'b0);
-    assign m1_wvalid = s_wvalid & (w_route == 1'b1);
-    assign s_wready  = (w_route == 1'b0) ? m0_wready : m1_wready;
+    // W is held (wready=0, no downstream wvalid) until the route is known — fixes W-before-AW.
+    assign m0_wvalid = s_wvalid & w_known & (w_route == 1'b0);
+    assign m1_wvalid = s_wvalid & w_known & (w_route == 1'b1);
+    assign s_wready  = w_known ? ((w_route == 1'b0) ? m0_wready : m1_wready) : 1'b0;
     assign m0_wdata = s_wdata; assign m1_wdata = s_wdata;
     assign m0_wstrb = s_wstrb; assign m1_wstrb = s_wstrb;
 

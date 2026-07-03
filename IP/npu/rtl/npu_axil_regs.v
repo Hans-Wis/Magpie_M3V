@@ -5,7 +5,7 @@
 // frozen axil_bridge.v) through the M3V axil_1to2 fabric. Word-addressed CSRs:
 //   0x00 ID      RO  0x4E505530 ("NPU0") — host presence check
 //   0x04 CTRL    RW  [0]=start [1]=irq_clear(W1-action) [2]=soft_reset [3]=irq_enable
-//   0x08 STATUS  RO  [0]=npu_busy [1]=npu_done [2]=dma_busy [3]=dma_done [4]=irq_pending
+//   0x08 STATUS  RO  [0]=npu_busy [1]=npu_done [2]=dma_busy [3]=dma_done [4]=irq_pending [5]=dma_err
 //   0x0C CONFIG  RW  kernel/descriptor pointer (weight base, etc.)
 //   0x10 SCRATCH RW  round-trip sanity register
 // Single-outstanding AXI4-Lite (matches the host bridge). 32-bit data, no burst.
@@ -48,10 +48,11 @@ module npu_axil_regs #(
     // ---- DMA descriptor (to npu_dma) ----
     output reg  [31:0] dma_src,
     output reg  [31:0] dma_dst,
-    output reg  [16:0] dma_len,
+    output wire [16:0] dma_len,
     output reg         dma_go,       // 1-cycle pulse on CTRL-GO write
     input  wire        dma_busy,
     input  wire        dma_done,
+    input  wire        dma_err,      // sticky DMA read-error (STATUS[5])
 
     // ---- level interrupt to host (out only) ----
     output wire        irq            // = irq_pending & CTRL.irq_enable
@@ -62,15 +63,24 @@ module npu_axil_regs #(
     // ---------- register storage ----------
     reg [31:0] ctrl_q, config_q;
     reg        irq_pending;
-    //  STATUS: [0]=npu_busy [1]=npu_done [2]=dma_busy [3]=dma_done [4]=irq_pending
-    wire [31:0] status_w = {27'b0, irq_pending, dma_done, dma_busy, npu_done, npu_busy};
+    reg [31:0] dma_len_q;                 // full-word storage; DMA uses low 17 bits
+    assign     dma_len = dma_len_q[16:0];
+    //  STATUS: [0]=npu_busy [1]=npu_done [2]=dma_busy [3]=dma_done [4]=irq_pending [5]=dma_err
+    wire [31:0] status_w = {26'b0, dma_err, irq_pending, dma_done, dma_busy, npu_done, npu_busy};
 
     // ================= WRITE channel (single-outstanding) =================
     // Accept AW and W together, then emit B. Fits the host bridge that issues
     // AW+W and waits for B.
     reg aw_seen, w_seen;
     reg [31:0] wa_q, wd_q;
+    reg [3:0]  wstrb_q;
     wire wr_fire = aw_seen && w_seen && !s_axi_bvalid;
+
+    // byte-strobe merge: keep old bytes where WSTRB=0
+    function [31:0] merge; input [31:0] old; input [31:0] wd; input [3:0] strb; begin
+        merge = { strb[3] ? wd[31:24] : old[31:24], strb[2] ? wd[23:16] : old[23:16],
+                  strb[1] ? wd[15:8]  : old[15:8],  strb[0] ? wd[7:0]   : old[7:0] };
+    end endfunction
 
     assign s_axi_awready = !aw_seen && !s_axi_bvalid;
     assign s_axi_wready  = !w_seen  && !s_axi_bvalid;
@@ -79,21 +89,21 @@ module npu_axil_regs #(
         if (!resetn) begin
             aw_seen <= 1'b0; w_seen <= 1'b0; s_axi_bvalid <= 1'b0;
             ctrl_q <= 32'b0; config_q <= 32'b0;
-            dma_src <= 32'b0; dma_dst <= 32'b0; dma_len <= 17'b0; dma_go <= 1'b0;
+            dma_src <= 32'b0; dma_dst <= 32'b0; dma_len_q <= 32'b0; dma_go <= 1'b0;
         end else begin
             dma_go <= 1'b0;                    // default: pulse is 1-cycle
             if (s_axi_awvalid && s_axi_awready) begin aw_seen <= 1'b1; wa_q <= s_axi_awaddr; end
-            if (s_axi_wvalid  && s_axi_wready ) begin w_seen  <= 1'b1; wd_q <= s_axi_wdata; end
+            if (s_axi_wvalid  && s_axi_wready ) begin w_seen <= 1'b1; wd_q <= s_axi_wdata; wstrb_q <= s_axi_wstrb; end
 
             if (wr_fire) begin
                 case (wa_q[7:2])
-                    6'h01: ctrl_q   <= wd_q;              // 0x04 CTRL
-                    6'h03: config_q <= wd_q;              // 0x0C CONFIG
+                    6'h01: ctrl_q   <= merge(ctrl_q,   wd_q, wstrb_q);          // 0x04 CTRL
+                    6'h03: config_q <= merge(config_q, wd_q, wstrb_q);          // 0x0C CONFIG
                     // 0x10 SCRATCH written in the dedicated scratch_q block below
-                    6'h08: dma_src  <= wd_q;              // 0x20 DMA_SRC (byte addr)
-                    6'h09: dma_dst  <= wd_q;              // 0x24 DMA_DST (local word index)
-                    6'h0A: dma_len  <= wd_q[16:0];        // 0x28 DMA_LEN (beats)
-                    6'h0B: dma_go   <= wd_q[0];           // 0x2C DMA_CTRL: bit0 = GO (1-cyc pulse)
+                    6'h08: dma_src  <= merge(dma_src,  wd_q, wstrb_q);          // 0x20 DMA_SRC
+                    6'h09: dma_dst  <= merge(dma_dst,  wd_q, wstrb_q);          // 0x24 DMA_DST
+                    6'h0A: dma_len_q <= merge(dma_len_q, wd_q, wstrb_q);        // 0x28 DMA_LEN
+                    6'h0B: dma_go   <= wd_q[0] & wstrb_q[0];                    // 0x2C GO (1-cyc pulse)
                     default: ;                            // RO/unmapped (ID/STATUS): ignore
                 endcase
                 s_axi_bvalid <= 1'b1;
@@ -107,7 +117,7 @@ module npu_axil_regs #(
     reg [31:0] scratch_q;
     always @(posedge clk) begin
         if (!resetn) scratch_q <= 32'b0;
-        else if (wr_fire && wa_q[7:2] == 6'h04) scratch_q <= wd_q;
+        else if (wr_fire && wa_q[7:2] == 6'h04) scratch_q <= merge(scratch_q, wd_q, wstrb_q);
     end
 
     // ================= READ channel (single-outstanding) =================
@@ -145,7 +155,7 @@ module npu_axil_regs #(
             npu_done_d <= npu_done;
             if ((dma_done & ~dma_done_d) | (npu_done & ~npu_done_d))
                 irq_pending <= 1'b1;                                  // rising edge of a completion
-            else if (wr_fire && wa_q[7:2] == 6'h01 && wd_q[1])
+            else if (wr_fire && wa_q[7:2] == 6'h01 && wd_q[1] && wstrb_q[0])
                 irq_pending <= 1'b0;                                  // CTRL.irq_clear (bit1)
         end
     end

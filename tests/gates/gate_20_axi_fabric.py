@@ -3,12 +3,8 @@
 Verifies the first net-new bus slice of the two-core M3V SoC:
   host AXI4-Lite master  ->  axil_1to2 router  ->  { NPU CSR slave @0x3xxx , passthrough mem }
 
-Checks (transaction scoreboard, `tb_axil_fabric.v`):
-  - NPU presence (ID reg), CSR round-trips (SCRATCH/CONFIG), CTRL->npu_start, STATUS RO
-  - address routing: 0x3xxx -> NPU, else -> passthrough; no cross-talk
-
-Two stages: Verilator lint (errors fatal; style warnings allowed) + iverilog simulation
-asserting AXIL_FABRIC_PASS. Skips (not-run) if verilator/iverilog absent (§9 honesty).
+Sim engine = **Verilator** (`--binary --timing`); VCS is the signoff track (OUTSIDE-SANDBOX).
+Verilator lint (errors fatal) + Verilator sim asserting AXIL_FABRIC_PASS. Skips if verilator absent.
 """
 
 import shutil
@@ -20,27 +16,34 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 RTL = [ROOT / "IP/npu/rtl/axil_1to2.v", ROOT / "IP/npu/rtl/npu_axil_regs.v"]
 TB = [ROOT / "IP/npu/dv/tb/axil_mem16.v", ROOT / "IP/npu/dv/tb/tb_axil_fabric.v"]
+TOP = "tb_axil_fabric"
+LINT_WAIVERS = ["-Wno-DECLFILENAME", "-Wno-MULTITOP", "-Wno-UNUSEDSIGNAL"]
 
 
-@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
-def test_fabric_rtl_lints_clean_of_errors():
-    r = subprocess.run(
-        ["verilator", "--lint-only", "-Wall", "-Wno-DECLFILENAME", "-Wno-MULTITOP",
-         "-Wno-UNUSEDSIGNAL", *[str(p) for p in RTL]],
-        capture_output=True, text=True,
-    )
-    # warnings are allowed; only hard errors (%Error) fail the gate
+def verilator_lint(rtl):
+    r = subprocess.run(["verilator", "--lint-only", "-Wall", *LINT_WAIVERS, *[str(p) for p in rtl]],
+                       capture_output=True, text=True)
     assert "%Error" not in r.stderr, f"verilator lint errors:\n{r.stderr}"
     assert r.returncode == 0, f"verilator exited {r.returncode}:\n{r.stderr}"
 
 
-@pytest.mark.skipif(not (shutil.which("iverilog") and shutil.which("vvp")), reason="no iverilog — not-run")
+def verilator_sim(tmp_path, top, files, pass_token, require_zero_errors=True):
+    mdir = tmp_path / "obj"
+    b = subprocess.run(["verilator", "--binary", "--timing", "-Wno-fatal", "--top-module", top,
+                        "-Mdir", str(mdir), *[str(p) for p in files]],
+                       capture_output=True, text=True)
+    assert (mdir / f"V{top}").exists(), f"verilator build failed:\n{b.stdout}\n{b.stderr}"
+    out = subprocess.run([str(mdir / f"V{top}")], capture_output=True, text=True, timeout=180).stdout
+    assert pass_token in out, f"sim did not pass ({pass_token} absent):\n{out}"
+    if require_zero_errors:
+        assert "0 errors" in out, f"scoreboard reported mismatches:\n{out}"
+
+
+@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
+def test_fabric_rtl_lints_clean_of_errors():
+    verilator_lint(RTL)
+
+
+@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
 def test_fabric_scoreboard_passes(tmp_path):
-    vvp = tmp_path / "fabric.vvp"
-    subprocess.run(
-        ["iverilog", "-g2012", "-o", str(vvp), *[str(p) for p in RTL], *[str(p) for p in TB]],
-        check=True, capture_output=True, text=True,
-    )
-    out = subprocess.run(["vvp", str(vvp)], capture_output=True, text=True, timeout=60).stdout
-    assert "AXIL_FABRIC_PASS" in out, f"scoreboard did not pass:\n{out}"
-    assert "0 errors" in out, f"scoreboard reported mismatches:\n{out}"
+    verilator_sim(tmp_path, TOP, RTL + TB, "AXIL_FABRIC_PASS")

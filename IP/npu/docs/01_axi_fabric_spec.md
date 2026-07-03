@@ -40,7 +40,7 @@ NPU window = `addr[31:28] == 0x3`. NPU CSR bank (word-addressed):
 | `IP/npu/dv/tb/axil_mem16.v` | passthrough mem slave (stands in for host subsystem) |
 | `IP/npu/dv/tb/tb_axil_fabric.v` | host-master BFM + transaction scoreboard (8 checks) |
 
-**Verified**: Verilator lint (0 errors) + iverilog sim → `AXIL_FABRIC_PASS`, 8/8 checks
+**Verified**: Verilator lint (0 errors) + Verilator sim → `AXIL_FABRIC_PASS`, 8/8 checks
 (ID, SCRATCH/CONFIG round-trip, npu_start/config wiring, STATUS RO, 0x3 vs passthrough routing,
 no cross-talk).
 
@@ -95,7 +95,25 @@ the host-loaded TCM region survives the DMA region (no clobber).
 
 `npu_top` is the stable socket the **Phase 2 cpu_m1-derived NPU core** plugs into (beside CSR/TCM).
 
-## 7. Deferred (Phase 2 or throughput tuning)
+## 7. Phase 1.5 — bus-protocol hardening (DONE, `gate_28_axi_adversarial`)
+
+Multi-agent review (Codex, self-verified) found the Phase-1 gates passed happy-path only. Fixed +
+proven by an **adversarial Verilator testbench** (`tb_axi_adversarial.v`, `tb_dma_err.v`):
+
+| bug | fix |
+|---|---|
+| AXI-Lite **W-before-AW** misroute/deadlock (`axil_1to2`, `npu_top`) | hold W until the write route is known (`w_known = w_busy \| s_awvalid`) |
+| **WSTRB ignored** (CSR + TCM) | byte-strobe `merge()` — keep old bytes where WSTRB=0 |
+| **decode aliasing** (`0x3002_xxxx`→CSR ID) | 3-way decode CSR/TCM/**DECERR**; out-of-window → SLVERR (`axil_decerr.v`) |
+| TCM **address wrap** | out-of-range offset → SLVERR (no wrap) |
+| DMA **`LEN=0`** → ARLEN underflow to 0xff | `LEN=0` is a no-op, no burst |
+| DMA **RRESP ignored** | latch read SLVERR → `STATUS[5]=dma_err`, still terminates |
+
+Sim engine is **Verilator** (`--binary --timing`) in-sandbox; **VCS** is the signoff track
+(OUTSIDE-SANDBOX, run via the licensed-EDA path). iverilog is not used on this project.
+
+## 8. Deferred (Phase 2 or throughput tuning)
 
 - [ ] Double-buffer ping-pong / multi-outstanding bursts (overlap fetch with compute) — throughput.
+- [ ] DMA DST-overflow guard (currently a SW contract: host ensures `dst+len ≤ TCM`).
 - [ ] (later) formal AXI property check on `axil_1to2` / `npu_dma`, mirroring the host's `phase_p_axi`.
