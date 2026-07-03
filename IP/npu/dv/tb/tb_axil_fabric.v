@@ -51,7 +51,8 @@ module tb_axil_fabric;
         .s_axi_bvalid(m0_bvalid),.s_axi_bready(m0_bready),.s_axi_bresp(m0_bresp),
         .s_axi_arvalid(m0_arvalid),.s_axi_arready(m0_arready),.s_axi_araddr(m0_araddr),.s_axi_arprot(m0_arprot),
         .s_axi_rvalid(m0_rvalid),.s_axi_rready(m0_rready),.s_axi_rdata(m0_rdata),.s_axi_rresp(m0_rresp),
-        .npu_start(npu_start),.npu_config(npu_config),.npu_busy(1'b0),.npu_done(1'b0)
+        .npu_start(npu_start),.npu_config(npu_config),.npu_busy(1'b0),.npu_done(1'b0),
+        .dma_src(),.dma_dst(),.dma_len(),.dma_go(),.dma_busy(1'b0),.dma_done(1'b0)
     );
 
     axil_mem16 mem (

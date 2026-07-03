@@ -43,14 +43,23 @@ module npu_axil_regs #(
     output wire        npu_start,
     output wire [31:0] npu_config,
     input  wire        npu_busy,
-    input  wire        npu_done
+    input  wire        npu_done,
+
+    // ---- DMA descriptor (to npu_dma) ----
+    output reg  [31:0] dma_src,
+    output reg  [31:0] dma_dst,
+    output reg  [16:0] dma_len,
+    output reg         dma_go,       // 1-cycle pulse on CTRL-GO write
+    input  wire        dma_busy,
+    input  wire        dma_done
 );
     assign s_axi_bresp = 2'b00;   // OKAY
     assign s_axi_rresp = 2'b00;
 
     // ---------- register storage ----------
     reg [31:0] ctrl_q, config_q;
-    wire [31:0] status_w = {30'b0, npu_done, npu_busy};
+    //  STATUS: [0]=npu_busy [1]=npu_done [2]=dma_busy [3]=dma_done
+    wire [31:0] status_w = {28'b0, dma_done, dma_busy, npu_done, npu_busy};
 
     // ================= WRITE channel (single-outstanding) =================
     // Accept AW and W together, then emit B. Fits the host bridge that issues
@@ -66,16 +75,22 @@ module npu_axil_regs #(
         if (!resetn) begin
             aw_seen <= 1'b0; w_seen <= 1'b0; s_axi_bvalid <= 1'b0;
             ctrl_q <= 32'b0; config_q <= 32'b0;
+            dma_src <= 32'b0; dma_dst <= 32'b0; dma_len <= 17'b0; dma_go <= 1'b0;
         end else begin
+            dma_go <= 1'b0;                    // default: pulse is 1-cycle
             if (s_axi_awvalid && s_axi_awready) begin aw_seen <= 1'b1; wa_q <= s_axi_awaddr; end
             if (s_axi_wvalid  && s_axi_wready ) begin w_seen  <= 1'b1; wd_q <= s_axi_wdata; end
 
             if (wr_fire) begin
                 case (wa_q[7:2])
-                    6'h01: ctrl_q   <= wd_q;   // 0x04 CTRL
-                    6'h03: config_q <= wd_q;   // 0x0C CONFIG
+                    6'h01: ctrl_q   <= wd_q;              // 0x04 CTRL
+                    6'h03: config_q <= wd_q;              // 0x0C CONFIG
                     // 0x10 SCRATCH written in the dedicated scratch_q block below
-                    default: ;                 // RO/unmapped (ID/STATUS): ignore
+                    6'h08: dma_src  <= wd_q;              // 0x20 DMA_SRC (byte addr)
+                    6'h09: dma_dst  <= wd_q;              // 0x24 DMA_DST (local word index)
+                    6'h0A: dma_len  <= wd_q[16:0];        // 0x28 DMA_LEN (beats)
+                    6'h0B: dma_go   <= wd_q[0];           // 0x2C DMA_CTRL: bit0 = GO (1-cyc pulse)
+                    default: ;                            // RO/unmapped (ID/STATUS): ignore
                 endcase
                 s_axi_bvalid <= 1'b1;
                 aw_seen <= 1'b0; w_seen <= 1'b0;
@@ -104,6 +119,9 @@ module npu_axil_regs #(
                     6'h02:  s_axi_rdata <= status_w;   // 0x08 STATUS
                     6'h03:  s_axi_rdata <= config_q;   // 0x0C CONFIG
                     6'h04:  s_axi_rdata <= scratch_q;  // 0x10 SCRATCH
+                    6'h08:  s_axi_rdata <= dma_src;    // 0x20 DMA_SRC
+                    6'h09:  s_axi_rdata <= dma_dst;    // 0x24 DMA_DST
+                    6'h0A:  s_axi_rdata <= {15'b0, dma_len}; // 0x28 DMA_LEN
                     default: s_axi_rdata <= 32'h0;
                 endcase
             end else if (s_axi_rvalid && s_axi_rready) begin

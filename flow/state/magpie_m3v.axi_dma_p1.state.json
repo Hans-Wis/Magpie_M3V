@@ -1,0 +1,12 @@
+{
+  "design": "magpie_m3v",
+  "design_id": "cpu_m3v",
+  "stage": "npu_phase1_data_plane_dma",
+  "gate": "tests/gates/gate_25_npu_dma.py",
+  "status": "pass",
+  "summary": "Phase 1 data plane DONE: npu_dma.v AXI4-full INCR read-burst master, host-programmed over the AXI4-Lite fabric (DMA_SRC/DST/LEN/GO CSRs in npu_axil_regs), streams shared-mem weights into NPU local buffer. Verilator lint 0-error + iverilog scoreboard NPU_DMA_PASS (303 checks) with multi-burst chunking (>256 beats) and 4KB-boundary crossing exercised.",
+  "adr": "docs/adr/0031-m3v-hybrid-npu-scope.md",
+  "spec_doc": "IP/npu/docs/01_axi_fabric_spec.md",
+  "date": "2026-07-03",
+  "note": "Frozen IP/cpu_m1/rtl/ untouched. Open: double-buffer ping-pong, NPU ITCM/DTCM behind fabric, IRQ, host no-regress guard. cpu_m3v-owned evidence."
+}

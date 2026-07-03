@@ -1,7 +1,7 @@
 # M3V Phase 1 — AXI4-Lite fabric (control plane) spec
 
-Status: **Phase 1 in progress — control-plane brick DONE & verified** (2026-07-03).
-Gate: `tests/gates/gate_20_axi_fabric.py`. Scope: `docs/adr/0031-m3v-hybrid-npu-scope.md`.
+Status: **Phase 1 in progress — control-plane + data-plane (DMA) bricks DONE & verified** (2026-07-03).
+Gates: `gate_20_axi_fabric.py` (control), `gate_25_npu_dma.py` (data). Scope: `docs/adr/0031-m3v-hybrid-npu-scope.md`.
 
 ## 1. Where this plugs into the frozen host
 
@@ -53,10 +53,31 @@ no cross-talk).
   weight/activation streaming, NPU as AXI master to shared mem) is the next Phase 1 slice — that is
   where the roofline bandwidth is won (ADR-0031 §3).
 
-## 5. Next Phase 1 slices
+## 5. Data plane — AXI4-full + DMA (DONE)
 
-- [ ] AXI4-full + burst data path + DMA descriptor engine (bandwidth plane).
+`npu_dma.v` is an **AXI4-full INCR read-burst master**, host-programmed over the AXI4-Lite fabric:
+
+| CSR (NPU window) | reg | meaning |
+|---|---|---|
+| 0x20 | DMA_SRC | shared-mem byte address (word-aligned) |
+| 0x24 | DMA_DST | local buffer start (word index) |
+| 0x28 | DMA_LEN | beats (32-bit words) to move |
+| 0x2C | DMA_CTRL | write bit0 = GO (1-cycle pulse) |
+| 0x08[3:2] | STATUS | dma_done, dma_busy |
+
+Flow: host writes SRC/DST/LEN → GO → DMA issues INCR bursts (each **≤256 beats AND never crossing a
+4 KB boundary**, longer transfers chunked) from shared memory into the NPU local buffer → sets
+STATUS.dma_done. Single-outstanding (one burst in flight).
+
+**Verified** (`tb_npu_dma.v`, 303 checks, `NPU_DMA_PASS`): a 300-beat transfer whose source
+**crosses a 4 KB boundary** is split into 3 legal bursts (24 + 256 + 20) and every copied word
+matches the weight-memory pattern. This is the bandwidth path the roofline (ADR-0031 §3) needs.
+
+## 6. Next Phase 1 slices
+
+- [ ] **Double-buffer ping-pong** on the local buffer (overlap DMA fetch with compute) — throughput.
+- [ ] Multi-outstanding bursts (issue next AR before current R done) — bandwidth tuning.
 - [ ] NPU ITCM/DTCM windows behind the fabric (host loads NPU program/data).
-- [ ] NPU→host completion IRQ wiring.
+- [ ] NPU→host completion IRQ wiring (from dma_done / npu_done).
 - [ ] Host scalar no-regression guard gate (`gate_10_host_noregress`).
-- [ ] (later) formal AXI-Lite property check on `axil_1to2`, mirroring the host's `phase_p_axi`.
+- [ ] (later) formal AXI property check on `axil_1to2` / `npu_dma`, mirroring the host's `phase_p_axi`.
