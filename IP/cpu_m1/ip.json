@@ -1,7 +1,7 @@
 {
-  "id": "cpu.cpu_m1a",
-  "name": "cpu_m1a",
-  "display_name": "Magpie M1A — performance line (pipelined MUL / Zb* / TCM / RVV Zve32x / TC-GEMV), forked from M1",
+  "id": "cpu.cpu_m3v",
+  "name": "cpu_m3v",
+  "display_name": "Magpie M3V — hybrid NPU line (frozen M1A scalar host + net-new tightly-coupled int8/int4 GEMV TCU + TCM/DMA), forked from M1A",
   "kind": "cpu",
   "flow": "cpu",
   "maturity": "draft",
@@ -45,7 +45,7 @@
       ]
     }
   },
-  "design_id": "cpu_m1a",
+  "design_id": "cpu_m3v",
   "source_mode": "greenfield-ip-native",
   "path_policy": "ip-native",
   "active_variant": "v2_pipeline_ch2_lab08e",
@@ -237,14 +237,17 @@
   "owner_agent": "Claude Code",
   "schema_ref": "../../../../doc/ip_flow_plan_of_record.md (ip.json schema)",
   "provenance_fork": {
-    "parent": "Magpie_M1 (cpu_m1)",
-    "parent_repo": "~/project/SOC/Magpie_M1",
-    "fork_tag": "m1-rtl-freeze-v1.0",
-    "fork_sha": "4e6e1d4",
-    "date": "2026-06-11",
-    "note": "Full-history clone. M1 Tier-2 evidence is NOT claimable by cpu_m1a; all gates/coverage/lockstep must be re-earned on this line. Physical path IP/cpu_m1/ retained to avoid churn in Makefiles/gates; identity = design_id cpu_m1a everywhere.",
-    "evaluation": "docs/reports/m1a_performance_evaluation.md",
-    "baseline": "docs/reports/m1_benchmark_baseline.md (CoreMark/MHz 2.47, CPI 1.29, GEMV 11.0 c/MAC)"
+    "parent": "Magpie_M1A (cpu_m1a)",
+    "parent_repo": "~/project/SOC/Magpie_M1A",
+    "fork_tag": "m1a-rtl-freeze-v1.0",
+    "fork_sha": "51a6fe0",
+    "date": "2026-07-03",
+    "grandparent": "Magpie_M1 (cpu_m1) @ m1-rtl-freeze-v1.0 / 4e6e1d4",
+    "sibling": "Magpie_M1V (cpu_m1v) — CoralNPU IMPORT route (ADR-0030); M3V is the independent self-built HYBRID route, evidence hard-isolated from M1V",
+    "note": "Full-history clone of M1A at its RTL-freeze tag. M1A/M1 Tier-2 evidence is NOT claimable by cpu_m3v; all gates/coverage/lockstep must be re-earned on this line (the inherited M1A scalar+TCM RTL under IP/cpu_m1/ stays FROZEN as host and is re-verified only as a no-regression guard). All net-new ML work lands under IP/npu/. Physical path IP/cpu_m1/ retained to avoid Makefile/gate churn; identity = design_id cpu_m3v everywhere.",
+    "scope": "docs/adr/0031-m3v-hybrid-npu-scope.md (self-built tightly-coupled GEMV; NOT CoralNPU import)",
+    "evaluation": "docs/reports/m1a_performance_evaluation.md (HYBRID = route #4 tightly-coupled GEMV)",
+    "baseline": "docs/reports/m1_benchmark_baseline.md (M1A scalar host baseline: CoreMark/MHz 2.47, CPI 1.29, GEMV 11.0 c/MAC)"
   },
-  "gate_map_note": "m1a_a1/a2/a3 gates are PLANNED (ADR-0026 D2); status not-run until each sub-phase opens — never green by default (§9)"
+  "gate_map_note": "cpu_m1 host gates inherited from M1A are FROZEN reference; M3V net-new gates (npu identity, TCM/DMA, GEMV TCU, ML e2e) are PLANNED per ADR-0001 — status not-run until each phase opens, never green by default (§9)"
 }

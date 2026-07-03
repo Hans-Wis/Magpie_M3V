@@ -1,0 +1,52 @@
+{
+  "id": "npu.cpu_m1_derived_npu",
+  "name": "npu_core_m3v",
+  "display_name": "Magpie M3V NPU — cpu_m1-derived RISC-V+vector ML core, loosely-coupled to frozen cpu_m1 host over AXI",
+  "kind": "accelerator",
+  "flow": "cpu",
+  "design_id": "cpu_m3v",
+  "maturity": "draft",
+  "status": "not-started",
+  "topology": "two-core SoC: cpu_m1 (frozen host, main CPU) --AXI--> NPU core (cpu_m1-derived, modified). Loosely-coupled companion accelerator (CoralNPU-style), NOT tightly-coupled custom-0.",
+  "note": "The NPU is a COPY of the frozen cpu_m1 scalar RTL (taken from tag m1a-rtl-freeze-v1.0) placed under IP/npu/ and MODIFIED to add ML compute (vector/GEMV/matrix EXU + local TCM + AXI slave/master). The frozen IP/cpu_m1/rtl/ is never touched. Route #5 (loosely-coupled) of docs/reports/m1a_performance_evaluation.md, but the companion is self-built from our own scalar rather than an Ethos-U-style fixed block or imported CoralNPU (that is the sibling M1V line).",
+  "scope_ref": "docs/adr/0031-m3v-hybrid-npu-scope.md",
+  "isa_contract": {
+    "target": "RV32IMF_Zve32x_Zicsr_Zifencei_Zbb",
+    "vlen": 128,
+    "source": "CoralNPU datasheet parity (User directive 2026-07-03: match Google NPU first so the toolchain applies)",
+    "delta_vs_cpu_m1": "add F (FPU) + Zve32x (vector); C dropped/optional (CoralNPU has no compressed)",
+    "config_parity": "ITCM 8KB / DTCM 32KB, AXI4 master+slave, GEMV/matrix 64 MAC -> 256 (256 = datasheet matrix engine, NOT in open emit)"
+  },
+  "toolchain": {
+    "goal": "make the Google-NPU (open RVV) toolchain apply by matching the ISA contract",
+    "honest_scope": "Google coral-opt + CoralNPU IREE runtime are CLOSED (Synaptics Torq), unavailable here (M1V hit this, wrote stand-in m1v-coral-opt). What applies = standard OPEN RVV toolchain: clang -march=rv32imf_zve32x_zbb + RVV intrinsics + TFLM; M1V stand-in emitter as reference.",
+    "golden": "Spike ISS --isa rv32imf_zve32x (accepts zve32x locally); toolchain proven on ISS before RTL",
+    "vector_lockstep_method": "reuse M1V ADR-0028 RVV Zve32x vector-retire equivalence (reference)"
+  },
+  "host": {
+    "core": "IP/cpu_m1 (frozen M1A scalar @ m1a-rtl-freeze-v1.0) = main control CPU",
+    "existing_bus": "cpu_m1_axil_top.v + axil_bridge.v already expose an AXI4-Lite master (valid-ready dmem bridged to AXI-Lite; vcformal-checked in flow/v2_pipeline/phase_p_axi). Control plane to the NPU works out of the box.",
+    "constraint": "IP/cpu_m1/rtl/ must remain byte-identical to the freeze tag (host no-regression guard)"
+  },
+  "planned_units": [
+    {"name": "npu_core", "role": "cpu_m1 scalar spine (copied+modified) + F(FPU) as the NPU's control/sequencer core; runs ML kernels", "status": "not-started"},
+    {"name": "rvv_zve32x_exu", "role": "standard RVV Zve32x vector EXU (VLEN=128, integer EEW<=32) — the ISA-parity vector unit", "status": "not-started"},
+    {"name": "gemv_matrix_engine", "role": "int8/int4 GEMV/matrix array (start 64 MAC, path to 256; net-new, not in open CoralNPU emit)", "status": "not-started"},
+    {"name": "npu_tcm", "role": "local ITCM/DTCM + 128-bit data path for weight/activation residency", "status": "not-started"},
+    {"name": "npu_axi_if", "role": "AXI slave (host control/CSR + local-mem window) + AXI master (weight/activation DMA)", "status": "not-started"},
+    {"name": "axi_fabric", "role": "interconnect + addr decode + AXI4-Lite(control) & AXI4-full+DMA(data, burst); net-new bus work", "status": "not-started"},
+    {"name": "soc_top", "role": "two-core M3V SoC integration (host + NPU + fabric + shared mem)", "status": "not-started"}
+  ],
+  "verification": {
+    "authority": "SPLIT (route #5): host cpu_m1 = per-commit Spike lockstep (unchanged); NPU scalar spine = its own standalone Spike lockstep (cpu_m1-derived, so still Spike-golden); NPU vector/GEMV = Spike --extension or bit-accurate C golden model; boundary = AXI transaction scoreboard; system = ML e2e.",
+    "note": "Self-built NPU keeps the scalar part lockstep-able (advantage over the M1V imported-core route). The vector/GEMV extension is the only piece needing a new golden model. Document the split-authority deviation in the SKU contract."
+  },
+  "planned_gates": [
+    "gate_00_identity_m3v (line identity)",
+    "gate_10_host_noregress (cpu_m1 frozen scalar re-verify, no new claim)",
+    "gate_20_axi_fabric (AXI4-Lite control + AXI4-full/DMA data; transaction scoreboard)",
+    "gate_30_npu_scalar_lockstep (cpu_m1-derived NPU scalar spine vs Spike)",
+    "gate_40_npu_gemv_cosim (vector/GEMV extension vs Spike --extension / C golden)",
+    "gate_50_two_core_ml_e2e (host orchestrates NPU: TFLM / int4 GEMV tinyLLM, roofline numbers)"
+  ]
+}

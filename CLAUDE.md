@@ -1,3 +1,15 @@
+# CLAUDE.md — `SOC/Magpie_M3V` 自建 HYBRID NPU 線(M1A fork)
+
+> ⭐ **本 repo 是 Magpie_M3V**:fork 自 `m1a-rtl-freeze-v1.0`(M1A @ 51a6fe0,完整歷史保留,remote=parent → `~/project/SOC/Magpie_M1A`)。祖系=M1 @ 4e6e1d4。
+> **design_id = `cpu_m3v` / `magpie_m3v`**(物理路徑沿用 `IP/cpu_m1/` 避免 Makefile/gate 翻修——身分以 design_id 為準)。identity gate = `tests/gates/gate_00_identity_m3v.py`。
+> **🎯 任務(User 裁示 2026-07-03,ADR-0031 PROPOSED)**:把 M1A RV32 scalar 長成**類 Google CoralNPU 的 edge-ML 能力**(對標 Cortex-M55 + Ethos-U55)。架構 = **兩核 SoC**:**主 CPU = 凍結的 cpu_m1**(control plane)**--AXI--> NPU core(= 複製 cpu_m1 的 scalar RTL 再修改,加向量/GEMV/矩陣 EXU + 本地 TCM + AXI slave/master)**。**鬆耦合 companion**(CoralNPU SoC 形狀),但那顆 ML 核**用自己的 cpu_m1 長出來**,不是匯入 CoralNPU RTL(那是 M1V)。決策=[`docs/adr/0031-m3v-hybrid-npu-scope.md`](docs/adr/0031-m3v-hybrid-npu-scope.md);藍圖=[`docs/reports/m1a_performance_evaluation.md`](docs/reports/m1a_performance_evaluation.md)(route #5,companion 自建)。
+> **⚠️ freeze 邊界**:`IP/cpu_m1/rtl/` 維持 byte-identical(host);NPU 是**複製一份到 `IP/npu/` 再改**,不動凍結核。凍結 host 本來就有 **AXI4-Lite master**(`cpu_m1_axil_top.v`+`axil_bridge.v`,vcformal 過)→ control plane 現成;**net-new = AXI4-full + DMA 資料路徑 + NPU 向量/矩陣 datapath**。
+> **🔬 驗證權威 = SPLIT(route #5 代價,誠實標注)**:host cpu_m1 = per-commit Spike lockstep 不變;NPU **scalar 脊椎因是 cpu_m1 衍生仍可獨立 Spike lockstep**(勝過 M1V imported 核);NPU 向量/GEMV = Spike `--extension`/bit-accurate C golden;邊界 = AXI scoreboard;系統 = ML e2e。**不再是單一統一 per-commit**。
+> **🔀 與 Magpie_M1V 的關係**:M1V = **IMPORT**(整包匯入 CoralNPU,ADR-0030);M3V = **自建兩核 SoC**。sibling、**證據硬隔離**、互不回流。M1A/M1/M1V 的 Tier-2 證據不得由本線宣稱;flow/state 已清空,所有 gate 在本線重新掙。
+> **🧩 ISA 契約 = CoralNPU parity(User 裁示 2026-07-03)**:NPU = **可程式 RISC-V+向量核**,ISA = **標準 RVV Zve32x**,對齊 CoralNPU datasheet 字串 **`RV32IMF_Zve32x_Zicsr_Zifencei_Zbb`,VLEN=128**(cpu_m1 衍生核要**加 F+Zve32x**,C 不需要);GEMV 陣列 **64 MAC→256**。目的 = **先讓 Google NPU 的 toolchain 套進來**。⚠️ **誠實界**:Google 真正的 `coral-opt`+CoralNPU IREE runtime 是**閉源商用(Synaptics Torq)、此環境拿不到**(M1V 已撞牆、自寫 stand-in)。對齊 ISA 換到的是**標準開源 RVV toolchain**(`clang -march=rv32imf_zve32x_zbb`+RVV intrinsics+TFLM),**不是** Google 專有編譯器——這反而更穩(不綁閉源)。golden = Spike ISS(`--isa rv32imf_zve32x`)。**256-MAC matrix 不在開源 emit,是淨新**。
+> **第一動作 = Phase 0(contract/toolchain-first)**:鎖 ISA/ABI/memory-map 契約 → **在 Spike ISS 上把開源 RVV toolchain 立起來(一個向量 kernel + 一個 TFLM op 跑起來 = toolchain 套用成功)**,RTL 才依契約長。詳見 ADR-0031。
+> 以下為承襲自 M1A/M1 的**工程規則/工具/flow**(reference policy、ADR、phase gate、Spike 權威仍適用;凍結註記屬 M1A 線;向量/ML 實作在本線 `IP/npu/` 而非移交):
+
 # CLAUDE.md — `SOC/Magpie_M1A` 效能改版線(M1 fork)
 
 > ⭐ **本 repo 是 Magpie_M1A**:M1 的效能升級線,fork 自 `m1-rtl-freeze-v1.0`(M1 @ 4e6e1d4,完整歷史保留,remote=parent)。

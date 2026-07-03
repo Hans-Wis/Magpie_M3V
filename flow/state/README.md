@@ -1,11 +1,14 @@
-# MCP state (*.state.json) + actions.jsonl for AI Design IDE discovery.
+# flow/state — Magpie_M3V (design_id = cpu_m3v)
 
-`magpie_m1.isa_scope.state.json` is the active scope record for
-`gate_00_spec`. It records ADR-0001 as superseded-for-implementation, ADR-0002
-as accepted, and Ch2 `lab08e` `RV32IMC_Zicsr_Zifencei` 4-stage pipeline + BP +
-RAS + RV32C + pre-fetch as the active Magpie_M1 productization line.
+MCP state (`*.state.json`) + `actions.jsonl` for AI Design IDE discovery.
 
-Note: platform `pipeline.record_step` currently validates stages against a
-fixed SoC list that does not include `isa_scope`, so this state was emitted
-manually for transparency. The platform schema should add CPU IP development
-stages before this becomes a fully automated record_step path.
+**This directory starts EMPTY of evidence.** M3V is a full-history fork of Magpie_M1A at
+tag `m1a-rtl-freeze-v1.0` (fork SHA 51a6fe0). Per `docs/M1A_DESIGN_FREEZE.md` and CLAUDE.md §9,
+**M1A / M1 / M1V Tier-2 evidence is NOT claimable by cpu_m3v** — every gate, lockstep, and
+coverage result must be re-earned on this line under the `cpu_m3v` identity.
+
+- The frozen M1A scalar core under `IP/cpu_m1/` is the host; it is re-verified only as a
+  scalar no-regression guard, never re-claimed as new evidence.
+- All net-new ML work (GEMV TCU / TCM / DMA) lands under `IP/npu/` and earns its own gates.
+
+`gate_00_identity_m3v` enforces this separation mechanically.
