@@ -23,7 +23,9 @@
 
 `include "def.vh"
 
-module cdec (
+module cdec #(
+    parameter EN_RVC = 1
+) (
     input      [15:0] cinstr,
     output reg [31:0] expanded,
     output reg        illegal
@@ -88,6 +90,8 @@ module cdec (
     // C.SWSP: imm[5:2|7:6] from cinstr[12:9,8:7] zext
     wire [11:0] imm_swsp = {4'b0, cinstr[8:7], cinstr[12:9], 2'b0};
 
+generate
+if (EN_RVC != 0) begin : gen_cdec_enabled
     always @* begin
         expanded = 32'h0;
         illegal  = 1'b0;
@@ -238,5 +242,16 @@ module cdec (
         2'b11: illegal = 1'b1;
         endcase
     end
+end else begin : gen_cdec_disabled
+    always @* begin
+        expanded = 32'h0;
+        illegal  = 1'b0;
+        if (cinstr[0]) begin
+            expanded = 32'h0;
+            illegal  = 1'b0;
+        end
+    end
+end
+endgenerate
 
 endmodule

@@ -26,7 +26,9 @@
 
 `include "def.vh"
 
-module bp (
+module bp #(
+    parameter EN_BP = 1
+) (
     input             clk,
     input             resetn,
 
@@ -42,6 +44,8 @@ module bp (
     input      [31:0] upd_target
 );
 
+generate
+if (EN_BP != 0) begin : gen_bp_enabled
     localparam IDX_BITS = 5;                             // 32 sets → 5-bit index
     localparam IDX_LSB  = 1;                             // Lab08d: PC[1] can be 1 with RV32C
     localparam TAG_LSB  = IDX_LSB + IDX_BITS;            // = 7
@@ -137,5 +141,10 @@ module bp (
             lru[wr_idx] <= lru_next;
         end
     end
+end else begin : gen_bp_disabled
+    assign bp_predict_taken  = 1'b0;
+    assign bp_predict_target = 32'h0;
+end
+endgenerate
 
 endmodule

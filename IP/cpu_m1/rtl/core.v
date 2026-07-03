@@ -19,7 +19,10 @@
 module core #(
     parameter [31:0] RESET_PC = `PC_RESET,
     parameter RV32A = 0,
-    parameter PMP_ENTRIES = 0
+    parameter PMP_ENTRIES = 0,
+    parameter EN_RVC = 1,
+    parameter EN_BP = 1,
+    parameter EN_RAS = 1
 ) (
     input             clk,
     input             resetn,
@@ -167,25 +170,26 @@ module core #(
     wire        ras_predict_ret;
 
     // Lab08e: residue-based pre-fetch (replaces wait_high + high_buf)
-    reg [15:0]  residue;        // saved high-half for upcoming cross-boundary assemble
-    reg         cross_assemble; // 1 = this cycle: assemble {i_mem_rdata[15:0], residue}
+    wire [15:0] residue;        // saved high-half for upcoming cross-boundary assemble
+    wire        cross_assemble; // 1 = this cycle: assemble {i_mem_rdata[15:0], residue}
 
     // ---- Pre-decode i_mem_rdata for instruction length ----
     wire [15:0] cur_half_lo = i_mem_rdata[15:0];
     wire [15:0] cur_half_hi = i_mem_rdata[31:16];
-    wire        is_comp_lo  = (cur_half_lo[1:0] != 2'b11);
-    wire        is_comp_hi  = (cur_half_hi[1:0] != 2'b11);
+    wire        is_comp_lo  = (EN_RVC != 0) && (cur_half_lo[1:0] != 2'b11);
+    wire        is_comp_hi  = (EN_RVC != 0) && (cur_half_hi[1:0] != 2'b11);
 
     wire        cur_at_high = if_pc[1];   // current instr at high half of fetched word
 
     // at_cross_boundary: fallback — arrived at cross-boundary without pre-setup
     // (happens after stall / redirect blocked upcoming_cross the previous cycle)
-    wire        at_cross_boundary = cur_at_high && !is_comp_hi && !cross_assemble && !redirect_warmup;
+    wire        at_cross_boundary = (EN_RVC != 0) && cur_at_high && !is_comp_hi &&
+                                    !cross_assemble && !redirect_warmup;
 
     // upcoming_cross: sequential 16-bit at low half, FOLLOWED BY 32-bit at high half
     // Only fires when current instr is 16-bit at low half AND high half is 32-bit start,
     // with no prediction override or stall this cycle. Guarantees residue = correct high-half.
-    wire        upcoming_cross = !cur_at_high && is_comp_lo && !is_comp_hi &&
+    wire        upcoming_cross = (EN_RVC != 0) && !cur_at_high && is_comp_lo && !is_comp_hi &&
                                   !cross_assemble && !stall && !warmup && !redirect_warmup && !pc_redirect &&
                                   !core_mem_stall && !debug_mode &&
                                   !bp_predict_taken && !ras_predict_ret;
@@ -194,14 +198,15 @@ module core #(
     // consuming the current assembled instruction, save this word's high half
     // and fetch the next word so the following instruction also has 0-cycle
     // assembly.
-    wire        consecutive_cross = cross_assemble && cur_at_high && !is_comp_hi &&
+    wire        consecutive_cross = (EN_RVC != 0) && cross_assemble && cur_at_high && !is_comp_hi &&
                                      !stall && !warmup && !redirect_warmup && !pc_redirect && !core_mem_stall &&
                                      !debug_mode && !bp_predict_taken && !ras_predict_ret;
 
     // is_16bit signal (drives ifu pc_inc)
-    wire        is_16bit_w = cross_assemble  ? 1'b0 :       // assembled cross = 32-bit
-                              cur_at_high    ? is_comp_hi :
-                                               is_comp_lo;
+    wire        is_16bit_w = (EN_RVC != 0) &&
+                             (cross_assemble ? 1'b0 :       // assembled cross = 32-bit
+                              cur_at_high     ? is_comp_hi :
+                                                is_comp_lo);
 
     // fetch_stall: only fallback cross-boundary detection (not upcoming_cross path)
     wire        fetch_stall = at_cross_boundary;
@@ -211,7 +216,9 @@ module core #(
     wire [15:0] cinstr   = cur_at_high ? cur_half_hi : cur_half_lo;
     wire [31:0] cdec_expanded;
     wire        cdec_illegal;
-    cdec u_cdec (
+    cdec #(
+        .EN_RVC(EN_RVC)
+    ) u_cdec (
         .cinstr   (cinstr),
         .expanded (cdec_expanded),
         .illegal  (cdec_illegal)
@@ -250,13 +257,15 @@ module core #(
     wire if_is_ret     = if_is_ret_32 || if_is_ret_16;
 
     wire        ras_valid      = (ras_top != 32'h0);
-    assign      ras_predict_ret = if_is_ret && ras_valid && !any_stall && !pc_redirect;
+    assign      ras_predict_ret = (EN_RAS != 0) && if_is_ret && ras_valid && !any_stall && !pc_redirect;
     // VCS-compatible split declaration for: wire        ras_predict_ret = if_is_ret && ras_valid && !any_stall && !pc_redirect;
 
-    assign ras_pop = ras_predict_ret;
+    assign ras_pop = (EN_RAS != 0) && ras_predict_ret;
 
     // ---- BP / RAS / ifu instantiation ----
-    bp u_bp (
+    bp #(
+        .EN_BP(EN_BP)
+    ) u_bp (
         .clk               (clk),
         .resetn            (resetn),
         .if_pc             (if_pc),
@@ -268,7 +277,9 @@ module core #(
         .upd_target        (bp_upd_target)
     );
 
-    ras u_ras (
+    ras #(
+        .EN_RAS(EN_RAS)
+    ) u_ras (
         .clk      (clk),
         .resetn   (resetn),
         .ras_top  (ras_top),
@@ -278,7 +289,8 @@ module core #(
     );
 
     ifu #(
-        .RESET_PC(RESET_PC)
+        .RESET_PC(RESET_PC),
+        .EN_RVC(EN_RVC)
     ) u_ifu (
         .clk                (clk),
         .resetn             (resetn),
@@ -310,27 +322,40 @@ module core #(
     assign i_mem_en   = (pc_redirect || redirect_warmup || !stall || at_cross_boundary) && !core_mem_stall && !debug_mode;
 
     // ---- Cross-boundary state machine ----
+generate
+if (EN_RVC != 0) begin : gen_rvc_residue_enabled
+    reg [15:0] residue_r;
+    reg        cross_assemble_r;
+
+    assign residue        = residue_r;
+    assign cross_assemble = cross_assemble_r;
+
     always @(posedge clk) begin
         if (!resetn || pc_redirect) begin
-            cross_assemble <= 1'b0;
-            residue        <= 16'h0;
+            cross_assemble_r <= 1'b0;
+            residue_r        <= 16'h0;
         end else if (consecutive_cross) begin
             // Back-to-back high-half 32-bit: consume current and arm next.
-            cross_assemble <= 1'b1;
-            residue        <= cur_half_hi;
+            cross_assemble_r <= 1'b1;
+            residue_r        <= cur_half_hi;
         end else if (upcoming_cross) begin
             // Pre-fetch path: no stall, save high-half for next cycle assembly
-            cross_assemble <= 1'b1;
-            residue        <= cur_half_hi;
+            cross_assemble_r <= 1'b1;
+            residue_r        <= cur_half_hi;
         end else if (at_cross_boundary && !warmup && !core_mem_stall) begin
             // Fallback path: stall this cycle, set up for stall-free assembly next cycle
-            cross_assemble <= 1'b1;
-            residue        <= cur_half_hi;
+            cross_assemble_r <= 1'b1;
+            residue_r        <= cur_half_hi;
         end else if (!any_stall) begin
             // Only clear when pipeline can advance; hold through stalls so BRAM data stays valid
-            cross_assemble <= 1'b0;
+            cross_assemble_r <= 1'b0;
         end
     end
+end else begin : gen_rvc_residue_disabled
+    assign residue        = 16'h0;
+    assign cross_assemble = 1'b0;
+end
+endgenerate
 
     // =========================================================================
     // IF/EX pipeline register
@@ -648,7 +673,7 @@ module core #(
     // BP update：combinational in EX，latch 進 ex_mem_bp_upd_* register，下一拍才
     // drive bp.v 的 upd port → BP counter_arr.D 跟 target_arr.D path 從 register
     // output 出發 (不再有 alu_result 進 BP write data 路徑)
-    wire        ex_bp_upd_valid  = if_ex_valid && (id_is_branch | id_is_jal)
+    wire        ex_bp_upd_valid  = (EN_BP != 0) && if_ex_valid && (id_is_branch | id_is_jal)
                                               && !stall && !pc_redirect && !debug_mode;
     // Original BP update gate:
     // && !stall && !pc_redirect;
@@ -662,7 +687,7 @@ module core #(
     // assign ras_push     = if_ex_valid && id_is_jal && (id_rd_idx == 5'd1)
     wire ras_push_commit = if_ex_valid && id_is_jal && (id_rd_idx == 5'd1)
                                       && !stall && !pc_redirect && !core_mem_stall;
-    assign ras_push     = ras_push_commit && !debug_mode;
+    assign ras_push     = (EN_RAS != 0) && ras_push_commit && !debug_mode;
     assign ras_push_val = if_ex_pc_plus_4;
 
     // =========================================================================
@@ -1278,12 +1303,12 @@ module core #(
     //   alu_result for jalr = rs1 + imm = ra (因為 ret 是 jalr x0, ra, 0)，& ~1 mask LSB
     //   mismatch → fire 額外 redirect (priority 比 ex_mem_mispredict 高)
     wire [31:0] mem_ras_actual_target = ex_mem_alu_result_r & ~32'd1;
-    wire        mem_ras_mispredict    = ex_mem_valid_r && ex_mem_pred_ras_r && !ex_mem_trigger_hit_r &&
+    wire        mem_ras_mispredict    = (EN_RAS != 0) && ex_mem_valid_r && ex_mem_pred_ras_r && !ex_mem_trigger_hit_r &&
                                         !ex_mem_pmp_if_fault_r
                                      && (mem_ras_actual_target != ex_mem_pred_ras_target_r);
 
     // BP update 用 ex_mem_bp_upd_* register output 驅動 (1 cycle delay)
-    assign bp_upd_valid  = ex_mem_bp_upd_valid_r && !core_mem_stall && !ex_mem_trigger_hit_r &&
+    assign bp_upd_valid  = (EN_BP != 0) && ex_mem_bp_upd_valid_r && !core_mem_stall && !ex_mem_trigger_hit_r &&
                            !ex_mem_pmp_if_fault_r;
     assign bp_upd_pc     = ex_mem_bp_upd_pc_r;
     assign bp_upd_taken  = ex_mem_bp_upd_taken_r;

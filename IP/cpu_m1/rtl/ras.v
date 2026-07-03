@@ -26,7 +26,9 @@
 
 `include "def.vh"
 
-module ras (
+module ras #(
+    parameter EN_RAS = 1
+) (
     input             clk,
     input             resetn,
 
@@ -39,6 +41,8 @@ module ras (
     input             pop              // 1 = end of this cycle pop
 );
 
+generate
+if (EN_RAS != 0) begin : gen_ras_enabled
     localparam DEPTH = 8;
     localparam PTR_BITS = 3;
 
@@ -75,5 +79,9 @@ module ras (
             end
         end
     end
+end else begin : gen_ras_disabled
+    assign ras_top = 32'h0;
+end
+endgenerate
 
 endmodule

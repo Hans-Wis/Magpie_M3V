@@ -22,7 +22,8 @@
 `include "def.vh"
 
 module ifu #(
-    parameter [31:0] RESET_PC = `PC_RESET
+    parameter [31:0] RESET_PC = `PC_RESET,
+    parameter EN_RVC = 1
 ) (
     input             clk,
     input             resetn,
@@ -47,7 +48,7 @@ module ifu #(
     reg [31:0] pc_reg;
     assign pc = pc_reg;
 
-    wire [31:0] pc_inc = is_16bit ? 32'd2 : 32'd4;
+    wire [31:0] pc_inc = ((EN_RVC != 0) && is_16bit) ? 32'd2 : 32'd4;
 
     assign next_pc = pc_redirect          ? redirect_target :
                      pc_stall             ? pc_reg :

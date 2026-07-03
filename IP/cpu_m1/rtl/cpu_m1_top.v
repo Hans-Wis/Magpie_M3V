@@ -32,7 +32,10 @@ module cpu_m1_top #(
     // handler at RESET_PC (see integration guide). ADR-0012.
     parameter [31:0] RESET_PC = 32'h0000_0000,
     parameter RV32A = 0,
-    parameter PMP_ENTRIES = 0
+    parameter PMP_ENTRIES = 0,
+    parameter EN_RVC = 1,
+    parameter EN_BP = 1,
+    parameter EN_RAS = 1
 )(
     input             clk,
     input             resetn,
@@ -163,7 +166,10 @@ module cpu_m1_top #(
     core #(
         .RESET_PC(RESET_PC),
         .RV32A(RV32A),
-        .PMP_ENTRIES(PMP_ENTRIES)
+        .PMP_ENTRIES(PMP_ENTRIES),
+        .EN_RVC(EN_RVC),
+        .EN_BP(EN_BP),
+        .EN_RAS(EN_RAS)
     ) u_core(
         .clk                (clk),
         .resetn             (resetn),
