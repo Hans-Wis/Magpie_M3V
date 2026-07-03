@@ -35,6 +35,7 @@
 | P0① | **result writeback DMA**(npu_dma 雙向;Coral 卸載迴圈兩半齊)ADR-0033 | `gate_29`(writeback scoreboard + SLVERR abort) |
 | 2 Step 4 | **NPU core 進 socket**(ADR-0034):stripped cpu_m1 於 npu_top 內從真 npu_tcm 取指;CTRL.start 閘 reset;DONE mailbox→STATUS/IRQ | `gate_30..34`:directed 1164 + random **8×10,809 commits** lockstep(rv32im 無 C)、DMA-vs-core 仲裁真重疊、strip coverage(bp/ras/cdec 零 points) |
 | P0② | **Command queue**(ADR-0035):shared-mem ring @0x8000 + TAIL doorbell;sequencer 經 core-local CSR 窗 0x0002_xxxx 當 consumer;v4 §06 SSOT(YAML→.vh/.h/.py);LOAD_W/STORE/FENCE 可執行,OP/RESCALE 誠實 ERR | `gate_35..39`:SSOT regen-diff、ring wrap/FULL、**CQ vs 直接 CSR 執行等價**(AXI 交易級)、ERR ladder、consume 全鏈 lockstep 298/298 |
+| 3A(P0④) | **vector CSR + vset{i}vl{i}**(ADR-0036):`EN_RVV` 參數(host=0);vtype/vl/vstart/vxsat/vcsr/vlenb + vill + mstatus.VS;**vector-CSR lockstep 契約上線**(checkpoint 紀律) | `gate_40/41`:vsetvli 網格 134/134 + vill ladder 51/51 vs Spike `zve32x_zvl128b`;抓到並修復 vx 別名組 CSR 轉發 bug |
 
 **驗證迴圈可用**:`flow/v2_pipeline/phase_03_0*/Makefile`(host)+ `phase_20_npu_core_lockstep/`(NPU:`make directed` / `make random SEED=n` / `make coverage`)= **Verilator(DUT)+ Spike(golden)+ riscv64-unknown-elf-gcc(firmware)** 一鍵重跑。baseline tag `m3v-pre-phase2-cpu`。
 
@@ -111,4 +112,4 @@
 
 **現況**:Phase 0+1+1.5 + Phase 2 Step2/Step4 + P0①writeback(ADR-0033)+ **P0②command queue(ADR-0035)** 完成;M3V gates 全綠(gate_30..39;僅 M1 時代 artifact gates 原生 fail,與本線無關)。**Coral 卸載迴圈(scalar 層)完整**:host 寫 ring → doorbell → sequencer 取 descriptor →(SSOT 解碼)LOAD_W/STORE 經 DMA 執行 → FENCE/IRQ/LAST → DONE/STATUS;MAT.OP/RESCALE 誠實 ERR 待矩陣引擎。
 **可替代性(User 問,2026-07-03 報告)**:尚不能宣稱取代 Coral——§3 清單 0/8 全綠;見 `docs/reports/2026-07-03_replaceability_status.md`。
-**下一步(依 §2 先架構確認)**:(a) Phase 3 **RVV Zve32x EXU**(P0④ vector-CSR lockstep 契約先行)或 (b) P0③ 矩陣 acc+requant(Phase 4,MAT.OP/RESCALE 轉真)。P1 註記在 ADR-0034/0035。**Gemini review 回補**:ADR-0034/0035 均 attempted-quota-blocked(key 免費層 20 req/day)——配額重置後用 scratchpad `gemini_inline_prompt.txt` 單發補跑。
+**進行中 = Phase 3 RVV Zve32x EXU(ADR-0036,User 裁示 2026-07-04)**:分段 3A✅→3B(VRF 32×128b + 整數 OPIVV/vmv 子集)→3C(unit-stride vle8/vse32 於 32b dbus)→3D(vwmul/vwadd/vredsum → **Phase 0 kernel 240 在 RTL 上重現 = Phase 3 出口**)。P0④ 契約已上線(per-commit checkpoint + post-run 記憶體權威)。Gemini 回補已完成(2026-07-04 review 入 docs/reviews;跑法=背景+檔案輪詢、單發內嵌,User 指定模式)。
