@@ -6,7 +6,7 @@
   the re-supplied API key is free-tier with a 20-requests/DAY limit (exhausted by the first
   agentic run; all single-shot retries 429'd). Backfill when the daily quota resets; the
   Coral-side evidence below stands on the committed gap review + Ch5 de-blackbox lab
-  (same honesty handling as ADR-0034).
+  (same honesty handling as ADR-0034). **Backfill DONE 2026-07-04**: Gemini full-context review completed (docs/reviews/2026-07-04_gemini_backfill_and_rvv_dossier.md) — verdict: consistent, no unbacked claims.
 - Date: 2026-07-03
 - Relates: ADR-0031 (scope), ADR-0033 (bidirectional DMA — the executors), ADR-0034 (live
   sequencer — the consumer), design report v4 **§06 Command 編碼 Spec v0.1 = frozen SSOT

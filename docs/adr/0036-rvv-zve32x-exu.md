@@ -1,0 +1,94 @@
+# ADR-0036 — Phase 3: RVV Zve32x EXU (in-core, staged 3A–3D) + P0④ vector-CSR lockstep contract
+
+- Status: **ACCEPTED** (per-phase architecture confirmation, CLAUDE.md §2; User directive
+  2026-07-04 "下一步(a)"). Architects: Grok (staging/microarch/contract/DV) + **Gemini
+  full-context** (Coral vector dossier + ADR-0034/0035 backfill review — quota unblocked via
+  the background-run + file-polling pattern; both prior ADRs reviewed **consistent, no
+  unbacked claims**). Integrator/approver = Claude PL.
+- Date: 2026-07-04
+- Relates: ADR-0031 (scope: rv32im_zve32x_zvl128b, VLEN=128, int-only), ADR-0032 (EN_* param
+  spine), ADR-0034 (live sequencer), ADR-0035 (CQ). Phase 3 exit bar = the Phase 0 proof
+  kernel (clang, `vsetvli e8/mf4 → vle8.v → vwmul.vv → vwadd.wv → vredsum.vs → vmv.x.s →
+  vse32.v`, result 240) runs on RTL with full stated evidence.
+
+## Coral comparison (Gemini dossier, observation-only)
+
+Kelvin: RVV 1.0 Zve32x/Zvl128b, SEW 8/16/32, **2× Vector ALU behind a Vector Command Queue**
+(~8 deep, non-blocking dispatch + scoreboard for vector→scalar writebacks), **128-bit vector
+LSU into DTCM** (unit-stride 128b/cycle; strided serialized), standard vector CSRs with
+limited `vstart` resumption in the open emit.
+
+**Recorded deviation (function-parity honest):** Phase 3 builds an **in-core iterative EXU**
+(scalar pipe freezes for the op; VLEN128/ELEN32 = 4×32b lanes) and reuses the **32-bit scalar
+dbus** for unit-stride vector memory. Coral's VCQ + 128-bit LSU are a *throughput shape*, not
+a replaceability requirement — the matrix engine + CQ (ADR-0035) is the ML MAC path, and the
+`vector_exu` boundary (`start/busy/done/illegal`, no CQ embedded) lets Phase 4/5 add a
+decoupled issue buffer without ISA/lockstep changes. 128-bit TCM port = P1 (with DTCM split).
+
+## Decision — staging (each stage independently gated, no stage skipped)
+
+| stage | scope | minimum op/feature list |
+|---|---|---|
+| **3A** | vector CSRs + config, **no datapath**; **P0④ lands here** | `vsetvli/vsetivli` (incl. `rs1=x0`/`rd=x0` keep semantics); CSRs `vtype/vl/vstart/vxsat/vcsr/vlenb`; `vill` set + propagation (post-illegal config every vector op is illegal until a legal `vsetvli`); fractional LMUL legality (`mf2/mf4/mf8`) and `vlmax` math |
+| **3B** | VRF 32×128b + same-SEW integer ALU | `vadd.vv/vsub.vv/vmv.v.v/vmv.v.x/vmv.v.i`, `vmv.x.s`, `vmerge.vvm` (mask plumbing smoke); LMUL 1 + fractional; lane iterator |
+| **3C** | unit-stride LSU on the scalar dbus | `vle8.v`, `vse32.v` (+`vle32.v`); `vl`-bounded beats; one vector mem op atomic across beats under `mem_stall`; TCM-wrap + mailbox/CSR-window non-collision directed |
+| **3D** | widening + reduction → kernel e2e | `vwmul.vv` (i8×i8→i16), `vwadd.wv` (→i32), `vredsum.vs`; **exit: Phase 0 kernel = 240 on RTL** |
+
+**Microarchitecture:** `EN_RVV` elaboration parameter on the cpu_m1 spine (host default **0**
+— host equivalence untouched; NPU config 1). Vector unit sits beside mul/div at EX with the
+same busy/stall discipline; VRF is architecturally separate (no scalar RFU change). LSU
+captures dbus data per beat; no second scalar mem op until vector `done`.
+
+**Deferred honestly (recorded):** strided/indexed loads, LMUL m2/m4/m8 (m1+fractional only),
+masked-op completeness beyond `vmerge` smoke, saturating ops (so `vxsat` has no setter yet —
+it is still a real, readable/writable CSR in the checkpoint contract), `vxrm` rounding modes,
+vector FP (Zve32x excludes), 128-bit memory port.
+
+## P0④ — vector-CSR lockstep contract (the bar, pinned)
+
+Commit-trace comparison is scalar-centric; the honest layered authority is:
+
+- **Per-commit (MUST):** (a) every `vsetvli` writes `rd` → already in the compared stream;
+  (b) **firmware checkpoint discipline**: after every `vsetvli` and after every vector
+  instruction that can change `vl/vtype/vstart/vxsat`, the test firmware executes `csrr` of
+  those CSRs (+`vlenb` once) so the values enter the compared scalar stream bit-exact.
+- **Post-run (MUST):** every vector-store target region in TCM compared against the Spike
+  memory image (authoritative for `vse*`).
+- **NOT required for P0④:** per-lane VRF shadow per commit (Spike's vector commit-log format
+  is not RVFI-clean; usable for debug, not gate authority).
+
+The checkpoint discipline is verification SSOT (test macro + linker), same tier as the
+dual-linker normalization.
+
+**Spike golden:** `--isa=rv32im_zve32x_zvl128b` (pins VLEN=128; **no C, no F** — green-wash
+guard), same dual-base normalization. **Tail policy:** per-instruction RVV-1.0/Spike
+behavior, documented as an opcode table in the `00_isa_contract.md` delta when 3B lands —
+not a single global choice.
+
+## Gates
+
+| gate | stage | pass bar |
+|---|---|---|
+| `gate_40_vector_csr_lockstep` | 3A | `vsetvli/vsetivli` grid (SEW×LMUL incl. mf2/4/8, boundary vl = vlmax/vlmax−1/1, keep-vl x0 matrix) with dense `csrr` checkpoints — 100% scalar-stream match vs Spike |
+| `gate_41_vill_illegal_ladder` | 3A | illegal config → `vill`; following vector op behavior matches Spike; recovery via legal `vsetvli` |
+| `gate_42_vector_alu_lockstep` | 3B | directed OPIVV/vmv + 1k-commit mixed vector-scalar random smoke (C off, checkpoints mandatory) |
+| `gate_43_vector_lsu_tcm` | 3C | `vle8/vse32` varied `vl` + TCM-wrap edge; post-run TCM region == Spike; LSU-vs-scalar-mem and LSU-vs-DMA stall directed |
+| `gate_44_phase0_kernel_e2e` | 3D | the unmodified Phase 0 clang kernel: result 240 + full scalar commit match + result region == Spike |
+
+**Green-wash guards:** wrong `--isa` (C or missing zvl128b); vector ops without checkpoints;
+claiming lockstep from `vsetvli rd` alone; kernel recompiled with a different `-march`;
+skipping the memory-region compare; host config elaborating with `EN_RVV=1`.
+
+## Top risks → directed catch
+
+1. Fractional-LMUL `vlmax` math (`e8,mf4` is kernel-critical) → gate_40 boundary grid.
+2. `vill` not enforced on subsequent vector ops → gate_41 ladder.
+3. `vsetvli` x0 keep-vl/keep-vtype semantics → gate_40 rs1/rd ∈ {x0,≠x0} matrix.
+4. Widening dest-overlap/EMUL legality (`vwmul/vwadd.wv`) → gate_44 + directed illegal encodings.
+5. `mem_stall` × multi-beat vector LSU (atomicity, DMA-write priority collision) → gate_43 stress.
+
+## Labor division (§5)
+
+Grok+Gemini arch (done, this ADR) → Codex staged RTL (3A first: idu/csr/core `EN_RVV`
+generate + vector CSR block; each stage self-smoke) → Claude authoritative gates 40–44,
+host-equivalence re-run (EN_RVV=0 unchanged), sole commit per stage.

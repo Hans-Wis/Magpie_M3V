@@ -20,7 +20,7 @@
 
 ## 附錄:Gemini 全上下文覆核狀態
 
-**attempted, quota-blocked(誠實界:not-run,非綠)**。2026-07-03 深夜以 User 提供的 key 嘗試
+**已回補(2026-07-04)**:Gemini 全上下文覆核完成(`docs/reviews/2026-07-04_gemini_backfill_and_rvv_dossier.md`)——逐列 CONFIRM 本報告判定,bottom-line 一致(向量/矩陣未建前不可宣稱取代)。原 quota-blocked 記錄保留如下。**原註**。2026-07-03 深夜以 User 提供的 key 嘗試
 執行(ADR-0034 回補 review + 本清單交叉檢查 + Coral CQ dossier):該 key 為免費層,
 gemini-3.5-flash 每日 20 requests,首次 agentic(--yolo)多輪呼叫即耗盡,其後所有單發
 重試均 429。**待每日配額重置後回補**(已備妥單發內嵌全檔 prompt,

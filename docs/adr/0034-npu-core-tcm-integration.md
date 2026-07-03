@@ -10,7 +10,7 @@
 - **Honesty note**: the usual Gemini full-context review is **not-run** this session (API key
   unavailable — stored only in the prior session scratchpad). The Coral comparison below is
   grounded in the de-blackbox lab RTL evidence + the committed gap review instead. Backfill a
-  Gemini pass when the key is re-supplied; flagged, not skipped silently.
+  Gemini pass when the key is re-supplied; flagged, not skipped silently. **Backfill DONE 2026-07-04**: Gemini full-context review completed (docs/reviews/2026-07-04_gemini_backfill_and_rvv_dossier.md) — verdict: consistent, no unbacked claims.
 
 ## Context
 
