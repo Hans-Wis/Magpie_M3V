@@ -10,6 +10,8 @@
 // here, fetching/loading through dedicated npu_tcm core ports. CTRL.start gates
 // its reset (Coral cg-release shape); a store to the core-local DONE mailbox
 // (0x0001_0000) sets STATUS.npu_done + IRQ. Single-outstanding throughout.
+// ADR-0035 extends dbus decode: addr[17] -> core-local CSR mirror, else
+// addr[16] -> DONE mailbox, else TCM.
 // =============================================================================
 `default_nettype none
 
@@ -124,17 +126,40 @@ module npu_top #(
     wire        core_d_we, core_d_wgrant;
 
     wire d_is_mbox = dbus_addr[16];
+    wire d_is_csr  = dbus_addr[17];
+    wire d_is_tcm  = ~d_is_csr & ~d_is_mbox;
+    reg  core_csr_rd_pending;
+    wire core_csr_en;
+    wire core_csr_we;
+    wire [7:0] core_csr_addr;
+    wire [31:0] core_csr_rdata;
+
+    always @(posedge clk) begin
+        if (!resetn) begin
+            core_csr_rd_pending <= 1'b0;
+        end else if (core_csr_rd_pending) begin
+            core_csr_rd_pending <= 1'b0;
+        end else if (dbus_req && d_is_csr && !dbus_we) begin
+            core_csr_rd_pending <= 1'b1;
+        end
+    end
+
+    assign core_csr_en   = dbus_req & d_is_csr & (dbus_we | !core_csr_rd_pending);
+    assign core_csr_we   = dbus_we;
+    assign core_csr_addr = dbus_addr[7:0];
     assign ibus_ready   = 1'b1;
     assign core_i_en    = ibus_req;
     assign core_i_addr  = ibus_addr[TCM_AW+1:2];
     assign ibus_rdata   = core_i_rdata;
     assign core_d_addr  = dbus_addr[TCM_AW+1:2];
-    assign core_d_we    = dbus_req & dbus_we & ~d_is_mbox;
-    assign dbus_ready   = d_is_mbox ? 1'b1 : (dbus_we ? core_d_wgrant : 1'b1);
-    assign dbus_rdata   = d_is_mbox ? 32'h0000_0000 : core_d_rdata;
+    assign core_d_we    = dbus_req & dbus_we & d_is_tcm;
+    assign dbus_ready   = d_is_csr ? (dbus_we ? 1'b1 : core_csr_rd_pending) :
+                          (d_is_mbox ? 1'b1 : (dbus_we ? core_d_wgrant : 1'b1));
+    assign dbus_rdata   = d_is_csr ? core_csr_rdata :
+                          (d_is_mbox ? 32'h0000_0000 : core_d_rdata);
 
     reg done_latch;
-    wire mbox_done_w = dbus_req & dbus_ready & dbus_we & d_is_mbox & dbus_wstrb[0] & dbus_wdata[0];
+    wire mbox_done_w = dbus_req & dbus_ready & dbus_we & d_is_mbox & ~d_is_csr & dbus_wstrb[0] & dbus_wdata[0];
     always @(posedge clk) begin
         if (!resetn)          done_latch <= 1'b0;
         else if (!npu_start)  done_latch <= 1'b0;
@@ -189,6 +214,8 @@ module npu_top #(
         .s_axi_arvalid(c_arvalid),.s_axi_arready(c_arready),.s_axi_araddr(s_araddr),.s_axi_arprot(s_arprot),
         .s_axi_rvalid(c_rvalid),.s_axi_rready(c_rready),.s_axi_rdata(c_rdata),.s_axi_rresp(c_rresp),
         .npu_start(npu_start),.npu_config(npu_config),.npu_busy(npu_start & ~done_latch),.npu_done(done_latch),
+        .core_csr_en(core_csr_en),.core_csr_we(core_csr_we),.core_csr_addr(core_csr_addr),
+        .core_csr_wdata(dbus_wdata),.core_csr_rdata(core_csr_rdata),
         .dma_src(dma_src),.dma_dst(dma_dst),.dma_len(dma_len),.dma_go(dma_go),
         .dma_busy(dma_busy),.dma_done(dma_done),.dma_err(dma_err),
         .wb_src(wb_src),.wb_dst(wb_dst),.wb_len(wb_len),.wb_go(wb_go),

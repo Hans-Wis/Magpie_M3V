@@ -1,0 +1,12 @@
+{
+  "design": "magpie_m3v",
+  "design_id": "cpu_m3v",
+  "stage": "npu_p0_2_command_queue",
+  "gate": "gate_35 SSOT + gate_36 ring/smoke + gate_37 exec-equivalence + gate_38 ERR ladder + gate_39 CQ lockstep (298 commits)",
+  "status": "pass",
+  "summary": "P0(2) command queue (ADR-0035): shared-memory descriptor ring @0x8000 (TAIL write = doorbell, HEAD = consumer-owned), scalar sequencer is the Coral-faithful consumer via a new core-local CSR mirror window 0x0002_xxxx (dbus addr[17]); firmware fetches descriptors with the existing DMA, decodes per the frozen v4 s06 SSOT (128-bit, opcodes 0x01-0x07), executes LOAD_W/STORE via the verified DMA/writeback engines, FENCE drains, W0 IRQ/LAST semantics, MAT.OP/RESCALE honestly ERR ENGINE_NOT_READY (no green-wash). SSOT = YAML schema -> generated cq_defs.vh + command_descriptor.h + cq_codec.py, regen-diff enforced. Authoritative verification: ring smoke (38 checks incl. weights-in + results-back + IRQ + rerun-batch), WRAP/FULL/EMPTY, CQ-vs-direct-CSR execution equivalence (identical AXI write bursts/beats/WLAST + result region), ERR ladder with latched cause + frozen HEAD + recovery, and a per-commit Spike lockstep of the full consume flow (doorbell->fetch->decode->execute->HEAD++->LAST, 298/298 commits, MMIO deterministic via Spike-image shadow seeding). Full suite regression green (gates 30-34 intact).",
+  "adr": "docs/adr/0035-command-queue-ssot.md",
+  "labor": "Grok=architect(ring/consumer/SSOT/DV), Codex=surgical impl(regs mirror+schema+firmware+smoke), Claude=review+gates 35-39+lockstep+committer; Gemini=attempted-quota-blocked (free tier 20 req/day), backfill flagged",
+  "date": "2026-07-04",
+  "note": "Deviations recorded in ADR-0035: RING_OVERRUN detection deferred (host discipline), DMA_FAULT CQ-level injection pending, CQ-mode IRQ ownership, MMIO shadow = image seeding, stride=0 P0(2) simplification. Next P0 gaps: (3) matrix acc+requant (Phase 4, v4 s06 MAT.OP/RESCALE become real), (4) RVV vector-CSR lockstep (Phase 3 prerequisite), (5) traps/ERR_CAUSE-to-host + true abort."
+}

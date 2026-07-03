@@ -101,6 +101,32 @@ extending random lockstep over MMIO without a Spike device would be a false gree
 4KB TCM pressure (firmware + scratch + data) is acceptable for the P0② sequencer but is a
 real dependency for P1 ITCM/DTCM sizing — recorded.
 
+## Result + implementation deviations (2026-07-04, recorded at verification close)
+
+Gates 35–39 all green: SSOT regen byte-identical + codec round-trip/rsvd-reject; smoke
+offload batch over the ring (LOAD_W/FENCE/STORE/IRQ/LAST, 38 checks); ring WRAP + FULL/EMPTY
+advisory; CQ-vs-direct-CSR **execution equivalence** (identical write-channel bursts/beats/
+WLAST + weight-read activity + byte-identical result region); ERR ladder (BAD_OPCODE/RSVD/
+ENGINE_NOT_READY/DESC_ALIGN — latched cause, frozen HEAD, no DONE, enable-toggle recovery);
+CQ consume slice per-commit lockstep **298/298 commits** vs Spike.
+
+Deviations vs the plan above (all honesty-reviewed):
+1. **RING_OVERRUN (0x03) detection not implemented** — the firmware cannot cheaply
+   distinguish a TAIL jump from a legal batch; enforcement stays host-side discipline.
+   Code point reserved; revisit with P0⑤ abort. gate_38 documents the exclusion.
+2. **DMA_FAULT (0x05)** exercised only at the engine level (gate_28/29); the firmware wait
+   loops route it to `cq_halt(DMA_FAULT)` but no CQ-level directed test injects it yet.
+3. **CQ-mode IRQ ownership** (Codex addition, accepted): while `CQ_CTRL.enable=1`, raw
+   dma_done/wb_done edges no longer pulse the host IRQ — descriptor-level `W0.IRQ`
+   (via `CQ_EVENT`) and `npu_done` own completion signaling. Legacy behavior is unchanged
+   when the CQ is disabled (gate_29/30 regressions green).
+4. **Spike MMIO shadow realized as image seeding** (no device plugin available in-env):
+   deterministic poll-free firmware + seeded MMIO/DMA values; drift in real STATUS
+   composition fails the commit diff loudly (gate_39 docstring records the technique).
+5. **MAT.LOAD_W/STORE P0② simplification**: stride (W2) must be 0 (else RSVD_VIOLATION);
+   contiguous rows*cols words land at the fixed TCM weight region (byte 0x400). Real
+   strided/2D tiling arrives with the matrix engine (P1 strided DMA note stands).
+
 ## Labor division (§5)
 
 Grok contract+DV (done, this ADR) → Codex surgical implementation (CSR bank + mirror decode

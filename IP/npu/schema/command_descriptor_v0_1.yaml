@@ -1,0 +1,47 @@
+{
+  "version": "v0.1",
+  "descriptor_words": 4,
+  "w0": {
+    "fields": [
+      {"name": "OPCODE", "lsb": 0, "width": 6},
+      {"name": "DTYPE", "lsb": 6, "width": 2, "values": {"i8": 0, "i16": 1, "bf16": 2}},
+      {"name": "ACC", "lsb": 8, "width": 4},
+      {"name": "IRQ", "lsb": 12, "width": 1},
+      {"name": "FENCE", "lsb": 13, "width": 1},
+      {"name": "LAST", "lsb": 14, "width": 1},
+      {"name": "RPT", "lsb": 16, "width": 8}
+    ],
+    "reserved_mask": 4278222848
+  },
+  "opcodes": [
+    {"name": "MAT_CFG", "value": 1, "w1": "(M<<16)|N", "w2": "K", "w3": "tile_flags", "fields": ["m", "n", "k", "tile_flags"]},
+    {"name": "MAT_LOAD_W", "value": 2, "w1": "src_addr", "w2": "stride", "w3": "(rows<<8)|cols", "fields": ["src_addr", "stride", "rows", "cols"], "notes": "P0.2 firmware requires stride=0 and loads rows*cols words into the fixed TCM weight region at byte 0x400."},
+    {"name": "MAT_OP", "value": 3, "w1": "a_addr", "w2": "b_addr", "w3": "(acc_r<<4)|acc_c", "fields": ["a_addr", "b_addr", "acc_r", "acc_c"]},
+    {"name": "MAT_RESCALE", "value": 4, "w1": "multiplier_q31", "w2": "(out_zp<<8)|shift", "w3": "(clamp_max<<8)|(clamp_min&0xFF)", "fields": ["multiplier_q31", "out_zp", "shift", "clamp_max", "clamp_min"]},
+    {"name": "MAT_STORE", "value": 5, "w1": "dst_addr", "w2": "stride", "w3": "(rows<<8)|cols", "fields": ["dst_addr", "stride", "rows", "cols"]},
+    {"name": "MAT_ACC_CLR", "value": 6, "w1": "acc_mask", "w2": "0", "w3": "0", "fields": ["acc_mask"]},
+    {"name": "MAT_FENCE", "value": 7, "w1": "0", "w2": "0", "w3": "0", "fields": []}
+  ],
+  "err_causes": [
+    {"name": "BAD_OPCODE", "value": 1},
+    {"name": "RSVD_VIOLATION", "value": 2},
+    {"name": "RING_OVERRUN", "value": 3},
+    {"name": "ENGINE_NOT_READY", "value": 4},
+    {"name": "DMA_FAULT", "value": 5},
+    {"name": "DESC_ALIGN", "value": 6}
+  ],
+  "csr": {
+    "core_window_base": 131072,
+    "mailbox_base": 65536,
+    "registers": [
+      {"name": "CQ_RING_BASE", "offset": 64},
+      {"name": "CQ_RING_SIZE", "offset": 68},
+      {"name": "CQ_HEAD", "offset": 72},
+      {"name": "CQ_TAIL", "offset": 76},
+      {"name": "CQ_CTRL", "offset": 80},
+      {"name": "CQ_STATUS", "offset": 84},
+      {"name": "ERR_CAUSE", "offset": 88},
+      {"name": "CQ_EVENT", "offset": 92}
+    ]
+  }
+}

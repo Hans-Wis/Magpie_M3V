@@ -9,6 +9,7 @@
 //                    [6]=wb_busy [7]=wb_done
 //   0x0C CONFIG  RW  kernel/descriptor pointer (weight base, etc.)
 //   0x10 SCRATCH RW  round-trip sanity register
+//   0x40..0x5C CQ transport/control block (ADR-0035)
 // Single-outstanding AXI4-Lite (matches the host bridge). 32-bit data, no burst.
 // =============================================================================
 `default_nettype none
@@ -46,6 +47,13 @@ module npu_axil_regs #(
     input  wire        npu_busy,
     input  wire        npu_done,
 
+    // ---- core-local CSR mirror (simple synchronous register-file port) ----
+    input  wire        core_csr_en,
+    input  wire        core_csr_we,
+    input  wire [ 7:0] core_csr_addr,
+    input  wire [31:0] core_csr_wdata,
+    output reg  [31:0] core_csr_rdata,
+
     // ---- DMA descriptor (to npu_dma) ----
     output reg  [31:0] dma_src,
     output reg  [31:0] dma_dst,
@@ -74,10 +82,15 @@ module npu_axil_regs #(
     reg        irq_pending;
     reg [31:0] dma_len_q;                 // full-word storage; DMA uses low 17 bits
     reg [31:0] wb_len_q;                  // full-word storage; DMA uses low 17 bits
+    reg [31:0] cq_ring_base_q, cq_ring_size_q, cq_head_q, cq_tail_q, cq_ctrl_q, err_cause_q;
+    reg        cq_busy_q, cq_err_q;
     assign     dma_len = dma_len_q[16:0];
     assign     wb_len  = wb_len_q[16:0];
     //  STATUS: [0]=npu_busy [1]=npu_done [2]=dma_busy [3]=dma_done [4]=irq_pending [5]=dma_err [6]=wb_busy [7]=wb_done
     wire [31:0] status_w = {24'b0, wb_done, wb_busy, dma_err, irq_pending, dma_done, dma_busy, npu_done, npu_busy};
+    wire [31:0] cq_mask_w = cq_ring_size_q - 32'd1;
+    wire [31:0] cq_tail_next_w = (cq_tail_q + 32'd1) & cq_mask_w;
+    wire [31:0] cq_status_w = {28'b0, cq_err_q, cq_busy_q, (cq_tail_next_w == cq_head_q), (cq_head_q == cq_tail_q)};
 
     // ================= WRITE channel (single-outstanding) =================
     // Accept AW and W together, then emit B. Fits the host bridge that issues
@@ -102,6 +115,8 @@ module npu_axil_regs #(
             ctrl_q <= 32'b0; config_q <= 32'b0;
             dma_src <= 32'b0; dma_dst <= 32'b0; dma_len_q <= 32'b0; dma_go <= 1'b0;
             wb_src <= 32'b0; wb_dst <= 32'b0; wb_len_q <= 32'b0; wb_go <= 1'b0;
+            cq_ring_base_q <= 32'b0; cq_ring_size_q <= 32'b0; cq_head_q <= 32'b0; cq_tail_q <= 32'b0;
+            cq_ctrl_q <= 32'b0; err_cause_q <= 32'b0; cq_busy_q <= 1'b0; cq_err_q <= 1'b0;
         end else begin
             dma_go <= 1'b0;                    // default: pulse is 1-cycle
             wb_go <= 1'b0;                     // default: pulse is 1-cycle
@@ -121,10 +136,44 @@ module npu_axil_regs #(
                     6'h0D: wb_dst   <= merge(wb_dst,   wd_q, wstrb_q);          // 0x34 WB_DST
                     6'h0E: wb_len_q <= merge(wb_len_q, wd_q, wstrb_q);          // 0x38 WB_LEN
                     6'h0F: wb_go    <= wd_q[0] & wstrb_q[0];                    // 0x3C WB_CTRL.WB_GO
+                    6'h10: cq_ring_base_q <= merge(cq_ring_base_q, wd_q, wstrb_q); // 0x40 CQ_RING_BASE
+                    6'h11: cq_ring_size_q <= merge(cq_ring_size_q, wd_q, wstrb_q); // 0x44 CQ_RING_SIZE
+                    6'h13: cq_tail_q <= merge(cq_tail_q, wd_q, wstrb_q);         // 0x4C CQ_TAIL
+                    6'h14: begin                                                // 0x50 CQ_CTRL
+                        if (!cq_ctrl_q[0] && merge(cq_ctrl_q, wd_q, wstrb_q)[0]) begin
+                            err_cause_q <= 32'b0;
+                            cq_err_q <= 1'b0;
+                        end
+                        cq_ctrl_q <= merge(cq_ctrl_q, wd_q, wstrb_q);
+                    end
                     default: ;                            // RO/unmapped (ID/STATUS): ignore
                 endcase
                 s_axi_bvalid <= 1'b1;
                 aw_seen <= 1'b0; w_seen <= 1'b0;
+            end
+            // ADR-0035: the core-local mirror owns CQ_HEAD/ERR_CAUSE and may
+            // program DMA/WB. If host and core collide on one register, core wins.
+            if (core_csr_en && core_csr_we) begin
+                case (core_csr_addr[7:2])
+                    6'h08: dma_src   <= core_csr_wdata;      // 0x20 DMA_SRC
+                    6'h09: dma_dst   <= core_csr_wdata;      // 0x24 DMA_DST
+                    6'h0A: dma_len_q <= core_csr_wdata;      // 0x28 DMA_LEN
+                    6'h0B: dma_go    <= core_csr_wdata[0];   // 0x2C GO (1-cyc pulse)
+                    6'h0C: wb_src    <= core_csr_wdata;      // 0x30 WB_SRC
+                    6'h0D: wb_dst    <= core_csr_wdata;      // 0x34 WB_DST
+                    6'h0E: wb_len_q  <= core_csr_wdata;      // 0x38 WB_LEN
+                    6'h0F: wb_go     <= core_csr_wdata[0];   // 0x3C WB_CTRL.WB_GO
+                    6'h12: cq_head_q <= core_csr_wdata;      // 0x48 CQ_HEAD
+                    6'h16: if (err_cause_q == 32'b0 && core_csr_wdata != 32'b0) begin // 0x58 ERR_CAUSE
+                        err_cause_q <= core_csr_wdata;
+                        cq_err_q <= 1'b1;
+                    end
+                    6'h17: begin                            // 0x5C CQ_EVENT
+                        if (core_csr_wdata[1]) cq_busy_q <= 1'b1;
+                        if (core_csr_wdata[2]) cq_busy_q <= 1'b0;
+                    end
+                    default: ;
+                endcase
             end
             if (s_axi_bvalid && s_axi_bready) s_axi_bvalid <= 1'b0;
         end
@@ -156,6 +205,13 @@ module npu_axil_regs #(
                     6'h0C:  s_axi_rdata <= wb_src;     // 0x30 WB_SRC
                     6'h0D:  s_axi_rdata <= wb_dst;     // 0x34 WB_DST
                     6'h0E:  s_axi_rdata <= {15'b0, wb_len}; // 0x38 WB_LEN
+                    6'h10:  s_axi_rdata <= cq_ring_base_q; // 0x40 CQ_RING_BASE
+                    6'h11:  s_axi_rdata <= cq_ring_size_q; // 0x44 CQ_RING_SIZE
+                    6'h12:  s_axi_rdata <= cq_head_q;      // 0x48 CQ_HEAD
+                    6'h13:  s_axi_rdata <= cq_tail_q;      // 0x4C CQ_TAIL
+                    6'h14:  s_axi_rdata <= cq_ctrl_q;      // 0x50 CQ_CTRL
+                    6'h15:  s_axi_rdata <= cq_status_w;    // 0x54 CQ_STATUS
+                    6'h16:  s_axi_rdata <= err_cause_q;    // 0x58 ERR_CAUSE
                     default: s_axi_rdata <= 32'h0;
                 endcase
             end else if (s_axi_rvalid && s_axi_rready) begin
@@ -174,7 +230,9 @@ module npu_axil_regs #(
             dma_done_d <= dma_done;
             wb_done_d <= wb_done;
             npu_done_d <= npu_done;
-            if ((dma_done & ~dma_done_d) | (wb_done & ~wb_done_d) | (npu_done & ~npu_done_d))
+            if (((!cq_ctrl_q[0]) && ((dma_done & ~dma_done_d) | (wb_done & ~wb_done_d))) |
+                (npu_done & ~npu_done_d) |
+                (core_csr_en && core_csr_we && core_csr_addr[7:2] == 6'h17 && core_csr_wdata[0]))
                 irq_pending <= 1'b1;                                  // rising edge of a completion
             else if (wr_fire && wa_q[7:2] == 6'h01 && wd_q[1] && wstrb_q[0])
                 irq_pending <= 1'b0;                                  // CTRL.irq_clear (bit1)
@@ -185,6 +243,32 @@ module npu_axil_regs #(
     // ---------- outputs to NPU core ----------
     assign npu_start  = ctrl_q[0];
     assign npu_config = config_q;
+
+    // ================= core-local registered read port =================
+    always @(posedge clk) begin
+        if (!resetn) begin
+            core_csr_rdata <= 32'b0;
+        end else if (core_csr_en) begin
+            case (core_csr_addr[7:2])
+                6'h01:  core_csr_rdata <= ctrl_q;          // 0x04 CTRL (RO to core)
+                6'h02:  core_csr_rdata <= status_w;        // 0x08 STATUS
+                6'h08:  core_csr_rdata <= dma_src;         // 0x20 DMA_SRC
+                6'h09:  core_csr_rdata <= dma_dst;         // 0x24 DMA_DST
+                6'h0A:  core_csr_rdata <= {15'b0, dma_len};
+                6'h0C:  core_csr_rdata <= wb_src;          // 0x30 WB_SRC
+                6'h0D:  core_csr_rdata <= wb_dst;          // 0x34 WB_DST
+                6'h0E:  core_csr_rdata <= {15'b0, wb_len};
+                6'h10:  core_csr_rdata <= cq_ring_base_q;  // 0x40 CQ_RING_BASE
+                6'h11:  core_csr_rdata <= cq_ring_size_q;  // 0x44 CQ_RING_SIZE
+                6'h12:  core_csr_rdata <= cq_head_q;       // 0x48 CQ_HEAD
+                6'h13:  core_csr_rdata <= cq_tail_q;       // 0x4C CQ_TAIL
+                6'h14:  core_csr_rdata <= cq_ctrl_q;       // 0x50 CQ_CTRL
+                6'h15:  core_csr_rdata <= cq_status_w;     // 0x54 CQ_STATUS
+                6'h16:  core_csr_rdata <= err_cause_q;     // 0x58 ERR_CAUSE
+                default: core_csr_rdata <= 32'b0;
+            endcase
+        end
+    end
 
 endmodule
 `default_nettype wire
