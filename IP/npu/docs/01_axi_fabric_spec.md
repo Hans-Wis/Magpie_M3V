@@ -73,11 +73,29 @@ STATUS.dma_done. Single-outstanding (one burst in flight).
 **crosses a 4 KB boundary** is split into 3 legal bursts (24 + 256 + 20) and every copied word
 matches the weight-memory pattern. This is the bandwidth path the roofline (ADR-0031 §3) needs.
 
-## 6. Next Phase 1 slices
+## 6. Sealed Phase 1 subsystem — `npu_top` (DONE)
 
-- [ ] **Double-buffer ping-pong** on the local buffer (overlap DMA fetch with compute) — throughput.
-- [ ] Multi-outstanding bursts (issue next AR before current R done) — bandwidth tuning.
-- [ ] NPU ITCM/DTCM windows behind the fabric (host loads NPU program/data).
-- [ ] NPU→host completion IRQ wiring (from dma_done / npu_done).
-- [ ] Host scalar no-regression guard gate (`gate_10_host_noregress`).
+`npu_top.v` is the integrated NPU IP: one AXI4-Lite slave (NPU window) decoded on `addr[16]` into
+**CSR (0x3000_xxxx)** and **TCM (0x3001_xxxx)**; the DMA (AXI4-full master) streams shared-mem
+weights **into the TCM**; a **level IRQ** rises to the host on completion.
+
+```
+host fabric ─AXI4-Lite─> npu_top
+                          ├─ 0x3000_xxxx ─> npu_axil_regs (CSR + DMA descriptor) ── irq ─> host
+                          ├─ 0x3001_xxxx ─> npu_tcm (ITCM/DTCM; host-loadable + DMA write port)
+                          └─ npu_dma ─AXI4-full─> shared weight mem;  DMA data ─> npu_tcm
+```
+
+**Verified** (`tb_npu_top.v`, `gate_27_npu_top`, 23 checks, `NPU_TOP_PASS`): CSR ID, TCM host
+load/readback, CSR/TCM decode, DMA-into-TCM stream, IRQ assert on `dma_done` + clear via CTRL, and
+the host-loaded TCM region survives the DMA region (no clobber).
+
+**Freeze guard** (`gate_10_host_noregress`): `IP/cpu_m1/rtl/` must stay byte-identical to
+`m1a-rtl-freeze-v1.0` — any host edit trips CI.
+
+`npu_top` is the stable socket the **Phase 2 cpu_m1-derived NPU core** plugs into (beside CSR/TCM).
+
+## 7. Deferred (Phase 2 or throughput tuning)
+
+- [ ] Double-buffer ping-pong / multi-outstanding bursts (overlap fetch with compute) — throughput.
 - [ ] (later) formal AXI property check on `axil_1to2` / `npu_dma`, mirroring the host's `phase_p_axi`.

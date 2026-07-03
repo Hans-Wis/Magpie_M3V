@@ -1,0 +1,12 @@
+{
+  "design": "magpie_m3v",
+  "design_id": "cpu_m3v",
+  "stage": "npu_phase1_sealed",
+  "gate": "tests/gates/gate_27_npu_top.py",
+  "status": "pass",
+  "summary": "Phase 1 SEALED: npu_top integrates CSR + DMA + TCM behind one AXI4-Lite slave (CSR@0x3000 / TCM@0x3001 decode); DMA streams shared-mem weights into TCM; level IRQ to host on completion (assert + CTRL clear). Freeze guard gate_10_host_noregress enforces IP/cpu_m1/rtl byte-identity to m1a-rtl-freeze-v1.0. Verilator lint 0-error + iverilog NPU_TOP_PASS (23 checks). 13/13 gate tests green.",
+  "adr": "docs/adr/0031-m3v-hybrid-npu-scope.md",
+  "spec_doc": "IP/npu/docs/01_axi_fabric_spec.md",
+  "date": "2026-07-03",
+  "note": "Phase 1 closed. npu_top is the stable socket for the Phase 2 cpu_m1-derived NPU core. Open (Phase 2+): NPU scalar+F core, RVV Zve32x EXU, GEMV 64->256, ML e2e; plus optional double-buffer/multi-outstanding throughput tuning."
+}

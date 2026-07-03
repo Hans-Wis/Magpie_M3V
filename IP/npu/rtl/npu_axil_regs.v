@@ -4,8 +4,8 @@
 // The host cpu_m1 (frozen) reaches this over its AXI4-Lite D master (via the
 // frozen axil_bridge.v) through the M3V axil_1to2 fabric. Word-addressed CSRs:
 //   0x00 ID      RO  0x4E505530 ("NPU0") — host presence check
-//   0x04 CTRL    RW  [0]=start [1]=irq_clear [2]=soft_reset
-//   0x08 STATUS  RO  [0]=busy  [1]=done      (driven by npu_core later; stub=0)
+//   0x04 CTRL    RW  [0]=start [1]=irq_clear(W1-action) [2]=soft_reset [3]=irq_enable
+//   0x08 STATUS  RO  [0]=npu_busy [1]=npu_done [2]=dma_busy [3]=dma_done [4]=irq_pending
 //   0x0C CONFIG  RW  kernel/descriptor pointer (weight base, etc.)
 //   0x10 SCRATCH RW  round-trip sanity register
 // Single-outstanding AXI4-Lite (matches the host bridge). 32-bit data, no burst.
@@ -51,15 +51,19 @@ module npu_axil_regs #(
     output reg  [16:0] dma_len,
     output reg         dma_go,       // 1-cycle pulse on CTRL-GO write
     input  wire        dma_busy,
-    input  wire        dma_done
+    input  wire        dma_done,
+
+    // ---- level interrupt to host (out only) ----
+    output wire        irq            // = irq_pending & CTRL.irq_enable
 );
     assign s_axi_bresp = 2'b00;   // OKAY
     assign s_axi_rresp = 2'b00;
 
     // ---------- register storage ----------
     reg [31:0] ctrl_q, config_q;
-    //  STATUS: [0]=npu_busy [1]=npu_done [2]=dma_busy [3]=dma_done
-    wire [31:0] status_w = {28'b0, dma_done, dma_busy, npu_done, npu_busy};
+    reg        irq_pending;
+    //  STATUS: [0]=npu_busy [1]=npu_done [2]=dma_busy [3]=dma_done [4]=irq_pending
+    wire [31:0] status_w = {27'b0, irq_pending, dma_done, dma_busy, npu_done, npu_busy};
 
     // ================= WRITE channel (single-outstanding) =================
     // Accept AW and W together, then emit B. Fits the host bridge that issues
@@ -130,6 +134,22 @@ module npu_axil_regs #(
         end
     end
     assign s_axi_arready = !s_axi_rvalid;
+
+    // ---------- interrupt: set on completion edge, cleared by CTRL.irq_clear ----------
+    reg dma_done_d, npu_done_d;
+    always @(posedge clk) begin
+        if (!resetn) begin
+            irq_pending <= 1'b0; dma_done_d <= 1'b0; npu_done_d <= 1'b0;
+        end else begin
+            dma_done_d <= dma_done;
+            npu_done_d <= npu_done;
+            if ((dma_done & ~dma_done_d) | (npu_done & ~npu_done_d))
+                irq_pending <= 1'b1;                                  // rising edge of a completion
+            else if (wr_fire && wa_q[7:2] == 6'h01 && wd_q[1])
+                irq_pending <= 1'b0;                                  // CTRL.irq_clear (bit1)
+        end
+    end
+    assign irq = irq_pending & ctrl_q[3];                            // CTRL.irq_enable (bit3)
 
     // ---------- outputs to NPU core ----------
     assign npu_start  = ctrl_q[0];
