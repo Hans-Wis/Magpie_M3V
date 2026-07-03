@@ -118,3 +118,28 @@ then build RTL to that frozen contract.
 
 User accepted; proceeding to **Phase 1 = AXI fabric**. Phase 0 evidence
 (`gate_p0_toolchain_iss`, ISS-proven RVV toolchain) stands as the software-contract baseline.
+
+## Revision (2026-07-03, post multi-agent review) — see `docs/reviews/2026-07-03_multiagent_review.md`
+
+Codex (RTL, self-verified) + Grok (architecture) reviewed the plan (`rv32_npu_design_plan.html`) vs
+the built Phase 0/1. Adopted changes:
+
+1. **NPU scalar = STRIPPED `cpu_m1` fork** (drop RVC/BP/RAS; keep exec/CSR/MUL/regfile) — *not* a full
+   copy. A matrix-oriented NPU wants a run-to-completion sequencer, not an app-CPU.
+2. **Sequencing = RVV int8 GEMV FIRST; matrix engine + command-queue = Phase 4–6.** The plan's
+   matrix-CENTRIC command-queue is the accelerator layer, not the day-1 compute path (the open
+   toolchain is clang-RVV + TFLM, not Google's closed matrix-aware IREE).
+3. **Compile path**: build a **command-queue SSOT schema** (→ RTL decode + C headers) + reference
+   encoder + host ring driver + TFLM custom op. IREE/StableHLO auto-lowering deferred.
+4. **Matrix golden = NumPy decoding the CQ bytes independently** (shares only the SSOT, anti-common-mode).
+5. **Memory map**: keep as-built 0x3000 (CSR)/0x3001 (TCM); add **SHARED_MEM@0x8000** for weights + a
+   **CQ ring** (not CSR space); add doorbell + DONE/ERR/FULL STATUS bits + abort/reset CSR; document
+   non-coherent-AXI host flush-before-doorbell.
+
+**Phase 1.5 (hardening, NEW — before Phase 2):** fix Codex's verified bugs — AXI-Lite **W-before-AW
+deadlock** (`axil_1to2.v`, `npu_top.v`, HIGH), WSTRB-ignored byte writes, decode aliasing (add DECERR),
+DMA `LEN=0` (ARLEN underflow), DMA RRESP-ignored — and add an **adversarial AXI BFM** so gates 20/25/27
+cover W-ordering / strobes / out-of-range / SLVERR / zero-len. "Phase 1 sealed" is hereby qualified:
+functionally integrated, **not yet bus-protocol-correct**.
+
+The revised Phase 2–7 list lives in the review doc §D and supersedes the original phase table above.
