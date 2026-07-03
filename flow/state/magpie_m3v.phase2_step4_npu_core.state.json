@@ -1,0 +1,12 @@
+{
+  "design": "magpie_m3v",
+  "design_id": "cpu_m3v",
+  "stage": "npu_phase2_step4_core_in_socket",
+  "gate": "gate_30 integration + gate_31 directed lockstep + gate_32 random lockstep (8x10809) + gate_33 DMA-vs-core arbitration + gate_34 strip coverage",
+  "status": "pass",
+  "summary": "Phase 2 Step 4 (ADR-0034): stripped cpu_m1 sequencer (EN_RVC/BP/RAS=0, RESET_PC=0) instantiated inside npu_top, fetching through real npu_tcm core ports (FETCH_SRC=TCM realized as integration wiring). CTRL.start gates core reset (Coral cg-release shape); DONE mailbox @0x0001_0000 -> STATUS.npu_done + level IRQ; TCM write arbitration dma > core > host with host B-response held until grant. Authoritative verification (Claude, not Codex self-report): boot-from-TCM via host AXI load path, busy/done/IRQ/re-run (42->55) directed; Spike rv32im_zicsr_zifencei (NO C) lockstep directed 1164/1164 commits; random 8 seeds x 10,809 commits (loop-wrapped rv32im in 4KB TCM, ebreak-only terminator, mailbox never EOF) 0 divergences; DMA burst overlapped with running core - real overlap proven on internal retire/busy signals, 256-beat region exact, core result exact, program intact; strip coverage: bp/ras/cdec zero coverage points (generate-off at elaboration), no EN_* guard line uncovered, ifu 100%. No regression in existing suite (only pre-existing M1-era artifact gate failures, verified failing at pre-change HEAD).",
+  "adr": "docs/adr/0034-npu-core-tcm-integration.md",
+  "labor": "Grok=architect(contract+DV plan), Codex=surgical RTL(npu_top/npu_tcm/smoke TB)+self-verify, Claude=review+authoritative lockstep/arbitration/coverage gates+committer; Gemini=not-run (API key unavailable this session, backfill flagged in ADR)",
+  "date": "2026-07-03",
+  "note": "Sim=Verilator (VCS=signoff OUTSIDE-SANDBOX). The NPU core is now alive: host-load -> start -> run-to-completion -> done/IRQ matches the Coral offload shape end-to-end at scalar level. Next: P0(2) command-queue SSOT (rv32_npu_design_plan_v4 s06 is the design baseline) or Phase 3 RVV EXU; P1 notes recorded in ADR-0034 (ITCM/DTCM split+sizing, host-access-while-busy policy, soft_reset/abort P0(5))."
+}

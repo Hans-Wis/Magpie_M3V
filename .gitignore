@@ -60,3 +60,7 @@ flow/v2_pipeline/phase_05_00_lint/cpu_m1_phase_05_00_lint/
 flow/v2_pipeline/phase_p_cdc_rdc_xprop/cpu_m1_phase_p_cdc_rdc_xprop/
 flow/v2_pipeline/**/spyglass.vdb
 flow/v2_pipeline/**/.SG_SaveRestoreDB/
+
+# NPU coverage build outputs (phase_20)
+**/obj_cov/
+flow/v2_pipeline/phase_20_npu_core_lockstep/ann_cov/

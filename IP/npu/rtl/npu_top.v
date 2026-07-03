@@ -1,13 +1,15 @@
 // =============================================================================
-// npu_top.v — Magpie_M3V NPU IP subsystem (Phase 1 sealed integration)
+// npu_top.v — Magpie_M3V NPU IP subsystem (Phase 2 Step 4: core in the socket)
 // -----------------------------------------------------------------------------
 // One AXI4-Lite slave faces the host fabric (NPU window 0x3xxx). Internally it
 // decodes on addr[16]:  0x3000_xxxx -> CSR (npu_axil_regs), 0x3001_xxxx -> TCM.
 // The DMA (AXI4-full master to shared memory) is programmed via the CSR and
 // streams into the TCM, or writes result data from TCM back to shared memory.
 // A level IRQ is raised to the host on completion.
-// Phase 2 drops the cpu_m1-derived NPU core in beside the TCM/CSR — this wrapper
-// is the stable socket for it. Single-outstanding throughout (matches the host).
+// ADR-0034: the stripped cpu_m1 sequencer (EN_RVC/BP/RAS=0, RESET_PC=0) lives
+// here, fetching/loading through dedicated npu_tcm core ports. CTRL.start gates
+// its reset (Coral cg-release shape); a store to the core-local DONE mailbox
+// (0x0001_0000) sets STATUS.npu_done + IRQ. Single-outstanding throughout.
 // =============================================================================
 `default_nettype none
 
@@ -41,6 +43,8 @@ module npu_top #(
     output wire        npu_start,
     output wire [31:0] npu_config
 );
+    localparam [31:0] CORE_RESET_PC = 32'h0000_0000;
+
     // ================= internal 1->2 AXI4-Lite decode (CSR vs TCM) =================
     // sel 0 = CSR (addr[16]==0), sel 1 = TCM (addr[16]==1). Single-outstanding.
     // route: 0=CSR (0x3000_xxxx), 1=TCM (0x3001_xxxx), 2=DECERR (any other NPU-window addr).
@@ -96,10 +100,87 @@ module npu_top #(
     assign s_rdata   = (r_route==2'd0)?c_rdata  : (r_route==2'd1)?t_rdata  : d_rdata;
     assign s_rresp   = (r_route==2'd0)?c_rresp  : (r_route==2'd1)?t_rresp  : d_rresp;
 
-    // ================= CSR block =================
+    // ================= CSR/DMA register wires =================
     wire [31:0] dma_src, dma_dst, wb_src, wb_dst;
     wire [16:0] dma_len, wb_len;
     wire dma_go, wb_go, dma_busy, dma_done, wb_busy, wb_done, dma_err;
+    // ================= NPU scalar core =================
+    wire        core_resetn = resetn & npu_start;
+    wire        ibus_req, ibus_ready;
+    wire [31:0] ibus_addr, ibus_rdata;
+    wire        dbus_req, dbus_we, dbus_ready;
+    wire [31:0] dbus_addr, dbus_wdata, dbus_rdata;
+    wire [ 3:0] dbus_wstrb;
+    wire        core_trap;
+    wire        core_dm_hart_halted, core_debug_mode, core_dm_acc_err;
+    wire [31:0] core_dm_acc_rdata, core_dbg_pc, core_dbg_instr;
+    wire [ 2:0] core_dbg_state;
+
+    wire        core_i_en;
+    wire [TCM_AW-1:0] core_i_addr;
+    wire [31:0] core_i_rdata;
+    wire [TCM_AW-1:0] core_d_addr;
+    wire [31:0] core_d_rdata;
+    wire        core_d_we, core_d_wgrant;
+
+    wire d_is_mbox = dbus_addr[16];
+    assign ibus_ready   = 1'b1;
+    assign core_i_en    = ibus_req;
+    assign core_i_addr  = ibus_addr[TCM_AW+1:2];
+    assign ibus_rdata   = core_i_rdata;
+    assign core_d_addr  = dbus_addr[TCM_AW+1:2];
+    assign core_d_we    = dbus_req & dbus_we & ~d_is_mbox;
+    assign dbus_ready   = d_is_mbox ? 1'b1 : (dbus_we ? core_d_wgrant : 1'b1);
+    assign dbus_rdata   = d_is_mbox ? 32'h0000_0000 : core_d_rdata;
+
+    reg done_latch;
+    wire mbox_done_w = dbus_req & dbus_ready & dbus_we & d_is_mbox & dbus_wstrb[0] & dbus_wdata[0];
+    always @(posedge clk) begin
+        if (!resetn)          done_latch <= 1'b0;
+        else if (!npu_start)  done_latch <= 1'b0;
+        else if (mbox_done_w) done_latch <= 1'b1;
+    end
+
+    cpu_m1_top #(
+        .RESET_PC(CORE_RESET_PC),
+        .EN_RVC(0),
+        .EN_BP(0),
+        .EN_RAS(0)
+    ) u_npu_core (
+        .clk(clk),
+        .resetn(core_resetn),
+        .trap(core_trap),
+        .ibus_req(ibus_req),
+        .ibus_addr(ibus_addr),
+        .ibus_ready(ibus_ready),
+        .ibus_rdata(ibus_rdata),
+        .dbus_req(dbus_req),
+        .dbus_addr(dbus_addr),
+        .dbus_we(dbus_we),
+        .dbus_wstrb(dbus_wstrb),
+        .dbus_wdata(dbus_wdata),
+        .dbus_ready(dbus_ready),
+        .dbus_rdata(dbus_rdata),
+        .irq_external_pulse(1'b0),
+        .mtip(1'b0),
+        .msip(1'b0),
+        .meip(1'b0),
+        .dm_halt_req(1'b0),
+        .dm_resume_req(1'b0),
+        .dm_hart_halted(core_dm_hart_halted),
+        .debug_mode(core_debug_mode),
+        .dm_acc_en(1'b0),
+        .dm_acc_write(1'b0),
+        .dm_acc_regno(16'h0000),
+        .dm_acc_wdata(32'h0000_0000),
+        .dm_acc_rdata(core_dm_acc_rdata),
+        .dm_acc_err(core_dm_acc_err),
+        .dbg_pc(core_dbg_pc),
+        .dbg_instr(core_dbg_instr),
+        .dbg_state(core_dbg_state)
+    );
+
+    // ================= CSR block =================
     npu_axil_regs csr (
         .clk(clk), .resetn(resetn),
         .s_axi_awvalid(c_awvalid),.s_axi_awready(c_awready),.s_axi_awaddr(s_awaddr),.s_axi_awprot(s_awprot),
@@ -107,7 +188,7 @@ module npu_top #(
         .s_axi_bvalid(c_bvalid),.s_axi_bready(c_bready),.s_axi_bresp(c_bresp),
         .s_axi_arvalid(c_arvalid),.s_axi_arready(c_arready),.s_axi_araddr(s_araddr),.s_axi_arprot(s_arprot),
         .s_axi_rvalid(c_rvalid),.s_axi_rready(c_rready),.s_axi_rdata(c_rdata),.s_axi_rresp(c_rresp),
-        .npu_start(npu_start),.npu_config(npu_config),.npu_busy(1'b0),.npu_done(1'b0),
+        .npu_start(npu_start),.npu_config(npu_config),.npu_busy(npu_start & ~done_latch),.npu_done(done_latch),
         .dma_src(dma_src),.dma_dst(dma_dst),.dma_len(dma_len),.dma_go(dma_go),
         .dma_busy(dma_busy),.dma_done(dma_done),.dma_err(dma_err),
         .wb_src(wb_src),.wb_dst(wb_dst),.wb_len(wb_len),.wb_go(wb_go),
@@ -167,7 +248,10 @@ module npu_top #(
         .s_axi_arvalid(t_arvalid),.s_axi_arready(t_arready),.s_axi_araddr(s_araddr),.s_axi_arprot(s_arprot),
         .s_axi_rvalid(t_rvalid),.s_axi_rready(t_rready),.s_axi_rdata(t_rdata),.s_axi_rresp(t_rresp),
         .dma_we(dma_we),.dma_waddr(dma_waddr),.dma_wdata(dma_wdata),
-        .dma_re(dma_re),.dma_raddr(dma_raddr),.dma_rdata(dma_rdata)
+        .dma_re(dma_re),.dma_raddr(dma_raddr),.dma_rdata(dma_rdata),
+        .core_i_en(core_i_en),.core_i_addr(core_i_addr),.core_i_rdata(core_i_rdata),
+        .core_d_addr(core_d_addr),.core_d_rdata(core_d_rdata),
+        .core_d_we(core_d_we),.core_d_wdata(dbus_wdata),.core_d_wstrb(dbus_wstrb),.core_d_wgrant(core_d_wgrant)
     );
 
     // ================= DECERR hole (out-of-window NPU addresses) =================

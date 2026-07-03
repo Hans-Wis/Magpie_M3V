@@ -32,12 +32,13 @@
 | 0 | 開源 RVV Zve32x toolchain 在 Spike ISS 跑通(clang int8 dot,不靠 Google 閉源鏈) | `gate_p0_toolchain_iss` |
 | 1 + 1.5 | AXI4-Lite fabric + AXI4-full **read** DMA + TCM + IRQ;bus 協定硬化(W-before-AW/WSTRB/DECERR/LEN0/RRESP) | `gate_20/25/27/28` |
 | 2 Step 2 | cpu_m1 參數化 `EN_RVC/EN_BP/EN_RAS`(host-equivalent) | host lockstep 重跑(directed/trap/random 對 Spike 相符)+ 雙組態 lint |
+| P0① | **result writeback DMA**(npu_dma 雙向;Coral 卸載迴圈兩半齊)ADR-0033 | `gate_29`(writeback scoreboard + SLVERR abort) |
+| 2 Step 4 | **NPU core 進 socket**(ADR-0034):stripped cpu_m1 於 npu_top 內從真 npu_tcm 取指;CTRL.start 閘 reset;DONE mailbox→STATUS/IRQ | `gate_30..34`:directed 1164 + random **8×10,809 commits** lockstep(rv32im 無 C)、DMA-vs-core 仲裁真重疊、strip coverage(bp/ras/cdec 零 points) |
 
-**驗證迴圈可用**:`flow/v2_pipeline/phase_03_0*/Makefile` = **Verilator(DUT)+ Spike(golden)+ riscv64-unknown-elf-gcc(firmware)** 一鍵重跑。baseline tag `m3v-pre-phase2-cpu`。
+**驗證迴圈可用**:`flow/v2_pipeline/phase_03_0*/Makefile`(host)+ `phase_20_npu_core_lockstep/`(NPU:`make directed` / `make random SEED=n` / `make coverage`)= **Verilator(DUT)+ Spike(golden)+ riscv64-unknown-elf-gcc(firmware)** 一鍵重跑。baseline tag `m3v-pre-phase2-cpu`。
 
 **Roadmap(對 Coral 對等,含缺漏 folded — 見 `docs/reviews/2026-07-03_coral_gap_review.md`)**:
-- **P0 缺漏(近期,優先):** ① **result writeback DMA**(npu_dma 目前只讀 → Coral 卸載迴圈缺半;**下一步**)② command-queue ring/SSOT ③ 矩陣 accumulator + requant(scale/zero-point)④ **RVV vector-CSR lockstep**(vtype/vl/vstart/vxsat,Phase 3 硬前提)⑤ compute-done/ERR/FULL IRQ + 真 soft_reset/abort。
-- Phase 2 Step 4:NPU core 插進 `npu_top` socket + `FETCH_SRC=TCM`,rv32im(無 C)lockstep ≥10k commits。
+- **P0 缺漏(近期,優先):** ② command-queue ring/SSOT(**下一步候選**,v4 §06 為 SSOT 基準)③ 矩陣 accumulator + requant(scale/zero-point)④ **RVV vector-CSR lockstep**(vtype/vl/vstart/vxsat,Phase 3 硬前提)⑤ compute-done/ERR/FULL IRQ + 真 soft_reset/abort(①writeback、core-DONE IRQ 已落)。
 - Phase 3 RVV Zve32x EXU → Phase 4 GEMV/矩陣 64→256 MAC + CQ + NumPy golden → Phase 6 TFLM e2e → Phase 7 harden/PPA/+F。
 - **P1**:NPU traps/ERR_CAUSE、cache flush-before-doorbell、ITCM/DTCM sizing(8K/32K)、strided/2D DMA、RVVI/RVFI trace。
 - **scope-cut(已記錄):** scalar F(int8-first)、L0 I-cache、clock/power gating、double-buffer。
@@ -107,6 +108,5 @@
 
 ## §7 現況 / 下一步
 
-**HEAD 741eec3**:Phase 0+1+1.5 + Phase 2 Step2 完成;15/15 gates green;Coral 缺漏 review + 誠實修正已落。
-**下一步(User 裁示 b,三方分工)= P0 ① result writeback DMA**:對稱擴充 `npu_dma` 的 AXI4 寫通道(NPU→shared mem)+ 結果 SRC/DST/LEN(或 CQ descriptor)+ BRESP/SLVERR 處理 + 寫回完成才 DONE IRQ。
-先依 §2 做**架構設計確認**(Gemini 全上下文對照 Coral 卸載/writeback + Grok 契約/DV 計畫 → ADR)→ Codex 實作 → Claude Verilator scoreboard + review + commit。
+**現況**:Phase 0+1+1.5 + Phase 2 Step2 + P0①(writeback DMA,ADR-0033)+ **Phase 2 Step 4(NPU core 進 socket,ADR-0034)** 完成;M3V gates 全綠(gate_30..34 新增;僅 M1 時代 artifact gates 原生 fail,與本線無關)。**NPU 核已活**:host-load → CTRL.start → run-to-completion → DONE mailbox → STATUS/IRQ,端到端 = Coral 卸載形狀(scalar 層)。
+**下一步(依 §2 先架構確認)**:(a) **P0② command-queue ring/SSOT** — v4 §06 Command 編碼 Spec 已是 SSOT 基準,現在 core 活了有載體;或 (b) Phase 3 RVV Zve32x EXU(P0④ vector-CSR lockstep 為硬前提)。P1 註記已入 ADR-0034(ITCM/DTCM sizing/split、host-access-while-busy、P0⑤ abort)。Gemini 對 ADR-0034 的全上下文 review = **not-run**(session key 遺失)——key 補上後回補。

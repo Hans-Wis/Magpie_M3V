@@ -32,11 +32,27 @@ module npu_tcm #(
     // ---- DMA read port (to npu_dma writeback-mode egress) ----
     input  wire        dma_re,
     input  wire [AW-1:0] dma_raddr,
-    output wire [31:0] dma_rdata
+    output wire [31:0] dma_rdata,
+
+    // ---- NPU core instruction fetch port (read-only, combinational) ----
+    input  wire            core_i_en,
+    input  wire [AW-1:0]   core_i_addr,
+    output wire [31:0]     core_i_rdata,
+
+    // ---- NPU core data port ----
+    input  wire [AW-1:0]   core_d_addr,
+    output wire [31:0]     core_d_rdata,
+    input  wire            core_d_we,
+    input  wire [31:0]     core_d_wdata,
+    input  wire [ 3:0]     core_d_wstrb,
+    output wire            core_d_wgrant
 );
     localparam [1:0] OKAY = 2'b00, SLVERR = 2'b10;
     reg [31:0] mem [0:WORDS-1];
-    assign dma_rdata = mem[dma_raddr];
+    assign dma_rdata     = mem[dma_raddr];
+    assign core_i_rdata  = mem[core_i_addr];
+    assign core_d_rdata  = mem[core_d_addr];
+    assign core_d_wgrant = core_d_we & ~dma_we;
 
     // byte-strobe merge
     function [31:0] merge; input [31:0] old; input [31:0] wd; input [3:0] strb; begin
@@ -51,7 +67,9 @@ module npu_tcm #(
     // ---- host write channel (single-outstanding) ----
     reg aw_seen, w_seen, wa_ok;
     reg [AW-1:0] wa_q; reg [31:0] wd_q; reg [3:0] wstrb_q;
-    wire host_we = aw_seen && w_seen && !s_axi_bvalid;
+    wire host_we        = aw_seen && w_seen && !s_axi_bvalid;
+    wire host_mem_grant = host_we && wa_ok && !dma_we && !core_d_we;
+    wire host_resp_fire = host_we && (!wa_ok || host_mem_grant);
     assign s_axi_awready = !aw_seen && !s_axi_bvalid;
     assign s_axi_wready  = !w_seen  && !s_axi_bvalid;
     always @(posedge clk) begin
@@ -61,7 +79,7 @@ module npu_tcm #(
                 aw_seen<=1; wa_q<=s_axi_awaddr[AW+1:2]; wa_ok <= ({18'd0, aw_off} < WORDS);
             end
             if (s_axi_wvalid && s_axi_wready) begin w_seen<=1; wd_q<=s_axi_wdata; wstrb_q<=s_axi_wstrb; end
-            if (host_we) begin
+            if (host_resp_fire) begin
                 s_axi_bvalid<=1; s_axi_bresp <= wa_ok ? OKAY : SLVERR;
                 aw_seen<=0; w_seen<=0;
             end
@@ -69,10 +87,11 @@ module npu_tcm #(
         end
     end
 
-    // ---- single memory-write block: DMA priority; host write only if in-range ----
+    // ---- single memory-write block: dma > core data > host ----
     always @(posedge clk) begin
-        if (dma_we)                   mem[dma_waddr] <= dma_wdata;
-        else if (host_we && wa_ok)    mem[wa_q]      <= merge(mem[wa_q], wd_q, wstrb_q);
+        if (dma_we)                    mem[dma_waddr]   <= dma_wdata;
+        else if (core_d_we)            mem[core_d_addr] <= merge(mem[core_d_addr], core_d_wdata, core_d_wstrb);
+        else if (host_we && wa_ok)     mem[wa_q]        <= merge(mem[wa_q], wd_q, wstrb_q);
     end
 
     // ---- host read channel (single-outstanding) ----

@@ -78,14 +78,30 @@ commits scale.
 
 | gate | content | pass bar |
 |---|---|---|
-| `gate_30_npu_core_integration` | elab both configs; **no ibus fetch while start=0**; boot-from-TCM with program loaded *via host AXI path*; mailbox DONE → busy/done CSR readback; start-fall clears done; re-run with a different image; DONE→level IRQ→irq_clear | all directed checks pass |
+| `gate_30_npu_core_integration` | elab both configs; **no instruction commit while start=0** (the ADR-0005 wrapper's boot-prime request line idles high by design — reset gating is the execution guard, observed via `core_resetn`); boot-from-TCM with program loaded *via host AXI path*; mailbox DONE → busy/done CSR readback; start-fall clears done; re-run with a different image; DONE→level IRQ→irq_clear | all directed checks pass |
 | `gate_31_npu_core_directed_lockstep` | directed rv32im in-TCM: smoke ≥500 commits; mul/div busy; branch/jalr (redirect only on EX resolve — ADR-0032 strip risk) | 100% commit-trace match vs Spike |
 | `gate_32_npu_core_random_lockstep` | riscv_rand (C disabled), **≥8 seeds × ≥10,000 commits/seed** | 0 divergences |
 | `gate_33_npu_core_arbitration` | DMA write burst overlapped with running core (fetch+load/store); both complete, no X, TCM golden intact | scoreboard pass |
 | host no-regress | full existing gate suite | 17/17 stays green |
 
-Coverage (ADR-0032: ≥95% line on `!EN_*` branches, measured on the `npu_top` instance) closes
-within Step 4 before it is declared done.
+Coverage bar (`gate_34_npu_core_strip_coverage`, ADR-0032's ≥95% on `!EN_*` branches measured
+on the `npu_top` instance): **closed** — bp/ras/cdec contribute zero coverage points in the
+NPU elaboration (generate-off proven at RTL level, not TB-disabled), no EN_* guard line is
+uncovered, ifu.v (the live EN_RVC-parameterized module) = 100% line. Residual uncovered core.v
+lines are triaged in `phase_20_npu_core_lockstep/coverage_report.md` (debug-module / trap
+corners / BP-RAS-mispredict arms unreachable by construction when `EN_BP=EN_RAS=0`).
+
+**Result (2026-07-03):** gates 30–34 all green. Directed lockstep 1164/1164 commits matched;
+random lockstep 8 seeds × 10,809 commits each (86k+ commits), 0 divergences; arbitration
+scoreboard passed with real overlap (core retired instructions while the DMA engine was busy).
+Existing suite: no regression (the only failing gate files are pre-existing M1-era artifact
+gates, verified failing at the pre-change HEAD too).
+
+**Supersedes**: the uncommitted prior-session draft `0034-npu-core-alive.md` (same Step-4 scope,
+PROPOSED, never accepted). Its stricter options — retire-gated `tohost` done, IDLE/RUN/DONE FSM
+with hard host/DMA port isolation during RUN — were considered and recorded here as P1 hardening
+candidates (host-access-while-busy policy, P0⑤ abort); the accepted contract above is the
+simpler reset-gated variant Grok signed off this session.
 
 **Green-wash guards (Claude enforces):** no C/Zca in `--isa`; the fetch path must be the real
 `npu_tcm` ports (no IMEM stand-in); TB must not set start before the load completes; no TB-side
