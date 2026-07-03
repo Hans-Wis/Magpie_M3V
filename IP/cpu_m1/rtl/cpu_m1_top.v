@@ -35,7 +35,8 @@ module cpu_m1_top #(
     parameter PMP_ENTRIES = 0,
     parameter EN_RVC = 1,
     parameter EN_BP = 1,
-    parameter EN_RAS = 1
+    parameter EN_RAS = 1,
+    parameter EN_RVV = 0
 )(
     input             clk,
     input             resetn,
@@ -169,7 +170,8 @@ module cpu_m1_top #(
         .PMP_ENTRIES(PMP_ENTRIES),
         .EN_RVC(EN_RVC),
         .EN_BP(EN_BP),
-        .EN_RAS(EN_RAS)
+        .EN_RAS(EN_RAS),
+        .EN_RVV(EN_RVV)
     ) u_core(
         .clk                (clk),
         .resetn             (resetn),

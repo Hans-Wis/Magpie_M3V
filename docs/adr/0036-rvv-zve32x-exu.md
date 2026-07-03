@@ -87,6 +87,23 @@ skipping the memory-region compare; host config elaborating with `EN_RVV=1`.
 4. Widening dest-overlap/EMUL legality (`vwmul/vwadd.wv`) → gate_44 + directed illegal encodings.
 5. `mem_stall` × multi-beat vector LSU (atomicity, DMA-write priority collision) → gate_43 stress.
 
+## Stage 3A result (2026-07-04)
+
+**Gates 40/41 green.** `gate_40`: vset{i}vl{i}/vsetvl grid (SEW×LMUL incl. mf4/mf2, AVL
+boundaries, vsetivli, tail/mask bits, keep-vl x0 matrix, register-vtype form) + dense csrr
+checkpoints — 134 commits, 100% match vs Spike `rv32im_zve32x_zvl128b`. `gate_41`: vill
+ladder (e8mf8/e16mf4/e32mf2 fractional violations, reserved vlmul=100, e64, reserved vtype
+bits — injected via vsetvl rs2) + recovery — 51 commits matched. Host equivalence: EN_RVV=0
+default, phase_03_00 lockstep re-run pass, full suite = pre-existing failures only.
+
+**Bug found by gate_40 and fixed (PL surgical):** the CSR read-after-write bypass matched
+exact addresses only — a write to one member of the `vxsat/vxrm/vcsr` ALIAS group was not
+forwarded into a same-window read of another member (nor were `mstatus.VS` dirty side
+effects), giving stale reads in the EX/MEM (1-apart) and WB (same-cycle, 2-apart) windows.
+Fixed in both windows (core.v overlay + csr.v same-cycle alias forward); adjacent-pair cases
+added to the gate_40 firmware permanently. Two source-literal assertions in
+`gate_02_00` were synced to the governed mstatus/illegal-path changes.
+
 ## Labor division (§5)
 
 Grok+Gemini arch (done, this ADR) → Codex staged RTL (3A first: idu/csr/core `EN_RVV`

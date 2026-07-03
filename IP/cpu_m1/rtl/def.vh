@@ -30,6 +30,7 @@
 `define OPC_SYSTEM  7'b1110011  // ecall/ebreak/csr (ebreak only here)
 `define OPC_FENCE   7'b0001111  // fence (NOP in lab04)
 `define OPC_AMO     7'b0101111  // RV32A atomics
+`define OPC_OP_V    7'b1010111  // RVV OP-V (Stage 3A: vset* only)
 
 // -----------------------------------------------------------------------------
 // funct3 — branch
@@ -186,6 +187,13 @@
 `define CSR_CYCLEH   12'hC80
 `define CSR_INSTRET  12'hC02
 `define CSR_INSTRETH 12'hC82
+`define CSR_VSTART   12'h008
+`define CSR_VXSAT    12'h009
+`define CSR_VXRM     12'h00A
+`define CSR_VCSR     12'h00F
+`define CSR_VL       12'hC20
+`define CSR_VTYPE    12'hC21
+`define CSR_VLENB    12'hC22
 `define CSR_DCSR     12'h7B0
 `define CSR_DPC      12'h7B1
 `define CSR_DSCRATCH0 12'h7B2
@@ -221,8 +229,11 @@
 // -----------------------------------------------------------------------------
 `define MSTATUS_MIE_BIT  3
 `define MSTATUS_MPIE_BIT 7
+`define MSTATUS_VS_LO_BIT 9
+`define MSTATUS_VS_HI_BIT 10
 `define MSTATUS_MPP_LO_BIT 11
 `define MSTATUS_MPP_HI_BIT 12
+`define MSTATUS_SD_BIT 31
 
 // -----------------------------------------------------------------------------
 // mie / mip bit positions

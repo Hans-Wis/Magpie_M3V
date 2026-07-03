@@ -22,7 +22,8 @@ module core #(
     parameter PMP_ENTRIES = 0,
     parameter EN_RVC = 1,
     parameter EN_BP = 1,
-    parameter EN_RAS = 1
+    parameter EN_RAS = 1,
+    parameter EN_RVV = 0
 ) (
     input             clk,
     input             resetn,
@@ -448,13 +449,15 @@ endgenerate
     wire        id_is_muldiv;
     wire [ 2:0] id_md_op;
     wire        id_md_is_div;
+    wire        id_is_vset;
     wire        id_illegal;
     wire        id_is_ecall;
     wire        id_is_ebreak;
 
     // Historical gate anchor: idu u_idu
     idu #(
-        .RV32A(RV32A)
+        .RV32A(RV32A),
+        .EN_RVV(EN_RVV)
     ) u_idu (
         .instr         (if_ex_instr),
         .rd_idx        (id_rd_idx),
@@ -489,6 +492,7 @@ endgenerate
         .is_muldiv     (id_is_muldiv),
         .md_op         (id_md_op),
         .md_is_div     (id_md_is_div),
+        .is_vset       (id_is_vset),
         .illegal       (id_illegal)
     );
 
@@ -563,6 +567,9 @@ endgenerate
     reg [11:0] ex_mem_csr_addr_r;
     reg [ 1:0] ex_mem_csr_op_r;
     reg [31:0] ex_mem_csr_wdata_r;
+    reg        ex_mem_vcfg_we_r;
+    reg [31:0] ex_mem_vcfg_vl_r;
+    reg [31:0] ex_mem_vcfg_vtype_r;
     reg        ex_mem_is_branch_taken_r;
     reg        ex_mem_is_jal_r;
     reg        ex_mem_is_jalr_r;
@@ -654,6 +661,98 @@ endgenerate
     // Use actual instruction size (16-bit→+2, 32-bit→+4) for link address and mepc
     wire [31:0] if_ex_pc_plus_4   = if_ex_pc + (if_ex_is_16bit ? 32'd2 : 32'd4);
     wire [31:0] if_ex_pc_plus_imm = if_ex_pc + id_imm;
+
+    function [32:0] rvv_vlmax_info;
+        input [31:0] vtype;
+        reg          legal;
+        reg [31:0]   sew_bits;
+        reg [31:0]   base_elems;
+        reg [31:0]   vlmax;
+        begin
+            legal = 1'b1;
+            sew_bits = 32'd8 << vtype[5:3];
+            base_elems = 32'd16 >> vtype[5:3]; // VLEN=128, SEW in {8,16,32}
+            vlmax = 32'h0;
+
+            if (vtype[31] || (vtype[30:8] != 23'h0) || (vtype[5:3] > 3'd2) ||
+                (vtype[2:0] == 3'b100)) begin
+                legal = 1'b0;
+            end
+
+            case (vtype[2:0])
+                3'b000: vlmax = base_elems;
+                3'b001: vlmax = base_elems << 1;
+                3'b010: vlmax = base_elems << 2;
+                3'b011: vlmax = base_elems << 3;
+                3'b101: begin
+                    vlmax = base_elems >> 3;       // mf8
+                    if ((sew_bits << 3) > 32'd32) legal = 1'b0;
+                end
+                3'b110: begin
+                    vlmax = base_elems >> 2;       // mf4
+                    if ((sew_bits << 2) > 32'd32) legal = 1'b0;
+                end
+                3'b111: begin
+                    vlmax = base_elems >> 1;       // mf2
+                    if ((sew_bits << 1) > 32'd32) legal = 1'b0;
+                end
+                default: begin
+                    vlmax = 32'h0;
+                    legal = 1'b0;
+                end
+            endcase
+
+            rvv_vlmax_info = {legal, vlmax};
+        end
+    endfunction
+
+    wire        id_is_vsetivli = id_is_vset && (if_ex_instr[31:30] == 2'b11);
+    wire        id_is_vsetvl   = id_is_vset && (if_ex_instr[31:25] == 7'b1000000);
+    wire [31:0] rvv_cur_vl     = ex_mem_vcfg_we_r ? ex_mem_vcfg_vl_r : csr_vl;
+    wire [31:0] rvv_cur_vtype  = ex_mem_vcfg_we_r ? ex_mem_vcfg_vtype_r : csr_vtype;
+    wire [31:0] ex_mem_csr_next_val =
+        (ex_mem_csr_op_r == `CSR_OP_W) ? ex_mem_csr_wdata_r :
+        (ex_mem_csr_op_r == `CSR_OP_S) ? (ex_mem_csr_rdata_r | ex_mem_csr_wdata_r) :
+        (ex_mem_csr_op_r == `CSR_OP_C) ? (ex_mem_csr_rdata_r & ~ex_mem_csr_wdata_r) :
+                                         ex_mem_csr_rdata_r;
+    wire [31:0] ex_wb_csr_next_val =
+        (ex_wb_csr_op_r == `CSR_OP_W) ? ex_wb_csr_wdata_r :
+        (ex_wb_csr_op_r == `CSR_OP_S) ? (ex_wb_csr_rdata_r | ex_wb_csr_wdata_r) :
+        (ex_wb_csr_op_r == `CSR_OP_C) ? (ex_wb_csr_rdata_r & ~ex_wb_csr_wdata_r) :
+                                        ex_wb_csr_rdata_r;
+    wire [ 1:0] csr_mstatus_vs_eff =
+        ((EN_RVV != 0) && ex_mem_valid_r && ex_mem_csr_we_r &&
+         (ex_mem_csr_addr_r == `CSR_MSTATUS)) ?
+        ex_mem_csr_next_val[`MSTATUS_VS_HI_BIT:`MSTATUS_VS_LO_BIT] :
+        ((EN_RVV != 0) && ex_wb_valid_r && ex_wb_csr_we_r &&
+         (ex_wb_csr_addr_r == `CSR_MSTATUS)) ?
+        ex_wb_csr_next_val[`MSTATUS_VS_HI_BIT:`MSTATUS_VS_LO_BIT] : csr_mstatus_vs;
+    wire [31:0] rvv_req_vtype  = id_is_vsetvl   ? rs2_val :
+                                  id_is_vsetivli ? {22'b0, if_ex_instr[29:20]} :
+                                                   {21'b0, if_ex_instr[30:20]};
+    wire [32:0] rvv_new_info   = rvv_vlmax_info(rvv_req_vtype);
+    wire [32:0] rvv_old_info   = rvv_vlmax_info(rvv_cur_vtype);
+    wire        rvv_new_vtype_legal = rvv_new_info[32];
+    wire [31:0] rvv_new_vlmax = rvv_new_info[31:0];
+    wire [31:0] rvv_old_vlmax = rvv_old_info[31:0];
+    wire        rvv_keep_vl_form = id_is_vset && !id_is_vsetivli &&
+                                   (id_rs1_idx == 5'd0) && (id_rd_idx == 5'd0);
+    wire        rvv_rs1_x0_form = id_is_vset && !id_is_vsetivli &&
+                                  (id_rs1_idx == 5'd0) && (id_rd_idx != 5'd0);
+    wire [31:0] rvv_avl = id_is_vsetivli ? {27'b0, id_rs1_idx} : rs1_val;
+    wire        rvv_vill_next = !rvv_new_vtype_legal ||
+                                (rvv_keep_vl_form && (rvv_new_vlmax != rvv_old_vlmax));
+    wire [31:0] rvv_vl_next_raw = rvv_keep_vl_form ? rvv_cur_vl :
+                                  rvv_rs1_x0_form  ? rvv_new_vlmax :
+                                  ((rvv_avl < rvv_new_vlmax) ? rvv_avl : rvv_new_vlmax);
+    wire [31:0] rvv_vl_next = rvv_vill_next ? 32'h0 : rvv_vl_next_raw;
+    wire [31:0] rvv_vtype_next = rvv_vill_next ? 32'h8000_0000 : rvv_req_vtype;
+    wire        id_vset_can_commit = (EN_RVV != 0) && id_is_vset && (csr_mstatus_vs_eff != 2'b00);
+    wire        id_opv_vs_illegal = (EN_RVV != 0) && id_is_op_v && (csr_mstatus_vs_eff == 2'b00);
+    wire        id_vector_csr_illegal = id_is_vector_csr &&
+                                        (((EN_RVV == 0) || (csr_mstatus_vs_eff == 2'b00)) ||
+                                         (id_is_vector_ro_csr && id_csr_we_logic));
+    wire        id_illegal_eff = id_illegal | id_opv_vs_illegal | id_vector_csr_illegal;
 
     // BP mispredict detection: direction plus predicted-target equality.
     // BTB target aliases are possible; a predicted-taken branch/JAL/JALR must
@@ -902,10 +1001,39 @@ endgenerate
     wire        id_csr_we_logic = id_is_csr &&
                                   ((id_csr_op == `CSR_OP_W) || (id_csr_wdata != 32'h0));
 
+    function is_vector_csr_addr;
+        input [11:0] addr;
+        begin
+            is_vector_csr_addr = (addr == `CSR_VSTART) ||
+                                 (addr == `CSR_VXSAT)  ||
+                                 (addr == `CSR_VXRM)   ||
+                                 (addr == `CSR_VCSR)   ||
+                                 (addr == `CSR_VL)     ||
+                                 (addr == `CSR_VTYPE)  ||
+                                 (addr == `CSR_VLENB);
+        end
+    endfunction
+
+    function is_vector_ro_csr_addr;
+        input [11:0] addr;
+        begin
+            is_vector_ro_csr_addr = (addr == `CSR_VL) ||
+                                    (addr == `CSR_VTYPE) ||
+                                    (addr == `CSR_VLENB);
+        end
+    endfunction
+
+    wire        id_is_op_v = (if_ex_instr[6:0] == `OPC_OP_V);
+    wire        id_is_vector_csr = id_is_csr && is_vector_csr_addr(id_csr_addr);
+    wire        id_is_vector_ro_csr = id_is_vector_csr && is_vector_ro_csr_addr(id_csr_addr);
+
     wire [31:0] csr_rdata;
     wire [31:0] dbg_csr_rdata;
     reg  [31:0] id_csr_rdata;
     wire [31:0] mtvec_o, mepc_o;
+    wire [ 1:0] csr_mstatus_vs;
+    wire [31:0] csr_vl;
+    wire [31:0] csr_vtype;
     wire        irq_pending_raw;
     wire        irq_pending;
     wire [31:0] wb_irq_cause;       // priority-encoded interrupt mcause from csr (ADR-0019)
@@ -913,6 +1041,7 @@ endgenerate
     wire [31:0] wb_trap_mtval;
     // CSR write happens in EX/WB stage (latched into ex_wb register)
     wire        wb_csr_we;
+    wire        wb_vcfg_we;
     wire        wb_trap_enter, wb_trap_exit;
     wire [31:0] wb_trap_pc_for_mepc;
     wire        wb_instr_retired;
@@ -944,6 +1073,9 @@ endgenerate
     reg [11:0] ex_wb_csr_addr_r;
     reg [ 1:0] ex_wb_csr_op_r;
     reg [31:0] ex_wb_csr_wdata_r;
+    reg        ex_wb_vcfg_we_r;
+    reg [31:0] ex_wb_vcfg_vl_r;
+    reg [31:0] ex_wb_vcfg_vtype_r;
     reg        ex_wb_is_branch_taken_r;
     reg        ex_wb_is_jal_r;
     reg        ex_wb_is_jalr_r;
@@ -1047,7 +1179,8 @@ endgenerate
 
     csr #(
         .RV32A(RV32A),
-        .PMP_ENTRIES(PMP_ENTRIES)
+        .PMP_ENTRIES(PMP_ENTRIES),
+        .EN_RVV(EN_RVV)
     ) u_csr (
         .clk                (clk),
         .resetn             (resetn),
@@ -1058,6 +1191,9 @@ endgenerate
         .csr_op             (ex_wb_csr_op_r),
         .csr_wdata          (ex_wb_csr_wdata_r),
         .csr_old_val        (ex_wb_csr_rdata_r),
+        .vcfg_we            (wb_vcfg_we),
+        .vcfg_vl            (ex_wb_vcfg_vl_r),
+        .vcfg_vtype         (ex_wb_vcfg_vtype_r),
         .instr_retired      (wb_instr_retired),
         .trap_enter         (wb_trap_enter),
         .trap_pc            (wb_trap_pc_for_mepc),
@@ -1090,6 +1226,9 @@ endgenerate
         .mepc_o             (mepc_o),
         .irq_pending        (irq_pending_raw),
         .irq_cause          (wb_irq_cause),
+        .mstatus_vs_o       (csr_mstatus_vs),
+        .vl_o               (csr_vl),
+        .vtype_o            (csr_vtype),
         .pmp_addr_o         (pmp_addr_flat),
         .pmp_cfg_o          (pmp_cfg_flat)
     );
@@ -1109,6 +1248,42 @@ endgenerate
             // ^ CS-COV-1 exclusion: CSR ops serialize in this pipeline (empirically: thousands of
             //   adjacent same-addr csr pairs injected, arms never taken); bypass retained defensively
         end
+        if (ex_mem_valid_r && ex_mem_vcfg_we_r) begin
+            case (id_csr_addr)
+                `CSR_VSTART: id_csr_rdata = 32'h0;
+                `CSR_VL    : id_csr_rdata = ex_mem_vcfg_vl_r;
+                `CSR_VTYPE : id_csr_rdata = ex_mem_vcfg_vtype_r;
+                default    : ;
+            endcase
+        end
+        // ADR-0036 3A: EX/MEM-window forwarding for the vxsat/vxrm/vcsr alias
+        // group + mstatus.VS side effects — the exact-address bypass above
+        // misses cross-alias writes (gate_40 adjacent-pair lockstep coverage).
+        // Composes with the WB-window forward inside csr.v: csr_rdata may
+        // already carry that overlay; the newer EX/MEM write wins per field.
+        if ((EN_RVV != 0) && ex_mem_valid_r && ex_mem_csr_we_r &&
+            (ex_mem_csr_addr_r != id_csr_addr)) begin
+            case (id_csr_addr)
+                `CSR_VCSR: begin
+                    if (ex_mem_csr_addr_r == `CSR_VXSAT)
+                        id_csr_rdata = {csr_rdata[31:1], ex_mem_csr_next_val[0]};
+                    if (ex_mem_csr_addr_r == `CSR_VXRM)
+                        id_csr_rdata = {csr_rdata[31:3], ex_mem_csr_next_val[1:0], csr_rdata[0]};
+                end
+                `CSR_VXSAT: if (ex_mem_csr_addr_r == `CSR_VCSR)
+                    id_csr_rdata = {31'b0, ex_mem_csr_next_val[0]};
+                `CSR_VXRM : if (ex_mem_csr_addr_r == `CSR_VCSR)
+                    id_csr_rdata = {30'b0, ex_mem_csr_next_val[2:1]};
+                `CSR_MSTATUS:
+                    if ((ex_mem_csr_addr_r == `CSR_VSTART) || (ex_mem_csr_addr_r == `CSR_VXSAT) ||
+                        (ex_mem_csr_addr_r == `CSR_VXRM)   || (ex_mem_csr_addr_r == `CSR_VCSR))
+                        id_csr_rdata = csr_rdata | 32'h8000_0000 |
+                                       (32'h3 << `MSTATUS_VS_LO_BIT);
+                default: ;
+            endcase
+        end
+        if ((EN_RVV != 0) && ex_mem_valid_r && ex_mem_vcfg_we_r && (id_csr_addr == `CSR_MSTATUS))
+            id_csr_rdata = csr_rdata | 32'h8000_0000 | (32'h3 << `MSTATUS_VS_LO_BIT);
     end
 
     // =========================================================================
@@ -1170,6 +1345,9 @@ endgenerate
             ex_mem_is_misaligned_r   <= 1'b0;
             ex_mem_is_misaligned_store_r <= 1'b0;
             ex_mem_csr_we_r          <= 1'b0;
+            ex_mem_vcfg_we_r         <= 1'b0;
+            ex_mem_vcfg_vl_r         <= 32'h0;
+            ex_mem_vcfg_vtype_r      <= 32'h8000_0000;
             ex_mem_is_branch_taken_r <= 1'b0;
             ex_mem_is_jal_r          <= 1'b0;
             ex_mem_is_jalr_r         <= 1'b0;
@@ -1200,6 +1378,7 @@ endgenerate
             ex_mem_is_misaligned_r   <= 1'b0;
             ex_mem_is_misaligned_store_r <= 1'b0;
             ex_mem_csr_we_r          <= 1'b0;
+            ex_mem_vcfg_we_r         <= 1'b0;
             ex_mem_is_branch_taken_r <= 1'b0;
             ex_mem_is_jal_r          <= 1'b0;
             ex_mem_is_jalr_r         <= 1'b0;
@@ -1217,7 +1396,8 @@ endgenerate
         end else if (id_advance_to_ex_mem) begin
             ex_mem_valid_r           <= 1'b1;
             ex_mem_pc_r              <= if_ex_pc;
-            ex_mem_alu_result_r      <= id_is_bmu ? bmu_result : alu_result;  // M1A A2
+            ex_mem_alu_result_r      <= id_is_vset ? rvv_vl_next :
+                                        (id_is_bmu ? bmu_result : alu_result);  // M1A A2 / RVV vset rd
             ex_mem_md_result_r       <= md_result;
             ex_mem_pc_plus_4_r       <= if_ex_pc_plus_4;
             ex_mem_pc_plus_imm_r     <= if_ex_pc_plus_imm;
@@ -1244,10 +1424,13 @@ endgenerate
             ex_mem_csr_addr_r        <= id_csr_addr;
             ex_mem_csr_op_r          <= id_csr_op;
             ex_mem_csr_wdata_r       <= id_csr_wdata;
+            ex_mem_vcfg_we_r         <= id_vset_can_commit;
+            ex_mem_vcfg_vl_r         <= rvv_vl_next;
+            ex_mem_vcfg_vtype_r      <= rvv_vtype_next;
             ex_mem_is_branch_taken_r <= branch_taken;
             ex_mem_is_jal_r          <= id_is_jal;
             ex_mem_is_jalr_r         <= id_is_jalr;
-            ex_mem_illegal_r         <= id_illegal;
+            ex_mem_illegal_r         <= id_illegal_eff;
             ex_mem_is_ecall_r        <= id_is_ecall;
             ex_mem_is_ebreak_r       <= id_is_ebreak;
             ex_mem_instr_r           <= if_ex_instr;
@@ -1281,6 +1464,7 @@ endgenerate
             ex_mem_is_misaligned_r   <= 1'b0;
             ex_mem_is_misaligned_store_r <= 1'b0;
             ex_mem_csr_we_r          <= 1'b0;
+            ex_mem_vcfg_we_r         <= 1'b0;
             ex_mem_is_branch_taken_r <= 1'b0;
             ex_mem_is_jal_r          <= 1'b0;
             ex_mem_is_jalr_r         <= 1'b0;
@@ -1427,6 +1611,9 @@ endgenerate
             ex_wb_csr_addr_r        <= 12'h0;
             ex_wb_csr_op_r          <= 2'h0;
             ex_wb_csr_wdata_r       <= 32'h0;
+            ex_wb_vcfg_we_r         <= 1'b0;
+            ex_wb_vcfg_vl_r         <= 32'h0;
+            ex_wb_vcfg_vtype_r      <= 32'h8000_0000;
             ex_wb_is_branch_taken_r <= 1'b0;
             ex_wb_is_jal_r          <= 1'b0;
             ex_wb_is_jalr_r         <= 1'b0;
@@ -1455,6 +1642,7 @@ endgenerate
             ex_wb_is_mret_r         <= 1'b0;
             ex_wb_is_dret_r         <= 1'b0;
             ex_wb_csr_we_r          <= 1'b0;
+            ex_wb_vcfg_we_r         <= 1'b0;
             ex_wb_is_branch_taken_r <= 1'b0;
             ex_wb_is_jal_r          <= 1'b0;
             ex_wb_is_jalr_r         <= 1'b0;
@@ -1501,6 +1689,9 @@ endgenerate
             ex_wb_csr_addr_r        <= ex_mem_csr_addr_r;
             ex_wb_csr_op_r          <= ex_mem_csr_op_r;
             ex_wb_csr_wdata_r       <= ex_mem_csr_wdata_r;
+            ex_wb_vcfg_we_r         <= ex_mem_vcfg_we_r;
+            ex_wb_vcfg_vl_r         <= ex_mem_vcfg_vl_r;
+            ex_wb_vcfg_vtype_r      <= ex_mem_vcfg_vtype_r;
             ex_wb_is_branch_taken_r <= ex_mem_is_branch_taken_r;
             ex_wb_is_jal_r          <= ex_mem_is_jal_r;
             ex_wb_is_jalr_r         <= ex_mem_is_jalr_r;
@@ -1530,6 +1721,7 @@ endgenerate
             ex_wb_is_mret_r         <= 1'b0;
             ex_wb_is_dret_r         <= 1'b0;
             ex_wb_csr_we_r          <= 1'b0;
+            ex_wb_vcfg_we_r         <= 1'b0;
             ex_wb_is_branch_taken_r <= 1'b0;
             ex_wb_is_jal_r          <= 1'b0;
             ex_wb_is_jalr_r         <= 1'b0;
@@ -1555,6 +1747,9 @@ endgenerate
     assign ex_wb_rd_idx   = ex_wb_rd_idx_r;
     assign ex_wb_is_load  = ex_wb_is_load_r;
     assign wb_csr_we      = ex_wb_csr_we_r && ex_wb_valid_r && !wb_take_irq &&
+                             !wb_take_sync_trap && !wb_take_data_trap &&
+                             !wb_take_trigger && !core_mem_stall;
+    assign wb_vcfg_we     = ex_wb_vcfg_we_r && ex_wb_valid_r && !wb_take_irq &&
                              !wb_take_sync_trap && !wb_take_data_trap &&
                              !wb_take_trigger && !core_mem_stall;
 

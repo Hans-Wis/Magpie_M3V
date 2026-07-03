@@ -22,7 +22,8 @@
 `include "def.vh"
 
 module idu #(
-    parameter RV32A = 0
+    parameter RV32A = 0,
+    parameter EN_RVV = 0
 ) (
     input  [31:0] instr,
 
@@ -78,6 +79,9 @@ module idu #(
     output [ 2:0]     md_op,           // = funct3 (MD_MUL/MULH/.../REMU)
     output            md_is_div,       // 1 = 走 div unit; 0 = 走 mul unit
 
+    // RVV Stage 3A config instruction (OP-V funct3=111: vsetvli/vsetivli/vsetvl)
+    output            is_vset,
+
     // Exception
     output            illegal
 );
@@ -115,6 +119,7 @@ module idu #(
     wire is_system = (opcode == `OPC_SYSTEM);
     wire is_fence  = (opcode == `OPC_FENCE);
     wire is_amo_opcode = (opcode == `OPC_AMO);
+    wire is_op_v   = (opcode == `OPC_OP_V);
 
     assign is_jal    = (opcode == `OPC_JAL);
     assign is_jalr   = (opcode == `OPC_JALR) && (funct3 == 3'b000);
@@ -169,6 +174,11 @@ module idu #(
     assign is_muldiv = is_op && (funct7 == `F7_MULDIV);
     assign md_op     = funct3;
     assign md_is_div = funct3[2];
+
+    wire opv_vsetvli  = is_op_v && (funct3 == 3'b111) && (instr[31] == 1'b0);
+    wire opv_vsetivli = is_op_v && (funct3 == 3'b111) && (instr[31:30] == 2'b11);
+    wire opv_vsetvl   = is_op_v && (funct3 == 3'b111) && (instr[31:25] == 7'b1000000);
+    assign is_vset = (EN_RVV != 0) && (opv_vsetvli || opv_vsetivli || opv_vsetvl);
 
     // -------------------------------------------------------------------------
     // Immediate mux
@@ -376,7 +386,7 @@ module idu #(
     // Write-back 控制
     // -------------------------------------------------------------------------
     assign rd_we = is_op | is_op_imm | is_lui | is_auipc
-                 | is_jal | is_jalr | is_load | is_csr | is_amo;
+                 | is_jal | is_jalr | is_load | is_csr | is_amo | is_vset;
 
     always @* begin
         case (1'b1)
@@ -409,7 +419,7 @@ module idu #(
     wire known_base_opcode =
         is_lui | is_auipc | is_jal | (is_branch && branch_funct3_valid)
       | is_load | is_store | is_op_imm | is_op | is_fence | is_amo
-      | is_jalr | is_csr | is_mret;
+      | is_jalr | is_csr | is_mret | is_vset;
     wire known_opcode = known_base_opcode | is_dret;
 
     assign illegal = !known_opcode | bmu_slot_illegal;   // M1A A2: reserved OP/OP-IMM-shift slots trap (Spike parity)

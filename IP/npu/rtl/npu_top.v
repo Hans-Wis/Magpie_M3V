@@ -170,7 +170,8 @@ module npu_top #(
         .RESET_PC(CORE_RESET_PC),
         .EN_RVC(0),
         .EN_BP(0),
-        .EN_RAS(0)
+        .EN_RAS(0),
+        .EN_RVV(1)
     ) u_npu_core (
         .clk(clk),
         .resetn(core_resetn),

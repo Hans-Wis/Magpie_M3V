@@ -30,7 +30,8 @@
 
 module csr #(
     parameter RV32A = 0,
-    parameter PMP_ENTRIES = 0
+    parameter PMP_ENTRIES = 0,
+    parameter EN_RVV = 0
 ) (
     input             clk,
     input             resetn,
@@ -45,6 +46,11 @@ module csr #(
     input  [ 1:0]     csr_op,        // CSR_OP_W/S/C
     input  [31:0]     csr_wdata,     // 直接寫入用 / set 用 mask / clear 用 mask
     input  [31:0]     csr_old_val,   // = ex_wb 階段已 latch 的 OLD 值 (pipeline 用)
+
+    // RVV Stage 3A architectural config commit (from core WB boundary)
+    input             vcfg_we,
+    input  [31:0]     vcfg_vl,
+    input  [31:0]     vcfg_vtype,
 
     // Counter input
     input             instr_retired,
@@ -97,6 +103,11 @@ module csr #(
     output            irq_pending,
     output [31:0]     irq_cause,        // priority-encoded interrupt mcause (MEI>MSI>MTI)
 
+    // RVV state exported for vset* EX calculation and privilege checks
+    output [ 1:0]     mstatus_vs_o,
+    output [31:0]     vl_o,
+    output [31:0]     vtype_o,
+
     // PMP CSRs (ADR-0024). Flattened as 8 entries so PMP_ENTRIES=0/4/8 can share ports.
     output [32*8-1:0] pmp_addr_o,
     output [ 8*8-1:0] pmp_cfg_o
@@ -110,6 +121,7 @@ module csr #(
     reg        mie_msie;        // mie[3]  (ADR-0019)
     reg        mstatus_mie;     // mstatus[3]
     reg        mstatus_mpie;    // mstatus[7]
+    reg [ 1:0] mstatus_vs;      // mstatus[10:9], RVV vector state status (WARL 0..3 when EN_RVV)
     localparam [1:0] mstatus_mpp = 2'b11;  // mstatus[12:11] read-only WARL=M (M-only hart; ADR-0015)
     reg [31:2] mtvec_base;      // mtvec[31:2] (MODE 永遠 0)
     reg [31:0] mscratch;
@@ -122,6 +134,11 @@ module csr #(
     reg        dcsr_step_reg;
     reg        dcsr_ebreakm_reg;
     reg [ 2:0] dcsr_cause_reg;
+    reg [ 6:0] vstart_reg;
+    reg        vxsat_reg;
+    reg [ 1:0] vxrm_reg;
+    reg [31:0] vl_reg;
+    reg [31:0] vtype_reg;
     reg [ 7:0] pmpcfg_r [0:7];
     reg [31:0] pmpaddr_r [0:7];
 
@@ -177,17 +194,38 @@ module csr #(
         end
     endfunction
 
+    function is_vector_csr;
+        input [11:0] addr;
+        begin
+            is_vector_csr = (addr == `CSR_VSTART) ||
+                            (addr == `CSR_VXSAT)  ||
+                            (addr == `CSR_VXRM)   ||
+                            (addr == `CSR_VCSR)   ||
+                            (addr == `CSR_VL)     ||
+                            (addr == `CSR_VTYPE)  ||
+                            (addr == `CSR_VLENB);
+        end
+    endfunction
+
     // -------------------------------------------------------------------------
     // 2. Read mux (組合)
     //   未列出的位址回 0 (mhartid / misa / mvendorid 等)
     // -------------------------------------------------------------------------
-    // mstatus layout: [31:8]=0, [7]=MPIE, [6:4]=0, [3]=MIE, [2:0]=0
-    wire [31:0] mstatus_val = {19'b0, mstatus_mpp, 3'b0, mstatus_mpie, 3'b0, mstatus_mie, 3'b0};
+    wire [1:0]  mstatus_vs_visible = (EN_RVV != 0) ? mstatus_vs : 2'b00;
+    wire        mstatus_sd = (EN_RVV != 0) && (mstatus_vs == 2'b11);
+    // mstatus layout: [31]=SD, [12:11]=MPP, [10:9]=VS, [7]=MPIE, [3]=MIE
+    wire [31:0] mstatus_val = {mstatus_sd, 18'b0, mstatus_mpp, mstatus_vs_visible,
+                               1'b0, mstatus_mpie, 3'b0, mstatus_mie, 3'b0};
     // mie/mip layout: [11]=MEIE/MEIP, [7]=MTIE/MTIP, [3]=MSIE/MSIP (ADR-0019)
     wire [31:0] mie_val     = {20'b0, mie_meie, 3'b0, mie_mtie, 3'b0, mie_msie, 3'b0};
     wire [31:0] mip_val     = {20'b0, (ext_pending | meip), 3'b0, mtip, 3'b0, msip, 3'b0};
     wire [31:0] mtvec_val   = {mtvec_base, 2'b00};
     wire [31:0] mtval_val   = mtval_reg;
+    wire [31:0] vstart_val  = {25'b0, vstart_reg};
+    wire [31:0] vxsat_val   = {31'b0, vxsat_reg};
+    wire [31:0] vxrm_val    = {30'b0, vxrm_reg};
+    wire [31:0] vcsr_val    = {29'b0, vxrm_reg, vxsat_reg};
+    wire [31:0] vlenb_val   = 32'd16;
     // M1A A2 (ADR-0026): + misa.B (bit1) — Zba+Zbb+Zbs ratified as B; Spike --priv=m parity = 0x40001106
     localparam [25:0] MISA_EXT_BASE = (26'h1 << 8) | (26'h1 << 12) | (26'h1 << 2) | (26'h1 << 1);
     wire [31:0] misa_val    = {2'b01, 4'b0, (MISA_EXT_BASE | ((RV32A != 0) ? 26'h1 : 26'h0))};
@@ -207,6 +245,13 @@ module csr #(
                 `CSR_MCAUSE  : csr_debug_read = mcause_reg;
                 `CSR_MTVAL   : csr_debug_read = mtval_val;
                 `CSR_MIP     : csr_debug_read = mip_val;
+                `CSR_VSTART  : csr_debug_read = (EN_RVV != 0) ? vstart_val : 32'h0;
+                `CSR_VXSAT   : csr_debug_read = (EN_RVV != 0) ? vxsat_val : 32'h0;
+                `CSR_VXRM    : csr_debug_read = (EN_RVV != 0) ? vxrm_val : 32'h0;
+                `CSR_VCSR    : csr_debug_read = (EN_RVV != 0) ? vcsr_val : 32'h0;
+                `CSR_VL      : csr_debug_read = (EN_RVV != 0) ? vl_reg : 32'h0;
+                `CSR_VTYPE   : csr_debug_read = (EN_RVV != 0) ? vtype_reg : 32'h0;
+                `CSR_VLENB   : csr_debug_read = (EN_RVV != 0) ? vlenb_val : 32'h0;
                 `CSR_CYCLE   : csr_debug_read = cycle_cnt[31:0];
                 `CSR_CYCLEH  : csr_debug_read = cycle_cnt[63:32];
                 `CSR_INSTRET : csr_debug_read = instret_cnt[31:0];
@@ -245,6 +290,13 @@ module csr #(
             `CSR_MCAUSE  : csr_rdata = mcause_reg;
             `CSR_MTVAL   : csr_rdata = mtval_val;
             `CSR_MIP     : csr_rdata = mip_val;
+            `CSR_VSTART  : csr_rdata = (EN_RVV != 0) ? vstart_val : 32'h0;
+            `CSR_VXSAT   : csr_rdata = (EN_RVV != 0) ? vxsat_val : 32'h0;
+            `CSR_VXRM    : csr_rdata = (EN_RVV != 0) ? vxrm_val : 32'h0;
+            `CSR_VCSR    : csr_rdata = (EN_RVV != 0) ? vcsr_val : 32'h0;
+            `CSR_VL      : csr_rdata = (EN_RVV != 0) ? vl_reg : 32'h0;
+            `CSR_VTYPE   : csr_rdata = (EN_RVV != 0) ? vtype_reg : 32'h0;
+            `CSR_VLENB   : csr_rdata = (EN_RVV != 0) ? vlenb_val : 32'h0;
             `CSR_CYCLE   : csr_rdata = cycle_cnt[31:0];
             `CSR_CYCLEH  : csr_rdata = cycle_cnt[63:32];
             `CSR_INSTRET : csr_rdata = instret_cnt[31:0];
@@ -278,6 +330,10 @@ module csr #(
                 `CSR_MEPC,
                 `CSR_MCAUSE,
                 `CSR_MTVAL,
+                `CSR_VSTART,
+                `CSR_VXSAT,
+                `CSR_VXRM,
+                `CSR_VCSR,
                 `CSR_DPC,
                 `CSR_DSCRATCH0,
                 `CSR_PMPCFG0,
@@ -300,6 +356,14 @@ module csr #(
                         csr_rdata = new_val;
                     else if (is_pmpaddr_csr(csr_waddr))
                         csr_rdata = new_val;
+                    else if ((EN_RVV != 0) && (csr_waddr == `CSR_VSTART))
+                        csr_rdata = {25'b0, new_val[6:0]};
+                    else if ((EN_RVV != 0) && (csr_waddr == `CSR_VXSAT))
+                        csr_rdata = {31'b0, new_val[0]};
+                    else if ((EN_RVV != 0) && (csr_waddr == `CSR_VXRM))
+                        csr_rdata = {30'b0, new_val[1:0]};
+                    else if ((EN_RVV != 0) && (csr_waddr == `CSR_VCSR))
+                        csr_rdata = {29'b0, new_val[2:1], new_val[0]};
                     else
                         csr_rdata = new_val;
                 end
@@ -311,6 +375,36 @@ module csr #(
                 // ^ CS-COV-1 exclusion: every writable CSR is in the bypass list; reachable only via RO-addr writes which trap — CS-COV-1
             endcase
         end
+        if ((EN_RVV != 0) && vcfg_we) begin
+            case (csr_raddr)
+                `CSR_VSTART: csr_rdata = 32'h0;
+                `CSR_VL    : csr_rdata = vcfg_vl;
+                `CSR_VTYPE : csr_rdata = vcfg_vtype;
+                default    : ;
+            endcase
+        end
+        // ADR-0036 3A: same-cycle WB-write forwarding for the vxsat/vxrm/vcsr
+        // ALIAS group and for mstatus.VS side effects. The exact-address bypass
+        // above cannot see a write to a *different alias of the same physical
+        // state* (caught by gate_40 lockstep: csrw vxsat; ...; csrr vcsr).
+        if ((EN_RVV != 0) && csr_we && (csr_waddr != csr_raddr)) begin
+            case (csr_raddr)
+                `CSR_VCSR: begin
+                    if (csr_waddr == `CSR_VXSAT) csr_rdata = {29'b0, vxrm_reg, new_val[0]};
+                    if (csr_waddr == `CSR_VXRM)  csr_rdata = {29'b0, new_val[1:0], vxsat_reg};
+                end
+                `CSR_VXSAT: if (csr_waddr == `CSR_VCSR) csr_rdata = {31'b0, new_val[0]};
+                `CSR_VXRM : if (csr_waddr == `CSR_VCSR) csr_rdata = {30'b0, new_val[2:1]};
+                `CSR_MSTATUS:
+                    if ((csr_waddr == `CSR_VSTART) || (csr_waddr == `CSR_VXSAT) ||
+                        (csr_waddr == `CSR_VXRM)   || (csr_waddr == `CSR_VCSR))
+                        csr_rdata = mstatus_val | 32'h8000_0000 |
+                                    (32'h3 << `MSTATUS_VS_LO_BIT);
+                default: ;
+            endcase
+        end
+        if ((EN_RVV != 0) && vcfg_we && (csr_raddr == `CSR_MSTATUS))
+            csr_rdata = mstatus_val | 32'h8000_0000 | (32'h3 << `MSTATUS_VS_LO_BIT);
     end
 
     // -------------------------------------------------------------------------
@@ -343,6 +437,7 @@ module csr #(
             mie_msie     <= 1'b0;          // ADR-0019
             mstatus_mie  <= 1'b0;          // 重置時 IRQ 關閉，要靠軟體開
             mstatus_mpie <= 1'b0;
+            mstatus_vs   <= 2'b00;
             mtvec_base   <= 30'b0;
             mscratch     <= 32'b0;
             mepc_reg     <= 32'b0;
@@ -354,6 +449,11 @@ module csr #(
             dcsr_step_reg <= 1'b0;
             dcsr_ebreakm_reg <= 1'b0;
             dcsr_cause_reg <= 3'b0;
+            vstart_reg   <= 7'h00;
+            vxsat_reg    <= 1'b0;
+            vxrm_reg     <= 2'b00;
+            vl_reg       <= 32'h0;
+            vtype_reg    <= 32'h8000_0000;
             cycle_cnt    <= 64'b0;
             instret_cnt  <= 64'b0;
             for (pmp_i = 0; pmp_i < 8; pmp_i = pmp_i + 1) begin
@@ -375,6 +475,8 @@ module csr #(
                     `CSR_MSTATUS : begin
                         mstatus_mie  <= new_val[`MSTATUS_MIE_BIT];
                         mstatus_mpie <= new_val[`MSTATUS_MPIE_BIT];
+                        if (EN_RVV != 0)
+                            mstatus_vs <= new_val[`MSTATUS_VS_HI_BIT:`MSTATUS_VS_LO_BIT];
                         // mstatus.MPP is read-only WARL=M (M-only hart, ADR-0015): write ignored
                     end
                     `CSR_MIE     : begin
@@ -387,6 +489,23 @@ module csr #(
                     `CSR_MEPC    : mepc_reg    <= {new_val[31:1], 1'b0};
                     `CSR_MCAUSE  : mcause_reg  <= new_val;
                     `CSR_MTVAL   : mtval_reg   <= new_val;
+                    `CSR_VSTART  : if (EN_RVV != 0) begin
+                        vstart_reg <= new_val[6:0];
+                        mstatus_vs <= 2'b11;
+                    end
+                    `CSR_VXSAT   : if (EN_RVV != 0) begin
+                        vxsat_reg <= new_val[0];
+                        mstatus_vs <= 2'b11;
+                    end
+                    `CSR_VXRM    : if (EN_RVV != 0) begin
+                        vxrm_reg <= new_val[1:0];
+                        mstatus_vs <= 2'b11;
+                    end
+                    `CSR_VCSR    : if (EN_RVV != 0) begin
+                        vxrm_reg <= new_val[2:1];
+                        vxsat_reg <= new_val[0];
+                        mstatus_vs <= 2'b11;
+                    end
                     `CSR_DPC     : dpc_reg     <= {new_val[31:1], 1'b0};
                     `CSR_DSCRATCH0: dscratch0_reg <= new_val;
                     `CSR_PMPCFG0: if (PMP_ENTRIES != 0) begin
@@ -428,6 +547,8 @@ module csr #(
                     `CSR_MSTATUS : begin
                         mstatus_mie  <= debug_csr_wdata[`MSTATUS_MIE_BIT];
                         mstatus_mpie <= debug_csr_wdata[`MSTATUS_MPIE_BIT];
+                        if (EN_RVV != 0)
+                            mstatus_vs <= debug_csr_wdata[`MSTATUS_VS_HI_BIT:`MSTATUS_VS_LO_BIT];
                     end
                     `CSR_MIE     : begin
                         mie_meie <= debug_csr_wdata[`MIE_MEIE_BIT];
@@ -439,6 +560,15 @@ module csr #(
                     `CSR_MEPC    : mepc_reg    <= {debug_csr_wdata[31:1], 1'b0};
                     `CSR_MCAUSE  : mcause_reg  <= debug_csr_wdata;
                     `CSR_MTVAL   : mtval_reg   <= debug_csr_wdata;
+                    `CSR_VSTART  : if (EN_RVV != 0) vstart_reg <= debug_csr_wdata[6:0];
+                    `CSR_VXSAT   : if (EN_RVV != 0) vxsat_reg <= debug_csr_wdata[0];
+                    `CSR_VXRM    : if (EN_RVV != 0) vxrm_reg <= debug_csr_wdata[1:0];
+                    `CSR_VCSR    : if (EN_RVV != 0) begin
+                        vxrm_reg <= debug_csr_wdata[2:1];
+                        vxsat_reg <= debug_csr_wdata[0];
+                    end
+                    `CSR_VL      : if (EN_RVV != 0) vl_reg <= debug_csr_wdata;
+                    `CSR_VTYPE   : if (EN_RVV != 0) vtype_reg <= debug_csr_wdata;
                     `CSR_DPC     : dpc_reg     <= {debug_csr_wdata[31:1], 1'b0};
                     `CSR_DSCRATCH0: dscratch0_reg <= debug_csr_wdata;
                     `CSR_PMPCFG0: if (PMP_ENTRIES != 0) begin
@@ -469,6 +599,13 @@ module csr #(
                     end
                     default: ;
                 endcase
+            end
+
+            if ((EN_RVV != 0) && vcfg_we) begin
+                vl_reg     <= vcfg_vl;
+                vtype_reg  <= vcfg_vtype;
+                vstart_reg <= 7'h00;
+                mstatus_vs <= 2'b11;
             end
 
             // 4.4 硬體 trap entry / exit
@@ -512,6 +649,9 @@ module csr #(
     assign dcsr_step_o = dcsr_step_reg;
     assign dcsr_ebreakm_o = dcsr_ebreakm_reg;
     assign debug_csr_rdata = csr_debug_read(debug_csr_waddr);
+    assign mstatus_vs_o = mstatus_vs_visible;
+    assign vl_o         = (EN_RVV != 0) ? vl_reg : 32'h0;
+    assign vtype_o      = (EN_RVV != 0) ? vtype_reg : 32'h8000_0000;
     genvar pmp_g;
     generate
         for (pmp_g = 0; pmp_g < 8; pmp_g = pmp_g + 1) begin : g_pmp_flatten
