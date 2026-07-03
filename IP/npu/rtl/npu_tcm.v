@@ -2,7 +2,8 @@
 // npu_tcm.v — Magpie_M3V NPU tightly-coupled memory (ITCM/DTCM window)
 // -----------------------------------------------------------------------------
 // AXI4-Lite slave so the host can load the NPU's program/data (0x3001_xxxx), plus
-// a DMA write port so npu_dma streams weights/activations straight into it. The
+// a DMA write port so npu_dma streams weights/activations straight into it. A
+// DMA read port lets npu_dma write results back out to shared memory. The
 // (future, Phase 2) NPU core reads this memory. Single-outstanding AXI4-Lite.
 // DMA writes take priority over host writes (streaming must not stall); in
 // practice the host loads before/after a transfer, so they do not collide.
@@ -23,13 +24,19 @@ module npu_tcm #(
     input  wire        s_axi_arvalid, output wire s_axi_arready, input wire [31:0] s_axi_araddr, input wire [2:0] s_axi_arprot,
     output reg         s_axi_rvalid,  input  wire s_axi_rready,  output reg [31:0] s_axi_rdata, output reg [1:0] s_axi_rresp,
 
-    // ---- DMA write port (from npu_dma) ----
+    // ---- DMA write port (from npu_dma read-mode ingress) ----
     input  wire        dma_we,
     input  wire [AW-1:0] dma_waddr,
-    input  wire [31:0] dma_wdata
+    input  wire [31:0] dma_wdata,
+
+    // ---- DMA read port (to npu_dma writeback-mode egress) ----
+    input  wire        dma_re,
+    input  wire [AW-1:0] dma_raddr,
+    output wire [31:0] dma_rdata
 );
     localparam [1:0] OKAY = 2'b00, SLVERR = 2'b10;
     reg [31:0] mem [0:WORDS-1];
+    assign dma_rdata = mem[dma_raddr];
 
     // byte-strobe merge
     function [31:0] merge; input [31:0] old; input [31:0] wd; input [3:0] strb; begin

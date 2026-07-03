@@ -4,7 +4,8 @@
 // One AXI4-Lite slave faces the host fabric (NPU window 0x3xxx). Internally it
 // decodes on addr[16]:  0x3000_xxxx -> CSR (npu_axil_regs), 0x3001_xxxx -> TCM.
 // The DMA (AXI4-full master to shared memory) is programmed via the CSR and
-// streams into the TCM. A level IRQ is raised to the host on completion.
+// streams into the TCM, or writes result data from TCM back to shared memory.
+// A level IRQ is raised to the host on completion.
 // Phase 2 drops the cpu_m1-derived NPU core in beside the TCM/CSR — this wrapper
 // is the stable socket for it. Single-outstanding throughout (matches the host).
 // =============================================================================
@@ -28,6 +29,12 @@ module npu_top #(
     output wire        m_arvalid, input wire m_arready, output wire [31:0] m_araddr,
     output wire [7:0]  m_arlen,   output wire [2:0] m_arsize, output wire [1:0] m_arburst,
     input  wire        m_rvalid,  output wire m_rready, input wire [31:0] m_rdata, input wire m_rlast, input wire [1:0] m_rresp,
+
+    // ---- AXI4-full write master (to shared result memory) ----
+    output wire        m_awvalid, input wire m_awready, output wire [31:0] m_awaddr,
+    output wire [7:0]  m_awlen,   output wire [2:0] m_awsize, output wire [1:0] m_awburst,
+    output wire        m_wvalid,  input wire m_wready, output wire [31:0] m_wdata, output wire [3:0] m_wstrb, output wire m_wlast,
+    input  wire        m_bvalid,  output wire m_bready, input wire [1:0] m_bresp,
 
     // ---- to host / future core ----
     output wire        irq,
@@ -90,7 +97,9 @@ module npu_top #(
     assign s_rresp   = (r_route==2'd0)?c_rresp  : (r_route==2'd1)?t_rresp  : d_rresp;
 
     // ================= CSR block =================
-    wire [31:0] dma_src, dma_dst; wire [16:0] dma_len; wire dma_go, dma_busy, dma_done, dma_err;
+    wire [31:0] dma_src, dma_dst, wb_src, wb_dst;
+    wire [16:0] dma_len, wb_len;
+    wire dma_go, wb_go, dma_busy, dma_done, wb_busy, wb_done, dma_err;
     npu_axil_regs csr (
         .clk(clk), .resetn(resetn),
         .s_axi_awvalid(c_awvalid),.s_axi_awready(c_awready),.s_axi_awaddr(s_awaddr),.s_axi_awprot(s_awprot),
@@ -100,21 +109,53 @@ module npu_top #(
         .s_axi_rvalid(c_rvalid),.s_axi_rready(c_rready),.s_axi_rdata(c_rdata),.s_axi_rresp(c_rresp),
         .npu_start(npu_start),.npu_config(npu_config),.npu_busy(1'b0),.npu_done(1'b0),
         .dma_src(dma_src),.dma_dst(dma_dst),.dma_len(dma_len),.dma_go(dma_go),
-        .dma_busy(dma_busy),.dma_done(dma_done),.dma_err(dma_err),.irq(irq)
+        .dma_busy(dma_busy),.dma_done(dma_done),.dma_err(dma_err),
+        .wb_src(wb_src),.wb_dst(wb_dst),.wb_len(wb_len),.wb_go(wb_go),
+        .wb_busy(wb_busy),.wb_done(wb_done),
+        .irq(irq)
     );
 
-    // ================= DMA (AXI4-full master) -> TCM =================
-    wire dma_we; wire [TCM_AW-1:0] dma_waddr; wire [31:0] dma_wdata;
-    wire [11:0] dma_buf_addr;
+    // ================= DMA (AXI4-full master) <-> TCM =================
+    wire dma_we, dma_re;
+    wire [TCM_AW-1:0] dma_waddr, dma_raddr;
+    wire [31:0] dma_wdata, dma_rdata;
+    wire [11:0] dma_buf_addr, dma_buf_raddr;
+    wire dma_busy_engine, dma_done_engine;
+    wire dma_start_write = wb_go & ~dma_go;     // preserve read GO if both pulses collide
+    wire dma_start = dma_go | wb_go;
+    wire [31:0] dma_desc_addr = dma_start_write ? wb_dst : dma_src;
+    wire [11:0] dma_desc_word = dma_start_write ? wb_src[11:0] : dma_dst[11:0];
+    wire [16:0] dma_desc_len  = dma_start_write ? wb_len : dma_len;
+    reg dma_mode_write_l;
     assign dma_waddr = dma_buf_addr[TCM_AW-1:0];
+    assign dma_raddr = dma_buf_raddr[TCM_AW-1:0];
+    assign dma_busy = dma_busy_engine & ~dma_mode_write_l;
+    assign wb_busy  = dma_busy_engine &  dma_mode_write_l;
+    assign dma_done = dma_done_engine & ~dma_mode_write_l;
+    assign wb_done  = dma_done_engine &  dma_mode_write_l;
+
+    always @(posedge clk) begin
+        if (!resetn)
+            dma_mode_write_l <= 1'b0;
+        else if (!dma_busy_engine && dma_start)
+            dma_mode_write_l <= dma_start_write;
+    end
+
     npu_dma #(.BUF_AW(12)) dma (
         .clk(clk), .resetn(resetn),
-        .go(dma_go), .src_addr(dma_src), .dst_word(dma_dst[11:0]), .len_beats(dma_len),
-        .busy(dma_busy), .done(dma_done),
+        .go(dma_start), .write_mode(dma_start_write),
+        .src_addr(dma_desc_addr), .dst_word(dma_desc_word), .len_beats(dma_desc_len),
+        .busy(dma_busy_engine), .done(dma_done_engine),
         .m_arvalid(m_arvalid),.m_arready(m_arready),.m_araddr(m_araddr),.m_arlen(m_arlen),
         .m_arsize(m_arsize),.m_arburst(m_arburst),
         .m_rvalid(m_rvalid),.m_rready(m_rready),.m_rdata(m_rdata),.m_rlast(m_rlast),.m_rresp(m_rresp),
-        .buf_we(dma_we),.buf_addr(dma_buf_addr),.buf_wdata(dma_wdata),.err(dma_err)
+        .m_awvalid(m_awvalid),.m_awready(m_awready),.m_awaddr(m_awaddr),.m_awlen(m_awlen),
+        .m_awsize(m_awsize),.m_awburst(m_awburst),
+        .m_wvalid(m_wvalid),.m_wready(m_wready),.m_wdata(m_wdata),.m_wstrb(m_wstrb),.m_wlast(m_wlast),
+        .m_bvalid(m_bvalid),.m_bready(m_bready),.m_bresp(m_bresp),
+        .buf_we(dma_we),.buf_addr(dma_buf_addr),.buf_wdata(dma_wdata),
+        .buf_re(dma_re),.buf_raddr(dma_buf_raddr),.buf_rdata(dma_rdata),
+        .err(dma_err)
     );
 
     // ================= TCM =================
@@ -125,7 +166,8 @@ module npu_top #(
         .s_axi_bvalid(t_bvalid),.s_axi_bready(t_bready),.s_axi_bresp(t_bresp),
         .s_axi_arvalid(t_arvalid),.s_axi_arready(t_arready),.s_axi_araddr(s_araddr),.s_axi_arprot(s_arprot),
         .s_axi_rvalid(t_rvalid),.s_axi_rready(t_rready),.s_axi_rdata(t_rdata),.s_axi_rresp(t_rresp),
-        .dma_we(dma_we),.dma_waddr(dma_waddr),.dma_wdata(dma_wdata)
+        .dma_we(dma_we),.dma_waddr(dma_waddr),.dma_wdata(dma_wdata),
+        .dma_re(dma_re),.dma_raddr(dma_raddr),.dma_rdata(dma_rdata)
     );
 
     // ================= DECERR hole (out-of-window NPU addresses) =================

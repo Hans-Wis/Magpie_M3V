@@ -1,0 +1,13 @@
+{
+  "design": "magpie_m3v",
+  "design_id": "cpu_m3v",
+  "stage": "npu_writeback_dma_coral_gap1",
+  "gate": "tests/gates/gate_29_npu_writeback.py",
+  "status": "pass",
+  "summary": "Coral-parity gap #1 (result writeback DMA) CLOSED per ADR-0033. npu_dma generalized to a bidirectional single-outstanding engine (write_mode + S_AW/S_W/S_B, reuses 256-beat/4KB chunking); WB_SRC/DST/LEN/GO CSRs @0x30-0x3C; STATUS[6]=wb_busy/[7]=wb_done; wb_done/IRQ only after final B handshake; npu_tcm gains a DMA read port. Implemented by Codex, AUTHORITATIVELY verified by Claude: tb_npu_writeback scoreboard NPU_WB_PASS (302 checks, TCM->shared-mem, 4KB-cross write chunking, SHARED==TCM golden) + tb_npu_wb_err NPU_WB_ERR_PASS (write SLVERR -> dma_err, no wb_done, no lockup). 17/17 M3V gates green, no regression. Sim=Verilator.",
+  "adr": "docs/adr/0033-result-writeback-dma.md",
+  "design_report": "rv32_npu_design_plan_v4.html (v0.2)",
+  "labor": "Gemini+Grok arch confirmation -> ADR-0033 (Claude) -> Codex RTL -> Claude scoreboard+verify+commit",
+  "date": "2026-07-03",
+  "note": "Coral offload loop now has both DMA halves (weights-in + results-out). Remaining P0: command-queue SSOT (design ref now in v4 §06), matrix accumulator+requant (v4 MAT.RESCALE), RVV vector-CSR lockstep, DONE/FULL/abort. Next: Phase 2 Step 4 (NPU core into socket + FETCH_SRC=TCM)."
+}
