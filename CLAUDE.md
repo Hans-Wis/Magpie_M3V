@@ -100,7 +100,7 @@
 ## §6 目錄 / 工具 / 關鍵文件
 
 - `IP/cpu_m1/`(host + NPU 參數化 spine)· `IP/npu/`(NPU domain RTL/dv/docs/sw)· `tests/gates/`(Verilator/lockstep gates)· `flow/v2_pipeline/phase_03_0*/`(可重跑 lockstep)· `flow/state/`(cpu_m3v 證據)。
-- **關鍵文件**:`docs/adr/0031`(scope)· `0032`(cpu 參數化+驗證)· `docs/reviews/2026-07-03_multiagent_review.md`(架構 review)· `docs/reviews/2026-07-03_coral_gap_review.md`(**Coral 缺漏對照**)· `IP/npu/docs/00_isa_contract.md` / `01_axi_fabric_spec.md` · `rv32_npu_design_plan.html`(v0.1 藍圖,已標 aspirational)· 參考 lab `~/project/lab/CPU/Ch5_NPU`(Coral de-blackbox)。
+- **關鍵文件**:`docs/adr/0031`(scope)· `0032`(cpu 參數化+驗證)· `docs/reviews/2026-07-03_multiagent_review.md`(架構 review)· `docs/reviews/2026-07-03_coral_gap_review.md`(**Coral 缺漏對照**)· `IP/npu/docs/00_isa_contract.md` / `01_axi_fabric_spec.md` · **`rv32_npu_design_plan_v4.html`(v0.2,設計報告參考,User 2026-07-03)**——含 **§06 Command 編碼 Spec v0.1**(128-bit descriptor + opcode 表 MAT.CFG/LOAD_W/OP/RESCALE/STORE/ACC_CLR/FENCE + MAC 陣列/acc/執行單元數量 + L1→L5 下降對照);**§06 是 CQ/矩陣的 SSOT 設計參考**(P0②③ 缺漏的設計基準,實作時 RTL 解碼器 + IREE codegen + NumPy golden 共用同一份)。`rv32_npu_design_plan.html`(v0.1)已 superseded。**注意**:設計報告的記憶體映射(0x4000/ITCM/DTCM)與 IREE-plugin/RVVI 為藍圖;**實作真值以本 repo RTL 為準**(NPU_CSR 0x3000 / TCM 0x3001;開源 clang-RVV)。· 參考 lab `~/project/lab/CPU/Ch5_NPU`(Coral de-blackbox)。
 - **platform/lib**(直接 import):`pipeline`(record_step/build_report)· `sim`(Verilator)· `spike_ref`(golden)· `riscv_rand`· `wave`· `parsers`。gate 取 platform/lib 慣例照 X6/M1。
 
 ---
