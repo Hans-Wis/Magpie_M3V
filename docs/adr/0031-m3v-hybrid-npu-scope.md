@@ -1,8 +1,8 @@
 # ADR-0031 — Magpie_M3V scope: two-core SoC (frozen cpu_m1 host --AXI--> cpu_m1-derived NPU core)
 
-- Status: **PROPOSED** (draft — awaiting User acceptance; producer≠approver)
-- Date: 2026-07-03
-- Deciders: User (directive — architecture fixed by User), PL (Claude)
+- Status: **ACCEPTED** (User accepted 2026-07-03; producer=Claude, approver=User)
+- Date: 2026-07-03 (proposed) · 2026-07-03 (accepted)
+- Deciders: User (directive — architecture fixed by User + acceptance), PL (Claude)
 - Line: Magpie_M3V (`design_id = cpu_m3v`), full-history fork of Magpie_M1A @ `m1a-rtl-freeze-v1.0` (SHA 51a6fe0)
 - Relates: `docs/reports/m1a_performance_evaluation.md` route #5 (loosely-coupled NPU), but companion is self-built from our own scalar; sibling of Magpie_M1V ADR-0030 (CoralNPU IMPORT, *different* route)
 
@@ -108,8 +108,13 @@ then build RTL to that frozen contract.
   later phase to reach full `rv32imf_...` CoralNPU parity. Phase 0 kernels/TFLM must be int-only
   (int8/int16 — the edge-ML path anyway). This also sidesteps CoralNPU's upstream no-float emit bug.
 
-## Open items (remaining, for User before acceptance)
+## Open items (resolved / deferred)
 
-1. Line name **Magpie_M3V** confirmed? (fork done at `~/project/SOC/Magpie_M3V`, `design_id=cpu_m3v`.)
-2. **Governance framing**: keep the M1A "AI-design-flow / IP demo" north-star, or pure-engineering
-   line like M1V? (affects whether IDE/flow evidence is a deliverable.)
+1. ✅ Line name **Magpie_M3V** confirmed (fork at `~/project/SOC/Magpie_M3V`, `design_id=cpu_m3v`, committed 9320032).
+2. ⏸️ **Governance framing** (north-star vs pure-engineering) — **deferred, non-blocking**; does not
+   gate RTL work. Default: engineering-first (like M1V) until User says otherwise.
+
+## Acceptance note (2026-07-03)
+
+User accepted; proceeding to **Phase 1 = AXI fabric**. Phase 0 evidence
+(`gate_p0_toolchain_iss`, ISS-proven RVV toolchain) stands as the software-contract baseline.

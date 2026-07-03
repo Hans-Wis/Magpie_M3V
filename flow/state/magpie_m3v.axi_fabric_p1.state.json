@@ -1,0 +1,12 @@
+{
+  "design": "magpie_m3v",
+  "design_id": "cpu_m3v",
+  "stage": "npu_phase1_axi_fabric",
+  "gate": "tests/gates/gate_20_axi_fabric.py",
+  "status": "partial",
+  "summary": "Phase 1 AXI4-Lite control-plane brick DONE: axil_1to2 router (host D-master -> NPU CSR slave @0x3xxx / passthrough) + npu_axil_regs slave. Verilator lint 0-error + iverilog scoreboard AXIL_FABRIC_PASS (8/8). Data plane (AXI4-full+DMA), ITCM/DTCM windows, IRQ, host no-regress guard still open.",
+  "adr": "docs/adr/0031-m3v-hybrid-npu-scope.md",
+  "spec_doc": "IP/npu/docs/01_axi_fabric_spec.md",
+  "date": "2026-07-03",
+  "note": "Frozen IP/cpu_m1/rtl/ untouched. Emitted manually for IDE discovery; cpu_m3v-owned evidence."
+}
