@@ -6,9 +6,9 @@
   "flow": "cpu",
   "design_id": "cpu_m3v",
   "maturity": "draft",
-  "status": "not-started",
-  "topology": "two-core SoC: cpu_m1 (frozen host, main CPU) --AXI--> NPU core (cpu_m1-derived, modified). Loosely-coupled companion accelerator (CoralNPU-style), NOT tightly-coupled custom-0.",
-  "note": "The NPU is a COPY of the frozen cpu_m1 scalar RTL (taken from tag m1a-rtl-freeze-v1.0) placed under IP/npu/ and MODIFIED to add ML compute (vector/GEMV/matrix EXU + local TCM + AXI slave/master). The frozen IP/cpu_m1/rtl/ is never touched. Route #5 (loosely-coupled) of docs/reports/m1a_performance_evaluation.md, but the companion is self-built from our own scalar rather than an Ethos-U-style fixed block or imported CoralNPU (that is the sibling M1V line).",
+  "status": "phase2-in-progress (Phase 0+1+1.5 fabric/DMA/TCM/IRQ built + verified; Phase 2 Step 2 cpu_m1 parameterized)",
+  "topology": "two-core SoC: cpu_m1 (host, main CPU) --AXI--> NPU domain. Loosely-coupled companion accelerator (CoralNPU-style), NOT tightly-coupled custom-0.",
+  "note": "Since ADR-0032 (User 2026-07-03) cpu_m1 is MODIFIABLE in M3V (was frozen) but every change must pass full Spike-lockstep verification (host commit-trace equivalence). The NPU scalar sequencer is the SAME cpu_m1 parameterized (EN_RVC/EN_BP/EN_RAS + planned FETCH_SRC=TCM), host=all-on stays lockstep-identical, NPU=stripped. Net-new ML compute (RVV Zve32x + GEMV/matrix + writeback DMA + command-queue) under IP/npu/. Route #5 (loosely-coupled) self-built from our own scalar, not imported CoralNPU (that is sibling M1V). Known gaps: docs/reviews/2026-07-03_coral_gap_review.md.",
   "scope_ref": "docs/adr/0031-m3v-hybrid-npu-scope.md",
   "isa_contract": {
     "target": "RV32IMF_Zve32x_Zicsr_Zifencei_Zbb",

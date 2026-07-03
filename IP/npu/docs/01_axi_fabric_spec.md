@@ -48,7 +48,7 @@ no cross-talk).
 
 - **Single-outstanding** read and write, matching the frozen host bridge. A multi-outstanding /
   burst interconnect is not needed for the AXI4-Lite control plane.
-- `wstrb` ignored by the CSR slave (full-word control writes); prot ignored.
+- `wstrb` is honored (byte-strobe merge, since Phase 1.5 §7); `prot` is ignored.
 - This is the **control plane only**. The **data plane** (AXI4-full + burst + DMA double-buffer for
   weight/activation streaming, NPU as AXI master to shared mem) is the next Phase 1 slice — that is
   where the roofline bandwidth is won (ADR-0031 §3).

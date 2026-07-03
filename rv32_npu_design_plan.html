@@ -180,6 +180,9 @@
     <p class="eyebrow">設計規劃 · Design Plan <span>/ v0.1 / Coral-referenced</span></p>
     <h1>RV32IMC 主機<br>經 <span class="flow-word">AXI</span> 卸載至 <span class="npu-word">RV32-NPU</span></h1>
     <p class="thesis">一顆通用 <b>RV32IMC</b> 應用主機,透過 <b>AXI4</b> 把張量運算卸載給一顆內建 scalar 控制核、RVV 向量與 outer-product 矩陣引擎的 NPU。硬體參考 Google Coral NPU 的 ML-first 結構,軟體沿 <b>TensorFlow → MLIR/IREE → binary</b> 的漸進下降路徑編譯。</p>
+    <div style="border:1px solid #b58900;background:rgba(181,137,0,.12);border-radius:8px;padding:12px 16px;margin:16px 0;font-size:13px;line-height:1.6">
+      <b>⚠️ 狀態:v0.1 為目標藍圖(aspirational),非已實作。</b> 已建置並驗證(Verilator + Spike lockstep)= AXI4-Lite fabric + AXI4-full <em>read</em> DMA + TCM + IRQ(<code>npu_top</code>)、cpu_m1 參數化(host-equivalent)。<b>本文描述但尚未實作</b>:結果 writeback DMA、command-queue ring、RVV/矩陣引擎與 accumulator/requant、RVVI/RVFI trace、獨立 clock/power domain。工具鏈:Google <code>coral-opt</code>/IREE-plugin 為<b>閉源不可用</b>,實際走開源 clang-RVV + TFLM。記憶體映射以實作為準:<b>NPU_CSR@0x3000 / TCM@0x3001</b>(非本文早稿的 0x4000)。完整缺漏對照見 <code>docs/reviews/2026-07-03_coral_gap_review.md</code>。
+    </div>
     <div class="hero-strip">
       <div class="hs"><div class="k">Host</div><div class="v">RV32IMC <small>+ L1$ / RVFI</small></div></div>
       <div class="hs"><div class="k">Interconnect</div><div class="v">AXI4 <small>Lite + Full</small></div></div>
