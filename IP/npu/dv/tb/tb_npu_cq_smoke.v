@@ -203,7 +203,7 @@ module tb_npu_cq_smoke;
         wait_status_bit(CSR_BASE + 32'h08, 1, "STATUS.npu_done timeout");
 
         for (i = 0; i < 16; i = i + 1) begin
-            axil_read(TCM_BASE + 32'h600 + (i << 2), rd);  // weight region (ADR-0037: 0x600)
+            axil_read(TCM_BASE + 32'h680 + (i << 2), rd);  // weight region (ADR-0043: 0x680)
             chk(rd, 32'hA5A50000 | i[31:0], "TCM.weight");
         end
         for (i = 0; i < 16; i = i + 1)

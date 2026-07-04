@@ -75,7 +75,7 @@ module tb_npu_cq_equiv;
     localparam [31:0] A_BASE = 32'h3000_0040, A_SIZE = 32'h3000_0044, A_TAIL = 32'h3000_004C, A_CQCTRL = 32'h3000_0050;
     localparam [31:0] WEIGHT_SRC = 32'h0000_0800;   // shared byte addr, word 0x200
     localparam [31:0] RESULT_DST = 32'h0000_1800;   // shared byte addr, word 0x600
-    localparam [31:0] TCM_W_WORD = 32'h0000_0180;   // firmware TCM_WEIGHT_W (byte 0x600, ADR-0037)
+    localparam [31:0] TCM_W_WORD = 32'h0000_01A0;   // firmware TCM_WEIGHT_W (byte 0x680, ADR-0043)
 
     // ---- AXI activity counters ----
     integer aw_cnt, w_cnt, wlast_cnt, ar_weight_cnt, r_cnt;

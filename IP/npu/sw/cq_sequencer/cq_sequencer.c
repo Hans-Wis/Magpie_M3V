@@ -4,7 +4,7 @@
 #define MAILBOX_BASE    CQ_MAILBOX_BASE
 #define TCM_SCRATCH_B   0x00000F00u
 #define TCM_SCRATCH_W   (TCM_SCRATCH_B >> 2)
-#define TCM_WEIGHT_B    0x00000600u   /* ADR-0037: moved from 0x400 (firmware text grew past it) */
+#define TCM_WEIGHT_B    0x00000680u   /* ADR-0043: moved 0x400->0x600->0x680 (text+bss growth) */
 #define TCM_WEIGHT_W    (TCM_WEIGHT_B >> 2)
 
 #define CSR_CTRL        0x04u
@@ -31,6 +31,7 @@
 #define MAT_ST_ERR      4u
 #define MAT_CMD_CLR     0u
 #define MAT_CMD_LOADACC 3u
+#define MAT_CMD_RESCALE_PC 4u
 #define MAT_CMD_OP      1u
 #define MAT_CMD_RESCALE 2u
 
@@ -200,15 +201,30 @@ void main(void)
         case CQ_OP_MAT_LOAD_W: {
             uint32_t rows = (w3 >> 8) & 0xFFu;
             uint32_t cols = w3 & 0xFFu;
-            if (w2 != 0u)
-                cq_halt(CQ_ERR_RSVD_VIOLATION);
-            /* P0.2 simplification: contiguous rows*cols words land at TCM byte 0x400. */
-            dma_read(w1, TCM_WEIGHT_W, rows * cols);
+            /* ADR-0043 (Codex #3): destination capacity — the fixed weight
+             * region holds (SCRATCH - WEIGHT)/4 words; more must halt. */
+            if (rows * cols > (TCM_SCRATCH_B - TCM_WEIGHT_B) / 4u)
+                cq_halt(CQ_ERR_MAT_PARAM);
+            if (w2 == 0u) {
+                /* contiguous rows*cols words -> TCM weight region */
+                dma_read(w1, TCM_WEIGHT_W, rows * cols);
+            } else {
+                /* ADR-0043: W2 = src row stride in BYTES (2D gather).
+                 * stride word-aligned, >= row bytes, capped at 64K (a stray
+                 * huge stride lands on the DMA_FAULT path, not silent wrap) */
+                uint32_t r;
+                if ((w2 & 3u) != 0u || w2 < cols * 4u || w2 > 0xFFFFu ||
+                    (rows != 0u && w1 > 0xFFFFFFFFu - (rows - 1u) * w2))
+                    cq_halt(CQ_ERR_MAT_PARAM);   /* Codex #2: no silent wrap */
+                for (r = 0u; r < rows; r++)
+                    dma_read(w1 + r * w2, TCM_WEIGHT_W + r * cols, cols);
+            }
             break;
         }
         case CQ_OP_MAT_STORE: {
             uint32_t rows = (w3 >> 8) & 0xFFu;
             uint32_t cols = w3 & 0xFFu;
+            uint32_t dstride = (w3 >> 16) & 0xFFFFu;   /* ADR-0043: words, 0=contig */
             /* ADR-0037: W2 = TCM source byte addr; 0 = legacy weight region.
              * Bound + alignment checked (no silent TCM aliasing). */
             uint32_t src_w;
@@ -216,7 +232,17 @@ void main(void)
                 w2 > (0x1000u - rows * cols * 4u))
                 cq_halt(CQ_ERR_MAT_PARAM);
             src_w = (w2 != 0u) ? (w2 >> 2) : TCM_WEIGHT_W;
-            dma_writeback(src_w, w1, rows * cols);
+            if (dstride == 0u) {
+                dma_writeback(src_w, w1, rows * cols);
+            } else {
+                /* 2D scatter: dst row r at w1 + r*stride*4 */
+                uint32_t r;
+                if (dstride < cols ||
+                    (rows != 0u && w1 > 0xFFFFFFFFu - (rows - 1u) * dstride * 4u))
+                    cq_halt(CQ_ERR_MAT_PARAM);   /* Codex #2: no silent wrap */
+                for (r = 0u; r < rows; r++)
+                    dma_writeback(src_w + r * cols, w1 + r * dstride * 4u, cols);
+            }
             break;
         }
         case CQ_OP_MAT_ACC_CLR:
@@ -256,14 +282,23 @@ void main(void)
             mat_run(MAT_CMD_OP, cq_w0_acc(w0), rpt);
             break;
         }
-        case CQ_OP_MAT_RESCALE:
-            if (cq_w0_dtype(w0) != 0u)
+        case CQ_OP_MAT_RESCALE: {
+            uint32_t rmode = cq_w0_rpt(w0);
+            if (cq_w0_dtype(w0) != 0u || rmode > 1u)
                 cq_halt(CQ_ERR_MAT_PARAM);
+            if (rmode == 1u) {
+                /* ADR-0042 per-channel: W1 = 32B-aligned TCM ptr to 8x Q31
+                 * mult + 8 shift bytes (40B); wrap-safe bound. */
+                if ((w1 & 31u) != 0u || w1 > (TCM_SCRATCH_B - 40u))
+                    cq_halt(CQ_ERR_MAT_PARAM);
+            }
             csr_write(CSR_MAT_MULT, w1);
             csr_write(CSR_MAT_RSP, w2);
             csr_write(CSR_MAT_CLAMP, w3);
-            mat_run(MAT_CMD_RESCALE, cq_w0_acc(w0), 1u);
+            mat_run(rmode ? MAT_CMD_RESCALE_PC : MAT_CMD_RESCALE,
+                    cq_w0_acc(w0), 1u);
             break;
+        }
         default:
             cq_halt(CQ_ERR_BAD_OPCODE);
             break;

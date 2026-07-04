@@ -198,6 +198,63 @@ module tb_mat_engine;
         for (i = 0; i < 16; i = i + 1)
             chk8(mem[10'h300 + i][7:0], 8'd31, 2950 + i);
 
+        // ---------- Part 3: per-channel rescale (ADR-0042) ----------
+        fin  = $fopen("vectors/pc_cases.txt", "r");
+        fexp = $fopen("vectors/pc_expected.txt", "r");
+        if (fin == 0 || fexp == 0) begin
+            $display("MAT_ENGINE_FAIL: pc vector files missing"); $finish;
+        end
+        n = 0;
+        parse_ok = 1;
+        while (!$feof(fin) && parse_ok) begin
+            rc = $fscanf(fin, "%h", zp_v);
+            if (rc != 1) parse_ok = 0;
+            if (rc == 1) begin
+                // param block -> stub TCM @ byte 0x1000 (word 0x400... use 0x700)
+                for (i = 0; i < 8; i = i + 1) begin
+                    rc = $fscanf(fin, "%h", mult_v);
+                    mem[10'h380 + i] = mult_v;
+                end
+                mem[10'h388] = 32'h0; mem[10'h389] = 32'h0;
+                for (i = 0; i < 8; i = i + 1) begin
+                    rc = $fscanf(fin, "%h", sh_v);
+                    mem[10'h388 + i[4:2]][(i%4)*8 +: 8] = sh_v[7:0];
+                end
+                for (i = 0; i < 64; i = i + 1) begin
+                    rc = $fscanf(fin, "%h", byte_v);
+                    dut.acc[0][i] = byte_v;                 // unit-level poke
+                end
+                rc = $fscanf(fexp, "%s\n", expline);
+                for (i = 0; i < 64; i = i + 1) begin
+                    exp_str[i][7:4] = hex1(expline[8*(128 - 2*i) - 1 -: 8]);
+                    exp_str[i][3:0] = hex1(expline[8*(127 - 2*i) - 1 -: 8]);
+                end
+                cmd = 3'd4; arg_bank = 4'd0;
+                rs_mult = 32'h0000_0E00;                    // param ptr (byte)
+                rs_zp = zp_v[7:0]; rs_min = 8'h80; rs_max = 8'h7F;
+                out_base = 32'h0000_0C00;
+                pulse_go();
+                for (i = 0; i < 64; i = i + 1)
+                    chk8(mem[10'h300 + i[7:2]][(i%4)*8 +: 8], exp_str[i], 3000 + n*100 + i);
+                n = n + 1;
+            end
+        end
+        $fclose(fin); $fclose(fexp);
+        $display("part3: %0d per-channel tiles", n);
+
+        // per-channel err probes: out-of-range shift byte / misaligned ptr
+        mem[10'h388] = {8'd35, 8'd35, 8'd35, 8'd30};        // shift 30 -> err
+        cmd = 3'd4; rs_mult = 32'h0000_0E00; pulse_go();
+        checks = checks + 1;
+        if (!err_param) begin errors = errors + 1; $display("  FAIL: pc shift<31 not flagged"); end
+        mem[10'h388] = {8'd63, 8'd35, 8'd35, 8'd35};        // shift 63 -> err
+        cmd = 3'd4; pulse_go();
+        checks = checks + 1;
+        if (!err_param) begin errors = errors + 1; $display("  FAIL: pc shift>62 not flagged"); end
+        cmd = 3'd4; rs_mult = 32'h0000_0E04; pulse_go();    // misaligned ptr
+        checks = checks + 1;
+        if (!err_param) begin errors = errors + 1; $display("  FAIL: pc ptr align not flagged"); end
+
         // ---------- param errors ----------
         cmd = 3'd1; arg_bank = 4'd4; arg_rpt = 8'd1; a_addr = 0; b_addr = 0;
         pulse_go();

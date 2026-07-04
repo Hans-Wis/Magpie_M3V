@@ -58,8 +58,9 @@ module mat_engine #(
     output reg  [TCM_AW-1:0] t_waddr,
     output reg  [31:0]       t_wdata
 );
-    localparam [2:0] CMD_CLR = 3'd0, CMD_OP = 3'd1, CMD_RESCALE = 3'd2, CMD_LOADACC = 3'd3;
-    localparam [3:0] S_LA = 4'd6;
+    localparam [2:0] CMD_CLR = 3'd0, CMD_OP = 3'd1, CMD_RESCALE = 3'd2,
+                     CMD_LOADACC = 3'd3, CMD_RESCALE_PC = 3'd4;   // ADR-0042
+    localparam [3:0] S_LA = 4'd6, S_PRM = 4'd7, S_PRS = 4'd8;
     localparam [3:0] S_IDLE = 4'd0, S_RUN = 4'd1,
                      S_RSC = 4'd3, S_RSW = 4'd4, S_FIN = 4'd5;
 
@@ -70,6 +71,9 @@ module mat_engine #(
     reg [31:0] a_ptr, b_ptr;
     reg [5:0]  el_i;                 // rescale element 0..63
     reg [31:0] pack_q;
+    reg        pc_mode;                       // ADR-0042 per-channel rescale
+    reg [31:0] mult_c [0:7];
+    reg [7:0]  shift_c [0:7];
 
     assign busy = (state != S_IDLE);
 
@@ -104,15 +108,19 @@ module mat_engine #(
     endgenerate
 
     // ---- TFLite two-step rescale of the current element (combinational) ----
+    // per-channel (ADR-0042): mult/shift selected by the column index el[2:0];
+    // per-tensor path uses the CSR values unchanged
+    wire [31:0]        cur_mult  = pc_mode ? mult_c[el_i[2:0]] : rs_mult;
+    wire [7:0]         cur_shift = pc_mode ? shift_c[el_i[2:0]] : rs_shift;
     wire signed [31:0] acc_el = acc[bank_q][el_i];
-    wire signed [63:0] ab     = acc_el * $signed(rs_mult);
+    wire signed [63:0] ab     = acc_el * $signed(cur_mult);
     wire signed [63:0] nudge  = ab[63] ? (64'sd1 - 64'sd1073741824) : 64'sd1073741824;
     wire signed [63:0] s_sum  = ab + nudge;
     wire signed [63:0] q_tz   = s_sum[63] ? -((-s_sum) >>> 31) : (s_sum >>> 31);
-    wire               sat    = (acc_el == 32'sh8000_0000) && (rs_mult == 32'h8000_0000);
+    wire               sat    = (acc_el == 32'sh8000_0000) && (cur_mult == 32'h8000_0000);
     wire signed [31:0] t32    = sat ? 32'sh7FFF_FFFF : q_tz[31:0];
-    // exp = shift - 31 (shift validated to [31,62] at GO, so this fits 5 bits)
-    wire [5:0]         exp_r  = rs_shift[5:0] - 6'd31;
+    // exp = shift - 31 (validated to [31,62] at GO / at param fetch)
+    wire [5:0]         exp_r  = cur_shift[5:0] - 6'd31;
     wire [31:0]        rmask  = (exp_r == 6'd0) ? 32'h0 : ((32'h1 << exp_r[4:0]) - 32'h1);
     wire [31:0]        remv   = t32 & rmask;
     wire [31:0]        thr    = (rmask >> 1) + {31'b0, t32[31]};
@@ -134,12 +142,15 @@ module mat_engine #(
         (cmd == CMD_RESCALE && ((arg_bank >= 4'd4) ||
                                 (rs_shift < 8'd31) || (rs_shift > 8'd62) ||
                                 (out_base[1:0] != 2'b00))) ||
-        (cmd == CMD_LOADACC && ((arg_bank >= 4'd4) || (a_addr[4:0] != 5'b0)));
+        (cmd == CMD_LOADACC && ((arg_bank >= 4'd4) || (a_addr[4:0] != 5'b0))) ||
+        (cmd == CMD_RESCALE_PC && ((arg_bank >= 4'd4) ||
+                                   (rs_mult[4:0] != 5'b0) ||
+                                   (out_base[1:0] != 2'b00)));
 
     always @(posedge clk) begin
         if (!resetn) begin
             state <= S_IDLE; done <= 1'b0; err_param <= 1'b0;
-            t_we <= 1'b0; el_i <= 6'd0; rep_i <= 8'd0;
+            t_we <= 1'b0; el_i <= 6'd0; rep_i <= 8'd0; pc_mode <= 1'b0;
         end else if (abort_i) begin
             state <= S_IDLE; done <= 1'b0; err_param <= 1'b0; t_we <= 1'b0;
         end else begin
@@ -167,7 +178,12 @@ module mat_engine #(
                             end
                             CMD_OP:      state <= S_RUN;
                             CMD_LOADACC: state <= S_LA;
-                            CMD_RESCALE: state <= S_RSC;
+                            CMD_RESCALE: begin pc_mode <= 1'b0; state <= S_RSC; end
+                            CMD_RESCALE_PC: begin
+                                pc_mode <= 1'b1;
+                                a_ptr   <= rs_mult;        // W1 = param block ptr
+                                state   <= S_PRM;
+                            end
                             default:     begin err_param <= 1'b1; done <= 1'b1; end
                         endcase
                     end
@@ -211,6 +227,29 @@ module mat_engine #(
                         for (cj = 0; cj < 8; cj = cj + 1)
                             acc[bank_q][ci*8 + cj] <= t_a_rdata[cj*32 +: 32];
                     state <= S_IDLE; done <= 1'b1;
+                end
+
+                S_PRM: begin    // per-channel mults: one 256b window
+                    for (ci = 0; ci < 8; ci = ci + 1)
+                        mult_c[ci] <= t_a_rdata[ci*32 +: 32];
+                    a_ptr <= a_ptr + 32'd32;
+                    state <= S_PRS;
+                end
+
+                S_PRS: begin    // per-channel shifts: 8 bytes, validated here
+                    for (ci = 0; ci < 8; ci = ci + 1)
+                        shift_c[ci] <= t_a_rdata[ci*8 +: 8];
+                    if ((t_a_rdata[7:0]   < 8'd31) || (t_a_rdata[7:0]   > 8'd62) ||
+                        (t_a_rdata[15:8]  < 8'd31) || (t_a_rdata[15:8]  > 8'd62) ||
+                        (t_a_rdata[23:16] < 8'd31) || (t_a_rdata[23:16] > 8'd62) ||
+                        (t_a_rdata[31:24] < 8'd31) || (t_a_rdata[31:24] > 8'd62) ||
+                        (t_a_rdata[39:32] < 8'd31) || (t_a_rdata[39:32] > 8'd62) ||
+                        (t_a_rdata[47:40] < 8'd31) || (t_a_rdata[47:40] > 8'd62) ||
+                        (t_a_rdata[55:48] < 8'd31) || (t_a_rdata[55:48] > 8'd62) ||
+                        (t_a_rdata[63:56] < 8'd31) || (t_a_rdata[63:56] > 8'd62)) begin
+                        err_param <= 1'b1; done <= 1'b1; state <= S_IDLE;
+                    end else
+                        state <= S_RSC;
                 end
 
                 default: state <= S_IDLE;

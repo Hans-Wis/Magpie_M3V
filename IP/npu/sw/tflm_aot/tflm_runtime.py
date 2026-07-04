@@ -29,7 +29,7 @@ sys.path.insert(0, str(ROOT / "IP/npu/golden"))
 import cq_codec  # noqa: E402  (SSOT — generated)
 from tflm_fc import wrap32  # noqa: E402
 
-TCM_BLOB_B = 0x600
+TCM_BLOB_B = 0x680
 A_OFF = 0x240                # a-vectors (past the 0x800 MAT_OUT hole gap map)
 MAT_OUT_B = 0x800
 SHARED_BLOB_B = 0x2000
@@ -122,7 +122,7 @@ def emit_layer(outdir: Path, layer, inputs):
         lines.append("%08x" % int.from_bytes(blob[i:i + 4], "little"))
     (outdir / "tflm_shared.hex").write_text("\n".join(lines) + "\n")
     (outdir / "tflm_meta.hex").write_text(
-        "%08x\n%08x\n" % (len(ring) // 4, n_tiles * 16))
+        "%08x\n%08x\n%08x\n" % (len(ring) // 4, n_tiles * 16, 16))
     return n_tiles
 
 
@@ -144,4 +144,156 @@ def unpack_result(dump_path: Path, n_tiles: int, n: int):
 def load_artifacts():
     model = json.loads((ART / "model.json").read_text())
     golden = json.loads((ART / "golden.json").read_text())
+    return model, golden
+
+
+# ---------------------------------------------------------------------------
+# ADR-0042: generalized lowering — CONV_2D (host im2col), K>64 chunking,
+# PER-CHANNEL requant (MAT_RESCALE RPT=1 -> engine RESCALE_PC).
+# ---------------------------------------------------------------------------
+PARAM_OFF = 0x20            # per-tile param block inside the job blob header
+JOB_STRIDE_B = 0x800        # shared-mem spacing between job blobs
+
+
+def _chunks(k):
+    out = []
+    while k > 0:
+        c = min(64, k)
+        out.append(c)
+        k -= c
+    return out
+
+
+def im2col(layer, x):
+    """x: [H][W][Cin] int8 -> rows[n_pixels][K] (VALID, stride 1, dilation 1)."""
+    assert layer["stride"] == 1, "scope (ADR-0042)"
+    kh, kw, cin = layer["kh"], layer["kw"], layer["cin"]
+    oh = layer["in_h"] - kh + 1
+    ow = layer["in_w"] - kw + 1
+    rows = []
+    for oy in range(oh):
+        for ox in range(ow):
+            rows.append([x[oy + ky][ox + kx][ci]
+                         for ky in range(kh) for kx in range(kw)
+                         for ci in range(cin)])
+    return rows
+
+
+def lower_layer_v2(layer, rows):
+    """rows: [n_rows][K] int8 (any n_rows; padded to groups of 8).
+    Returns (segments [(shared_byte, bytes)], ring words, n_groups, n_tiles)."""
+    if layer["kind"] == "conv":
+        n_out, k = layer["cout"], layer["kh"] * layer["kw"] * layer["cin"]
+    else:
+        n_out, k = layer["n"], layer["k"]
+    assert n_out % 8 == 0 and k % 8 == 0, "pad upstream (scope)"
+    n_tiles = n_out // 8
+    n_groups = (len(rows) + 7) // 8
+    rows = [list(r) for r in rows] +            [[0] * k for _ in range(n_groups * 8 - len(rows))]
+    w = layer["weights"]
+    input_offset = -layer["input_zp"]
+    amin, amax = act_range(layer)
+    chunks = _chunks(k)
+
+    segments, ring = [], []
+    job = 0
+    for g in range(n_groups):
+        for tile in range(n_tiles):
+            fold = bytearray()
+            for c in range(8):
+                f = wrap32(layer["bias"][tile * 8 + c] +
+                           input_offset * sum(w[tile * 8 + c])) & 0xFFFFFFFF
+                fold += f.to_bytes(4, "little")
+            header = bytes(fold).ljust(PARAM_OFF, b"\0") +                 _param_block_tile(layer, tile)
+            k_off = 0
+            for ci, ch in enumerate(chunks):
+                blob = bytearray(header.ljust(A_OFF, b"\0"))
+                for kk in range(ch):
+                    for r in range(8):
+                        blob.append(rows[g * 8 + r][k_off + kk] & 0xFF)
+                for kk in range(ch):
+                    for c in range(8):
+                        blob.append(w[tile * 8 + c][k_off + kk] & 0xFF)
+                words = (len(blob) + 3) // 4
+                lw_rows = (words + 15) // 16
+                blob.extend(b"\0" * (lw_rows * 16 * 4 - len(blob)))
+                src = SHARED_BLOB_B + (job * len(chunks) + ci) * JOB_STRIDE_B
+                segments.append((src, bytes(blob)))
+                ring += cq_codec.encode("MAT_LOAD_W",
+                                        src_addr=0x80000000 | src,
+                                        rows=lw_rows, cols=16)
+                if ci == 0:
+                    ring += cq_codec.encode("MAT_ACC_CLR", acc_mask=1,
+                                            bias_tcm_byte=TCM_BLOB_B)
+                ring += cq_codec.encode("MAT_CFG", m=8, n=8, k=8 * ch)
+                ring += cq_codec.encode("MAT_OP", a_addr=TCM_BLOB_B + A_OFF,
+                                        b_addr=TCM_BLOB_B + A_OFF + 8 * ch,
+                                        rpt=ch, acc=0)
+                k_off += ch
+            last = (g == n_groups - 1) and (tile == n_tiles - 1)
+            ring += cq_codec.encode("MAT_RESCALE",
+                                    param_ptr=TCM_BLOB_B + PARAM_OFF,
+                                    out_zp=layer["output_zp"],
+                                    clamp_min=amin, clamp_max=amax, acc=0)
+            ring += cq_codec.encode("MAT_STORE",
+                                    dst_addr=0x80000000 | (SHARED_DST_B + job * 0x40),
+                                    stride=MAT_OUT_B, rows=4, cols=4,
+                                    irq=1 if last else 0, last=1 if last else 0)
+            job += 1
+    return segments, ring, n_groups, n_tiles
+
+
+def _param_block_tile(layer, tile):
+    blk = bytearray()
+    shifts = bytearray()
+    for c in range(8):
+        ws = layer["weight_scales"][tile * 8 + c]
+        m, s = quantize_multiplier(
+            layer["input_scale"] * ws / layer["output_scale"])
+        eng = 31 - s
+        assert 31 <= eng <= 62
+        blk += (m & 0xFFFFFFFF).to_bytes(4, "little")
+        shifts.append(eng)
+    return bytes(blk) + bytes(shifts)
+
+
+def emit_layer_v2(outdir: Path, layer, rows, ring_entries=32):
+    segments, ring, n_groups, n_tiles = lower_layer_v2(layer, rows)
+    assert len(ring) // 4 < ring_entries, "ring capacity"
+    outdir.mkdir(parents=True, exist_ok=True)
+    lines = ["@00000100"] + ["%08x" % x for x in ring]
+    for src, blob in segments:
+        lines.append("@%08x" % (src >> 2))
+        for i in range(0, len(blob), 4):
+            lines.append("%08x" % int.from_bytes(blob[i:i + 4], "little"))
+    (outdir / "tflm_shared.hex").write_text("\n".join(lines) + "\n")
+    (outdir / "tflm_meta.hex").write_text(
+        "%08x\n%08x\n%08x\n" % (len(ring) // 4, n_groups * n_tiles * 16,
+                                   ring_entries))
+    return n_groups, n_tiles
+
+
+def unpack_result_v2(dump_path: Path, n_groups: int, n_tiles: int, n_rows: int, n_out: int):
+    words = [int(x, 16) for x in dump_path.read_text().split()]
+    assert len(words) == n_groups * n_tiles * 16
+    out = [[0] * n_out for _ in range(n_rows)]
+    job = 0
+    for g in range(n_groups):
+        for tile in range(n_tiles):
+            raw = b"".join(w.to_bytes(4, "little")
+                           for w in words[job * 16:(job + 1) * 16])
+            for r in range(8):
+                p = g * 8 + r
+                if p < n_rows:
+                    for c in range(8):
+                        if tile * 8 + c < n_out:
+                            v = raw[r * 8 + c]
+                            out[p][tile * 8 + c] = v - 256 if v > 127 else v
+            job += 1
+    return out
+
+
+def load_artifacts2():
+    model = json.loads((ART / "model2.json").read_text())
+    golden = json.loads((ART / "golden2.json").read_text())
     return model, golden

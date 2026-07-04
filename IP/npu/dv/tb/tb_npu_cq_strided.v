@@ -1,16 +1,16 @@
 // =============================================================================
-// tb_npu_tflm_model.v — ADR-0041 gate_49: ONE LAYER of a real .tflite model
-// runs the full offload loop; meta-driven (tflm_model/tflm_meta.hex gives the
-// descriptor TAIL count and result word count) so the same binary serves any
-// layer shape. The result window (shared 0x1800..) is dumped to
-// tflm_model/result.dump — the gate compares it against the TFLite reference
-// interpreter golden and REPACKS it as the next layer's input (true multi-op
-// chaining through the host, ADR-0041).
+// tb_npu_cq_strided.v — ADR-0043 gate_51: 2D/strided DMA through the CQ.
+// A: LOAD_W with W2=row-stride gathers a strided shared-mem block into the
+//    contiguous TCM weight region; a contiguous MAT.STORE reads it back out —
+//    every gathered word must match its strided source.
+// B: MAT.STORE with W3[31:16]=dst row stride scatters the TCM block into a
+//    larger tensor: rows land at stride, the GAPS must keep their sentinels.
+// C: sanitizer ladder — misaligned stride / stride < row bytes => MAT_PARAM.
 // =============================================================================
 `default_nettype none
 `timescale 1ns/1ps
 
-module tb_npu_tflm_model;
+module tb_npu_cq_strided;
     reg clk = 1'b0;
     reg resetn = 1'b0;
     always #5 clk = ~clk;
@@ -70,6 +70,7 @@ module tb_npu_tflm_model;
     localparam [31:0] A_CTRL = 32'h3000_0004, A_STATUS = 32'h3000_0008;
     localparam [31:0] A_BASE = 32'h3000_0040, A_SIZE = 32'h3000_0044, A_TAIL = 32'h3000_004C;
     localparam [31:0] A_CQCTRL = 32'h3000_0050, A_CQST = 32'h3000_0054, A_ERRC = 32'h3000_0058;
+    localparam [31:0] A_HEAD = 32'h3000_0048;
 
     integer errors = 0, checks = 0, i;
     reg [31:0] rd;
@@ -130,45 +131,104 @@ module tb_npu_tflm_model;
         end
     endtask
 
-    reg [31:0] meta [0:2];
-
-    initial begin
-        $readmemh("tflm_model/tflm_shared.hex", shared.mem);
-        $readmemh("tflm_model/tflm_meta.hex", meta);
-    end
-
     initial begin
         repeat (4) @(posedge clk);
         resetn = 1'b1;
         @(posedge clk);
 
+        // strided source: 3 rows x 4 words, row stride 8 words, at shared 0x2000
+        for (i = 0; i < 24; i = i + 1)
+            shared.mem[32'h800 + i] = 32'hA000_0000 + i;
+        // scatter target sentinels at shared 0x1900 (word 0x640)
+        for (i = 0; i < 24; i = i + 1)
+            shared.mem[32'h640 + i] = 32'hDEAD_BEEF;
+
+        // ---- A: gather + contiguous readback ----
+        shared.mem[32'h100] = 32'h0000_0002;  // LOAD_W
+        shared.mem[32'h101] = 32'h8000_2000;
+        shared.mem[32'h102] = 32'd32;         // src row stride bytes
+        shared.mem[32'h103] = 32'h0000_0304;  // rows=3 cols=4
+        shared.mem[32'h104] = 32'h0000_5005;  // STORE | IRQ | LAST
+        shared.mem[32'h105] = 32'h8000_1800;
+        shared.mem[32'h106] = 32'h0000_0680;  // src TCM byte (weight region)
+        shared.mem[32'h107] = 32'h0000_0304;  // contiguous (stride 0)
+
         axil_write(A_BASE, 32'h0000_0400);
-        axil_write(A_SIZE, meta[2]);
+        axil_write(A_SIZE, 32'd4);
         axil_write(A_CQCTRL, 32'h1);
-        axil_write(A_CTRL, 32'h9);            // start + irq_enable
-        axil_write(A_TAIL, meta[0]);          // doorbell
+        axil_write(A_CTRL, 32'h9);
+        axil_write(A_TAIL, 32'd2);
+        wait_bit(A_STATUS, 1, "A: gather batch DONE");
+        for (i = 0; i < 12; i = i + 1)
+            chk(shared.mem[32'h600 + i],
+                shared.mem[32'h800 + (i/4)*8 + (i%4)], "A: gathered word");
 
-        wait_bit(A_STATUS, 1, "layer batch DONE");
-        chk({31'b0, irq}, 32'h1, "IRQ on final STORE");
-        axil_read(A_CQST, rd);
-        chk({31'b0, rd[3]}, 32'h0, "no CQ err");
-        axil_read(A_ERRC, rd);
-        chk(rd, 32'h0, "ERR_CAUSE clean");
+        // ---- B: scatter writeback (dst stride 6 words) ----
+        axil_write(A_CTRL, 32'h0);
+        axil_write(A_CQCTRL, 32'h0); axil_write(A_CQCTRL, 32'h1);
+        shared.mem[32'h108] = 32'h0000_5005;  // STORE | IRQ | LAST
+        shared.mem[32'h109] = 32'h8000_1900;
+        shared.mem[32'h10A] = 32'h0000_0680;
+        shared.mem[32'h10B] = 32'h0006_0304;  // dstride=6, rows=3, cols=4
+        axil_write(A_TAIL, 32'd3);
+        axil_write(A_CTRL, 32'h1);
+        wait_bit(A_STATUS, 1, "B: scatter batch DONE");
+        for (i = 0; i < 12; i = i + 1)
+            chk(shared.mem[32'h640 + (i/4)*6 + (i%4)],
+                shared.mem[32'h600 + i], "B: scattered word");
+        chk(shared.mem[32'h644], 32'hDEAD_BEEF, "B: gap sentinel r0");
+        chk(shared.mem[32'h645], 32'hDEAD_BEEF, "B: gap sentinel r0b");
+        chk(shared.mem[32'h64A], 32'hDEAD_BEEF, "B: gap sentinel r1");
 
-        fdump = $fopen("tflm_model/result.dump", "w");
-        for (i = 0; i < meta[1]; i = i + 1)
-            $fdisplay(fdump, "%08x", shared.mem[32'h600 + i]);
-        $fclose(fdump);
+        // ---- C: sanitizer ladder ----
+        axil_write(A_CTRL, 32'h0);
+        axil_write(A_CQCTRL, 32'h0); axil_write(A_CQCTRL, 32'h1);
+        shared.mem[32'h10C] = 32'h0000_0002;  // LOAD_W, misaligned stride
+        shared.mem[32'h10D] = 32'h8000_2000;
+        shared.mem[32'h10E] = 32'd18;
+        shared.mem[32'h10F] = 32'h0000_0304;
+        axil_write(A_TAIL, 32'd0);            // (3+1)&3
+        axil_write(A_CTRL, 32'h1);
+        wait_bit(A_CQST, 3, "C1: err raised");
+        axil_read(A_ERRC, rd); chk(rd, 32'd7, "C1: stride align -> MAT_PARAM");
+        // C2..C4 rewrite the FROZEN-HEAD slot 3 (0x10C) — gate_38 pattern
+        axil_write(A_CTRL, 32'h0);
+        shared.mem[32'h10C] = 32'h0000_0002;  // LOAD_W, stride < cols*4
+        shared.mem[32'h10D] = 32'h8000_2000;
+        shared.mem[32'h10E] = 32'd8;
+        shared.mem[32'h10F] = 32'h0000_0304;
+        axil_write(A_CQCTRL, 32'h0); axil_write(A_CQCTRL, 32'h1);
+        axil_write(A_CTRL, 32'h1);
+        wait_bit(A_CQST, 3, "C2: err raised");
+        axil_read(A_ERRC, rd); chk(rd, 32'd7, "C2: short stride -> MAT_PARAM");
+        axil_read(A_HEAD, rd); chk(rd, 32'd3, "C2: HEAD frozen");
+        // C3: capacity — rows*cols beyond the weight region must halt
+        axil_write(A_CTRL, 32'h0);
+        shared.mem[32'h10E] = 32'd0;
+        shared.mem[32'h10F] = 32'h0000_1040;  // 16x64 = 1024 words > capacity
+        axil_write(A_CQCTRL, 32'h0); axil_write(A_CQCTRL, 32'h1);
+        axil_write(A_CTRL, 32'h1);
+        wait_bit(A_CQST, 3, "C3: err raised");
+        axil_read(A_ERRC, rd); chk(rd, 32'd7, "C3: capacity -> MAT_PARAM");
+        // C4: gather base near 2^32 would wrap row addresses -> halt
+        axil_write(A_CTRL, 32'h0);
+        shared.mem[32'h10D] = 32'hFFFF_FFF0;
+        shared.mem[32'h10E] = 32'd32;
+        shared.mem[32'h10F] = 32'h0000_0304;
+        axil_write(A_CQCTRL, 32'h0); axil_write(A_CQCTRL, 32'h1);
+        axil_write(A_CTRL, 32'h1);
+        wait_bit(A_CQST, 3, "C4: err raised");
+        axil_read(A_ERRC, rd); chk(rd, 32'd7, "C4: addr wrap -> MAT_PARAM");
 
-        $display("NPU_TFLM_MODEL: %0d checks, %0d errors", checks, errors);
-        if (errors == 0) $display("NPU_TFLM_MODEL_PASS");
-        else             $display("NPU_TFLM_MODEL_FAIL");
+        $display("NPU_CQ_STRIDED: %0d checks, %0d errors", checks, errors);
+        if (errors == 0) $display("NPU_CQ_STRIDED_PASS");
+        else             $display("NPU_CQ_STRIDED_FAIL");
         $finish;
     end
 
     initial begin
-        #8000000;
-        $display("NPU_TFLM_MODEL_FAIL: timeout");
+        #4000000;
+        $display("NPU_CQ_STRIDED_FAIL: timeout");
         $finish;
     end
 endmodule

@@ -148,7 +148,29 @@ def emit_vectors(outdir: Path, seed: int) -> None:
         seq_exp.append("".join(f"{x:02x}" for x in outs[0]))
     (outdir / "seq_cases.txt").write_text("\n".join(seq_in) + "\n")
     (outdir / "seq_expected.txt").write_text("\n".join(seq_exp) + "\n")
-    print(f"emitted {len(lines_in)} rescale corners + {len(seq_in)} sequences -> {outdir}")
+
+    # per-channel rescale (ADR-0042): 8 cases, each with a full acc tile and
+    # per-COLUMN (mult, shift) sets + per-tensor zp/clamp; 64 bytes compared
+    pc_in, pc_exp = [], []
+    for _ in range(8):
+        accs = [rng.randint(-(1 << 20), 1 << 20) for _ in range(64)]
+        mults = [rng.randint(1 << 30, I32_MAX) for _ in range(8)]
+        shifts = [rng.randint(31, 46) for _ in range(8)]
+        zp = rng.randint(-128, 127)
+        out = bytearray()
+        for r in range(8):
+            for c in range(8):
+                out.append(rescale(accs[r * 8 + c], mults[c], shifts[c],
+                                   zp, -128, 127) & 0xFF)
+        pc_in.append(" ".join([f"{zp & 0xFF:02x}"] +
+                              [f"{m:08x}" for m in mults] +
+                              [f"{s:02x}" for s in shifts] +
+                              [f"{a & 0xFFFFFFFF:08x}" for a in accs]))
+        pc_exp.append("".join(f"{x:02x}" for x in out))
+    (outdir / "pc_cases.txt").write_text("\n".join(pc_in) + "\n")
+    (outdir / "pc_expected.txt").write_text("\n".join(pc_exp) + "\n")
+    print(f"emitted {len(lines_in)} rescale corners + {len(seq_in)} sequences "
+          f"+ {len(pc_in)} per-channel tiles -> {outdir}")
 
 
 def selftest() -> None:

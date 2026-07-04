@@ -64,7 +64,7 @@
       "name": "MAT_LOAD_W",
       "value": 2,
       "w1": "src_addr",
-      "w2": "stride",
+      "w2": "src_row_stride_bytes (0 = contiguous; ADR-0043 2D gather: rows x cols words, src row r at src_addr + r*stride)",
       "w3": "(rows<<8)|cols",
       "fields": [
         "src_addr",
@@ -101,21 +101,21 @@
         "clamp_max",
         "clamp_min"
       ],
-      "notes": "ADR-0037: EXACT gemmlowp two-step (SRDHM + RoundingDivideByPOT(shift-31)); shift in [31,62]; output = 64 int8 at the MAT_OUT region."
+      "notes": "ADR-0042: W0.RPT=1 selects PER-CHANNEL mode \u2014 W1 becomes a 32B-aligned TCM ptr to 8x Q31 mult words + 8 shift bytes (40B); zp/clamp stay per-tensor in W2/W3. RPT=0 = per-tensor (W1 = Q31 multiplier)."
     },
     {
       "name": "MAT_STORE",
       "value": 5,
       "w1": "dst_addr",
       "w2": "src_tcm_byte",
-      "w3": "(rows<<8)|cols",
+      "w3": "(dst_row_stride_words<<16)|(rows<<8)|cols (stride 0 = contiguous; ADR-0043 2D scatter)",
       "fields": [
         "dst_addr",
         "src_tcm_byte",
         "rows",
         "cols"
       ],
-      "notes": "ADR-0037: W2 = TCM source byte address (0 = legacy weight region at 0x600); matrix flows use the MAT_OUT region (default 0x800)."
+      "notes": "ADR-0037: W2 = TCM source byte address (0 = legacy weight region at 0x680); matrix flows use the MAT_OUT region (default 0x800)."
     },
     {
       "name": "MAT_ACC_CLR",

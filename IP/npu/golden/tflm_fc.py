@@ -39,7 +39,7 @@ import cq_codec  # noqa: E402  (SSOT — generated)
 from mat_golden import rescale  # noqa: E402  (frozen engine requant)
 
 # TCM layout (bytes) — one contiguous MAT.LOAD_W blob lands at 0x600
-TCM_BLOB_B = 0x600          # fixed LOAD_W destination (firmware TCM_WEIGHT_B)
+TCM_BLOB_B = 0x680          # fixed LOAD_W destination (firmware TCM_WEIGHT_B, ADR-0043)
 FOLD_OFF = 0x000            # 8x int32 fold words
 A_OFF = 0x240               # a-vectors (skips the 0x800 MAT_OUT hole)
 MAT_OUT_B = 0x800           # engine RESCALE output region (reset default)

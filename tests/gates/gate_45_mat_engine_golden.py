@@ -26,6 +26,7 @@ def test_mat_engine_bit_exact_vs_golden():
     assert "MAT_ENGINE_PASS" in log
     assert "part1: 90 rescale corners" in log, "corner count shrank (parse guard tripped?)"
     assert "part2: 24 sequences" in log
+    assert "part3: 8 per-channel tiles" in log, "ADR-0042 per-channel coverage shrank"
     assert ", 0 errors" in log
 
 

@@ -63,3 +63,16 @@ Status: **Phase 0 — contract locked, toolchain proven on ISS** (2026-07-03). G
       bandwidth wall (report §3: edge-LLM is bandwidth-bound).
 - [ ] TFLM single int8 op on the ISS (extends the smoke kernel toward a real ML op).
 - [ ] Freeze the AXI memory map (§3) into the Phase 1 fabric spec.
+
+## ADR-0043 — Host producer ABI(RING_OVERRUN / flush-before-doorbell)
+
+- **RING_OVERRUN 防範 = 生產者紀律**(device 端偵測 deferred,ADR-0035):producer 依
+  `free = (HEAD - TAIL - 1) mod SIZE` 計算空間(恆留一空槽),空間不足時**拒絕寫入**,
+  絕不讓 TAIL 追上 HEAD。參考實作 `IP/npu/sw/host/cq_host.py::CqProducer`(gate_51)。
+- **flush-before-doorbell**:descriptor 與 payload 寫入 shared memory 後、TAIL doorbell
+  之前,host 必須執行 cache flush / memory fence——NPU DMA 讀的是記憶體,不是 host 快取。
+  `CqProducer.commit()` 固定順序:fence hook → doorbell(順序由 gate_51 斷言)。現行 DV
+  host 無快取,fence 為佔位;SoC 整合(Phase 7)時接真 flush。
+- **2D/strided DMA**(sequencer firmware,RTL 零改動):`MAT.LOAD_W W2 = src row stride
+  (bytes,0=連續)` gather;`MAT.STORE W3[31:16] = dst row stride(words,0=連續)`
+  scatter。stride 未對齊 / 小於 row bytes → `MAT_PARAM`。
