@@ -14,7 +14,7 @@ module tb_axi_adversarial;
     wire [7:0] d_arlen; wire [2:0] d_arsize; wire [1:0] d_arburst,d_rresp;
     wire irq, npu_start; wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(1024),.TCM_AW(10)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13)) dut (
         .clk(clk),.resetn(resetn),
         .s_awvalid(s_awvalid),.s_awready(s_awready),.s_awaddr(s_awaddr),.s_awprot(3'b0),
         .s_wvalid(s_wvalid),.s_wready(s_wready),.s_wdata(s_wdata),.s_wstrb(s_wstrb),
@@ -69,7 +69,7 @@ module tb_axi_adversarial;
         ck(rd===32'hDEAD_BEAA, "WSTRB byte-merge (DEADBEAA)");
 
         // (3) out-of-window NPU addr -> SLVERR, not CSR-ID alias (Codex #5)
-        axil_read_resp(32'h3002_0000, rd, resp);
+        axil_read_resp(32'h3003_0000, rd, resp);   // ADR-0044: 0x3002 = ITCM now
         ck(resp===2'b10 && rd!==32'h4E505530, "decode alias -> SLVERR");
 
         // (4) TCM out-of-range offset -> SLVERR, no wrap (Codex #6)

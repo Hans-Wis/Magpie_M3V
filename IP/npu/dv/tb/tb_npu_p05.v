@@ -41,7 +41,7 @@ module tb_npu_p05;
     wire        irq, npu_start;
     wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(1024), .TCM_AW(10)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13)) dut (
         .clk(clk), .resetn(resetn),
         .s_awvalid(s_awvalid), .s_awready(s_awready), .s_awaddr(s_awaddr), .s_awprot(3'b0),
         .s_wvalid(s_wvalid), .s_wready(s_wready), .s_wdata(s_wdata), .s_wstrb(s_wstrb),
@@ -156,6 +156,7 @@ module tb_npu_p05;
 
         // ================= S1: core trap -> host =================
         $readmemh("IP/npu/sw/cq_sequencer/trap_test.hex", dut.tcm.mem);
+        $readmemh("IP/npu/sw/cq_sequencer/trap_test.hex", dut.itcm.mem);
         axil_write(A_CTRL, 32'h9);            // start + irq_enable
         wait_cond_errc_nonzero();
         chk(rd, 32'h8000_0002, "ERR_CAUSE = CORE_TRAP|illegal");
@@ -207,6 +208,7 @@ module tb_npu_p05;
         axil_read(A_ERRC, rd);
         chk(rd, 32'h0, "abort acked");
         $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.tcm.mem);
+        $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.itcm.mem);
         for (i = 0; i < 8; i = i + 1)
             axil_write(32'h3001_0680 + i*4,
                        {a_byte(i*4+3), a_byte(i*4+2), a_byte(i*4+1), a_byte(i*4)});

@@ -18,7 +18,7 @@ module tb_npu_top;
     wire [7:0] d_arlen; wire [2:0] d_arsize; wire [1:0] d_arburst,d_rresp;
     wire irq, npu_start; wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(1024),.TCM_AW(10)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13)) dut (
         .clk(clk),.resetn(resetn),
         .s_awvalid(s_awvalid),.s_awready(s_awready),.s_awaddr(s_awaddr),.s_awprot(3'b0),
         .s_wvalid(s_wvalid),.s_wready(s_wready),.s_wdata(s_wdata),.s_wstrb(s_wstrb),

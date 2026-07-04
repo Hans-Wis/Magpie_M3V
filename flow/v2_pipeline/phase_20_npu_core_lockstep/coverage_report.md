@@ -18,11 +18,11 @@
 | mat_engine.v | 8 | 74 | 10.8% |
 | npu_axil_regs.v | 47 | 155 | 30.3% |
 | npu_dma.v | 6 | 75 | 8.0% |
-| npu_tcm.v | 11 | 20 | 55.0% |
-| npu_top.v | 19 | 25 | 76.0% |
+| npu_tcm.v | 24 | 48 | 50.0% |
+| npu_top.v | 20 | 28 | 71.4% |
 | pmp.v | 5 | 40 | 12.5% |
 | rfu.v | 10 | 12 | 83.3% |
-| tb_npu_lockstep.v | 57 | 61 | 93.4% |
+| tb_npu_lockstep.v | 59 | 63 | 93.7% |
 | trigger.v | 28 | 104 | 26.9% |
 | vexu.v | 42 | 71 | 59.2% |
 

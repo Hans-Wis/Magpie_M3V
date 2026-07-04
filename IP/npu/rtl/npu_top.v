@@ -16,8 +16,10 @@
 `default_nettype none
 
 module npu_top #(
-    parameter integer TCM_WORDS = 1024,
-    parameter integer TCM_AW    = 10
+    parameter integer TCM_WORDS  = 8192,   // DTCM 32KB (ADR-0044, Coral row 4)
+    parameter integer TCM_AW     = 13,
+    parameter integer ITCM_WORDS = 2048,   // ITCM 8KB
+    parameter integer ITCM_AW    = 11
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -47,15 +49,16 @@ module npu_top #(
 );
     localparam [31:0] CORE_RESET_PC = 32'h0000_0000;
 
-    // ================= internal 1->2 AXI4-Lite decode (CSR vs TCM) =================
-    // sel 0 = CSR (addr[16]==0), sel 1 = TCM (addr[16]==1). Single-outstanding.
-    // route: 0=CSR (0x3000_xxxx), 1=TCM (0x3001_xxxx), 2=DECERR (any other NPU-window addr).
-    // Guards decode aliasing: an out-of-window address gets SLVERR, not a real register.
+    // ================= internal 1->N AXI4-Lite decode (ADR-0044) =================
+    // route: 0=CSR (0x3000_xxxx), 1=DTCM (0x3001_xxxx), 3=ITCM (0x3002_xxxx),
+    //        2=DECERR (any other NPU-window addr). Single-outstanding.
     reg  w_busy, r_busy; reg [1:0] w_route_l, r_route_l;
     function [1:0] dec; input [31:0] a; begin
-        if (a[27:17] != 11'b0)  dec = 2'd2;   // outside 0x3000/0x3001 -> DECERR
-        else if (a[16] == 1'b0) dec = 2'd0;   // 0x3000_xxxx -> CSR
-        else                    dec = 2'd1;   // 0x3001_xxxx -> TCM
+        if (a[27:18] != 10'b0)       dec = 2'd2;   // beyond the 4-page window
+        else if (a[17:16] == 2'b00)  dec = 2'd0;   // 0x3000_xxxx -> CSR
+        else if (a[17:16] == 2'b01)  dec = 2'd1;   // 0x3001_xxxx -> DTCM
+        else if (a[17:16] == 2'b10)  dec = 2'd3;   // 0x3002_xxxx -> ITCM
+        else                         dec = 2'd2;   // 0x3003_xxxx -> DECERR
     end endfunction
     wire [1:0] w_dec = dec(s_awaddr);
     wire [1:0] r_dec = dec(s_araddr);
@@ -72,35 +75,41 @@ module npu_top #(
         end
     end
 
-    // per-target port wires: c_=CSR, t_=TCM, d_=DECERR
+    // per-target port wires: c_=CSR, t_=DTCM, d_=DECERR, i_=ITCM
     wire c_awready,c_wready,c_bvalid,c_arready,c_rvalid; wire [31:0] c_rdata; wire [1:0] c_bresp,c_rresp;
     wire t_awready,t_wready,t_bvalid,t_arready,t_rvalid; wire [31:0] t_rdata; wire [1:0] t_bresp,t_rresp;
     wire d_awready,d_wready,d_bvalid,d_arready,d_rvalid; wire [31:0] d_rdata; wire [1:0] d_bresp,d_rresp;
+    wire i_awready,i_wready,i_bvalid,i_arready,i_rvalid; wire [31:0] i_rdata; wire [1:0] i_bresp,i_rresp;
 
     wire c_awvalid = s_awvalid & (w_route==2'd0);
     wire t_awvalid = s_awvalid & (w_route==2'd1);
     wire d_awvalid = s_awvalid & (w_route==2'd2);
+    wire i_awvalid = s_awvalid & (w_route==2'd3);
     wire c_wvalid  = s_wvalid & w_known & (w_route==2'd0);
     wire t_wvalid  = s_wvalid & w_known & (w_route==2'd1);
     wire d_wvalid  = s_wvalid & w_known & (w_route==2'd2);
+    wire i_wvalid  = s_wvalid & w_known & (w_route==2'd3);
     wire c_bready  = s_bready & (w_route==2'd0);
     wire t_bready  = s_bready & (w_route==2'd1);
     wire d_bready  = s_bready & (w_route==2'd2);
+    wire i_bready  = s_bready & (w_route==2'd3);
     wire c_arvalid = s_arvalid & (r_route==2'd0);
     wire t_arvalid = s_arvalid & (r_route==2'd1);
     wire d_arvalid = s_arvalid & (r_route==2'd2);
+    wire i_arvalid = s_arvalid & (r_route==2'd3);
     wire c_rready  = s_rready & (r_route==2'd0);
     wire t_rready  = s_rready & (r_route==2'd1);
     wire d_rready  = s_rready & (r_route==2'd2);
+    wire i_rready  = s_rready & (r_route==2'd3);
 
-    assign s_awready = (w_route==2'd0)?c_awready : (w_route==2'd1)?t_awready : d_awready;
-    assign s_wready  = w_known ? ((w_route==2'd0)?c_wready : (w_route==2'd1)?t_wready : d_wready) : 1'b0;
-    assign s_bvalid  = (w_route==2'd0)?c_bvalid : (w_route==2'd1)?t_bvalid : d_bvalid;
-    assign s_bresp   = (w_route==2'd0)?c_bresp  : (w_route==2'd1)?t_bresp  : d_bresp;
-    assign s_arready = (r_route==2'd0)?c_arready : (r_route==2'd1)?t_arready : d_arready;
-    assign s_rvalid  = (r_route==2'd0)?c_rvalid : (r_route==2'd1)?t_rvalid : d_rvalid;
-    assign s_rdata   = (r_route==2'd0)?c_rdata  : (r_route==2'd1)?t_rdata  : d_rdata;
-    assign s_rresp   = (r_route==2'd0)?c_rresp  : (r_route==2'd1)?t_rresp  : d_rresp;
+    assign s_awready = (w_route==2'd0)?c_awready : (w_route==2'd1)?t_awready : (w_route==2'd3)?i_awready : d_awready;
+    assign s_wready  = w_known ? ((w_route==2'd0)?c_wready : (w_route==2'd1)?t_wready : (w_route==2'd3)?i_wready : d_wready) : 1'b0;
+    assign s_bvalid  = (w_route==2'd0)?c_bvalid : (w_route==2'd1)?t_bvalid : (w_route==2'd3)?i_bvalid : d_bvalid;
+    assign s_bresp   = (w_route==2'd0)?c_bresp  : (w_route==2'd1)?t_bresp  : (w_route==2'd3)?i_bresp  : d_bresp;
+    assign s_arready = (r_route==2'd0)?c_arready : (r_route==2'd1)?t_arready : (r_route==2'd3)?i_arready : d_arready;
+    assign s_rvalid  = (r_route==2'd0)?c_rvalid : (r_route==2'd1)?t_rvalid : (r_route==2'd3)?i_rvalid : d_rvalid;
+    assign s_rdata   = (r_route==2'd0)?c_rdata  : (r_route==2'd1)?t_rdata  : (r_route==2'd3)?i_rdata  : d_rdata;
+    assign s_rresp   = (r_route==2'd0)?c_rresp  : (r_route==2'd1)?t_rresp  : (r_route==2'd3)?i_rresp  : d_rresp;
 
     // ================= CSR/DMA register wires =================
     wire [31:0] dma_src, dma_dst, wb_src, wb_dst;
@@ -119,7 +128,7 @@ module npu_top #(
     wire [ 2:0] core_dbg_state;
 
     wire        core_i_en;
-    wire [TCM_AW-1:0] core_i_addr;
+    wire [ITCM_AW-1:0] core_i_addr;
     wire [31:0] core_i_rdata;
     wire [TCM_AW-1:0] core_d_addr;
     wire [31:0] core_d_rdata;
@@ -149,10 +158,11 @@ module npu_top #(
     assign core_csr_addr = dbus_addr[7:0];
     assign ibus_ready   = 1'b1;
     assign core_i_en    = ibus_req;
-    assign core_i_addr  = ibus_addr[TCM_AW+1:2];
+    assign core_i_addr  = ibus_addr[ITCM_AW+1:2];   // fetch = ITCM (ADR-0044)
     assign ibus_rdata   = core_i_rdata;
     assign core_d_addr  = dbus_addr[TCM_AW+1:2];
     assign core_d_we    = dbus_req & dbus_we & d_is_tcm;
+    wire   core_d_re    = dbus_req & ~dbus_we & d_is_tcm;   // ADR-0044 checker
     assign dbus_ready   = d_is_csr ? (dbus_we ? 1'b1 : core_csr_rd_pending) :
                           (d_is_mbox ? 1'b1 : (dbus_we ? core_d_wgrant : 1'b1));
     assign dbus_rdata   = d_is_csr ? core_csr_rdata :
@@ -213,7 +223,7 @@ module npu_top #(
     wire [2:0]  mat_cmd;
     wire [3:0]  mat_bank;
     wire [7:0]  mat_rpt;
-    wire              eng_we;
+    wire              eng_we, eng_a_re, eng_b_re;
     wire [TCM_AW-1:0] eng_a_addr, eng_b_addr, eng_waddr;
     wire [255:0]      eng_a_rdata, eng_b_rdata;
     wire [31:0]       eng_wdata;
@@ -225,8 +235,8 @@ module npu_top #(
         .rs_mult(mat_mult), .rs_shift(mat_rsp[7:0]), .rs_zp(mat_rsp[15:8]),
         .rs_min(mat_clamp[7:0]), .rs_max(mat_clamp[15:8]), .out_base(mat_out_base),
         .busy(mat_busy), .done(mat_done), .err_param(mat_err),
-        .t_a_addr(eng_a_addr), .t_a_rdata(eng_a_rdata),
-        .t_b_addr(eng_b_addr), .t_b_rdata(eng_b_rdata),
+        .t_a_re(eng_a_re), .t_a_addr(eng_a_addr), .t_a_rdata(eng_a_rdata),
+        .t_b_re(eng_b_re), .t_b_addr(eng_b_addr), .t_b_rdata(eng_b_rdata),
         .t_we(eng_we), .t_waddr(eng_waddr), .t_wdata(eng_wdata)
     );
 
@@ -257,16 +267,16 @@ module npu_top #(
     wire dma_we, dma_re;
     wire [TCM_AW-1:0] dma_waddr, dma_raddr;
     wire [31:0] dma_wdata, dma_rdata;
-    wire [11:0] dma_buf_addr, dma_buf_raddr;
+    wire [TCM_AW-1:0] dma_buf_addr, dma_buf_raddr;
     wire dma_busy_engine, dma_done_engine;
     wire dma_start_write = wb_go & ~dma_go;     // preserve read GO if both pulses collide
     wire dma_start = dma_go | wb_go;
     wire [31:0] dma_desc_addr = dma_start_write ? wb_dst : dma_src;
-    wire [11:0] dma_desc_word = dma_start_write ? wb_src[11:0] : dma_dst[11:0];
+    wire [TCM_AW-1:0] dma_desc_word = dma_start_write ? wb_src[TCM_AW-1:0] : dma_dst[TCM_AW-1:0];
     wire [16:0] dma_desc_len  = dma_start_write ? wb_len : dma_len;
     reg dma_mode_write_l;
-    assign dma_waddr = dma_buf_addr[TCM_AW-1:0];
-    assign dma_raddr = dma_buf_raddr[TCM_AW-1:0];
+    assign dma_waddr = dma_buf_addr;
+    assign dma_raddr = dma_buf_raddr;
     assign dma_busy = dma_busy_engine & ~dma_mode_write_l;
     assign wb_busy  = dma_busy_engine &  dma_mode_write_l;
     assign dma_done = dma_done_engine & ~dma_mode_write_l;
@@ -279,7 +289,7 @@ module npu_top #(
             dma_mode_write_l <= dma_start_write;
     end
 
-    npu_dma #(.BUF_AW(12)) dma (
+    npu_dma #(.BUF_AW(TCM_AW)) dma (
         .clk(clk), .resetn(resetn),
         .go(dma_start), .abort_i(npu_abort), .write_mode(dma_start_write),
         .src_addr(dma_desc_addr), .dst_word(dma_desc_word), .len_beats(dma_desc_len),
@@ -306,12 +316,23 @@ module npu_top #(
         .s_axi_rvalid(t_rvalid),.s_axi_rready(t_rready),.s_axi_rdata(t_rdata),.s_axi_rresp(t_rresp),
         .dma_we(dma_we),.dma_waddr(dma_waddr),.dma_wdata(dma_wdata),
         .dma_re(dma_re),.dma_raddr(dma_raddr),.dma_rdata(dma_rdata),
-        .core_i_en(core_i_en),.core_i_addr(core_i_addr),.core_i_rdata(core_i_rdata),
+        .core_d_re(core_d_re),
         .core_d_addr(core_d_addr),.core_d_rdata(core_d_rdata),
         .core_d_we(core_d_we),.core_d_wdata(dbus_wdata),.core_d_wstrb(dbus_wstrb),.core_d_wgrant(core_d_wgrant),
-        .eng_a_addr(eng_a_addr),.eng_a_rdata(eng_a_rdata),
-        .eng_b_addr(eng_b_addr),.eng_b_rdata(eng_b_rdata),
+        .eng_a_re(eng_a_re),.eng_a_addr(eng_a_addr),.eng_a_rdata(eng_a_rdata),
+        .eng_b_re(eng_b_re),.eng_b_addr(eng_b_addr),.eng_b_rdata(eng_b_rdata),
         .eng_we(eng_we),.eng_waddr(eng_waddr),.eng_wdata(eng_wdata)
+    );
+
+    // ================= ITCM (ADR-0044: fetch + host 0x3002 window) =================
+    npu_itcm #(.WORDS(ITCM_WORDS), .AW(ITCM_AW)) itcm (
+        .clk(clk), .resetn(resetn),
+        .s_axi_awvalid(i_awvalid),.s_axi_awready(i_awready),.s_axi_awaddr(s_awaddr),.s_axi_awprot(s_awprot),
+        .s_axi_wvalid(i_wvalid),.s_axi_wready(i_wready),.s_axi_wdata(s_wdata),.s_axi_wstrb(s_wstrb),
+        .s_axi_bvalid(i_bvalid),.s_axi_bready(i_bready),.s_axi_bresp(i_bresp),
+        .s_axi_arvalid(i_arvalid),.s_axi_arready(i_arready),.s_axi_araddr(s_araddr),.s_axi_arprot(s_arprot),
+        .s_axi_rvalid(i_rvalid),.s_axi_rready(i_rready),.s_axi_rdata(i_rdata),.s_axi_rresp(i_rresp),
+        .core_i_en(core_i_en),.core_i_addr(core_i_addr),.core_i_rdata(core_i_rdata)
     );
 
     // ================= DECERR hole (out-of-window NPU addresses) =================

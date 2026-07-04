@@ -33,7 +33,7 @@ module tb_npu_core_smoke;
     wire        irq, npu_start;
     wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(1024), .TCM_AW(10)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13)) dut (
         .clk(clk), .resetn(resetn),
         .s_awvalid(s_awvalid), .s_awready(s_awready), .s_awaddr(s_awaddr), .s_awprot(3'b0),
         .s_wvalid(s_wvalid), .s_wready(s_wready), .s_wdata(s_wdata), .s_wstrb(s_wstrb),
@@ -161,12 +161,12 @@ module tb_npu_core_smoke;
 
     task load_program(input [31:0] word1);
         begin
-            axil_write(32'h3001_0000, 32'h000100B7);
-            axil_write(32'h3001_0004, word1);
-            axil_write(32'h3001_0008, 32'h10202023);
-            axil_write(32'h3001_000C, 32'h00100213);
-            axil_write(32'h3001_0010, 32'h0040A023);
-            axil_write(32'h3001_0014, 32'h0000006F);
+            axil_write(32'h3002_0000, 32'h000100B7);
+            axil_write(32'h3002_0004, word1);
+            axil_write(32'h3002_0008, 32'h10202023);
+            axil_write(32'h3002_000C, 32'h00100213);
+            axil_write(32'h3002_0010, 32'h0040A023);
+            axil_write(32'h3002_0014, 32'h0000006F);
         end
     endtask
 
@@ -210,7 +210,7 @@ module tb_npu_core_smoke;
         axil_read(32'h3000_0008, rd);
         chk({30'b0, rd[1:0]}, 32'h0000_0000, "STATUS.done_cleared");
 
-        axil_write(32'h3001_0004, 32'h03700113);
+        axil_write(32'h3002_0004, 32'h03700113);
         axil_write(32'h3000_0004, 32'h0000_0009);
         wait_done();
         axil_read(32'h3001_0100, rd);

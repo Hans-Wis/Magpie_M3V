@@ -37,7 +37,7 @@ module tb_npu_core_arb;
     wire        irq, npu_start;
     wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(1024), .TCM_AW(10)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13)) dut (
         .clk(clk), .resetn(resetn),
         .s_awvalid(s_awvalid), .s_awready(s_awready), .s_awaddr(s_awaddr), .s_awprot(3'b0),
         .s_wvalid(s_wvalid), .s_wready(s_wready), .s_wdata(s_wdata), .s_wstrb(s_wstrb),
@@ -137,17 +137,17 @@ module tb_npu_core_arb;
 
         // core program: 300-iteration store/load/increment loop at TCM word 64,
         // then DONE mailbox store, then spin. All hand-assembled rv32im.
-        axil_write(32'h3001_0000, 32'h000100B7);  // lui  x1, 0x10   (mailbox base)
-        axil_write(32'h3001_0004, 32'h00000293);  // addi x5, x0, 0
-        axil_write(32'h3001_0008, 32'h12C00313);  // addi x6, x0, 300
-        axil_write(32'h3001_000C, 32'h10502023);  // loop: sw x5, 0x100(x0)
-        axil_write(32'h3001_0010, 32'h10002383);  //       lw x7, 0x100(x0)
-        axil_write(32'h3001_0014, 32'h00138293);  //       addi x5, x7, 1
-        axil_write(32'h3001_0018, 32'hFFF30313);  //       addi x6, x6, -1
-        axil_write(32'h3001_001C, 32'hFE0318E3);  //       bne x6, x0, loop
-        axil_write(32'h3001_0020, 32'h00100413);  // addi x8, x0, 1
-        axil_write(32'h3001_0024, 32'h0080A023);  // sw x8, 0(x1)    (DONE)
-        axil_write(32'h3001_0028, 32'h0000006F);  // jal x0, 0
+        axil_write(32'h3002_0000, 32'h000100B7);  // lui  x1, 0x10   (mailbox base)
+        axil_write(32'h3002_0004, 32'h00000293);  // addi x5, x0, 0
+        axil_write(32'h3002_0008, 32'h12C00313);  // addi x6, x0, 300
+        axil_write(32'h3002_000C, 32'h10502023);  // loop: sw x5, 0x100(x0)
+        axil_write(32'h3002_0010, 32'h10002383);  //       lw x7, 0x100(x0)
+        axil_write(32'h3002_0014, 32'h00138293);  //       addi x5, x7, 1
+        axil_write(32'h3002_0018, 32'hFFF30313);  //       addi x6, x6, -1
+        axil_write(32'h3002_001C, 32'hFE0318E3);  //       bne x6, x0, loop
+        axil_write(32'h3002_0020, 32'h00100413);  // addi x8, x0, 1
+        axil_write(32'h3002_0024, 32'h0080A023);  // sw x8, 0(x1)    (DONE)
+        axil_write(32'h3002_0028, 32'h0000006F);  // jal x0, 0
 
         // release the core, then immediately stream a 256-beat DMA burst into
         // TCM words 512..767 (disjoint from program @0..10 and data @64)
@@ -178,9 +178,9 @@ module tb_npu_core_arb;
         // core result: 300 iterations leave mem[word64] = 299
         axil_read(32'h3001_0100, rd);
         chk(rd, 32'd299, "TCM.core_result");
-        // program region untouched by DMA/core
-        axil_read(32'h3001_0000, rd);
-        chk(rd, 32'h000100B7, "TCM.program_word0");
+        // program (ITCM, ADR-0044) untouched by DMA/core
+        axil_read(32'h3002_0000, rd);
+        chk(rd, 32'h000100B7, "ITCM.program_word0");
 
         $display("NPU_CORE_ARB: %0d checks, %0d errors", checks, errors);
         if (errors == 0) $display("NPU_CORE_ARB_PASS");

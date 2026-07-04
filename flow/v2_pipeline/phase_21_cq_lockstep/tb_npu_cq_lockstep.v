@@ -65,6 +65,7 @@ module tb_npu_cq_lockstep;
     integer i;
     initial begin
         $readmemh("firmware.hex", dut.tcm.mem);
+        $readmemh("firmware.hex", dut.itcm.mem);
         // shared memory: descriptor ring slot 0 @ byte 0x400 = MAT.LOAD_W(src=0x800, 2x2)
         shared.mem[32'h100] = 32'h0000_0002;
         shared.mem[32'h101] = 32'h0000_0800;
@@ -143,7 +144,7 @@ module tb_npu_cq_lockstep;
             $finish;
         end else if (npu_start_o && dut.u_npu_core.u_core.wb_instr_retired && !dut.u_npu_core.u_core.ex_wb_illegal_r) begin
             /* verilator lint_off BLKSEQ */
-            commit_instr = dut.tcm.mem[dut.u_npu_core.u_core.ex_wb_pc_r[11:2]];
+            commit_instr = dut.itcm.mem[dut.u_npu_core.u_core.ex_wb_pc_r[12:2]];
             /* verilator lint_on BLKSEQ */
             $fdisplay(trace_fd, "%0d,%08x,%08x,%0d,%08x",
                       commit_count,

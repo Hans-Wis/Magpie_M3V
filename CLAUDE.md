@@ -24,7 +24,7 @@
 - **cpu_m1 現在是「參數化單一 spine」**(ADR-0032,取代原「凍結複製」構想):`EN_RVC/EN_BP/EN_RAS`(+ 規劃中 `FETCH_SRC=TCM`)。host = 全開;NPU = stripped run-to-completion sequencer,從 TCM 取指、驅動 RVV/矩陣。
 - **NPU domain(`IP/npu/`)**:`npu_top`(AXI4-Lite CSR@0x3000 / TCM@0x3001 / DECERR 解碼)、`npu_dma`(AXI4-full 突發)、`npu_tcm`、level IRQ。淨新 ML datapath(RVV Zve32x + GEMV/矩陣 + writeback DMA + command-queue)長在這裡。
 
-**記憶體映射(以實作為準)**:NPU_CSR **0x3000_xxxx** / TCM **0x3001_xxxx** / SHARED_MEM(權重+CQ ring)**0x8000_xxxx**。(plan HTML 早稿的 0x4000 作廢。)
+**記憶體映射(以實作為準)**:NPU_CSR **0x3000_xxxx** / DTCM 32KB **0x3001_xxxx** / **ITCM 8KB 0x3002_xxxx**(ADR-0044 Harvard;鏡像載入契約)/ SHARED_MEM(權重+CQ ring)**0x8000_xxxx**。(plan HTML 早稿的 0x4000 作廢。)
 
 **已建置 + 已驗證(Verilator + Spike lockstep,gates green)**:
 | Phase | 內容 | 證據 |
@@ -41,7 +41,7 @@
 
 **Roadmap(對 Coral 對等,含缺漏 folded — 見 `docs/reviews/2026-07-03_coral_gap_review.md`)**:
 - **P0 缺漏:全部完成(2026-07-04)** ✅ ①writeback ②command queue ③矩陣 64-MAC+requant ④vector-CSR lockstep(隨 Phase 3)⑤traps/abort(ADR-0038,gate_47)。RING_OVERRUN 偵測 deferred(host-side ABI)。
-- Phase 3 RVV ✅(3A-3D,kernel=240)→ Phase 4 矩陣 64-MAC+requant ✅ → **Phase 6 首戰 ✅(ADR-0039:TFLM int8 FC 六 corner bit-exact e2e,gate_48)** → **256 MAC/cycle ✅(ADR-0040,throughput gate 實測)** → **TFLM runtime AOT ✅(ADR-0041:真 .tflite 2 層 MLP 多 op 鏈接 bit-exact,gate_49)** → **CNN ✅(ADR-0042:Conv2D per-channel + K-chunking,gate_50)+ 卸載收尾 ✅(ADR-0043:2D/strided DMA + host producer ABI,gate_51)** → 續:POOL/大模型、列 4 記憶體 sizing、列 8 RVVI、Phase 7 harden/PPA/+F。
+- Phase 3 RVV ✅(3A-3D,kernel=240)→ Phase 4 矩陣 64-MAC+requant ✅ → **Phase 6 首戰 ✅(ADR-0039:TFLM int8 FC 六 corner bit-exact e2e,gate_48)** → **256 MAC/cycle ✅(ADR-0040,throughput gate 實測)** → **TFLM runtime AOT ✅(ADR-0041:真 .tflite 2 層 MLP 多 op 鏈接 bit-exact,gate_49)** → **CNN ✅(ADR-0042:Conv2D per-channel + K-chunking,gate_50)+ 卸載收尾 ✅(ADR-0043:2D/strided DMA + host producer ABI,gate_51)** → **列 4 記憶體 ✅(ADR-0044:ITCM 8K/DTCM 32K Harvard + banked DTCM,gate_52)** → 續:列 8 RVVI、POOL/大模型、Phase 7 harden/PPA/+F。
 - **P1**:NPU traps/ERR_CAUSE、cache flush-before-doorbell、ITCM/DTCM sizing(8K/32K)、strided/2D DMA、RVVI/RVFI trace。
 - **scope-cut(已記錄):** scalar F(int8-first)、L0 I-cache、clock/power gating、double-buffer。
 

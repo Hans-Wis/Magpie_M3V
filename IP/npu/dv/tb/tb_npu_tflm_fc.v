@@ -39,7 +39,7 @@ module tb_npu_tflm_fc;
     wire        irq, npu_start;
     wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(1024), .TCM_AW(10)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13)) dut (
         .clk(clk), .resetn(resetn),
         .s_awvalid(s_awvalid), .s_awready(s_awready), .s_awaddr(s_awaddr), .s_awprot(3'b0),
         .s_wvalid(s_wvalid), .s_wready(s_wready), .s_wdata(s_wdata), .s_wstrb(s_wstrb),
@@ -67,7 +67,10 @@ module tb_npu_tflm_fc;
         .bvalid(m_bvalid), .bready(m_bready), .bresp(m_bresp)
     );
 
-    initial $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.tcm.mem);
+    initial begin
+        $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.tcm.mem);
+        $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.itcm.mem);
+    end
 
     localparam [31:0] A_CTRL = 32'h3000_0004, A_STATUS = 32'h3000_0008;
     localparam [31:0] A_BASE = 32'h3000_0040, A_SIZE = 32'h3000_0044, A_TAIL = 32'h3000_004C;

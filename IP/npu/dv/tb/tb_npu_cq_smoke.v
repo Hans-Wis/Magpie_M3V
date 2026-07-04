@@ -33,7 +33,7 @@ module tb_npu_cq_smoke;
     wire        irq, npu_start;
     wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(1024), .TCM_AW(10)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13)) dut (
         .clk(clk), .resetn(resetn),
         .s_awvalid(s_awvalid), .s_awready(s_awready), .s_awaddr(s_awaddr), .s_awprot(3'b0),
         .s_wvalid(s_wvalid), .s_wready(s_wready), .s_wdata(s_wdata), .s_wstrb(s_wstrb),
@@ -79,7 +79,10 @@ module tb_npu_cq_smoke;
     integer i;
     reg [31:0] rd;
 
-    initial $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.tcm.mem);
+    initial begin
+        $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.tcm.mem);
+        $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.itcm.mem);
+    end
 
     task fail_msg(input [255:0] nm);
         begin

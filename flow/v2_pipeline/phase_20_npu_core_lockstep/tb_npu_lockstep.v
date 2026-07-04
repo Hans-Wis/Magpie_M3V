@@ -51,7 +51,10 @@ module tb_npu_lockstep;
     always #5 clk = ~clk;
 
     // ---- program image: backdoor into the REAL npu_tcm array ----
-    initial $readmemh("firmware.hex", dut.tcm.mem);
+    initial begin
+        $readmemh("firmware.hex", dut.tcm.mem);
+        $readmemh("firmware.hex", dut.itcm.mem);
+    end
 
     // ---- AXI-Lite single-outstanding write task (negedge-driven; AW/W tracked
     // independently so a same-cycle W acceptance cannot deadlock the B wait) ----
@@ -140,7 +143,7 @@ module tb_npu_lockstep;
             $finish;
         end else if (npu_start_o && dut.u_npu_core.u_core.wb_instr_retired && !dut.u_npu_core.u_core.ex_wb_illegal_r) begin
             /* verilator lint_off BLKSEQ */
-            commit_instr = dut.tcm.mem[dut.u_npu_core.u_core.ex_wb_pc_r[11:2]];  // EN_RVC=0: 32-bit only
+            commit_instr = dut.itcm.mem[dut.u_npu_core.u_core.ex_wb_pc_r[12:2]];  // EN_RVC=0: 32-bit only
             /* verilator lint_on BLKSEQ */
             // x0 writes (e.g. jalr x0) are architecturally invisible — normalize
             // them to "no writeback" exactly as Spike reports them.

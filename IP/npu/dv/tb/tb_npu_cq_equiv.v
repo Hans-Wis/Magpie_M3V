@@ -39,7 +39,7 @@ module tb_npu_cq_equiv;
     wire        irq, npu_start;
     wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(1024), .TCM_AW(10)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13)) dut (
         .clk(clk), .resetn(resetn),
         .s_awvalid(s_awvalid), .s_awready(s_awready), .s_awaddr(s_awaddr), .s_awprot(3'b0),
         .s_wvalid(s_wvalid), .s_wready(s_wready), .s_wdata(s_wdata), .s_wstrb(s_wstrb),
@@ -67,7 +67,10 @@ module tb_npu_cq_equiv;
         .bvalid(m_bvalid), .bready(m_bready), .bresp(m_bresp)
     );
 
-    initial $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.tcm.mem);
+    initial begin
+        $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.tcm.mem);
+        $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.itcm.mem);
+    end
 
     localparam [31:0] A_CTRL = 32'h3000_0004, A_STATUS = 32'h3000_0008;
     localparam [31:0] A_DSRC = 32'h3000_0020, A_DDST = 32'h3000_0024, A_DLEN = 32'h3000_0028, A_DGO = 32'h3000_002C;
@@ -194,7 +197,7 @@ module tb_npu_cq_equiv;
         axil_write(A_CTRL, 32'h0);            // stop sequencer
         axil_write(A_CQCTRL, 32'h0);          // CQ disabled: legacy IRQ/CSR semantics
         for (i = 0; i < 16; i = i + 1) shared.mem[32'h600 + i] = 32'hDEADBEEF;
-        for (i = 0; i < 16; i = i + 1) dut.tcm.mem[32'h180 + i] = 32'h0;
+        for (i = 0; i < 16; i = i + 1) dut.tcm.mem[TCM_W_WORD + i] = 32'h0;
         begin : phase_b
             integer b_aw, b_w, b_wl, b_arw;
             b_aw = aw_cnt; b_w = w_cnt; b_wl = wlast_cnt; b_arw = ar_weight_cnt;

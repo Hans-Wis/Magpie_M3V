@@ -50,8 +50,10 @@ module mat_engine #(
 
     // ---- TCM ports (ADR-0040: two 256-bit combinational read ports feed
     //      4 outer products per cycle; write port unchanged) ----
+    output wire              t_a_re,    // ADR-0044: window-consume strobes
     output wire [TCM_AW-1:0] t_a_addr,
     input  wire [255:0]      t_a_rdata,
+    output wire              t_b_re,
     output wire [TCM_AW-1:0] t_b_addr,
     input  wire [255:0]      t_b_rdata,
     output reg               t_we,
@@ -135,6 +137,9 @@ module mat_engine #(
     // ---- TCM wide read addresses (word index of the 8-word window) ----
     assign t_a_addr = a_ptr[TCM_AW+1:2];
     assign t_b_addr = b_ptr[TCM_AW+1:2];
+    assign t_a_re   = (state == S_RUN) || (state == S_LA) ||
+                      (state == S_PRM) || (state == S_PRS);
+    assign t_b_re   = (state == S_RUN);
 
     wire param_bad =
         (cmd == CMD_OP      && ((arg_bank >= 4'd4) || (arg_rpt == 8'd0) ||
