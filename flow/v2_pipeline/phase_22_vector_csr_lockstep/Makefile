@@ -16,7 +16,7 @@ GCC_MABI  = ilp32
 CPU_RTL_DIR = ../../../IP/cpu_m1/rtl
 NPU_RTL_DIR = ../../../IP/npu/rtl
 CPU_SRCS = $(addprefix $(CPU_RTL_DIR)/, rfu.v alu.v bmu.v idu.v ifu.v lsu.v csr.v \
-           trigger.v pmp.v mul.v div.v forward.v hazard.v bp.v ras.v cdec.v vexu.v core.v cpu_m1_top.v)
+           trigger.v pmp.v mul.v div.v forward.v hazard.v bp.v ras.v cdec.v vexu.v fexu.v core.v cpu_m1_top.v)
 NPU_SRCS = $(addprefix $(NPU_RTL_DIR)/, npu_top.v npu_axil_regs.v npu_dma.v npu_tcm.v axil_decerr.v mat_engine.v)
 TB_RTL   = ../phase_20_npu_core_lockstep/tb_npu_lockstep.v
 EXTRA_V ?=
@@ -93,6 +93,18 @@ pool:
 
 f1:
 	$(MAKE) FW_ASM=firmware_f1.S MIN_COMMITS=100 lockstep.log
+
+f2:
+	$(MAKE) FW_ASM=firmware_f2.S MIN_COMMITS=200 lockstep.log
+
+FSEED   ?= 20260705
+FBLOCKS ?= 40
+.PHONY: firmware_frand.S
+firmware_frand.S: gen_float_random.py
+	python3 gen_float_random.py --seed $(FSEED) --blocks $(FBLOCKS) --out $@
+
+frand: firmware_frand.S
+	$(MAKE) FW_ASM=firmware_frand.S MIN_COMMITS=800 lockstep.log
 
 .PHONY: firmware_vrand.S
 firmware_vrand.S: gen_vector_random.py

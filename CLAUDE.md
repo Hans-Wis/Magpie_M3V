@@ -41,9 +41,9 @@
 
 **Roadmap(對 Coral 對等,含缺漏 folded — 見 `docs/reviews/2026-07-03_coral_gap_review.md`)**:
 - **P0 缺漏:全部完成(2026-07-04)** ✅ ①writeback ②command queue ③矩陣 64-MAC+requant ④vector-CSR lockstep(隨 Phase 3)⑤traps/abort(ADR-0038,gate_47)。RING_OVERRUN 偵測 deferred(host-side ABI)。
-- Phase 3 RVV ✅(3A-3D,kernel=240)→ Phase 4 矩陣 64-MAC+requant ✅ → **Phase 6 首戰 ✅(ADR-0039:TFLM int8 FC 六 corner bit-exact e2e,gate_48)** → **256 MAC/cycle ✅(ADR-0040,throughput gate 實測)** → **TFLM runtime AOT ✅(ADR-0041:真 .tflite 2 層 MLP 多 op 鏈接 bit-exact,gate_49)** → **CNN ✅(ADR-0042:Conv2D per-channel + K-chunking,gate_50)+ 卸載收尾 ✅(ADR-0043:2D/strided DMA + host producer ABI,gate_51)** → **列 4 記憶體 ✅(ADR-0044:ITCM 8K/DTCM 32K Harvard + banked DTCM,gate_52)** → **列 8 RVFI/RVVI-lite ✅(ADR-0045:lockstep 換源自 trace port 全符,gate_53;PARTIAL,v1=insn/mem/mtval)** → **功能補齊中(User 裁示:功能→架構優化→簽核)**:列 6 hard-reset ✅(ADR-0047,gate_54)→ 列 8 trace v1 ✅(ADR-0048:insn/mem/mtval/mstatus,列 8 GREEN-leaning)→ **RVV Phase-A 收齊 S1-S4 ✅(ADR-0049;POOL 對 TFLM bit-exact 含 half-away 引理,gate_56-59;列 2 GREEN-leaning)** → scalar F **F1 ✅**(ADR-0050:fexu+fcsr/FS 契約+F-reg lockstep,gate_60)→ 續:F2 加減乘、F3 FMA、F4 div/sqrt。
+- Phase 3 RVV ✅(3A-3D,kernel=240)→ Phase 4 矩陣 64-MAC+requant ✅ → **Phase 6 首戰 ✅(ADR-0039:TFLM int8 FC 六 corner bit-exact e2e,gate_48)** → **256 MAC/cycle ✅(ADR-0040,throughput gate 實測)** → **TFLM runtime AOT ✅(ADR-0041:真 .tflite 2 層 MLP 多 op 鏈接 bit-exact,gate_49)** → **CNN ✅(ADR-0042:Conv2D per-channel + K-chunking,gate_50)+ 卸載收尾 ✅(ADR-0043:2D/strided DMA + host producer ABI,gate_51)** → **列 4 記憶體 ✅(ADR-0044:ITCM 8K/DTCM 32K Harvard + banked DTCM,gate_52)** → **列 8 RVFI/RVVI-lite ✅(ADR-0045:lockstep 換源自 trace port 全符,gate_53;PARTIAL,v1=insn/mem/mtval)** → **功能補齊中(User 裁示:功能→架構優化→簽核)**:列 6 hard-reset ✅(ADR-0047,gate_54)→ 列 8 trace v1 ✅(ADR-0048:insn/mem/mtval/mstatus,列 8 GREEN-leaning)→ **RVV Phase-A 收齊 S1-S4 ✅(ADR-0049;POOL 對 TFLM bit-exact 含 half-away 引理,gate_56-59;列 2 GREEN-leaning)** → **scalar F 全套 ✅(ADR-0050 F1-F4:fexu softfloat-3 忠實轉寫 + fcsr/FS 契約 + F-reg lockstep;directed 135+269 + random ~5.5K commits vs Spike rv32imf;gate_60/61;列 1 GREEN,F4 組合邏輯=Phase 7 多拍化偏離已記)** → **功能補齊完成** → 下一步:架構優化評估(Grok Route A:MAC tree pipelining/128b port/double-buffer)→ VCS/Spyglass/coverage 簽核。
 - **P1**:NPU traps/ERR_CAUSE、cache flush-before-doorbell、ITCM/DTCM sizing(8K/32K)、strided/2D DMA、RVVI/RVFI trace。
-- **scope-cut(已記錄):** scalar F(int8-first)、L0 I-cache、clock/power gating、double-buffer。
+- **scope-cut(已記錄):** L0 I-cache、clock/power gating、double-buffer。(scalar F 已於 ADR-0050 回收完成。)
 
 ---
 
@@ -61,7 +61,7 @@
 
 | 面向 | Coral | 我們的對等目標 | 狀態 |
 |---|---|---|---|
-| 純量 ISA | RV32IM**F**_Zbb | RV32IM_Zbb(+F 後補);參數化 stripped sequencer | Step2 ✅ / F deferred |
+| 純量 ISA | RV32IM**F**_Zbb | RV32IMF(sequencer EN_F=1);參數化 stripped sequencer | ✅ GREEN(ADR-0050,gate_60/61) |
 | 向量 | RVV Zve32x VLEN128 + vtype/vl/vstart/vxsat | 標準 RVV Zve32x + **向量 CSR lockstep 契約** | P0 ④,Phase 3 |
 | 矩陣 | 256-MAC outer-product int8→int32 + 8×8×32b acc + requant | 64→256 MAC + acc + scale/ZP requant + NumPy golden | P0 ③,Phase 4/5 |
 | 記憶體 | ITCM 8K/DTCM 32K,128-bit | ITCM/DTCM sizing + 128-bit port | P1 |

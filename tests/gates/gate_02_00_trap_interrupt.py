@@ -91,8 +91,8 @@ def test_idu_decodes_csr_ops_and_mret_as_legal_system_instructions():
         "assign csr_addr     = instr[31:20];",
         "assign csr_zimm     = {27'b0, instr[19:15]};",
         "is_csr         : wb_sel = `WB_SEL_CSR;",
-        "| is_csr | is_mret;",
-        "assign illegal = !known_opcode;",
+        "| is_jalr | is_csr | is_mret | is_vset | is_vexec | is_fexec_w;",
+        "assign illegal = !known_opcode | bmu_slot_illegal;",
     ]:
         assert required in text
 

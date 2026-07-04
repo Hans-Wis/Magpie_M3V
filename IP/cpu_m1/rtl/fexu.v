@@ -76,21 +76,33 @@ module fexu #(
     wire op_cvtsw = is_opfp && fmt_s && (f5 == 5'b11010) && (rs2f <= 5'd1); // s <- w/wu
     wire cvt_u    = rs2f[0];
 
-    // rounding mode: only the cvt ops consume rm in F1
-    wire needs_rm = op_cvtws || op_cvtsw;
+    // ---- F2/F3/F4 (ADR-0050): arithmetic / FMA / div-sqrt ----
+    wire op_fadd  = is_opfp && fmt_s && (f5 == 5'b00000);
+    wire op_fsub  = is_opfp && fmt_s && (f5 == 5'b00001);
+    wire op_fmul  = is_opfp && fmt_s && (f5 == 5'b00010);
+    wire op_fdiv  = is_opfp && fmt_s && (f5 == 5'b00011);
+    wire op_fsqrt = is_opfp && fmt_s && (f5 == 5'b01011) && (rs2f == 5'd0);
+    wire op_fma   = is_fma_opc && fmt_s;
+    wire fma_negp = q_instr[3];                 // fnmsub/fnmadd negate product
+    wire fma_negc = q_instr[2];                 // fmsub/fnmadd negate addend
+
+    wire needs_rm = op_cvtws || op_cvtsw || op_fadd || op_fsub || op_fmul ||
+                    op_fdiv || op_fsqrt || op_fma;
     wire [2:0] rm_eff = (f3 == 3'b111) ? q_frm : f3;
     wire rm_bad = needs_rm &&
                   ((f3 == 3'b101) || (f3 == 3'b110) ||
                    ((f3 == 3'b111) && (q_frm > 3'd4)));
 
     wire known_op = op_sgnj || op_mnmx || op_cmp || op_mvxw || op_class ||
-                    op_mvwx || op_cvtws || op_cvtsw || q_is_flw || q_is_fsw;
+                    op_mvwx || op_cvtws || op_cvtsw || q_is_flw || q_is_fsw ||
+                    op_fadd || op_fsub || op_fmul || op_fdiv || op_fsqrt || op_fma;
     assign q_illegal = q_hit && (!known_op || rm_bad);
 
     // ---------------- F regfile ----------------
     reg [31:0] fregs [0:31];
     wire [31:0] fa = fregs[rs1_i];
     wire [31:0] fb = fregs[rs2f];
+    wire [31:0] fc = fregs[q_instr[31:27]];     // FMA rs3
     assign q_fsw_data = fb;         // fsw stores f[rs2]
 
     always @(posedge clk) begin
@@ -285,13 +297,478 @@ module fexu #(
         end
     end
 
+    // =========================================================================
+    // F2/F3/F4 — transcribed from Berkeley softfloat-3 (the same algorithms
+    // Spike executes), so lockstep equivalence is by construction:
+    // roundPackToF32 (tininess AFTER rounding), addMags/subMags, mul with
+    // shortShiftRightJam64(·,32), mulAdd with the 64-bit aligned-sum path,
+    // div via full-width quotient + remainder-jam, sqrt via integer sqrt +
+    // square-check sticky. All combinational at sim level (pipelining is a
+    // Phase-7 concern alongside the 256-MAC tree — recorded in ADR-0050).
+    // =========================================================================
+    function [63:0] srj64;                    // shiftRightJam64
+        input [63:0] v; input [6:0] d;
+        begin
+            if (d == 7'd0) srj64 = v;
+            else if (d < 7'd64)
+                srj64 = (v >> d) | {63'b0, (v & ((64'h1 << d) - 64'h1)) != 64'h0};
+            else srj64 = {63'b0, v != 64'h0};
+        end
+    endfunction
+
+    function [5:0] clz64h;                    // count leading zeros, 64-bit
+        input [63:0] v;
+        integer i;
+        begin
+            clz64h = 6'd63;                   // (v==0 never queried)
+            for (i = 63; i >= 0; i = i - 1)
+                if (v[i] && (clz64h == 6'd63)) clz64h = 6'd63 - i[5:0];
+            if (v == 64'h0) clz64h = 6'd63;
+        end
+    endfunction
+
+    // normalize a subnormal significand: {exp10, sig23} -> exp = 1 - shift
+    function [33:0] norm_sub;                 // {exp[9:0], sig[23:0]}
+        input [22:0] m;
+        reg [5:0] lz;
+        reg [23:0] s24;
+        begin
+            lz  = clz32({9'b0, m}) - 6'd9;    // leading zeros within 23 bits
+            s24 = {1'b0, m} << (lz + 6'd1);   // implicit-1 position (bit 23)
+            norm_sub = {10'($signed(-{4'b0, lz})), s24};
+        end
+    endfunction
+
+    // softfloat roundPackToF32 (tininess AFTER rounding): sig[30:7] = 24-bit
+    // significand, sig[6:0] = round bits
+    function [36:0] rp32;                      // {flags, f32}
+        input        sign;
+        input signed [9:0] exp;
+        input [30:0] sig;
+        reg [6:0]  rinc, rbits;
+        reg [30:0] s;
+        reg [31:0] s32;
+        reg [63:0] srjt;                          // srj64 result before slice (portable frontends reject fn()[..])
+        reg signed [9:0] e;
+        reg        tiny, ovf;
+        reg [4:0]  fl;
+        begin
+            s32 = 32'b0; srjt = 64'b0;
+            fl = 5'b0; ovf = 1'b0;
+            rinc = ((rm_eff == 3'd0) || (rm_eff == 3'd4)) ? 7'h40 :
+                   (((rm_eff == 3'd2) && sign) || ((rm_eff == 3'd3) && !sign)) ? 7'h7F :
+                   7'h00;
+            e = exp; s = sig;
+            if (e < 10'sd0) begin
+                tiny = (e < -10'sd1) ||
+                       ({1'b0, s} + {25'b0, rinc} < 32'h8000_0000);
+                srjt = srj64({33'b0, s}, (-e > 10'sd63) ? 7'd63 : 7'(-e));
+                s = srjt[30:0];
+                e = 10'sd0;
+                if (tiny && (s[6:0] != 7'b0)) fl[1] = 1'b1;           // UF
+            end else if ((e > 10'sd253) ||
+                         ((e == 10'sd253) &&
+                          ({1'b0, s} + {25'b0, rinc} >= 32'h8000_0000))) begin
+                ovf = 1'b1;
+                fl[2] = 1'b1; fl[0] = 1'b1;                           // OF|NX
+            end
+            if (ovf) begin
+                rp32 = {fl, ({sign, 8'hFF, 23'b0} - ((rinc == 7'h0) ? 32'h1 : 32'h0))};
+            end else begin
+                rbits = s[6:0];
+                if (rbits != 7'b0) fl[0] = 1'b1;                      // NX
+                s32 = ({1'b0, s} + {25'b0, rinc}) >> 7;               // 32-bit sum
+                s = s32[30:0];
+                if ((rm_eff == 3'd0) && (rbits == 7'h40)) s = s & ~31'h1;
+                // softfloat: exp collapses only when the WHOLE significand is
+                // zero; the pack is an ADD so a mantissa carry (bit 24) rolls
+                // into the exponent (1.0-eps rounding back up to 1.0)
+                if (s == 31'b0) e = 10'sd0;
+                rp32 = {fl, {sign, 31'b0} + (32'($signed(e)) << 23) + {6'b0, s[25:0]}};
+            end
+        end
+    endfunction
+
+    // unpack helpers (raw fields)
+    wire [7:0]  eA = fa[30:23], eB = fb[30:23], eC = fc[30:23];
+    wire [22:0] mA = fa[22:0],  mB = fb[22:0],  mC = fc[22:0];
+    wire sA = fa[31], sB = fb[31], sC = fc[31];
+    wire c_nan  = (eC == 8'hFF) && (mC != 23'b0);
+    wire c_snan = c_nan && !fc[22];
+    wire a_inf = (eA == 8'hFF) && (mA == 23'b0);
+    wire b_inf = (eB == 8'hFF) && (mB == 23'b0);
+    wire c_inf = (eC == 8'hFF) && (mC == 23'b0);
+    wire a_zeroe = (eA == 8'h0) && (mA == 23'b0);
+    wire b_zeroe = (eB == 8'h0) && (mB == 23'b0);
+    wire c_zeroe = (eC == 8'h0) && (mC == 23'b0);
+
+    // normalized {exp,sig24} view (norm/subnormal)
+    wire [33:0] nA = (eA == 8'h0) ? norm_sub(mA) : {2'b0, eA, 1'b1, mA};
+    wire [33:0] nB = (eB == 8'h0) ? norm_sub(mB) : {2'b0, eB, 1'b1, mB};
+    wire [33:0] nC = (eC == 8'h0) ? norm_sub(mC) : {2'b0, eC, 1'b1, mC};
+    wire signed [9:0] enA = nA[33:24];
+    wire signed [9:0] enB = nB[33:24];
+    wire signed [9:0] enC = nC[33:24];
+    wire [23:0] sgA = nA[23:0], sgB = nB[23:0], sgC = nC[23:0];
+
+    // ---------------- fadd / fsub (softfloat addMags/subMags) ----------------
+    reg  [31:0] fas_res;
+    reg  [4:0]  fas_fl;
+    always @* begin : f_addsub
+        reg sEffB, signZ, sub_mode;
+        reg signed [9:0] expDiff, expZ;
+        reg [30:0] xA, xB;
+        reg [31:0] sigZ;
+        reg [63:0] srjt;                          // srj64 result before slice
+        reg [23:0] sigDiff;
+        reg [5:0]  shd;
+        reg [36:0] rp;
+        fas_res = 32'h0; fas_fl = 5'b0;
+        sEffB = sB ^ op_fsub;
+        signZ = sA; sub_mode = (sA != sEffB);
+        expDiff = 10'($signed({2'b0, eA})) - 10'($signed({2'b0, eB}));
+        xA = 31'b0; xB = 31'b0; sigZ = 32'b0; sigDiff = 24'b0; shd = 6'b0; expZ = 10'sd0;
+        rp = 37'b0; srjt = 64'b0;
+        if (a_nan || b_nan) begin
+            fas_res = QNAN; fas_fl = (a_snan || b_snan) ? 5'b10000 : 5'b0;
+        end else if (a_inf || b_inf) begin
+            if (a_inf && b_inf && sub_mode) begin
+                fas_res = QNAN; fas_fl = 5'b10000;                    // inf-inf
+            end else
+                fas_res = a_inf ? fa : {sEffB, 8'hFF, 23'b0};
+        end else if (!sub_mode) begin
+            // ---- addMags ----
+            if (expDiff == 10'sd0) begin
+                if (eA == 8'h0) begin
+                    fas_res = {sA, fa[30:0] + fb[30:0]};              // subnormal+subnormal (exact)
+                end else begin
+                    sigZ = 32'h0100_0000 + {9'b0, mA} + {9'b0, mB};
+                    if (!sigZ[0] && (eA < 8'hFE))
+                        fas_res = {sA, eA + 8'h1, sigZ[23:1]};
+                    else begin
+                        rp = rp32(signZ, 10'($signed({2'b0, eA})), sigZ[24:0] << 6);
+                        fas_fl = rp[36:32]; fas_res = rp[31:0];
+                    end
+                end
+            end else begin
+                xA = {2'b0, mA, 6'b0}; xB = {2'b0, mB, 6'b0};
+                if (expDiff < 10'sd0) begin
+                    expZ = 10'($signed({2'b0, eB}));
+                    xA = (eA != 8'h0) ? (xA | 31'h2000_0000) : (xA << 1);
+                    srjt = srj64({33'b0, xA}, (-expDiff > 10'sd63) ? 7'd63 : 7'(-expDiff)); xA = srjt[30:0];
+                end else begin
+                    expZ = 10'($signed({2'b0, eA}));
+                    xB = (eB != 8'h0) ? (xB | 31'h2000_0000) : (xB << 1);
+                    srjt = srj64({33'b0, xB}, (expDiff > 10'sd63) ? 7'd63 : 7'(expDiff)); xB = srjt[30:0];
+                end
+                sigZ = 32'h2000_0000 + {1'b0, xA} + {1'b0, xB};
+                if (sigZ < 32'h4000_0000) begin
+                    expZ = expZ - 10'sd1; sigZ = sigZ << 1;
+                end
+                rp = rp32(signZ, expZ, sigZ[30:0]);
+                fas_fl = rp[36:32]; fas_res = rp[31:0];
+            end
+        end else begin
+            // ---- subMags ----
+            if (expDiff == 10'sd0) begin
+                sigDiff = {1'b0, mA} - {1'b0, mB};
+                if (mA == mB) begin
+                    fas_res = {(rm_eff == 3'd2), 8'h0, 23'b0};        // ±0 (RDN -> -0)
+                end else begin
+                    if (sigDiff[23]) begin                            // mB > mA
+                        signZ = !signZ; sigDiff = (~sigDiff) + 24'h1;
+                    end
+                    // softfloat subMagsF32 equal-exp path: `if (expA) --expA;`
+                    // FIRST, then shiftDist = clz32(sigDiff)-8; expZ = expA-shiftDist.
+                    // The additive packToF32UI lets sigDiff's leading 1 (now at bit
+                    // 23 after the shift) carry INTO the exponent field — so expA
+                    // must be pre-decremented or the result is one exponent too high.
+                    expZ = (eA != 8'h0) ? 10'($signed({2'b0, eA})) - 10'sd1
+                                        : 10'($signed({2'b0, eA}));
+                    shd  = clz32({8'b0, sigDiff[23:0]}) - 6'd8;
+                    expZ = expZ - 10'($signed({4'b0, shd}));
+                    if (expZ < 10'sd0) begin
+                        shd  = (eA == 8'h0) ? 6'd0 : (eA[5:0] - 6'd1); // softfloat: shiftDist = (decremented) expA
+                        expZ = 10'sd0;
+                    end
+                    fas_res = {signZ, 8'b0, 23'b0} +
+                              (32'($signed(expZ)) << 23) +
+                              {8'b0, sigDiff << shd};
+                end
+            end else begin
+                xA = {1'b0, mA, 7'b0}; xB = {1'b0, mB, 7'b0};
+                if (expDiff < 10'sd0) begin
+                    signZ = !signZ;
+                    expZ = 10'($signed({2'b0, eB}));
+                    xA = (eA != 8'h0) ? (xA | 31'h4000_0000) : (xA << 1);
+                    srjt = srj64({33'b0, xA}, (-expDiff > 10'sd63) ? 7'd63 : 7'(-expDiff)); xA = srjt[30:0];
+                    xB = xB | 31'h4000_0000;
+                    sigZ = {1'b0, xB} - {1'b0, xA};
+                end else begin
+                    expZ = 10'($signed({2'b0, eA}));
+                    xB = (eB != 8'h0) ? (xB | 31'h4000_0000) : (xB << 1);
+                    srjt = srj64({33'b0, xB}, (expDiff > 10'sd63) ? 7'd63 : 7'(expDiff)); xB = srjt[30:0];
+                    xA = xA | 31'h4000_0000;
+                    sigZ = {1'b0, xA} - {1'b0, xB};
+                end
+                // normRoundPack: exp-1, normalize
+                expZ = expZ - 10'sd1;
+                shd = clz32(sigZ) - 6'd1;
+                expZ = expZ - 10'($signed({4'b0, shd}));
+                rp = rp32(signZ, expZ, sigZ[30:0] << shd);
+                fas_fl = rp[36:32]; fas_res = rp[31:0];
+            end
+        end
+    end
+
+    // ---------------- fmul (softfloat f32_mul) ----------------
+    reg  [31:0] fmul_res;
+    reg  [4:0]  fmul_fl;
+    always @* begin : f_mul
+        reg signZ;
+        reg signed [9:0] expZ;
+        reg [63:0] prod;
+        reg [31:0] sigZ;
+        reg [36:0] rp;
+        fmul_res = 32'h0; fmul_fl = 5'b0;
+        signZ = sA ^ sB;
+        expZ = 10'sd0; prod = 64'b0; sigZ = 32'b0; rp = 37'b0;
+        if (a_nan || b_nan) begin
+            fmul_res = QNAN; fmul_fl = (a_snan || b_snan) ? 5'b10000 : 5'b0;
+        end else if ((a_inf && b_zeroe) || (b_inf && a_zeroe)) begin
+            fmul_res = QNAN; fmul_fl = 5'b10000;
+        end else if (a_inf || b_inf) begin
+            fmul_res = {signZ, 8'hFF, 23'b0};
+        end else if (a_zeroe || b_zeroe) begin
+            fmul_res = {signZ, 31'b0};
+        end else begin
+            expZ = enA + enB - 10'sd127;
+            prod = ({40'b0, sgA} << 7) * ({40'b0, sgB} << 8);
+            sigZ = prod[63:32] | {31'b0, (prod[31:0] != 32'b0)};      // shortShiftRightJam64(·,32)
+            if (sigZ < 32'h4000_0000) begin
+                expZ = expZ - 10'sd1; sigZ = sigZ << 1;
+            end
+            rp = rp32(signZ, expZ, sigZ[30:0]);
+            fmul_fl = rp[36:32]; fmul_res = rp[31:0];
+        end
+    end
+
+    // ---------------- FMA (softfloat mulAddF32) ----------------
+    reg  [31:0] fma_res;
+    reg  [4:0]  fma_fl;
+    always @* begin : f_fma
+        reg spd, scc, signZ;
+        reg signed [9:0] expProd, expC10, expDiff, expZ;
+        reg [63:0] sigProd, sig64C, sig64Z;
+        reg [31:0] sigZ, sigC32;
+        reg [6:0]  shd7;
+        reg signed [7:0] shd;
+        reg [36:0] rp;
+        fma_res = 32'h0; fma_fl = 5'b0;
+        spd = sA ^ sB ^ fma_negp;
+        scc = sC ^ fma_negc;
+        signZ = spd;
+        expProd = 10'sd0; expC10 = 10'sd0; expDiff = 10'sd0; expZ = 10'sd0;
+        sigProd = 64'b0; sig64C = 64'b0; sig64Z = 64'b0;
+        sigZ = 32'b0; sigC32 = 32'b0; shd = 8'sd0; shd7 = 7'b0; rp = 37'b0;
+        if (a_nan || b_nan || c_nan) begin
+            fma_res = QNAN;
+            fma_fl = (a_snan || b_snan || c_snan ||
+                      (a_inf && b_zeroe) || (b_inf && a_zeroe)) ? 5'b10000 : 5'b0;
+        end else if ((a_inf && b_zeroe) || (b_inf && a_zeroe)) begin
+            fma_res = QNAN; fma_fl = 5'b10000;
+        end else if (a_inf || b_inf) begin
+            if (c_inf && (scc != spd)) begin
+                fma_res = QNAN; fma_fl = 5'b10000;                    // inf - inf
+            end else
+                fma_res = {spd, 8'hFF, 23'b0};
+        end else if (c_inf) begin
+            fma_res = {scc, 8'hFF, 23'b0};
+        end else if (a_zeroe || b_zeroe) begin
+            // exact product zero + C
+            if (c_zeroe)
+                fma_res = {(spd == scc) ? spd : (rm_eff == 3'd2), 31'b0};
+            else
+                fma_res = fc ^ {fma_negc, 31'b0};
+        end else begin
+            expProd = enA + enB - 10'sd126;
+            sigProd = ({40'b0, sgA} << 7) * ({40'b0, sgB} << 7);
+            if (sigProd < 64'h2000_0000_0000_0000) begin
+                expProd = expProd - 10'sd1;
+                sigProd = sigProd << 1;
+            end
+            if (c_zeroe) begin
+                expZ = expProd - 10'sd1;
+                sigZ = sigProd[62:31] | {31'b0, (sigProd[30:0] != 31'b0)};
+                rp = rp32(signZ, expZ, sigZ[30:0]);
+                fma_fl = rp[36:32]; fma_res = rp[31:0];
+            end else begin
+                expC10 = enC;
+                sigC32 = {2'b0, sgC, 6'b0};                           // 30-bit
+                expDiff = expProd - expC10;
+                if (spd == scc) begin
+                    if (expDiff <= 10'sd0) begin
+                        expZ = expC10;
+                        sig64Z = srj64(sigProd, (10'sd32 - expDiff > 10'sd63) ? 7'd63 : 7'(10'sd32 - expDiff));
+                        sigZ = sigC32 + sig64Z[31:0];
+                    end else begin
+                        expZ = expProd;
+                        sig64Z = sigProd +
+                                 srj64({sigC32, 32'b0}, (expDiff > 10'sd63) ? 7'd63 : 7'(expDiff));
+                        sigZ = sig64Z[63:32] | {31'b0, (sig64Z[31:0] != 32'b0)};
+                    end
+                    if (sigZ < 32'h4000_0000) begin
+                        expZ = expZ - 10'sd1; sigZ = sigZ << 1;
+                    end
+                    rp = rp32(signZ, expZ, sigZ[30:0]);
+                    fma_fl = rp[36:32]; fma_res = rp[31:0];
+                end else begin
+                    sig64C = {sigC32, 32'b0};
+                    if (expDiff < 10'sd0) begin
+                        signZ = scc;
+                        expZ = expC10;
+                        sig64Z = sig64C -
+                                 srj64(sigProd, (-expDiff > 10'sd63) ? 7'd63 : 7'(-expDiff));
+                    end else if (expDiff == 10'sd0) begin
+                        expZ = expProd;
+                        sig64Z = sigProd - sig64C;
+                        if (sig64Z == 64'b0) begin
+                            sig64Z = 64'b0;
+                        end else if (sig64Z[63]) begin
+                            signZ = !signZ;
+                            sig64Z = (~sig64Z) + 64'h1;
+                        end
+                    end else begin
+                        expZ = expProd;
+                        sig64Z = sigProd -
+                                 srj64(sig64C, (expDiff > 10'sd63) ? 7'd63 : 7'(expDiff));
+                    end
+                    if ((expDiff == 10'sd0) && (sig64Z == 64'b0)) begin
+                        fma_res = {(rm_eff == 3'd2), 31'b0};          // exact cancel
+                    end else begin
+                        shd = 8'($signed({2'b0, clz64h(sig64Z)})) - 8'sd1;
+                        expZ = expZ - 10'($signed(shd));
+                        shd = shd - 8'sd32;
+                        if (shd < 8'sd0) begin
+                            shd7 = 7'(-shd);
+                            sigZ = sig64Z[31:0];                      // placeholder
+                            sig64Z = srj64(sig64Z, shd7);
+                            sigZ = sig64Z[31:0];
+                        end else begin
+                            sigZ = sig64Z[31:0] << shd;
+                        end
+                        rp = rp32(signZ, expZ, sigZ[30:0]);
+                        fma_fl = rp[36:32]; fma_res = rp[31:0];
+                    end
+                end
+            end
+        end
+    end
+
+    // ---------------- fdiv (softfloat f32_div structure) ----------------
+    reg  [31:0] fdiv_res;
+    reg  [4:0]  fdiv_fl;
+    always @* begin : f_div
+        reg signZ;
+        reg signed [9:0] expZ;
+        reg [63:0] num;
+        reg [31:0] q;
+        reg [36:0] rp;
+        fdiv_res = 32'h0; fdiv_fl = 5'b0;
+        signZ = sA ^ sB;
+        expZ = 10'sd0; num = 64'b0; q = 32'b0; rp = 37'b0;
+        if (a_nan || b_nan) begin
+            fdiv_res = QNAN; fdiv_fl = (a_snan || b_snan) ? 5'b10000 : 5'b0;
+        end else if (a_inf && b_inf) begin
+            fdiv_res = QNAN; fdiv_fl = 5'b10000;
+        end else if (a_inf) begin
+            fdiv_res = {signZ, 8'hFF, 23'b0};
+        end else if (b_inf) begin
+            fdiv_res = {signZ, 31'b0};
+        end else if (b_zeroe) begin
+            if (a_zeroe) begin
+                fdiv_res = QNAN; fdiv_fl = 5'b10000;                  // 0/0
+            end else begin
+                fdiv_res = {signZ, 8'hFF, 23'b0}; fdiv_fl = 5'b01000; // DZ
+            end
+        end else if (a_zeroe) begin
+            fdiv_res = {signZ, 31'b0};
+        end else begin
+            expZ = enA - enB + 10'sd126;
+            if (sgA < sgB) begin
+                expZ = expZ - 10'sd1;
+                num = {9'b0, sgA, 31'b0};                             // <<31
+            end else
+                num = {10'b0, sgA, 30'b0};                            // <<30
+            num = num / {40'b0, sgB};
+            q = num[31:0];
+            num = (sgA < sgB) ? {9'b0, sgA, 31'b0} : {10'b0, sgA, 30'b0};
+            if (q[5:0] == 6'b0)
+                q = q | {31'b0, (({40'b0, sgB} * {32'b0, q}) != num)};
+            rp = rp32(signZ, expZ, q[30:0]);
+            fdiv_fl = rp[36:32]; fdiv_res = rp[31:0];
+        end
+    end
+
+    // ---------------- fsqrt (integer sqrt + square-check sticky) --------------
+    reg  [31:0] fsq_res;
+    reg  [4:0]  fsq_fl;
+    always @* begin : f_sqrt
+        reg signed [9:0] expZ;
+        reg [63:0] rad, rem;
+        reg [31:0] q;
+        reg [36:0] rp;
+        integer k;
+        fsq_res = 32'h0; fsq_fl = 5'b0;
+        expZ = 10'sd0; rad = 64'b0; rem = 64'b0; q = 32'b0; rp = 37'b0;
+        if (a_nan) begin
+            fsq_res = a_snan ? QNAN : fa;                              // qNaN passes? softfloat: canonical
+            fsq_res = QNAN;
+            fsq_fl = a_snan ? 5'b10000 : 5'b0;
+        end else if (a_zeroe) begin
+            fsq_res = fa;                                              // ±0
+        end else if (sA) begin
+            fsq_res = QNAN; fsq_fl = 5'b10000;                         // sqrt(neg)
+        end else if (a_inf) begin
+            fsq_res = fa;
+        end else begin
+            // E = enA-127; odd E folds a x2 into the radicand:
+            //   q = sqrt(1.m * 2^(E&1)) * 2^30  ->  q^2 = sgA << (37 + (E&1))
+            //   expZ - 126 = (E - (E&1)) / 2
+            expZ = ((enA - 10'sd127 - (enA[0] ? 10'sd0 : 10'sd1)) >>> 1) + 10'sd126;
+            rad = {40'b0, sgA} << (enA[0] ? 6'd37 : 6'd38);
+            // integer sqrt (restoring, 2 bits/step over the 62-bit radicand)
+            q = 32'b0; rem = 64'b0;
+            for (k = 30; k >= 0; k = k - 1) begin
+                rem = (rem << 2) | ((rad >> (2 * k)) & 64'h3);
+                if (rem >= ({30'b0, q, 2'b01})) begin
+                    rem = rem - {30'b0, q, 2'b01};
+                    q = (q << 1) | 32'h1;
+                end else
+                    q = q << 1;
+            end
+            // sticky: same trick as f32_div — only low-6-zero cases can be
+            // affected by an extra sticky bit
+            if (q[5:0] == 6'b0)
+                q = q | {31'b0, (rem != 64'b0)};
+            rp = rp32(1'b0, expZ, q[30:0]);
+            fsq_fl = rp[36:32]; fsq_res = rp[31:0];
+        end
+    end
+
     // ---------------- result muxes ----------------
     assign q_fwe = q_hit && !q_illegal &&
-                   (op_sgnj || op_mnmx || op_mvwx || op_cvtsw);
+                   (op_sgnj || op_mnmx || op_mvwx || op_cvtsw ||
+                    op_fadd || op_fsub || op_fmul || op_fdiv || op_fsqrt || op_fma);
     assign q_fd  = rd_i;
     assign q_fdata = op_sgnj  ? r_sgnj :
                      op_mnmx  ? mnmx_ab :
                      op_mvwx  ? q_rs1 :
+                     (op_fadd || op_fsub) ? fas_res :
+                     op_fmul  ? fmul_res :
+                     op_fma   ? fma_res :
+                     op_fdiv  ? fdiv_res :
+                     op_fsqrt ? fsq_res :
                                 cvtsw_res;
 
     assign q_xwe = q_hit && !q_illegal &&
@@ -305,7 +782,12 @@ module fexu #(
                      op_cmp   ? fl_cmp :
                      op_mnmx  ? fl_mnmx :
                      op_cvtws ? cvtws_fl :
-                     op_cvtsw ? cvtsw_fl : 5'b0;
+                     op_cvtsw ? cvtsw_fl :
+                     (op_fadd || op_fsub) ? fas_fl :
+                     op_fmul  ? fmul_fl :
+                     op_fma   ? fma_fl :
+                     op_fdiv  ? fdiv_fl :
+                     op_fsqrt ? fsq_fl : 5'b0;
 
 endmodule
 `default_nettype wire
