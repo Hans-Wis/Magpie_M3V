@@ -2,9 +2,9 @@
 
 Status: pass
 
-Result: vcsr-lockstep matched 1324 commits
+Result: vcsr-lockstep matched 176 commits
 
-Commits compared: 1324 (bar: >= 700)
+Commits compared: 176 (bar: >= 100)
 
 Spike ISA: `rv32im_zve32x_zvl128b_zicsr_zifencei`. Checkpoint discipline: csrr vl/vtype/vstart after every
 config change; vsetvli rd values in-stream (ADR-0036 P0④ contract).

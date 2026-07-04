@@ -93,3 +93,17 @@ widen/redsum/nclip 維持自身規則、**vmem 維持 EMUL≤1(vlmax_el 補整�
 ②e16/m2+vse16(EMUL=2)滑過 legality → 群組記憶體越界寫錯源。**Codex 1 真發現**:
 OPMVV .vv(vaadd 族)vs1 對齊檢查漏(aligned random 池的盲區,與 S1 同類)→ 修 + s3i。
 gate_42 的 3B 誠實界守衛隨 S3 更新(m8 仍禁)。
+
+## S4 結果(2026-07-04)= Phase-A 完成
+
+POOL runtime kernels(**零 RTL 改動**——全部由 S1-S3 原語組成):MAX_POOL_2D = vle8/vmax/
+vse8;AVERAGE_POOL_2D = 寬化求和(vwmul×1 + 3×vwadd.wv)+ **符號修正**(+2、負 lane 遮罩
+-1)+ vnclip>>2 @vxrm=rdn——精確重建 TFLM round-half-away(**引理 1 於生成時窮舉證明**
+所有可達 sum ∈[-512,508];單一 vssra/vnclip 捨入模式做不到)。**引理 2** 把 DTCM 內嵌 tile
+與 gate_51 已驗的 strided-DMA gather 語義綁定(DMA 路徑 ≡ kernel 消費的影像)。
+權威鏈:真 .tflite pooling(BUILTIN_REF interpreter,離線)→ golden;kernel 全程 Spike
+lockstep(176 commits)且輸出 probes(trace 中的 lw commits)== golden 16/16 words
+(gate_59,provenance 重生成含)。範圍:VALID 全窗(edge-partial count 在 2x2s2 形狀外)。
+
+**Phase-A 收齊(S1-S4)**:TFLM/Gemma int8 的 RVV 語意缺口按 User 清單全補;不做清單
+(Coral backend/硬體 VCQ/vlse RTL/4-wide)維持。

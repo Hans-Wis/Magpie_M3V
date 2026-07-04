@@ -88,6 +88,9 @@ s3:
 s3i:
 	$(MAKE) FW_ASM=firmware_s3i.S MIN_COMMITS=6 lockstep.log
 
+pool:
+	$(MAKE) FW_ASM=firmware_pool.S MIN_COMMITS=100 lockstep.log
+
 .PHONY: firmware_vrand.S
 firmware_vrand.S: gen_vector_random.py
 	python3 gen_vector_random.py --seed $(SEED) --blocks $(BLOCKS) --out $@
