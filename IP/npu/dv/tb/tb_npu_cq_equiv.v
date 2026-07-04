@@ -75,7 +75,7 @@ module tb_npu_cq_equiv;
     localparam [31:0] A_BASE = 32'h3000_0040, A_SIZE = 32'h3000_0044, A_TAIL = 32'h3000_004C, A_CQCTRL = 32'h3000_0050;
     localparam [31:0] WEIGHT_SRC = 32'h0000_0800;   // shared byte addr, word 0x200
     localparam [31:0] RESULT_DST = 32'h0000_1800;   // shared byte addr, word 0x600
-    localparam [31:0] TCM_W_WORD = 32'h0000_0100;   // firmware TCM_WEIGHT_W (byte 0x400)
+    localparam [31:0] TCM_W_WORD = 32'h0000_0180;   // firmware TCM_WEIGHT_W (byte 0x600, ADR-0037)
 
     // ---- AXI activity counters ----
     integer aw_cnt, w_cnt, wlast_cnt, ar_weight_cnt, r_cnt;
@@ -194,7 +194,7 @@ module tb_npu_cq_equiv;
         axil_write(A_CTRL, 32'h0);            // stop sequencer
         axil_write(A_CQCTRL, 32'h0);          // CQ disabled: legacy IRQ/CSR semantics
         for (i = 0; i < 16; i = i + 1) shared.mem[32'h600 + i] = 32'hDEADBEEF;
-        for (i = 0; i < 16; i = i + 1) dut.tcm.mem[32'h100 + i] = 32'h0;
+        for (i = 0; i < 16; i = i + 1) dut.tcm.mem[32'h180 + i] = 32'h0;
         begin : phase_b
             integer b_aw, b_w, b_wl, b_arw;
             b_aw = aw_cnt; b_w = w_cnt; b_wl = wlast_cnt; b_arw = ar_weight_cnt;

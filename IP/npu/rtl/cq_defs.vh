@@ -32,6 +32,7 @@ localparam [31:0] CQ_ERR_RING_OVERRUN = 32'h00000003;
 localparam [31:0] CQ_ERR_ENGINE_NOT_READY = 32'h00000004;
 localparam [31:0] CQ_ERR_DMA_FAULT = 32'h00000005;
 localparam [31:0] CQ_ERR_DESC_ALIGN = 32'h00000006;
+localparam [31:0] CQ_ERR_MAT_PARAM = 32'h00000007;
 
 localparam [31:0] CQ_CORE_WINDOW_BASE = 32'h00020000;
 localparam [31:0] CQ_MAILBOX_BASE = 32'h00010000;
@@ -43,5 +44,13 @@ localparam [7:0] CSR_CQ_CTRL = 8'h50;
 localparam [7:0] CSR_CQ_STATUS = 8'h54;
 localparam [7:0] CSR_ERR_CAUSE = 8'h58;
 localparam [7:0] CSR_CQ_EVENT = 8'h5C;
+localparam [7:0] CSR_MAT_A_ADDR = 8'h60;
+localparam [7:0] CSR_MAT_B_ADDR = 8'h64;
+localparam [7:0] CSR_MAT_CTRL = 8'h68;
+localparam [7:0] CSR_MAT_MULT = 8'h6C;
+localparam [7:0] CSR_MAT_RSP = 8'h70;
+localparam [7:0] CSR_MAT_CLAMP = 8'h74;
+localparam [7:0] CSR_MAT_OUT_BASE = 8'h78;
+localparam [7:0] CSR_MAT_STATUS = 8'h7C;
 
 `endif

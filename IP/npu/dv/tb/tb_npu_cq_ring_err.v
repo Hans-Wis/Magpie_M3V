@@ -4,7 +4,7 @@
 //   S1 batch + WRAP: 3 descriptors consumed, then 3 more wrapping 3->0->1
 //   S2 FULL/EMPTY advisory flags (computed from HEAD/TAIL, core held in reset)
 //   S3 ERR ladder with per-round recovery (repair ring + CQ_CTRL enable-toggle):
-//      BAD_OPCODE(1) -> RSVD_VIOLATION(2) -> ENGINE_NOT_READY(4) -> DESC_ALIGN(6)
+//      BAD_OPCODE(1) -> RSVD_VIOLATION(2) -> MAT_PARAM(7, ADR-0037) -> DESC_ALIGN(6)
 //      -> positive recovery run. Each ERR: CQ_STATUS.err set, ERR_CAUSE latched,
 //      HEAD frozen, no DONE. (RING_OVERRUN(3)/DMA_FAULT(5) not exercised here:
 //      overrun detection is deferred per ADR-0035 deviations; DMA fault path is
@@ -224,7 +224,7 @@ module tb_npu_cq_ring_err;
         axil_write(A_TAIL, 32'd3);
         expect_err(W0_BAD,  32'd1, 32'd2);   // BAD_OPCODE
         expect_err(W0_RSVD, 32'd2, 32'd2);   // RSVD_VIOLATION
-        expect_err(W0_OP,   32'd4, 32'd2);   // ENGINE_NOT_READY
+        expect_err(W0_OP,   32'd7, 32'd2);   // MAT_PARAM (ADR-0037: rpt=0 / K binding)
         // DESC_ALIGN: unaligned ring base trips before any fetch
         axil_write(A_CTRL, 32'h0);
         axil_write(A_BASE, 32'h0000_0404);

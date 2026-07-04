@@ -24,3 +24,4 @@ IP/cpu_m1/rtl/pmp.v
 IP/cpu_m1/rtl/core.v
 IP/cpu_m1/rtl/cpu_m1_top.v
 IP/npu/dv/tb/tb_npu_core_smoke.v
+IP/npu/rtl/mat_engine.v

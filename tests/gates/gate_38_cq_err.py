@@ -2,7 +2,7 @@
 
 tb_npu_cq_ring_err S3 (NPU_CQ_ERR_PASS): ERR ladder with per-round recovery —
 BAD_OPCODE(1), RSVD_VIOLATION(2), ENGINE_NOT_READY(4) for MAT.OP (the green-wash guard:
-the matrix engine does not exist, so executing its opcode is an ERROR, not a no-op),
+the engine exists since ADR-0037 — malformed params must ERR loudly),
 DESC_ALIGN(6). Each: CQ_STATUS.err set, ERR_CAUSE latched-once, HEAD frozen, no DONE.
 Recovery = repair ring + CQ_CTRL enable-toggle (clears cause) + core restart, then a good
 descriptor completes. RING_OVERRUN(3) detection is deferred (ADR-0035 deviation: host-side
@@ -17,7 +17,7 @@ import pytest
 from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_RTL, verilator_sim
 
 ROOT = Path(__file__).resolve().parents[2]
-RTL = [ROOT / f"IP/npu/rtl/{m}.v" for m in ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr")]
+RTL = [ROOT / f"IP/npu/rtl/{m}.v" for m in ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine")]
 RTL += CPU_M1_RTL
 
 

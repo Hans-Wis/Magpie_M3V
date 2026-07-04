@@ -203,7 +203,7 @@ module tb_npu_cq_smoke;
         wait_status_bit(CSR_BASE + 32'h08, 1, "STATUS.npu_done timeout");
 
         for (i = 0; i < 16; i = i + 1) begin
-            axil_read(TCM_BASE + 32'h400 + (i << 2), rd);
+            axil_read(TCM_BASE + 32'h600 + (i << 2), rd);  // weight region (ADR-0037: 0x600)
             chk(rd, 32'hA5A50000 | i[31:0], "TCM.weight");
         end
         for (i = 0; i < 16; i = i + 1)
@@ -221,7 +221,7 @@ module tb_npu_cq_smoke;
         wait_status_bit(CSR_BASE + 32'h54, 3, "CQ_STATUS.err timeout");
 
         axil_read(CSR_BASE + 32'h58, rd);
-        chk(rd, 32'h00000004, "ERR_CAUSE.engine_not_ready");
+        chk(rd, 32'h00000007, "ERR_CAUSE.mat_param (ADR-0037)");
         axil_read(CSR_BASE + 32'h48, rd);
         chk(rd, 32'h00000004, "CQ_HEAD.frozen_on_err");
         chk_bit(irq, 1'b0, "irq_no_error_done");

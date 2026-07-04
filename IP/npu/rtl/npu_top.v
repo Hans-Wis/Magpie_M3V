@@ -206,6 +206,27 @@ module npu_top #(
         .dbg_state(core_dbg_state)
     );
 
+    // ================= matrix engine (ADR-0037) =================
+    wire [31:0] mat_a_addr, mat_b_addr, mat_mult, mat_rsp, mat_clamp, mat_out_base;
+    wire        mat_go, mat_busy, mat_done, mat_err;
+    wire [2:0]  mat_cmd;
+    wire [3:0]  mat_bank;
+    wire [7:0]  mat_rpt;
+    wire              eng_re, eng_we;
+    wire [TCM_AW-1:0] eng_raddr, eng_waddr;
+    wire [31:0]       eng_rdata, eng_wdata;
+
+    mat_engine #(.TCM_AW(TCM_AW)) u_mat (
+        .clk(clk), .resetn(resetn),
+        .go(mat_go), .cmd(mat_cmd), .arg_bank(mat_bank), .arg_rpt(mat_rpt),
+        .a_addr(mat_a_addr), .b_addr(mat_b_addr),
+        .rs_mult(mat_mult), .rs_shift(mat_rsp[7:0]), .rs_zp(mat_rsp[15:8]),
+        .rs_min(mat_clamp[7:0]), .rs_max(mat_clamp[15:8]), .out_base(mat_out_base),
+        .busy(mat_busy), .done(mat_done), .err_param(mat_err),
+        .t_re(eng_re), .t_raddr(eng_raddr), .t_rdata(eng_rdata),
+        .t_we(eng_we), .t_waddr(eng_waddr), .t_wdata(eng_wdata)
+    );
+
     // ================= CSR block =================
     npu_axil_regs csr (
         .clk(clk), .resetn(resetn),
@@ -217,6 +238,10 @@ module npu_top #(
         .npu_start(npu_start),.npu_config(npu_config),.npu_busy(npu_start & ~done_latch),.npu_done(done_latch),
         .core_csr_en(core_csr_en),.core_csr_we(core_csr_we),.core_csr_addr(core_csr_addr),
         .core_csr_wdata(dbus_wdata),.core_csr_rdata(core_csr_rdata),
+        .mat_a_addr(mat_a_addr),.mat_b_addr(mat_b_addr),.mat_mult(mat_mult),
+        .mat_rsp(mat_rsp),.mat_clamp(mat_clamp),.mat_out_base(mat_out_base),
+        .mat_go(mat_go),.mat_cmd(mat_cmd),.mat_bank(mat_bank),.mat_rpt(mat_rpt),
+        .mat_busy(mat_busy),.mat_done(mat_done),.mat_err(mat_err),
         .dma_src(dma_src),.dma_dst(dma_dst),.dma_len(dma_len),.dma_go(dma_go),
         .dma_busy(dma_busy),.dma_done(dma_done),.dma_err(dma_err),
         .wb_src(wb_src),.wb_dst(wb_dst),.wb_len(wb_len),.wb_go(wb_go),
@@ -279,7 +304,9 @@ module npu_top #(
         .dma_re(dma_re),.dma_raddr(dma_raddr),.dma_rdata(dma_rdata),
         .core_i_en(core_i_en),.core_i_addr(core_i_addr),.core_i_rdata(core_i_rdata),
         .core_d_addr(core_d_addr),.core_d_rdata(core_d_rdata),
-        .core_d_we(core_d_we),.core_d_wdata(dbus_wdata),.core_d_wstrb(dbus_wstrb),.core_d_wgrant(core_d_wgrant)
+        .core_d_we(core_d_we),.core_d_wdata(dbus_wdata),.core_d_wstrb(dbus_wstrb),.core_d_wgrant(core_d_wgrant),
+        .eng_re(eng_re),.eng_raddr(eng_raddr),.eng_rdata(eng_rdata),
+        .eng_we(eng_we),.eng_waddr(eng_waddr),.eng_wdata(eng_wdata)
     );
 
     // ================= DECERR hole (out-of-window NPU addresses) =================

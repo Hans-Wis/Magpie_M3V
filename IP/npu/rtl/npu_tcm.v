@@ -39,6 +39,14 @@ module npu_tcm #(
     input  wire [AW-1:0]   core_i_addr,
     output wire [31:0]     core_i_rdata,
 
+    // ---- matrix engine ports (ADR-0037): combinational read + granted write ----
+    input  wire            eng_re,
+    input  wire [AW-1:0]   eng_raddr,
+    output wire [31:0]     eng_rdata,
+    input  wire            eng_we,
+    input  wire [AW-1:0]   eng_waddr,
+    input  wire [31:0]     eng_wdata,
+
     // ---- NPU core data port ----
     input  wire [AW-1:0]   core_d_addr,
     output wire [31:0]     core_d_rdata,
@@ -52,7 +60,9 @@ module npu_tcm #(
     assign dma_rdata     = mem[dma_raddr];
     assign core_i_rdata  = mem[core_i_addr];
     assign core_d_rdata  = mem[core_d_addr];
-    assign core_d_wgrant = core_d_we & ~dma_we;
+    assign eng_rdata     = mem[eng_raddr];
+    // write priority (ADR-0037): dma > engine > core > host
+    assign core_d_wgrant = core_d_we & ~dma_we & ~eng_we;
 
     // byte-strobe merge
     function [31:0] merge; input [31:0] old; input [31:0] wd; input [3:0] strb; begin
@@ -68,7 +78,7 @@ module npu_tcm #(
     reg aw_seen, w_seen, wa_ok;
     reg [AW-1:0] wa_q; reg [31:0] wd_q; reg [3:0] wstrb_q;
     wire host_we        = aw_seen && w_seen && !s_axi_bvalid;
-    wire host_mem_grant = host_we && wa_ok && !dma_we && !core_d_we;
+    wire host_mem_grant = host_we && wa_ok && !dma_we && !eng_we && !core_d_we;
     wire host_resp_fire = host_we && (!wa_ok || host_mem_grant);
     assign s_axi_awready = !aw_seen && !s_axi_bvalid;
     assign s_axi_wready  = !w_seen  && !s_axi_bvalid;
@@ -90,6 +100,7 @@ module npu_tcm #(
     // ---- single memory-write block: dma > core data > host ----
     always @(posedge clk) begin
         if (dma_we)                    mem[dma_waddr]   <= dma_wdata;
+        else if (eng_we)               mem[eng_waddr]   <= eng_wdata;
         else if (core_d_we)            mem[core_d_addr] <= merge(mem[core_d_addr], core_d_wdata, core_d_wstrb);
         else if (host_we && wa_ok)     mem[wa_q]        <= merge(mem[wa_q], wd_q, wstrb_q);
     end

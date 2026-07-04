@@ -4,7 +4,7 @@
 #define MAILBOX_BASE    CQ_MAILBOX_BASE
 #define TCM_SCRATCH_B   0x00000F00u
 #define TCM_SCRATCH_W   (TCM_SCRATCH_B >> 2)
-#define TCM_WEIGHT_B    0x00000400u
+#define TCM_WEIGHT_B    0x00000600u   /* ADR-0037: moved from 0x400 (firmware text grew past it) */
 #define TCM_WEIGHT_W    (TCM_WEIGHT_B >> 2)
 
 #define CSR_CTRL        0x04u
@@ -17,6 +17,20 @@
 #define CSR_WB_DST      0x34u
 #define CSR_WB_LEN      0x38u
 #define CSR_WB_GO       0x3Cu
+#define CSR_MAT_A       0x60u
+#define CSR_MAT_B       0x64u
+#define CSR_MAT_CTRL    0x68u
+#define CSR_MAT_MULT    0x6Cu
+#define CSR_MAT_RSP     0x70u
+#define CSR_MAT_CLAMP   0x74u
+#define CSR_MAT_OUT     0x78u
+#define CSR_MAT_STATUS  0x7Cu
+#define MAT_ST_BUSY     1u
+#define MAT_ST_DONE     2u
+#define MAT_ST_ERR      4u
+#define MAT_CMD_CLR     0u
+#define MAT_CMD_OP      1u
+#define MAT_CMD_RESCALE 2u
 
 #define STATUS_DMA_BUSY (1u << 2)
 #define STATUS_DMA_DONE (1u << 3)
@@ -100,6 +114,17 @@ static void dma_read(uint32_t src, uint32_t dst_word, uint32_t len_words)
     wait_dma_done();
 }
 
+static void mat_run(uint32_t cmd, uint32_t bank, uint32_t rpt)
+{
+    uint32_t st;
+    csr_write(CSR_MAT_CTRL, (cmd << 16) | (bank << 8) | (rpt & 0xFFu));
+    do {
+        st = csr_read(CSR_MAT_STATUS);
+    } while ((st & MAT_ST_DONE) == 0u);
+    if (st & MAT_ST_ERR)
+        cq_halt(CQ_ERR_MAT_PARAM);
+}
+
 static void dma_writeback(uint32_t src_word, uint32_t dst, uint32_t len_words)
 {
     csr_write(CSR_WB_SRC, src_word);
@@ -146,6 +171,8 @@ void main(void)
             cfg_n = w1 & 0xFFFFu;
             cfg_k = w2;
             cfg_tile_flags = w3;
+            if (cfg_m > 8u || cfg_n > 8u)
+                cq_halt(CQ_ERR_MAT_PARAM);
             break;
         case CQ_OP_MAT_LOAD_W: {
             uint32_t rows = (w3 >> 8) & 0xFFu;
@@ -159,18 +186,42 @@ void main(void)
         case CQ_OP_MAT_STORE: {
             uint32_t rows = (w3 >> 8) & 0xFFu;
             uint32_t cols = w3 & 0xFFu;
-            dma_writeback(TCM_WEIGHT_W, w1, rows * cols);
+            /* ADR-0037: W2 = TCM source byte addr; 0 = legacy weight region.
+             * Bound + alignment checked (no silent TCM aliasing). */
+            uint32_t src_w;
+            if ((w2 & 3u) != 0u || (w2 + rows * cols * 4u) > 0x1000u)
+                cq_halt(CQ_ERR_MAT_PARAM);
+            src_w = (w2 != 0u) ? (w2 >> 2) : TCM_WEIGHT_W;
+            dma_writeback(src_w, w1, rows * cols);
             break;
         }
         case CQ_OP_MAT_ACC_CLR:
             acc_mask_latch = w1;
+            mat_run(MAT_CMD_CLR, w1 & 0xFu, 1u);
             break;
         case CQ_OP_MAT_FENCE:
             drain_dma_wb();
             break;
-        case CQ_OP_MAT_OP:
+        case CQ_OP_MAT_OP: {
+            uint32_t rpt = cq_w0_rpt(w0);
+            /* ADR-0037 bindings: W3 must be 0; RPT*8 must equal latched K;
+             * int8-only engine (DTYPE=0); a/b must sit inside the TCM below
+             * the scratch region (no silent aliasing — Codex 4B review) */
+            if (w3 != 0u || (rpt * 8u) != cfg_k || cq_w0_dtype(w0) != 0u ||
+                (w1 + rpt * 8u) > TCM_SCRATCH_B || (w2 + rpt * 8u) > TCM_SCRATCH_B)
+                cq_halt(CQ_ERR_MAT_PARAM);
+            csr_write(CSR_MAT_A, w1);
+            csr_write(CSR_MAT_B, w2);
+            mat_run(MAT_CMD_OP, cq_w0_acc(w0), rpt);
+            break;
+        }
         case CQ_OP_MAT_RESCALE:
-            cq_halt(CQ_ERR_ENGINE_NOT_READY);
+            if (cq_w0_dtype(w0) != 0u)
+                cq_halt(CQ_ERR_MAT_PARAM);
+            csr_write(CSR_MAT_MULT, w1);
+            csr_write(CSR_MAT_RSP, w2);
+            csr_write(CSR_MAT_CLAMP, w3);
+            mat_run(MAT_CMD_RESCALE, cq_w0_acc(w0), 1u);
             break;
         default:
             cq_halt(CQ_ERR_BAD_OPCODE);

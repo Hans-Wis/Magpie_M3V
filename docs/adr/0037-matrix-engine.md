@@ -62,3 +62,28 @@ sequences bit-exact across all 64 outputs; bank/shift/rpt/alignment param errors
 Two bugs caught by the loop: done-before-final-write (S_FIN state added — "done means
 visible"), and a golden emit formatting bug (negative multiplier as `-80000000` silently
 truncated part 1 to 5 cases — the case-count print is now part of the gate's assertions).
+
+## 4B result (2026-07-04) — P0③ COMPLETE
+
+**gate_46 green**: the full Coral-shaped matrix offload — host loads int8 a/b into the TCM,
+writes a 5-descriptor ring (CFG → ACC_CLR → OP(K=8×RPT binding) → RESCALE(v4 worked-example
+params) → STORE(W2=MAT_OUT, IRQ|LAST)); the sequencer firmware drives the engine; the
+requantized 8×8 tile lands in shared memory **byte-exact vs mat_golden.py**. MAT_PARAM ERR
+paths verified (W3≠0, DTYPE≠i8). Gates 35–39 re-green with the engine integrated
+(gate_36/38's ENGINE_NOT_READY probe flipped to MAT_PARAM as planned); full suite = 0 new
+failures.
+
+**Integration deviations found during 4B:** the sequencer text outgrew the 0x400 weight
+region (LOAD_W DMA overwrote firmware — caught by the smoke gates) → weight region moved to
+**0x600** (SSOT + TBs updated).
+
+**Codex 4B review — 3 findings, all real, all fixed:** (1) the SSOT codec still encoded
+MAT_STORE.W2 as `stride` (a Python-built descriptor would silently take the legacy path) —
+schema fields renamed + regenerated; (2) TCM addresses could silently alias/wrap (a_addr
+beyond 4KB read word 0) — firmware bound-checks a/b/W2 against the TCM (→ MAT_PARAM);
+(3) DTYPE was accepted unchecked (i16/bf16 would run as int8 with wrong numbers) —
+DTYPE≠i8 → MAT_PARAM for OP/RESCALE.
+
+**Recorded deferrals:** 256-MAC scale-up (64 today), 16 ACC banks (4), MAT.CFG tile_flags
+semantics, DMA∥engine overlap scoreboard (time-division SW contract documented),
+weight-stationary LOAD_W-into-array (weights stream from TCM per rep).

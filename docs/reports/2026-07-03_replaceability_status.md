@@ -9,7 +9,7 @@
 |---|---|---|---|
 | 1 | 純量 ISA(RV32IMF_Zbb) | 🟡 PARTIAL | rv32im sequencer 已 lockstep 驗證(gate_31/32,8×10.8k commits);Zbb 在 RTL(bmu)但未入 NPU lockstep 語料;**F deferred**(記錄在案的 scope-cut,補回才算綠) |
 | 2 | 向量 RVV Zve32x + vtype/vl/vstart/vxsat lockstep | 🟡 PARTIAL(2026-07-04 升級) | **Phase 3 出口已達**:P0④ 契約上線(gate_40/41);TFLM int8 kernel 子集(vset*/vle/vse/vwmul/vwadd/vredsum/vmv.*)lockstep 全驗,Phase 0 kernel 於 RTL 跑出 240(gate_44)。缺:完整 Zve32x 覆蓋(mask/saturating/strided/LMUL>1,記錄性延後) |
-| 3 | 矩陣 256-MAC + 8×8×32b acc + requant | 🔴 MISSING | Phase 4/5;v4 §06 spec 已凍結(設計基準,非實作)。MAT.RESCALE Q31 bit-exact golden 未建 |
+| 3 | 矩陣 256-MAC + 8×8×32b acc + requant | 🟡 PARTIAL(2026-07-04 升級) | **64-MAC 外積引擎 + 4×8×8×32b acc + TFLite-exact requant 已落**(ADR-0037):gate_45 單元 1629 checks 對 NumPy golden 位元精確、gate_46 CQ 全鏈卸載 byte-exact。缺:64→256 MAC 放大、16 banks、weight-stationary、多 tile(記錄性延後) |
 | 4 | 記憶體 ITCM 8K / DTCM 32K,128-bit | 🔴 MISSING(P1) | 現為 unified 4KB TCM、32-bit port。sizing/split 已記 P1(ADR-0034) |
 | 5 | 卸載 doorbell→DMA→compute→writeback→IRQ | 🟡 PARTIAL(最接近) | doorbell(CTRL.start)✅ 權重 DMA ✅ scalar compute ✅ writeback ✅ DONE IRQ ✅(gate_29/30..34);**缺 command-queue ring(P0②,本步進行中)**;compute 僅 scalar |
 | 6 | 例外/控制(traps + abort/reset) | 🔴 MISSING | P0⑤/P1:ERR_CAUSE、真 soft_reset/abort 未實作(ADR-0035 起 stub) |

@@ -26,3 +26,4 @@ IP/cpu_m1/rtl/core.v
 IP/cpu_m1/rtl/cpu_m1_top.v
 IP/npu/dv/tb/axi_full_rwmem.v
 IP/npu/dv/tb/tb_npu_cq_smoke.v
+IP/npu/rtl/mat_engine.v

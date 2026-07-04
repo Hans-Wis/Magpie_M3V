@@ -23,6 +23,7 @@ typedef enum {
     CQ_ERR_ENGINE_NOT_READY = 0x04,
     CQ_ERR_DMA_FAULT = 0x05,
     CQ_ERR_DESC_ALIGN = 0x06,
+    CQ_ERR_MAT_PARAM = 0x07,
 } cq_err_cause_t;
 
 #define CQ_W0_OPCODE_MASK 0x0000003Fu
@@ -69,5 +70,13 @@ static inline uint32_t cq_w0_rpt(uint32_t w0) { return cq_w0_get(w0, CQ_W0_RPT_M
 #define CSR_CQ_STATUS 0x54u
 #define CSR_ERR_CAUSE 0x58u
 #define CSR_CQ_EVENT 0x5Cu
+#define CSR_MAT_A_ADDR 0x60u
+#define CSR_MAT_B_ADDR 0x64u
+#define CSR_MAT_CTRL 0x68u
+#define CSR_MAT_MULT 0x6Cu
+#define CSR_MAT_RSP 0x70u
+#define CSR_MAT_CLAMP 0x74u
+#define CSR_MAT_OUT_BASE 0x78u
+#define CSR_MAT_STATUS 0x7Cu
 
 #endif

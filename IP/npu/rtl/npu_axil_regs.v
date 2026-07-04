@@ -71,6 +71,21 @@ module npu_axil_regs #(
     input  wire        wb_busy,
     input  wire        wb_done,
 
+    // ---- matrix engine command block (ADR-0037; core-mirror-writable) ----
+    output reg  [31:0] mat_a_addr,
+    output reg  [31:0] mat_b_addr,
+    output reg  [31:0] mat_mult,
+    output reg  [31:0] mat_rsp,      // {(zp<<8)|shift} per v4 W2
+    output reg  [31:0] mat_clamp,    // {(max<<8)|min} per v4 W3
+    output reg  [31:0] mat_out_base,
+    output reg         mat_go,       // 1-cycle pulse on MAT_CTRL write
+    output reg  [2:0]  mat_cmd,
+    output reg  [3:0]  mat_bank,
+    output reg  [7:0]  mat_rpt,
+    input  wire        mat_busy,
+    input  wire        mat_done,
+    input  wire        mat_err,
+
     // ---- level interrupt to host (out only) ----
     output wire        irq            // = irq_pending & CTRL.irq_enable
 );
@@ -117,9 +132,13 @@ module npu_axil_regs #(
             wb_src <= 32'b0; wb_dst <= 32'b0; wb_len_q <= 32'b0; wb_go <= 1'b0;
             cq_ring_base_q <= 32'b0; cq_ring_size_q <= 32'b0; cq_head_q <= 32'b0; cq_tail_q <= 32'b0;
             cq_ctrl_q <= 32'b0; err_cause_q <= 32'b0; cq_busy_q <= 1'b0; cq_err_q <= 1'b0;
+            mat_a_addr <= 32'b0; mat_b_addr <= 32'b0; mat_mult <= 32'b0;
+            mat_rsp <= 32'b0; mat_clamp <= 32'b0; mat_out_base <= 32'h0000_0800;
+            mat_go <= 1'b0; mat_cmd <= 3'b0; mat_bank <= 4'b0; mat_rpt <= 8'b0;
         end else begin
             dma_go <= 1'b0;                    // default: pulse is 1-cycle
             wb_go <= 1'b0;                     // default: pulse is 1-cycle
+            mat_go <= 1'b0;                    // default: pulse is 1-cycle
             if (s_axi_awvalid && s_axi_awready) begin aw_seen <= 1'b1; wa_q <= s_axi_awaddr; end
             if (s_axi_wvalid  && s_axi_wready ) begin w_seen <= 1'b1; wd_q <= s_axi_wdata; wstrb_q <= s_axi_wstrb; end
 
@@ -164,6 +183,18 @@ module npu_axil_regs #(
                     6'h0E: wb_len_q  <= core_csr_wdata;      // 0x38 WB_LEN
                     6'h0F: wb_go     <= core_csr_wdata[0];   // 0x3C WB_CTRL.WB_GO
                     6'h12: cq_head_q <= core_csr_wdata;      // 0x48 CQ_HEAD
+                    6'h18: mat_a_addr   <= core_csr_wdata;   // 0x60 MAT_A_ADDR
+                    6'h19: mat_b_addr   <= core_csr_wdata;   // 0x64 MAT_B_ADDR
+                    6'h1A: begin                             // 0x68 MAT_CTRL (GO pulse)
+                        mat_cmd  <= core_csr_wdata[18:16];
+                        mat_bank <= core_csr_wdata[11:8];
+                        mat_rpt  <= core_csr_wdata[7:0];
+                        mat_go   <= 1'b1;
+                    end
+                    6'h1B: mat_mult     <= core_csr_wdata;   // 0x6C MAT_MULT
+                    6'h1C: mat_rsp      <= core_csr_wdata;   // 0x70 MAT_RSP {(zp<<8)|shift}
+                    6'h1D: mat_clamp    <= core_csr_wdata;   // 0x74 MAT_CLAMP {(max<<8)|min}
+                    6'h1E: mat_out_base <= core_csr_wdata;   // 0x78 MAT_OUT_BASE
                     6'h16: if (err_cause_q == 32'b0 && core_csr_wdata != 32'b0) begin // 0x58 ERR_CAUSE
                         err_cause_q <= core_csr_wdata;
                         cq_err_q <= 1'b1;
@@ -212,6 +243,7 @@ module npu_axil_regs #(
                     6'h14:  s_axi_rdata <= cq_ctrl_q;      // 0x50 CQ_CTRL
                     6'h15:  s_axi_rdata <= cq_status_w;    // 0x54 CQ_STATUS
                     6'h16:  s_axi_rdata <= err_cause_q;    // 0x58 ERR_CAUSE
+                    6'h1F:  s_axi_rdata <= {29'b0, mat_err, mat_done, mat_busy}; // 0x7C MAT_STATUS (debug)
                     default: s_axi_rdata <= 32'h0;
                 endcase
             end else if (s_axi_rvalid && s_axi_rready) begin
@@ -265,6 +297,13 @@ module npu_axil_regs #(
                 6'h14:  core_csr_rdata <= cq_ctrl_q;       // 0x50 CQ_CTRL
                 6'h15:  core_csr_rdata <= cq_status_w;     // 0x54 CQ_STATUS
                 6'h16:  core_csr_rdata <= err_cause_q;     // 0x58 ERR_CAUSE
+                6'h18:  core_csr_rdata <= mat_a_addr;      // 0x60
+                6'h19:  core_csr_rdata <= mat_b_addr;      // 0x64
+                6'h1B:  core_csr_rdata <= mat_mult;        // 0x6C
+                6'h1C:  core_csr_rdata <= mat_rsp;         // 0x70
+                6'h1D:  core_csr_rdata <= mat_clamp;       // 0x74
+                6'h1E:  core_csr_rdata <= mat_out_base;    // 0x78
+                6'h1F:  core_csr_rdata <= {29'b0, mat_err, mat_done, mat_busy}; // 0x7C MAT_STATUS
                 default: core_csr_rdata <= 32'b0;
             endcase
         end
