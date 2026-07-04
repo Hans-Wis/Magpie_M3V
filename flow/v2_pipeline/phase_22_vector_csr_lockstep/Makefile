@@ -27,7 +27,7 @@ VFLAGS = --binary --timing -j 4 --top-module tb_npu_lockstep --timescale 1ns/1ns
 
 SIM_BIN = obj_dir/Vtb_npu_lockstep
 
-.PHONY: all grid vill valu vrand vmem clean firmware.elf firmware_spike.elf firmware.hex
+.PHONY: all grid vill valu vrand vmem vwide clean firmware.elf firmware_spike.elf firmware.hex
 SEED ?= 20260704
 BLOCKS ?= 44
 
@@ -61,7 +61,7 @@ $(SIM_BIN): $(TB_RTL) $(NPU_SRCS) $(CPU_SRCS)
 	$(VERILATOR) $(VFLAGS) $(NPU_SRCS) $(CPU_SRCS) $(EXTRA_V) $(TB_RTL)
 
 .PHONY: sim.log lockstep.log
-sim.log: $(SIM_BIN) firmware.hex
+sim.log: $(SIM_BIN) $(if $(SIM_ONLY),,firmware.hex)
 	./$(SIM_BIN) +max_cycles=100000 +min_commits=$(MIN_COMMITS) | tee sim.log
 	@grep -q '^PASS' sim.log || (echo "FAIL: sim did not report PASS" && exit 1)
 
@@ -85,3 +85,28 @@ vrand: firmware_vrand.S
 
 vmem:
 	$(MAKE) FW_ASM=firmware_vmem.S MIN_COMMITS=70 lockstep.log
+
+vwide:
+	$(MAKE) FW_ASM=firmware_vwide.S MIN_COMMITS=70 lockstep.log
+
+# gate_44: the unmodified Phase 0 kernel (clang, exact Phase 0 -march) on RTL.
+KERNEL_SRC = ../../../IP/npu/sw/rvv_zve32x_smoke/vdot_i8.c
+KERNEL_MARCH = rv32im_zve32x_zvl128b
+
+.PHONY: kernel vdot_i8.o
+vdot_i8.o: $(KERNEL_SRC)
+	clang --target=riscv32 -march=$(KERNEL_MARCH) -mabi=ilp32 -O2 -c $(KERNEL_SRC) -o $@
+
+kernel: vdot_i8.o
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc -Os -march=$(GCC_MARCH) -mabi=$(GCC_MABI) \
+	    -nostartfiles -nostdlib -ffreestanding \
+	    -Wl,-Bstatic,-T,../phase_20_npu_core_lockstep/firmware.lds,--strip-debug \
+	    -o firmware.elf crt_kernel.S vdot_i8.o
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc -Os -march=$(GCC_MARCH) -mabi=$(GCC_MABI) \
+	    -nostartfiles -nostdlib -ffreestanding \
+	    -Wl,-Bstatic,-T,../phase_20_npu_core_lockstep/firmware_spike.lds,--strip-debug \
+	    -o firmware_spike.elf crt_kernel.S vdot_i8.o
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)objcopy -O verilog --verilog-data-width=4 firmware.elf firmware.hex
+	$(MAKE) SIM_ONLY=1 sim.log MIN_COMMITS=40
+	python3 vcsr_lockstep.py --min-commits 40 | tee lockstep.log
+	@grep -q '^PASS' lockstep.log || (echo "FAIL: kernel lockstep did not report PASS" && exit 1)

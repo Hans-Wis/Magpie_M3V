@@ -23,7 +23,7 @@
 | rfu.v | 10 | 12 | 83.3% |
 | tb_npu_lockstep.v | 57 | 61 | 93.4% |
 | trigger.v | 28 | 104 | 26.9% |
-| vexu.v | 31 | 55 | 56.4% |
+| vexu.v | 42 | 71 | 59.2% |
 
 ## core.v residual uncovered lines (stripped-config triage)
 

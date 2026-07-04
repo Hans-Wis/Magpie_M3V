@@ -158,6 +158,30 @@ impossible by construction.
    while a vector-memory op is in flight, EX hold through WB commit — a bounded
    instruction-boundary delay; host trap/IRQ lockstep re-verified green).
 
+## Stage 3D result (2026-07-04) — PHASE 3 EXIT BAR MET
+
+**The unmodified Phase 0 clang kernel runs on RTL: dot([1..8],[2..9]) = 240, 43/43 commits
+matched vs Spike**, result observed three ways in the compared stream (a0 return, register
+move, scalar readback of the stored slot). Directed vwide lockstep 86/86: vwmul.vv,
+vwadd.wv with the kernel's vd==vs2 accumulate, vmv.s.x, vredsum.vs (vd==vs2), negative
+operands through widening, 16-bit lanes memory-verified via vse16, vl=0 no-ops.
+
+Bugs found and fixed during 3D (both by the verification loop, not by inspection):
+1. **Verilog signedness trap**: an unsigned concat branch inside a conditional silently
+   zero-extended negative operands (0x81 -> 129) — caught by the directed negative-squares
+   case; fixed by computing each result in an all-signed expression.
+2. **WIDTHEXPAND lint regression**: the signedness fix introduced implicit-width adds that
+   broke every core-linting gate in the suite — caught by the full-suite diff discipline;
+   fixed with equal-width manual sign-extension (bit-exact, directed re-verified).
+
+Codex 3D review: **CLEAN** (decode aliasing OPIVV/OPMVV f6=000000, widening overlap rules
+vs Spike VI_CHECK_DSS/DDS, reduction corners, vmv.s.x semantics all checked).
+Recorded deferrals: random-corpus widening coverage (directed + kernel are the 3D bar);
+128b operand forwarding stays perf debt (function-parity exit met with conservative stalls).
+
+**Phase 3 exit declared**: vector rows of the Coral parity checklist move to PARTIAL —
+the TFLM int8 kernel subset of Zve32x is lockstep-proven end-to-end; full Zve32x coverage
+(masking, saturating ops, strided memory, LMUL>1) remains recorded future work.
 ## Labor division (§5)
 
 Grok+Gemini arch (done, this ADR) → Codex staged RTL (3A first: idu/csr/core `EN_RVV`

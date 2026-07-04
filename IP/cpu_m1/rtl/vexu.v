@@ -79,12 +79,20 @@ module vexu #(
     wire is_opivx = (f3 == 3'b100);
     wire is_opmvv = (f3 == 3'b010);
 
+    wire is_opmvx = (f3 == 3'b110);
+
     wire op_add   = (f6 == 6'b000000) && (is_opivv || is_opivx || is_opivi);
     wire op_sub   = (f6 == 6'b000010) && (is_opivv || is_opivx);
     wire f6_merge = (f6 == 6'b010111) && (is_opivv || is_opivx || is_opivi);
     wire op_mv    = f6_merge && vm;              // vmv.v.* (vs2 field must be 0)
     wire op_merge = f6_merge && !vm;             // vmerge.v*m (mask = v0)
     wire op_mvxs  = is_opmvv && (f6 == 6'b010000) && (vs1_i == 5'd0) && vm;
+    // ---- 3D (the Phase 0 kernel set) ----
+    wire op_wmul  = is_opmvv && (f6 == 6'b111011) && vm;   // vwmul.vv  (s*s -> 2*SEW)
+    wire op_waddw = is_opmvv && (f6 == 6'b110101) && vm;   // vwadd.wv  (wide vs2 + narrow vs1)
+    wire op_redsum= is_opmvv && (f6 == 6'b000000) && vm;   // vredsum.vs (vd[0]=vs1[0]+sum vs2)
+    wire op_mvsx  = is_opmvx && (f6 == 6'b010000) && (vs2_i == 5'd0) && vm; // vmv.s.x
+    wire op_widen = op_wmul || op_waddw;
 
     // ---------------- config legality ----------------
     wire        vill  = q_vtype[31];
@@ -119,7 +127,18 @@ module vexu #(
                     ((eew_sel == 2'd2) && (q_rs1[1:0] == 2'b00));
     wire mem_illegal = !mem_enc_ok || !emul_ok || !align_ok;
 
-    wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs;
+    // 3D widening legality: dst EEW = 2*SEW needs SEW<=16 and dst EMUL = 2*LMUL
+    // <= 1 (single register group) => LMUL must be fractional. Overlap (match
+    // Spike require_noover): a widening dest may not overlap a NARROWER source;
+    // vwadd.wv vd==vs2 is legal (same EEW — the kernel's accumulate uses it).
+    wire widen_lmul_ok = (vlmul == 3'b111) || (vlmul == 3'b110) || (vlmul == 3'b101);
+    wire widen_illegal = op_widen &&
+                         (!widen_lmul_ok || (vsew == 3'b010) ||
+                          (vd_i == vs1_i) ||
+                          (op_wmul && (vd_i == vs2_i)));
+
+    wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
+                    op_wmul || op_waddw || op_redsum || op_mvsx;
     // vstart!=0 on arithmetic = illegal (spec-allowed choice; MATCHES SPIKE —
     // caught by gate_42 lockstep: Spike trapped where the RTL executed).
     // Loads/stores are resumable: vstart is honored (start element), not illegal.
@@ -127,6 +146,7 @@ module vexu #(
                        (is_vmem ? mem_illegal :
                         (!known_op ||
                          (q_vstart != 32'h0) ||
+                         widen_illegal ||
                          ((op_add || op_sub) && !vm) ||   // masked add/sub = 3B deferral
                          (op_mv && (vs2_i != 5'd0)) ||
                          (op_merge && (vd_i == 5'd0)))));
@@ -254,7 +274,63 @@ module vexu #(
         end
     end
 
+    // ---------------- 3D widening datapaths (dst lanes are 2*SEW wide) ----------------
+    // SEW=8 -> 8 x 16-bit dst lanes; SEW=16 -> 4 x 32-bit dst lanes. Active dst
+    // lane i covers element i (i < vl); tail lanes undisturbed.
+    wire [127:0] res_w8, res_w16;
+    generate
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_w8
+            wire signed [7:0]  a = vs2_data[gi*8 +: 8];    // narrow src (wmul)
+            wire signed [7:0]  n = vs1_data[gi*8 +: 8];    // narrow src (both)
+            wire signed [15:0] w = vs2_data[gi*16 +: 16];  // wide src (wadd.wv)
+            // keep each result in an ALL-SIGNED expression (a conditional with an
+            // unsigned concat branch silently zero-extends: caught by lockstep)
+            wire signed [15:0] prod = a * n;
+            wire signed [15:0] wsum = w + {{8{n[7]}}, n};   // equal-width add: bit-exact, no implicit expand
+            wire        [15:0] r    = op_wmul ? prod : wsum;
+            wire active = (gi < q_vl);
+            assign res_w8[gi*16 +: 16] = active ? r : vd_old[gi*16 +: 16];
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_w16
+            wire signed [15:0] a = vs2_data[gi*16 +: 16];
+            wire signed [15:0] n = vs1_data[gi*16 +: 16];
+            wire signed [31:0] w = vs2_data[gi*32 +: 32];
+            wire signed [31:0] prod = a * n;
+            wire signed [31:0] wsum = w + {{16{n[15]}}, n};
+            wire        [31:0] r    = op_wmul ? prod : wsum;
+            wire active = (gi < q_vl);
+            assign res_w16[gi*32 +: 32] = active ? r : vd_old[gi*32 +: 32];
+        end
+    endgenerate
+
+    // ---------------- 3D vredsum.vs (vd[0] = vs1[0] + sum of active vs2) ----------------
+    reg [31:0] red_sum;
+    integer rk;
+    always @* begin
+        red_sum = (vsew == 3'b000) ? {24'b0, vs1_data[7:0]} :
+                  (vsew == 3'b001) ? {16'b0, vs1_data[15:0]} : vs1_data[31:0];
+        for (rk = 0; rk < 16; rk = rk + 1) begin
+            if (rk < q_vl) begin
+                case (vsew)
+                    3'b000:  red_sum = red_sum + {24'b0, vs2_data[(rk%16)*8 +: 8]};
+                    3'b001:  if (rk < 8) red_sum = red_sum + {16'b0, vs2_data[(rk%8)*16 +: 16]};
+                    default: if (rk < 4) red_sum = red_sum + vs2_data[(rk%4)*32 +: 32];
+                endcase
+            end
+        end
+    end
+    wire [127:0] res_red = (vsew == 3'b000) ? {vd_old[127:8],  red_sum[7:0]} :
+                           (vsew == 3'b001) ? {vd_old[127:16], red_sum[15:0]} :
+                                              {vd_old[127:32], red_sum[31:0]};
+    // vmv.s.x: element 0 = x[rs1] truncated to SEW; tail undisturbed
+    wire [127:0] res_sx = (vsew == 3'b000) ? {vd_old[127:8],  q_rs1[7:0]} :
+                          (vsew == 3'b001) ? {vd_old[127:16], q_rs1[15:0]} :
+                                             {vd_old[127:32], q_rs1[31:0]};
+
     assign q_wdata = is_vmem ? vm_buf :
+                     op_widen ? ((vsew == 3'b000) ? res_w8 : res_w16) :
+                     op_redsum ? res_red :
+                     op_mvsx ? res_sx :
                      (vsew == 3'b000) ? res8 :
                      (vsew == 3'b001) ? res16 : res32;
     assign q_vd    = vd_i;

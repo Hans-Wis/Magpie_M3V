@@ -19,5 +19,5 @@ make: Entering directory '/home/edauser/project/SOC/Magpie_M3V/flow/v2_pipeline/
 rm Vtb_equiv__ALL.verilator_deplist.tmp
 make: Leaving directory '/home/edauser/project/SOC/Magpie_M3V/flow/v2_pipeline/phase_02_01_mem_wrapper/obj_dir'
 - V e r i l a t i o n   R e p o r t: Verilator 5.046 2026-02-28 rev conda-forge build 0
-- Verilator: Built from 3.871 MB sources in 24 modules, into 1.574 MB in 11 C++ files needing 0.002 MB
-- Verilator: Walltime 6.222 s (elab=0.022, cvt=0.253, bld=5.891); cpu 0.352 s on 4 threads; allocated 316.676 MB
+- Verilator: Built from 3.892 MB sources in 24 modules, into 1.574 MB in 11 C++ files needing 0.002 MB
+- Verilator: Walltime 5.529 s (elab=0.024, cvt=0.210, bld=5.244); cpu 0.305 s on 4 threads; allocated 381.414 MB
