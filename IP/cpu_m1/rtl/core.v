@@ -603,7 +603,8 @@ endgenerate
     reg        ex_mem_vcfg_we_r;
     reg [31:0] ex_mem_vcfg_vl_r;
     reg [31:0] ex_mem_vcfg_vtype_r;
-    reg         ex_mem_vex_we_r;     // 3B: VRF write pending (vd/wdata below)
+    reg         ex_mem_vex_we_r;
+    reg        ex_mem_vex_sat_r, ex_wb_vex_sat_r;     // 3B: VRF write pending (vd/wdata below)
     reg         ex_mem_vex_flag_r;   // 3B: vector-exec commit (vstart clear / VS dirty)
     reg         ex_mem_vex_mem_r;    // 3C: the committing vector op is a load/store
     reg [4:0]   ex_mem_vex_vd_r;
@@ -805,6 +806,22 @@ endgenerate
         (ex_wb_valid_r && ex_wb_csr_we_r && (ex_wb_csr_addr_r == `CSR_VSTART)) ?
             {25'b0, ex_wb_csr_next_val[6:0]} : csr_vstart;
 
+    wire [1:0]   csr_vxrm;
+    wire         wb_vxsat_set;
+    // S2 (ADR-0049): effective vxrm at EX — pending csr writes to VXRM/VCSR in
+    // the MEM window win over WB window win over the register (same shape as
+    // eff_vstart; the 3A alias-group lesson: forward BOTH windows).
+    wire [1:0] eff_vxrm =
+        (ex_mem_valid_r && ex_mem_csr_we_r && (ex_mem_csr_addr_r == `CSR_VXRM)) ?
+            ex_mem_csr_next_val[1:0] :
+        (ex_mem_valid_r && ex_mem_csr_we_r && (ex_mem_csr_addr_r == `CSR_VCSR)) ?
+            ex_mem_csr_next_val[2:1] :
+        (ex_wb_valid_r  && ex_wb_csr_we_r  && (ex_wb_csr_addr_r == `CSR_VXRM))  ?
+            ex_wb_csr_next_val[1:0] :
+        (ex_wb_valid_r  && ex_wb_csr_we_r  && (ex_wb_csr_addr_r == `CSR_VCSR))  ?
+            ex_wb_csr_next_val[2:1] : csr_vxrm;
+
+    wire         vexu_q_vxsat;
     wire         vexu_q_illegal, vexu_q_scalar_we, vexu_q_vrf_we;
     wire [31:0]  vexu_q_scalar;
     wire [4:0]   vexu_q_vd;
@@ -824,6 +841,8 @@ endgenerate
         .q_vtype    (rvv_cur_vtype),
         .q_vl       (rvv_cur_vl),
         .q_vstart   (eff_vstart),
+        .q_vxrm     (eff_vxrm),
+        .q_vxsat    (vexu_q_vxsat),
         .q_rs1      (rs1_val),
         .q_illegal  (vexu_q_illegal),
         .q_scalar_we(vexu_q_scalar_we),
@@ -1385,6 +1404,8 @@ endgenerate
         .vl_o               (csr_vl),
         .vtype_o            (csr_vtype),
         .vstart_o           (csr_vstart),
+        .vxrm_o             (csr_vxrm),
+        .vxsat_set          (wb_vxsat_set),
         .pmp_addr_o         (pmp_addr_flat),
         .pmp_cfg_o          (pmp_cfg_flat)
     );
@@ -1412,6 +1433,16 @@ endgenerate
                 default    : ;
             endcase
         end
+        // S2 (ADR-0049): a saturating vector op at WB sets vxsat this cycle —
+        // overlay BEFORE the (younger) EX/MEM csr-write forwarding below so an
+        // intervening csrw still wins by age.
+        if ((EN_RVV != 0) && ex_wb_valid_r && ex_wb_vex_sat_r &&
+            ((id_csr_addr == `CSR_VXSAT) || (id_csr_addr == `CSR_VCSR)) &&
+            // ...unless a YOUNGER csr write to the alias group sits in MEM —
+            // sat-op(WB); csrw vxsat,x0(MEM); csrr(ID) must read 0 (Codex S2)
+            !(ex_mem_valid_r && ex_mem_csr_we_r &&
+              ((ex_mem_csr_addr_r == `CSR_VXSAT) || (ex_mem_csr_addr_r == `CSR_VCSR))))
+            id_csr_rdata = id_csr_rdata | 32'h1;
         // ADR-0036 3A: EX/MEM-window forwarding for the vxsat/vxrm/vcsr alias
         // group + mstatus.VS side effects — the exact-address bypass above
         // misses cross-alias writes (gate_40 adjacent-pair lockstep coverage).
@@ -1440,6 +1471,11 @@ endgenerate
         end
         if ((EN_RVV != 0) && ex_mem_valid_r && ex_mem_vcfg_we_r && (id_csr_addr == `CSR_MSTATUS))
             id_csr_rdata = csr_rdata | 32'h8000_0000 | (32'h3 << `MSTATUS_VS_LO_BIT);
+        // S2: saturating vector op in the MEM window (younger than any WB csrw,
+        // older than the reading csrr)
+        if ((EN_RVV != 0) && ex_mem_valid_r && ex_mem_vex_sat_r &&
+            ((id_csr_addr == `CSR_VXSAT) || (id_csr_addr == `CSR_VCSR)))
+            id_csr_rdata = id_csr_rdata | 32'h1;
         // 3B: vector-exec in EX/MEM clears vstart / dirties VS one commit ahead
         if ((EN_RVV != 0) && ex_mem_valid_r && ex_mem_vex_flag_r) begin
             if (id_csr_addr == `CSR_VSTART) id_csr_rdata = 32'h0;
@@ -1512,6 +1548,7 @@ endgenerate
             ex_mem_vcfg_vl_r         <= 32'h0;
             ex_mem_vcfg_vtype_r      <= 32'h8000_0000;
             ex_mem_vex_we_r          <= 1'b0;
+            ex_mem_vex_sat_r         <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
             ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_vex_vd_r          <= 5'd0;
@@ -1548,6 +1585,7 @@ endgenerate
             ex_mem_csr_we_r          <= 1'b0;
             ex_mem_vcfg_we_r         <= 1'b0;
             ex_mem_vex_we_r          <= 1'b0;
+            ex_mem_vex_sat_r         <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
             ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_is_branch_taken_r <= 1'b0;
@@ -1600,6 +1638,7 @@ endgenerate
             ex_mem_vcfg_vl_r         <= rvv_vl_next;
             ex_mem_vcfg_vtype_r      <= rvv_vtype_next;
             ex_mem_vex_we_r          <= id_vexec_can_commit && vexu_q_vrf_we;
+            ex_mem_vex_sat_r         <= id_vexec_can_commit && vexu_q_vxsat;
             ex_mem_vex_flag_r        <= id_vexec_can_commit;
             ex_mem_vex_mem_r         <= id_vexec_can_commit && vexu_q_is_mem;
             ex_mem_vex_vd_r          <= vexu_q_vd;
@@ -1643,6 +1682,7 @@ endgenerate
             ex_mem_csr_we_r          <= 1'b0;
             ex_mem_vcfg_we_r         <= 1'b0;
             ex_mem_vex_we_r          <= 1'b0;
+            ex_mem_vex_sat_r         <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
             ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_is_branch_taken_r <= 1'b0;
@@ -1795,6 +1835,7 @@ endgenerate
             ex_wb_vcfg_vl_r         <= 32'h0;
             ex_wb_vcfg_vtype_r      <= 32'h8000_0000;
             ex_wb_vex_we_r          <= 1'b0;
+            ex_wb_vex_sat_r         <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
             ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_vex_vd_r          <= 5'd0;
@@ -1831,6 +1872,7 @@ endgenerate
             ex_wb_csr_we_r          <= 1'b0;
             ex_wb_vcfg_we_r         <= 1'b0;
             ex_wb_vex_we_r          <= 1'b0;
+            ex_wb_vex_sat_r         <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
             ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_is_branch_taken_r <= 1'b0;
@@ -1885,6 +1927,7 @@ endgenerate
             ex_wb_vcfg_vl_r         <= ex_mem_vcfg_vl_r;
             ex_wb_vcfg_vtype_r      <= ex_mem_vcfg_vtype_r;
             ex_wb_vex_we_r          <= ex_mem_vex_we_r;
+            ex_wb_vex_sat_r         <= ex_mem_vex_sat_r;
             ex_wb_vex_flag_r        <= ex_mem_vex_flag_r;
             ex_wb_vex_mem_r         <= ex_mem_vex_mem_r;
             ex_wb_vex_vd_r          <= ex_mem_vex_vd_r;
@@ -1925,6 +1968,7 @@ endgenerate
             ex_wb_csr_we_r          <= 1'b0;
             ex_wb_vcfg_we_r         <= 1'b0;
             ex_wb_vex_we_r          <= 1'b0;
+            ex_wb_vex_sat_r         <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
             ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_is_branch_taken_r <= 1'b0;
@@ -1964,6 +2008,7 @@ endgenerate
     assign wb_vex_we      = ex_wb_vex_we_r && ex_wb_valid_r && !wb_take_irq &&
                              !wb_take_sync_trap && !wb_take_data_trap &&
                              !wb_take_trigger && !core_mem_stall;
+    assign wb_vxsat_set   = wb_vex_we && ex_wb_vex_sat_r;
     assign wb_vexec_we    = ex_wb_vex_flag_r && ex_wb_valid_r && !wb_take_irq &&
                              !wb_take_sync_trap && !wb_take_data_trap &&
                              !wb_take_trigger && !core_mem_stall;

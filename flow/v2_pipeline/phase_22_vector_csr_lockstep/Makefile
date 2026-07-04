@@ -79,6 +79,9 @@ valu:
 s1:
 	$(MAKE) FW_ASM=firmware_s1.S MIN_COMMITS=80 lockstep.log
 
+s2:
+	$(MAKE) FW_ASM=firmware_s2.S MIN_COMMITS=90 lockstep.log
+
 .PHONY: firmware_vrand.S
 firmware_vrand.S: gen_vector_random.py
 	python3 gen_vector_random.py --seed $(SEED) --blocks $(BLOCKS) --out $@

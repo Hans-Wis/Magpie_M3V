@@ -112,6 +112,8 @@ module csr #(
     output [31:0]     vl_o,
     output [31:0]     vtype_o,
     output [31:0]     vstart_o,
+    output [ 1:0]     vxrm_o,            // S2 (ADR-0049)
+    input             vxsat_set,         // S2: vector op saturated at WB
 
     // PMP CSRs (ADR-0024). Flattened as 8 entries so PMP_ENTRIES=0/4/8 can share ports.
     output [32*8-1:0] pmp_addr_o,
@@ -473,6 +475,9 @@ module csr #(
                 pmpaddr_r[pmp_i] <= 32'h0;
             end
         end else begin
+            // S2 (ADR-0049): saturation from a committed vector op (sticky).
+            // Cannot collide with a csr write in the same cycle (single WB).
+            if ((EN_RVV != 0) && vxsat_set) vxsat_reg <= 1'b1;
             // 4.1 cycle 永遠 +1 (CSR write 不影響)
             cycle_cnt <= cycle_cnt + 1'b1;
 
@@ -667,6 +672,7 @@ module csr #(
     assign debug_csr_rdata = csr_debug_read(debug_csr_waddr);
     assign mstatus_vs_o = mstatus_vs_visible;
     assign vl_o         = (EN_RVV != 0) ? vl_reg : 32'h0;
+    assign vxrm_o       = (EN_RVV != 0) ? vxrm_reg : 2'b00;
     assign vtype_o      = (EN_RVV != 0) ? vtype_reg : 32'h8000_0000;
     assign vstart_o     = (EN_RVV != 0) ? {25'b0, vstart_reg} : 32'h0;
     genvar pmp_g;

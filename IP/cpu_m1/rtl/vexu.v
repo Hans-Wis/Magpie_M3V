@@ -35,6 +35,8 @@ module vexu #(
     input  wire [31:0]  q_vl,        // effective vl
     input  wire [31:0]  q_vstart,    // effective vstart
     input  wire [31:0]  q_rs1,       // forwarded scalar rs1 (OPIVX)
+    input  wire [1:0]   q_vxrm,       // S2 (ADR-0049): effective vxrm at EX
+    output wire         q_vxsat,      // S2: saturation occurred (active lanes)
     output wire         q_illegal,
     output wire         q_scalar_we, // vmv.x.s -> scalar rd
     output wire [31:0]  q_scalar,
@@ -113,6 +115,22 @@ module vexu #(
     // mask-register logicals (bits 0..vl-1); vm bit is 1 in the encoding
     wire op_mlog  = is_opmvv && (f6[5:3] == 3'b011) && vm;
 
+    // ---------------- S2 (ADR-0049): saturating / averaging / scaling ----------------
+    wire op_saddu  = (f6 == 6'b100000) && (is_opivv || is_opivx || is_opivi);
+    wire op_sadd   = (f6 == 6'b100001) && (is_opivv || is_opivx || is_opivi);
+    wire op_ssubu  = (f6 == 6'b100010) && (is_opivv || is_opivx);
+    wire op_ssub   = (f6 == 6'b100011) && (is_opivv || is_opivx);
+    wire op_avg    = (is_opmvv || is_opmvx) && (f6[5:2] == 4'b0010);  // vaadd[u]/vasub[u]
+    wire avg_sub   = f6[1];                     // 001010/001011 = vasub[u]
+    wire avg_signed= f6[0];                     // 001001/001011 = signed
+    wire op_ssrl   = (f6 == 6'b101010) && (is_opivv || is_opivx || is_opivi);
+    wire op_ssra   = (f6 == 6'b101011) && (is_opivv || is_opivx || is_opivi);
+    wire op_nclipu = (f6 == 6'b101110) && (is_opivv || is_opivx || is_opivi);
+    wire op_nclip  = (f6 == 6'b101111) && (is_opivv || is_opivx || is_opivi);
+    wire op_s2same = op_saddu || op_sadd || op_ssubu || op_ssub ||
+                     op_avg || op_ssrl || op_ssra;
+    wire op_nc     = op_nclipu || op_nclip;
+
     // ---------------- config legality ----------------
     wire        vill  = q_vtype[31];
     wire [2:0]  vlmul = q_vtype[2:0];
@@ -158,7 +176,10 @@ module vexu #(
 
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
                     op_wmul || op_waddw || op_redsum || op_mvsx ||
-                    op_mm || op_cmp || op_mlog;
+                    op_mm || op_cmp || op_mlog || op_s2same || op_nc;
+    // narrowing legality mirrors widening (source EMUL = 2*LMUL <= 1); the
+    // low-part destination overlap (vd == vs2) is spec-legal for narrowing.
+    wire nc_illegal = op_nc && (!widen_lmul_ok || (vsew == 3'b010));
     // vstart!=0 on arithmetic = illegal (spec-allowed choice; MATCHES SPIKE —
     // caught by gate_42 lockstep: Spike trapped where the RTL executed).
     // Loads/stores are resumable: vstart is honored (start element), not illegal.
@@ -172,7 +193,9 @@ module vexu #(
                          // S1 (Codex, Spike-confirmed): a MASKED body op may not
                          // write v0 (dest overlaps the mask); mask-DEST compares
                          // targeting v0 remain legal.
-                         ((op_add || op_sub || op_mm) && !vm && (vd_i == 5'd0)))));
+                         nc_illegal ||
+                         ((op_add || op_sub || op_mm || op_s2same || op_nc) &&
+                          !vm && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------
     reg [127:0] vrf [0:31];
@@ -415,6 +438,220 @@ module vexu #(
                           (vsew == 3'b001) ? {vd_old[127:16], q_rs1[15:0]} :
                                              {vd_old[127:32], q_rs1[31:0]};
 
+    // ---------------- S2 datapaths (sat / avg / scaling shift / nclip) --------
+    // Rounding increment per vxrm (d = shift amount, x = raw bits):
+    //   rnu: x[d-1] | rne: x[d-1] & (x[d-2:0]!=0 | x[d]) | rdn: 0
+    //   rod: !x[d] & (x[d-1:0]!=0)
+    wire [15:0] s2_sat8, s2_sat16_x;  // per-lane sat flags (padded)
+    wire [3:0]  s2_sat32;
+    wire [7:0]  nc_sat8;
+    wire [3:0]  nc_sat16;
+    wire [127:0] res_s2_8, res_s2_16, res_s2_32, res_nc8, res_nc16;
+
+    generate
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_s2_8
+            wire [7:0] a = vs2_data[gi*8 +: 8];
+            wire [7:0] b = (is_opivv || is_opmvv) ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
+            wire signed [8:0] sxs = {a[7], a} + {b[7], b};
+            wire signed [8:0] sxd = {a[7], a} - {b[7], b};
+            wire        [8:0] uxs = {1'b0, a} + {1'b0, b};
+            wire        [8:0] uxd = {1'b0, a} - {1'b0, b};
+            // signed sat: top two bits differ
+            wire ss_ov  = sxs[8] != sxs[7];
+            wire sd_ov  = sxd[8] != sxd[7];
+            wire [7:0] r_sadd  = ss_ov ? (sxs[8] ? 8'h80 : 8'h7F) : sxs[7:0];
+            wire [7:0] r_ssub  = sd_ov ? (sxd[8] ? 8'h80 : 8'h7F) : sxd[7:0];
+            wire [7:0] r_saddu = uxs[8] ? 8'hFF : uxs[7:0];
+            wire [7:0] r_ssubu = uxd[8] ? 8'h00 : uxd[7:0];
+            // averaging: (a +/- b) >> 1 with vxrm; signed uses arithmetic shift
+            wire [8:0] avg_x   = avg_sub ? (avg_signed ? sxd[8:0] : uxd)
+                                         : (avg_signed ? sxs[8:0] : uxs);
+            wire avg_inc = (q_vxrm == 2'd0) ?  avg_x[0] :
+                           (q_vxrm == 2'd1) ? (avg_x[0] & avg_x[1]) :
+                           (q_vxrm == 2'd2) ?  1'b0 :
+                                              (~avg_x[1] & avg_x[0]);
+            wire [7:0] r_avg = avg_x[8:1] + {7'b0, avg_inc};   // (a±b)>>1, sign in bit 8
+            // scaling shifts
+            wire [2:0] d8 = b[2:0];
+            wire [7:0] lowm = (8'h01 << d8) - 8'h1;          // bits below d (incl d-1)
+            wire b_dm1 = (d8 != 3'd0) && (((a >> (d8 - 3'd1)) & 8'h1) != 8'h0);
+            wire b_d   = ((a >> d8) & 8'h1) != 8'h0;
+            wire lo_nz = (a & (lowm >> 1)) != 8'h0;
+            wire any_lo= (a & lowm) != 8'h0;
+            wire sh_inc = (q_vxrm == 2'd0) ? b_dm1 :
+                          (q_vxrm == 2'd1) ? (b_dm1 & (lo_nz | b_d)) :
+                          (q_vxrm == 2'd2) ? 1'b0 :
+                                             (~b_d & any_lo);
+            wire signed [7:0] as8 = a;
+            wire [7:0] r_ssrl = (a >> d8) + {7'b0, sh_inc};
+            wire [7:0] r_ssra = $unsigned(as8 >>> d8) + {7'b0, sh_inc};
+            wire [7:0] r_s2 = op_sadd  ? r_sadd  :
+                              op_saddu ? r_saddu :
+                              op_ssub  ? r_ssub  :
+                              op_ssubu ? r_ssubu :
+                              op_avg   ? r_avg   :
+                              op_ssrl  ? r_ssrl  : r_ssra;
+            wire en = (gi >= q_vstart) && (gi < q_vl) && (vm || v0_data[gi]);
+            assign res_s2_8[gi*8 +: 8] = en ? r_s2 : vd_old[gi*8 +: 8];
+            assign s2_sat8[gi] = en && ((op_sadd && ss_ov) || (op_ssub && sd_ov) ||
+                                        (op_saddu && uxs[8]) || (op_ssubu && uxd[8]));
+        end
+
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_s2_16
+            wire [15:0] a = vs2_data[gi*16 +: 16];
+            wire [15:0] b = (is_opivv || is_opmvv) ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
+            wire signed [16:0] sxs = {a[15], a} + {b[15], b};
+            wire signed [16:0] sxd = {a[15], a} - {b[15], b};
+            wire        [16:0] uxs = {1'b0, a} + {1'b0, b};
+            wire        [16:0] uxd = {1'b0, a} - {1'b0, b};
+            wire ss_ov  = sxs[16] != sxs[15];
+            wire sd_ov  = sxd[16] != sxd[15];
+            wire [15:0] r_sadd  = ss_ov ? (sxs[16] ? 16'h8000 : 16'h7FFF) : sxs[15:0];
+            wire [15:0] r_ssub  = sd_ov ? (sxd[16] ? 16'h8000 : 16'h7FFF) : sxd[15:0];
+            wire [15:0] r_saddu = uxs[16] ? 16'hFFFF : uxs[15:0];
+            wire [15:0] r_ssubu = uxd[16] ? 16'h0000 : uxd[15:0];
+            wire [16:0] avg_x   = avg_sub ? (avg_signed ? sxd[16:0] : uxd)
+                                          : (avg_signed ? sxs[16:0] : uxs);
+            wire avg_inc = (q_vxrm == 2'd0) ?  avg_x[0] :
+                           (q_vxrm == 2'd1) ? (avg_x[0] & avg_x[1]) :
+                           (q_vxrm == 2'd2) ?  1'b0 :
+                                              (~avg_x[1] & avg_x[0]);
+            wire [15:0] r_avg = avg_x[16:1] + {15'b0, avg_inc};
+            wire [3:0] d16 = b[3:0];
+            wire [15:0] lowm = (16'h0001 << d16) - 16'h1;
+            wire b_dm1 = (d16 != 4'd0) && (((a >> (d16 - 4'd1)) & 16'h1) != 16'h0);
+            wire b_d   = ((a >> d16) & 16'h1) != 16'h0;
+            wire lo_nz = (a & (lowm >> 1)) != 16'h0;
+            wire any_lo= (a & lowm) != 16'h0;
+            wire sh_inc = (q_vxrm == 2'd0) ? b_dm1 :
+                          (q_vxrm == 2'd1) ? (b_dm1 & (lo_nz | b_d)) :
+                          (q_vxrm == 2'd2) ? 1'b0 :
+                                             (~b_d & any_lo);
+            wire signed [15:0] as16 = a;
+            wire [15:0] r_ssrl = (a >> d16) + {15'b0, sh_inc};
+            wire [15:0] r_ssra = $unsigned(as16 >>> d16) + {15'b0, sh_inc};
+            wire [15:0] r_s2 = op_sadd  ? r_sadd  :
+                               op_saddu ? r_saddu :
+                               op_ssub  ? r_ssub  :
+                               op_ssubu ? r_ssubu :
+                               op_avg   ? r_avg   :
+                               op_ssrl  ? r_ssrl  : r_ssra;
+            wire en = (gi >= q_vstart) && (gi < q_vl) && (vm || v0_data[gi]);
+            assign res_s2_16[gi*16 +: 16] = en ? r_s2 : vd_old[gi*16 +: 16];
+            assign s2_sat16_x[gi] = en && ((op_sadd && ss_ov) || (op_ssub && sd_ov) ||
+                                           (op_saddu && uxs[16]) || (op_ssubu && uxd[16]));
+        end
+
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_s2_32
+            wire [31:0] a = vs2_data[gi*32 +: 32];
+            wire [31:0] b = (is_opivv || is_opmvv) ? vs1_data[gi*32 +: 32] : scalar_b;
+            wire signed [32:0] sxs = {a[31], a} + {b[31], b};
+            wire signed [32:0] sxd = {a[31], a} - {b[31], b};
+            wire        [32:0] uxs = {1'b0, a} + {1'b0, b};
+            wire        [32:0] uxd = {1'b0, a} - {1'b0, b};
+            wire ss_ov  = sxs[32] != sxs[31];
+            wire sd_ov  = sxd[32] != sxd[31];
+            wire [31:0] r_sadd  = ss_ov ? (sxs[32] ? 32'h8000_0000 : 32'h7FFF_FFFF) : sxs[31:0];
+            wire [31:0] r_ssub  = sd_ov ? (sxd[32] ? 32'h8000_0000 : 32'h7FFF_FFFF) : sxd[31:0];
+            wire [31:0] r_saddu = uxs[32] ? 32'hFFFF_FFFF : uxs[31:0];
+            wire [31:0] r_ssubu = uxd[32] ? 32'h0 : uxd[31:0];
+            wire [32:0] avg_x   = avg_sub ? (avg_signed ? sxd[32:0] : uxd)
+                                          : (avg_signed ? sxs[32:0] : uxs);
+            wire avg_inc = (q_vxrm == 2'd0) ?  avg_x[0] :
+                           (q_vxrm == 2'd1) ? (avg_x[0] & avg_x[1]) :
+                           (q_vxrm == 2'd2) ?  1'b0 :
+                                              (~avg_x[1] & avg_x[0]);
+            wire [31:0] r_avg = avg_x[32:1] + {31'b0, avg_inc};
+            wire [4:0] d32 = b[4:0];
+            wire [31:0] lowm = (32'h1 << d32) - 32'h1;
+            wire b_dm1 = (d32 != 5'd0) && (((a >> (d32 - 5'd1)) & 32'h1) != 32'h0);
+            wire b_d   = ((a >> d32) & 32'h1) != 32'h0;
+            wire lo_nz = (a & (lowm >> 1)) != 32'h0;
+            wire any_lo= (a & lowm) != 32'h0;
+            wire sh_inc = (q_vxrm == 2'd0) ? b_dm1 :
+                          (q_vxrm == 2'd1) ? (b_dm1 & (lo_nz | b_d)) :
+                          (q_vxrm == 2'd2) ? 1'b0 :
+                                             (~b_d & any_lo);
+            wire signed [31:0] as32 = a;
+            wire [31:0] r_ssrl = (a >> d32) + {31'b0, sh_inc};
+            wire [31:0] r_ssra = $unsigned(as32 >>> d32) + {31'b0, sh_inc};
+            wire [31:0] r_s2 = op_sadd  ? r_sadd  :
+                               op_saddu ? r_saddu :
+                               op_ssub  ? r_ssub  :
+                               op_ssubu ? r_ssubu :
+                               op_avg   ? r_avg   :
+                               op_ssrl  ? r_ssrl  : r_ssra;
+            wire en = (gi >= q_vstart) && (gi < q_vl) && (vm || v0_data[gi]);
+            assign res_s2_32[gi*32 +: 32] = en ? r_s2 : vd_old[gi*32 +: 32];
+            assign s2_sat32[gi] = en && ((op_sadd && ss_ov) || (op_ssub && sd_ov) ||
+                                         (op_saddu && uxs[32]) || (op_ssubu && uxd[32]));
+        end
+
+        // ---- vnclip[u]: wide 2*SEW source -> SEW dest with round + clip ----
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_nc8
+            wire [15:0] v = vs2_data[gi*16 +: 16];             // wide lane
+            wire [7:0]  b = is_opivv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
+            wire [3:0]  d = b[3:0];                            // shamt & (2*SEW-1)
+            wire [15:0] lowm = (16'h0001 << d) - 16'h1;
+            wire b_dm1 = (d != 4'd0) && (((v >> (d - 4'd1)) & 16'h1) != 16'h0);
+            wire b_d   = ((v >> d) & 16'h1) != 16'h0;
+            wire lo_nz = (v & (lowm >> 1)) != 16'h0;
+            wire any_lo= (v & lowm) != 16'h0;
+            wire inc = (q_vxrm == 2'd0) ? b_dm1 :
+                       (q_vxrm == 2'd1) ? (b_dm1 & (lo_nz | b_d)) :
+                       (q_vxrm == 2'd2) ? 1'b0 :
+                                          (~b_d & any_lo);
+            wire signed [15:0] vs = v;
+            wire signed [16:0] rs = {vs[15], $unsigned(vs >>> d)} + {16'b0, inc};
+            wire        [16:0] ru = {1'b0, v >> d} + {16'b0, inc};
+            wire s_ov = (rs > 17'sd127) || (rs < -17'sd128);
+            wire u_ov = (ru > 17'd255);
+            wire [7:0] r = op_nclip ? (s_ov ? (rs[16] ? 8'h80 : 8'h7F) : rs[7:0])
+                                    : (u_ov ? 8'hFF : ru[7:0]);
+            wire en = (gi >= q_vstart) && (gi < q_vl) && (vm || v0_data[gi]);
+            assign res_nc8[gi*8 +: 8] = en ? r : vd_old[gi*8 +: 8];
+            assign nc_sat8[gi] = en && (op_nclip ? s_ov : u_ov);
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_nc16
+            wire [31:0] v = vs2_data[gi*32 +: 32];
+            wire [15:0] b = is_opivv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
+            wire [4:0]  d = b[4:0];
+            wire [31:0] lowm = (32'h1 << d) - 32'h1;
+            wire b_dm1 = (d != 5'd0) && (((v >> (d - 5'd1)) & 32'h1) != 32'h0);
+            wire b_d   = ((v >> d) & 32'h1) != 32'h0;
+            wire lo_nz = (v & (lowm >> 1)) != 32'h0;
+            wire any_lo= (v & lowm) != 32'h0;
+            wire inc = (q_vxrm == 2'd0) ? b_dm1 :
+                       (q_vxrm == 2'd1) ? (b_dm1 & (lo_nz | b_d)) :
+                       (q_vxrm == 2'd2) ? 1'b0 :
+                                          (~b_d & any_lo);
+            wire signed [31:0] vs = v;
+            wire signed [32:0] rs = {vs[31], $unsigned(vs >>> d)} + {32'b0, inc};
+            wire        [32:0] ru = {1'b0, v >> d} + {32'b0, inc};
+            wire s_ov = (rs > 33'sd32767) || (rs < -33'sd32768);
+            wire u_ov = (ru > 33'd65535);
+            wire [15:0] r = op_nclip ? (s_ov ? (rs[32] ? 16'h8000 : 16'h7FFF) : rs[15:0])
+                                     : (u_ov ? 16'hFFFF : ru[15:0]);
+            wire en = (gi >= q_vstart) && (gi < q_vl) && (vm || v0_data[gi]);
+            assign res_nc16[gi*16 +: 16] = en ? r : vd_old[gi*16 +: 16];
+            assign nc_sat16[gi] = en && (op_nclip ? s_ov : u_ov);
+        end
+    endgenerate
+
+    // narrowing writes at most 8 (SEW8) / 4 (SEW16) dst elements under the
+    // fractional-LMUL rule -> the upper half of the dst register is tail
+    assign res_nc8[127:64]  = vd_old[127:64];
+    assign res_nc16[127:64] = vd_old[127:64];
+
+    wire [127:0] res_s2 = (vsew == 3'b000) ? res_s2_8 :
+                          (vsew == 3'b001) ? res_s2_16 : res_s2_32;
+    wire [127:0] res_nc = (vsew == 3'b000) ? res_nc8 : res_nc16;
+    assign q_vxsat = q_valid && !q_illegal && (q_vstart < q_vl) &&
+                     ((op_s2same && ((vsew == 3'b000) ? (|s2_sat8) :
+                                     (vsew == 3'b001) ? (|s2_sat16_x[7:0]) :
+                                                        (|s2_sat32))) ||
+                      (op_nc && ((vsew == 3'b000) ? (|nc_sat8) : (|nc_sat16))));
+
     // ---- S1 result assembly: compares + mask logicals ----
     wire [15:0] cmp_bits8;
     wire [7:0]  cmp_bits16;
@@ -441,6 +678,8 @@ module vexu #(
     assign q_wdata = is_vmem ? vm_buf :
                      op_cmp  ? res_cmp :
                      op_mlog ? res_mlog :
+                     op_s2same ? res_s2 :
+                     op_nc  ? res_nc :
                      op_widen ? ((vsew == 3'b000) ? res_w8 : res_w16) :
                      op_redsum ? res_red :
                      op_mvsx ? res_sx :

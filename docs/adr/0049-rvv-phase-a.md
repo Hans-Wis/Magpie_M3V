@@ -63,3 +63,18 @@ core.v 零改動**(單暫存器寫路徑不變,如 Codex 結構分析預測)。
 4K→8K(ITCM 容量)。**Codex 抓到 1 High(Spike 實跑確認)**:masked body op 寫 v0
 (dest 與 mask 重疊)RTL 原本放行、Spike 必 trap → q_illegal 補 guard + s1 終結子
 覆蓋。mask-dest tail 政策 = undisturbed,與此 Spike build 一致(lockstep 仲裁)。
+
+## S2 結果(2026-07-04)
+
+vexu 新增:vsadd[u]/vssub[u](逐 lane sat flag,僅 active lanes 置 vxsat)、
+vaadd[u]/vasub[u](vxrm 四模式)、vssrl/vssra(變動 shift 捨入)、vnclip[u](寬→窄
++ clip,fractional-LMUL 規則同 widening)。core.v:`eff_vxrm`(MEM+WB csr-next-val
+雙窗——3A 教訓套用到新 consumer)、vex_sat 管線 + `wb_vxsat_set`(與 vector 寫同 kill
+資格)、ID 讀 overlay 按年齡序。csr.v:vxrm_o + vxsat_set sticky。
+驗證:s2 directed 110 commits(INT8 邊界、csrr-緊跟-sat、csrw-vxrm-緊跟-vaadd、四捨入
+模式、masked 不置位、vnclip 邊界、vl=0、**sat;csrw-clear;csrr 年齡序 corner**)+
+vrand 1386 commits(vxrm churn + sticky/clear probes,gate_57 語料下限)全符;全 targets
+重綠。**Bring-up 抓到 2**:vaadd 取位 [8:2](多移一位)、OPMVV 的 operand-b 掉到 scalar
+路徑(單元 TB 隔離定位)。**Codex 1 真發現(修+corner)**:WB-sat overlay 壓過較年輕的
+MEM csrw 清除(年齡序 guard)。其餘捨入公式/vssra wrap/vnclip 重建/vasubu 語義經 Codex
+對 RVV 1.0 規格逐項驗證 CLEAN。

@@ -137,6 +137,29 @@ def gen(seed: int, blocks: int) -> str:
             wl = sorted(written)
             out.append(f"    vmv.x.s {rng.choice(SCALARS)}, v0")   # mask reg probe
 
+        # ---- S2 (ADR-0049): saturating / averaging / scaling + vxrm churn ----
+        if wl:
+            out.append(f"    li   t0, {rng.randint(0, 3)}")
+            out.append("    csrw vxrm, t0")
+            vd4 = rng.choice([v for v in vpool if v != 0])
+            sat_op = rng.choice(["vsadd.vv", "vsaddu.vv", "vssub.vv", "vssubu.vv",
+                                 "vaadd.vv", "vaaddu.vv", "vasub.vv", "vasubu.vv",
+                                 "vssrl.vv", "vssra.vv"])
+            out.append(f"    {sat_op} v{vd4}, v{rng.choice(wl)}, v{rng.choice(wl)}")
+            written.add(vd4)
+            if rng.random() < 0.5:
+                vd5 = rng.choice([v for v in vpool if v != 0])
+                si = rng.choice(["vsadd.vi", "vssrl.vi", "vssra.vi"])
+                imm = rng.randint(0, 7) if si != "vsadd.vi" else rng.randint(-16, 15)
+                out.append(f"    {si} v{vd5}, v{rng.choice(wl)}, {imm}")
+                written.add(vd5)
+            wl = sorted(written)
+            out.append("    csrr t4, vxsat")                       # sticky probe
+            out.append("    csrr t5, vcsr")
+            if rng.random() < 0.3:
+                out.append("    csrw vxsat, x0")                   # clear path
+            out.append(f"    vmv.x.s {rng.choice(SCALARS)}, v{vd4}")
+
         # 3C: one unit-stride memory op per block (legal EEW for live config)
         sewb = {"e8": 1, "e16": 2, "e32": 4}[sew]
         lm_den = {"m1": 1, "mf2": 2, "mf4": 4, "mf8": 8}.get(lmul, 1)
