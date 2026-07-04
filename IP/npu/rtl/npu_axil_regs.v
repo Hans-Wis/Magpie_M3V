@@ -86,6 +86,9 @@ module npu_axil_regs #(
     input  wire        mat_done,
     input  wire        mat_err,
 
+    // ---- ADR-0038 soft_reset/abort ----
+    output wire        abort_req,
+
     // ---- level interrupt to host (out only) ----
     output wire        irq            // = irq_pending & CTRL.irq_enable
 );
@@ -98,11 +101,15 @@ module npu_axil_regs #(
     reg [31:0] dma_len_q;                 // full-word storage; DMA uses low 17 bits
     reg [31:0] wb_len_q;                  // full-word storage; DMA uses low 17 bits
     reg [31:0] cq_ring_base_q, cq_ring_size_q, cq_head_q, cq_tail_q, cq_ctrl_q, err_cause_q;
+    reg [31:0] err_pc_q;
     reg        cq_busy_q, cq_err_q;
+    reg        soft_rst_q;          // ADR-0038: abort in progress (drain then clear run state)
+    wire       engines_quiet = !dma_busy && !wb_busy && !mat_busy;
+    assign     abort_req = soft_rst_q;
     assign     dma_len = dma_len_q[16:0];
     assign     wb_len  = wb_len_q[16:0];
     //  STATUS: [0]=npu_busy [1]=npu_done [2]=dma_busy [3]=dma_done [4]=irq_pending [5]=dma_err [6]=wb_busy [7]=wb_done
-    wire [31:0] status_w = {24'b0, wb_done, wb_busy, dma_err, irq_pending, dma_done, dma_busy, npu_done, npu_busy};
+    wire [31:0] status_w = {23'b0, soft_rst_q, wb_done, wb_busy, dma_err, irq_pending, dma_done, dma_busy, npu_done, npu_busy};
     wire [31:0] cq_mask_w = cq_ring_size_q - 32'd1;
     wire [31:0] cq_tail_next_w = (cq_tail_q + 32'd1) & cq_mask_w;
     wire [31:0] cq_status_w = {28'b0, cq_err_q, cq_busy_q, (cq_tail_next_w == cq_head_q), (cq_head_q == cq_tail_q)};
@@ -135,32 +142,53 @@ module npu_axil_regs #(
             mat_a_addr <= 32'b0; mat_b_addr <= 32'b0; mat_mult <= 32'b0;
             mat_rsp <= 32'b0; mat_clamp <= 32'b0; mat_out_base <= 32'h0000_0800;
             mat_go <= 1'b0; mat_cmd <= 3'b0; mat_bank <= 4'b0; mat_rpt <= 8'b0;
+            err_pc_q <= 32'b0; soft_rst_q <= 1'b0;
         end else begin
             dma_go <= 1'b0;                    // default: pulse is 1-cycle
             wb_go <= 1'b0;                     // default: pulse is 1-cycle
             mat_go <= 1'b0;                    // default: pulse is 1-cycle
+            // ADR-0038: abort completes when engines drain; run state clears,
+            // FAULT evidence (ERR_CAUSE/ERR_PC/cq_err) PERSISTS for post-mortem.
+            // Placed BEFORE the host-write case so a same-cycle CQ_CTRL ack wins
+            // (deliberate clear beats the ABORTED latch — Codex P0-5 finding #2).
+            if (soft_rst_q && engines_quiet) begin
+                soft_rst_q  <= 1'b0;
+                cq_busy_q   <= 1'b0;
+                if (err_cause_q == 32'b0) err_cause_q <= 32'd8;   // ABORTED
+                cq_err_q    <= 1'b1;
+            end
             if (s_axi_awvalid && s_axi_awready) begin aw_seen <= 1'b1; wa_q <= s_axi_awaddr; end
             if (s_axi_wvalid  && s_axi_wready ) begin w_seen <= 1'b1; wd_q <= s_axi_wdata; wstrb_q <= s_axi_wstrb; end
 
             if (wr_fire) begin
                 case (wa_q[7:2])
-                    6'h01: ctrl_q   <= merge(ctrl_q,   wd_q, wstrb_q);          // 0x04 CTRL
+                    6'h01: begin                                                // 0x04 CTRL
+                        // ADR-0038: bit2 = soft_reset/abort request — halts the core
+                        // NOW (start cleared), engines drain, run state clears at
+                        // quiesce. bit2 is momentary (not stored).
+                        if (wd_q[2] && wstrb_q[0]) begin
+                            soft_rst_q <= 1'b1;
+                            ctrl_q     <= merge(ctrl_q, wd_q, wstrb_q) & 32'hFFFF_FFFA;
+                        end else
+                            ctrl_q <= merge(ctrl_q, wd_q, wstrb_q) & 32'hFFFF_FFFB;
+                    end
                     6'h03: config_q <= merge(config_q, wd_q, wstrb_q);          // 0x0C CONFIG
                     // 0x10 SCRATCH written in the dedicated scratch_q block below
                     6'h08: dma_src  <= merge(dma_src,  wd_q, wstrb_q);          // 0x20 DMA_SRC
                     6'h09: dma_dst  <= merge(dma_dst,  wd_q, wstrb_q);          // 0x24 DMA_DST
                     6'h0A: dma_len_q <= merge(dma_len_q, wd_q, wstrb_q);        // 0x28 DMA_LEN
-                    6'h0B: dma_go   <= wd_q[0] & wstrb_q[0];                    // 0x2C GO (1-cyc pulse)
+                    6'h0B: dma_go   <= wd_q[0] & wstrb_q[0] & ~soft_rst_q;      // 0x2C GO (abort-locked)
                     6'h0C: wb_src   <= merge(wb_src,   wd_q, wstrb_q);          // 0x30 WB_SRC
                     6'h0D: wb_dst   <= merge(wb_dst,   wd_q, wstrb_q);          // 0x34 WB_DST
                     6'h0E: wb_len_q <= merge(wb_len_q, wd_q, wstrb_q);          // 0x38 WB_LEN
-                    6'h0F: wb_go    <= wd_q[0] & wstrb_q[0];                    // 0x3C WB_CTRL.WB_GO
+                    6'h0F: wb_go    <= wd_q[0] & wstrb_q[0] & ~soft_rst_q;      // 0x3C WB_GO (abort-locked)
                     6'h10: cq_ring_base_q <= merge(cq_ring_base_q, wd_q, wstrb_q); // 0x40 CQ_RING_BASE
                     6'h11: cq_ring_size_q <= merge(cq_ring_size_q, wd_q, wstrb_q); // 0x44 CQ_RING_SIZE
                     6'h13: cq_tail_q <= merge(cq_tail_q, wd_q, wstrb_q);         // 0x4C CQ_TAIL
                     6'h14: begin                                                // 0x50 CQ_CTRL
                         if (!cq_ctrl_q[0] && merge(cq_ctrl_q, wd_q, wstrb_q)[0]) begin
                             err_cause_q <= 32'b0;
+                            err_pc_q    <= 32'b0;   // evidence pair clears together
                             cq_err_q <= 1'b0;
                         end
                         cq_ctrl_q <= merge(cq_ctrl_q, wd_q, wstrb_q);
@@ -177,11 +205,11 @@ module npu_axil_regs #(
                     6'h08: dma_src   <= core_csr_wdata;      // 0x20 DMA_SRC
                     6'h09: dma_dst   <= core_csr_wdata;      // 0x24 DMA_DST
                     6'h0A: dma_len_q <= core_csr_wdata;      // 0x28 DMA_LEN
-                    6'h0B: dma_go    <= core_csr_wdata[0];   // 0x2C GO (1-cyc pulse)
+                    6'h0B: dma_go    <= core_csr_wdata[0] & ~soft_rst_q;   // 0x2C GO (abort-locked)
                     6'h0C: wb_src    <= core_csr_wdata;      // 0x30 WB_SRC
                     6'h0D: wb_dst    <= core_csr_wdata;      // 0x34 WB_DST
                     6'h0E: wb_len_q  <= core_csr_wdata;      // 0x38 WB_LEN
-                    6'h0F: wb_go     <= core_csr_wdata[0];   // 0x3C WB_CTRL.WB_GO
+                    6'h0F: wb_go     <= core_csr_wdata[0] & ~soft_rst_q;   // 0x3C WB_GO (abort-locked)
                     6'h12: cq_head_q <= core_csr_wdata;      // 0x48 CQ_HEAD
                     6'h18: mat_a_addr   <= core_csr_wdata;   // 0x60 MAT_A_ADDR
                     6'h19: mat_b_addr   <= core_csr_wdata;   // 0x64 MAT_B_ADDR
@@ -189,12 +217,14 @@ module npu_axil_regs #(
                         mat_cmd  <= core_csr_wdata[18:16];
                         mat_bank <= core_csr_wdata[11:8];
                         mat_rpt  <= core_csr_wdata[7:0];
-                        mat_go   <= 1'b1;
+                        mat_go   <= ~soft_rst_q;             // abort-locked
                     end
                     6'h1B: mat_mult     <= core_csr_wdata;   // 0x6C MAT_MULT
                     6'h1C: mat_rsp      <= core_csr_wdata;   // 0x70 MAT_RSP {(zp<<8)|shift}
                     6'h1D: mat_clamp    <= core_csr_wdata;   // 0x74 MAT_CLAMP {(max<<8)|min}
                     6'h1E: mat_out_base <= core_csr_wdata;   // 0x78 MAT_OUT_BASE
+                    6'h20: if (err_cause_q == 32'b0)         // 0x80 ERR_PC (pairs with cause)
+                        err_pc_q <= core_csr_wdata;
                     6'h16: if (err_cause_q == 32'b0 && core_csr_wdata != 32'b0) begin // 0x58 ERR_CAUSE
                         err_cause_q <= core_csr_wdata;
                         cq_err_q <= 1'b1;
@@ -244,6 +274,7 @@ module npu_axil_regs #(
                     6'h15:  s_axi_rdata <= cq_status_w;    // 0x54 CQ_STATUS
                     6'h16:  s_axi_rdata <= err_cause_q;    // 0x58 ERR_CAUSE
                     6'h1F:  s_axi_rdata <= {29'b0, mat_err, mat_done, mat_busy}; // 0x7C MAT_STATUS (debug)
+                    6'h20:  s_axi_rdata <= err_pc_q;       // 0x80 ERR_PC (post-mortem)
                     default: s_axi_rdata <= 32'h0;
                 endcase
             end else if (s_axi_rvalid && s_axi_rready) begin
@@ -254,16 +285,20 @@ module npu_axil_regs #(
     assign s_axi_arready = !s_axi_rvalid;
 
     // ---------- interrupt: set on completion edge, cleared by CTRL.irq_clear ----------
-    reg dma_done_d, wb_done_d, npu_done_d;
+    reg dma_done_d, wb_done_d, npu_done_d, cq_err_d, dma_err_d;
     always @(posedge clk) begin
         if (!resetn) begin
             irq_pending <= 1'b0; dma_done_d <= 1'b0; wb_done_d <= 1'b0; npu_done_d <= 1'b0;
+            cq_err_d <= 1'b0; dma_err_d <= 1'b0;
         end else begin
             dma_done_d <= dma_done;
             wb_done_d <= wb_done;
             npu_done_d <= npu_done;
+            cq_err_d  <= cq_err_q;
+            dma_err_d <= dma_err;
             if (((!cq_ctrl_q[0]) && ((dma_done & ~dma_done_d) | (wb_done & ~wb_done_d))) |
                 (npu_done & ~npu_done_d) |
+                (cq_err_q & ~cq_err_d) | (dma_err & ~dma_err_d) |   // ADR-0038 ERR IRQ
                 (core_csr_en && core_csr_we && core_csr_addr[7:2] == 6'h17 && core_csr_wdata[0]))
                 irq_pending <= 1'b1;                                  // rising edge of a completion
             else if (wr_fire && wa_q[7:2] == 6'h01 && wd_q[1] && wstrb_q[0])
@@ -304,6 +339,7 @@ module npu_axil_regs #(
                 6'h1D:  core_csr_rdata <= mat_clamp;       // 0x74
                 6'h1E:  core_csr_rdata <= mat_out_base;    // 0x78
                 6'h1F:  core_csr_rdata <= {29'b0, mat_err, mat_done, mat_busy}; // 0x7C MAT_STATUS
+                6'h20:  core_csr_rdata <= err_pc_q;        // 0x80 ERR_PC
                 default: core_csr_rdata <= 32'b0;
             endcase
         end

@@ -12,7 +12,7 @@
 | 3 | 矩陣 256-MAC + 8×8×32b acc + requant | 🟡 PARTIAL(2026-07-04 升級) | **64-MAC 外積引擎 + 4×8×8×32b acc + TFLite-exact requant 已落**(ADR-0037):gate_45 單元 1629 checks 對 NumPy golden 位元精確、gate_46 CQ 全鏈卸載 byte-exact。缺:64→256 MAC 放大、16 banks、weight-stationary、多 tile(記錄性延後) |
 | 4 | 記憶體 ITCM 8K / DTCM 32K,128-bit | 🔴 MISSING(P1) | 現為 unified 4KB TCM、32-bit port。sizing/split 已記 P1(ADR-0034) |
 | 5 | 卸載 doorbell→DMA→compute→writeback→IRQ | 🟡 PARTIAL(最接近) | doorbell(CTRL.start)✅ 權重 DMA ✅ scalar compute ✅ writeback ✅ DONE IRQ ✅(gate_29/30..34);**缺 command-queue ring(P0②,本步進行中)**;compute 僅 scalar |
-| 6 | 例外/控制(traps + abort/reset) | 🔴 MISSING | P0⑤/P1:ERR_CAUSE、真 soft_reset/abort 未實作(ADR-0035 起 stub) |
+| 6 | 例外/控制(traps + abort/reset) | 🟡 PARTIAL(2026-07-04 升級) | **P0⑤ 完成(ADR-0038)**:core trap→host(ERR_PC/ERR_CAUSE latch-once 對、ERR IRQ)、真 soft_reset/abort(burst-邊界 drain、AXI 乾淨、證據持久、ABORTED 入 fault namespace)、復原流程 gate_47 全驗。餘:hard-reset 區分、trap 向量豐富度(記錄) |
 | 7 | 軟體(開源 clang-RVV + TFLM + CQ encoder) | 🟡 PARTIAL | clang RVV → Spike ISS ✅(gate_p0);CQ encoder 隨 P0② SSOT 落;TFLM e2e = Phase 6 |
 | 8 | 除錯(RVVI/RVFI trace port) | 🔴 MISSING(P1) | 未建 |
 

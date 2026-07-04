@@ -23,6 +23,7 @@ module npu_dma #(
 
     // ---- descriptor / control (from npu_axil_regs) ----
     input  wire        go,                 // 1-cycle pulse: start transfer
+    input  wire        abort_i,              // ADR-0038: finish the CURRENT AXI burst, then idle
     input  wire        write_mode,         // 0=AXI read -> TCM, 1=TCM -> AXI write
     input  wire [31:0] src_addr,           // shared byte addr in read mode; destination byte addr in write mode
     input  wire [BUF_AW-1:0] dst_word,     // local destination in read mode; local source in write mode
@@ -106,7 +107,9 @@ module npu_dma #(
             m_arvalid <= 1'b0; m_awvalid <= 1'b0; m_wvalid <= 1'b0;
         end else begin
             case (state)
-                S_IDLE: if (go) begin
+                S_IDLE: if (abort_i) begin
+                            done <= 1'b0; err <= 1'b0;   // clear stickies for soft reset
+                        end else if (go) begin
                             cur_addr  <= {src_addr[31:2], 2'b00};
                             remaining <= len_beats;
                             buf_addr  <= dst_word;
@@ -118,7 +121,9 @@ module npu_dma #(
                             else
                                 state <= write_mode ? S_AW : S_AR;
                         end
-                S_AR: begin
+                S_AR: if (abort_i && !m_arvalid) begin
+                            done_ok <= 1'b0; state <= S_DONE;   // burst not yet presented
+                        end else begin
                             m_araddr <= cur_addr;
                             m_arlen  <= burst_m1[7:0];            // AXI ARLEN = beats-1
                             beats_in_burst <= this_burst[8:0];
@@ -134,13 +139,18 @@ module npu_dma #(
                             if (m_rlast) begin
                                 remaining <= remaining - {8'b0, beats_in_burst};
                                 cur_addr  <= cur_addr + {21'b0, beats_in_burst, 2'b00};
-                                if ((remaining - {8'b0, beats_in_burst}) == 17'd0)
+                                if (abort_i) begin
+                                    done_ok <= 1'b0;      // burst-boundary abort_i (protocol clean)
+                                    state <= S_DONE;
+                                end else if ((remaining - {8'b0, beats_in_burst}) == 17'd0)
                                     state <= S_DONE;
                                 else
                                     state <= S_AR;
                             end
                         end
-                S_AW: begin
+                S_AW: if (abort_i && !m_awvalid) begin
+                            done_ok <= 1'b0; state <= S_DONE;
+                        end else begin
                             m_awaddr <= cur_addr;
                             m_awlen  <= burst_m1[7:0];            // AXI AWLEN = beats-1
                             beats_in_burst <= this_burst[8:0];
@@ -166,18 +176,21 @@ module npu_dma #(
                             if (m_bresp[1]) begin
                                 err <= 1'b1;                       // latch SLVERR/DECERR
                                 done_ok <= 1'b0;
-                                state <= S_DONE;                   // abort; no wb_done
+                                state <= S_DONE;                   // abort_i; no wb_done
                             end else begin
                                 remaining <= remaining - {8'b0, beats_in_burst};
                                 cur_addr  <= cur_addr + {21'b0, beats_in_burst, 2'b00};
-                                if ((remaining - {8'b0, beats_in_burst}) == 17'd0)
+                                if (abort_i) begin
+                                    done_ok <= 1'b0;
+                                    state <= S_DONE;
+                                end else if ((remaining - {8'b0, beats_in_burst}) == 17'd0)
                                     state <= S_DONE;
                                 else
                                     state <= S_AW;
                             end
                         end
                 S_DONE: begin
-                            busy <= 1'b0; done <= done_ok;
+                            busy <= 1'b0; done <= done_ok && !abort_i;
                             state <= S_IDLE;
                         end
                 default: state <= S_IDLE;

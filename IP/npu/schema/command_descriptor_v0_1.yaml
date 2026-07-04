@@ -164,6 +164,15 @@
     {
       "name": "MAT_PARAM",
       "value": 7
+    },
+    {
+      "name": "ABORTED",
+      "value": 8
+    },
+    {
+      "name": "CORE_TRAP_FLAG",
+      "value": 2147483648,
+      "notes": "ADR-0038: ERR_CAUSE bit31 set by the trap handler; low bits = mcause; ERR_PC holds mepc (latch-once pair)."
     }
   ],
   "csr": {
@@ -233,6 +242,10 @@
       {
         "name": "MAT_STATUS",
         "offset": 124
+      },
+      {
+        "name": "ERR_PC",
+        "offset": 128
       }
     ]
   }

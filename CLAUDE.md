@@ -40,7 +40,7 @@
 **驗證迴圈可用**:`flow/v2_pipeline/phase_03_0*/Makefile`(host)+ `phase_20_npu_core_lockstep/`(NPU:`make directed` / `make random SEED=n` / `make coverage`)= **Verilator(DUT)+ Spike(golden)+ riscv64-unknown-elf-gcc(firmware)** 一鍵重跑。baseline tag `m3v-pre-phase2-cpu`。
 
 **Roadmap(對 Coral 對等,含缺漏 folded — 見 `docs/reviews/2026-07-03_coral_gap_review.md`)**:
-- **P0 缺漏(近期,優先):** ④ **RVV vector-CSR lockstep**(vtype/vl/vstart/vxsat,Phase 3 硬前提)⑤ ERR_CAUSE-to-host trap + 真 soft_reset/abort(CQ ERR halt/ERR_CAUSE 已落,RING_OVERRUN 偵測 deferred)。(①writeback、②command queue、③矩陣 64-MAC+requant 已完成——MAT.OP/RESCALE 已轉真執行,gate_45/46。)
+- **P0 缺漏:全部完成(2026-07-04)** ✅ ①writeback ②command queue ③矩陣 64-MAC+requant ④vector-CSR lockstep(隨 Phase 3)⑤traps/abort(ADR-0038,gate_47)。RING_OVERRUN 偵測 deferred(host-side ABI)。
 - Phase 3 RVV Zve32x EXU → Phase 4 GEMV/矩陣 64→256 MAC + CQ + NumPy golden → Phase 6 TFLM e2e → Phase 7 harden/PPA/+F。
 - **P1**:NPU traps/ERR_CAUSE、cache flush-before-doorbell、ITCM/DTCM sizing(8K/32K)、strided/2D DMA、RVVI/RVFI trace。
 - **scope-cut(已記錄):** scalar F(int8-first)、L0 I-cache、clock/power gating、double-buffer。

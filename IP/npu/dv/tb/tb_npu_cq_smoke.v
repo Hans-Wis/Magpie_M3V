@@ -224,7 +224,7 @@ module tb_npu_cq_smoke;
         chk(rd, 32'h00000007, "ERR_CAUSE.mat_param (ADR-0037)");
         axil_read(CSR_BASE + 32'h48, rd);
         chk(rd, 32'h00000004, "CQ_HEAD.frozen_on_err");
-        chk_bit(irq, 1'b0, "irq_no_error_done");
+        chk_bit(irq, 1'b1, "irq_on_error (ADR-0038 ERR IRQ)");
 
         $display("NPU_CQ_SMOKE: %0d checks, %0d errors", checks, errors);
         if (errors == 0) $display("NPU_CQ_SMOKE_PASS");

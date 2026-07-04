@@ -209,6 +209,7 @@ module npu_top #(
     // ================= matrix engine (ADR-0037) =================
     wire [31:0] mat_a_addr, mat_b_addr, mat_mult, mat_rsp, mat_clamp, mat_out_base;
     wire        mat_go, mat_busy, mat_done, mat_err;
+    wire        npu_abort;
     wire [2:0]  mat_cmd;
     wire [3:0]  mat_bank;
     wire [7:0]  mat_rpt;
@@ -218,7 +219,7 @@ module npu_top #(
 
     mat_engine #(.TCM_AW(TCM_AW)) u_mat (
         .clk(clk), .resetn(resetn),
-        .go(mat_go), .cmd(mat_cmd), .arg_bank(mat_bank), .arg_rpt(mat_rpt),
+        .go(mat_go), .abort_i(npu_abort), .cmd(mat_cmd), .arg_bank(mat_bank), .arg_rpt(mat_rpt),
         .a_addr(mat_a_addr), .b_addr(mat_b_addr),
         .rs_mult(mat_mult), .rs_shift(mat_rsp[7:0]), .rs_zp(mat_rsp[15:8]),
         .rs_min(mat_clamp[7:0]), .rs_max(mat_clamp[15:8]), .out_base(mat_out_base),
@@ -242,6 +243,7 @@ module npu_top #(
         .mat_rsp(mat_rsp),.mat_clamp(mat_clamp),.mat_out_base(mat_out_base),
         .mat_go(mat_go),.mat_cmd(mat_cmd),.mat_bank(mat_bank),.mat_rpt(mat_rpt),
         .mat_busy(mat_busy),.mat_done(mat_done),.mat_err(mat_err),
+        .abort_req(npu_abort),
         .dma_src(dma_src),.dma_dst(dma_dst),.dma_len(dma_len),.dma_go(dma_go),
         .dma_busy(dma_busy),.dma_done(dma_done),.dma_err(dma_err),
         .wb_src(wb_src),.wb_dst(wb_dst),.wb_len(wb_len),.wb_go(wb_go),
@@ -277,7 +279,7 @@ module npu_top #(
 
     npu_dma #(.BUF_AW(12)) dma (
         .clk(clk), .resetn(resetn),
-        .go(dma_start), .write_mode(dma_start_write),
+        .go(dma_start), .abort_i(npu_abort), .write_mode(dma_start_write),
         .src_addr(dma_desc_addr), .dst_word(dma_desc_word), .len_beats(dma_desc_len),
         .busy(dma_busy_engine), .done(dma_done_engine),
         .m_arvalid(m_arvalid),.m_arready(m_arready),.m_araddr(m_araddr),.m_arlen(m_arlen),

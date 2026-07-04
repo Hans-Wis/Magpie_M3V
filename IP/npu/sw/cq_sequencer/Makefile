@@ -26,3 +26,9 @@ size: firmware.elf
 
 clean:
 	rm -f firmware.elf firmware.hex firmware.disasm
+
+trap_test.hex: trap_test.S sequencer.lds
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc -Os -march=$(GCC_MARCH) -mabi=ilp32 \
+	    -nostartfiles -nostdlib -ffreestanding \
+	    -Wl,-Bstatic,-T,sequencer.lds,--strip-debug -o trap_test.elf trap_test.S
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)objcopy -O verilog --verilog-data-width=4 trap_test.elf $@

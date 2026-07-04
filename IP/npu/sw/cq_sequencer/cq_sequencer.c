@@ -25,6 +25,7 @@
 #define CSR_MAT_CLAMP   0x74u
 #define CSR_MAT_OUT     0x78u
 #define CSR_MAT_STATUS  0x7Cu
+#define CSR_ERR_PC      0x80u
 #define MAT_ST_BUSY     1u
 #define MAT_ST_DONE     2u
 #define MAT_ST_ERR      4u
@@ -49,10 +50,31 @@ static volatile cq_desc_t *const scratch = (volatile cq_desc_t *)TCM_SCRATCH_B;
 
 static volatile uint32_t cfg_m, cfg_n, cfg_k, cfg_tile_flags, acc_mask_latch;
 
+/* ADR-0038: terminal trap handler — reports the fault to the host through the
+ * latch-once ERR_PC/ERR_CAUSE pair (cause bit31 = CORE_TRAP flag | mcause);
+ * the cq_err rising edge raises the host ERR IRQ. Then spin (Kelvin io_fault
+ * shape: host soft_resets and resubmits). A trap inside the handler re-enters
+ * and spins with the FIRST cause preserved (latch-once). */
+__attribute__((naked, aligned(4))) void trap_handler(void)
+{
+    __asm__ volatile (
+        "lui  t1, 0x20\n"          /* CSR mirror base */
+        "csrr t2, mepc\n"
+        "sw   t2, 0x80(t1)\n"      /* ERR_PC first (pairs with cause) */
+        "csrr t0, mcause\n"
+        "lui  t3, 0x80000\n"
+        "or   t0, t0, t3\n"
+        "sw   t0, 0x58(t1)\n"      /* ERR_CAUSE = CORE_TRAP|mcause -> ERR IRQ */
+        "1: j 1b\n"
+    );
+}
+
 __attribute__((naked, section(".init"))) void _start(void)
 {
     __asm__ volatile (
-        "li sp, 0x0f00\n"
+        "la   t0, trap_handler\n"  /* mtvec FIRST: traps are host-visible from here on */
+        "csrw mtvec, t0\n"
+        "li   sp, 0x0f00\n"
         "call main\n"
         "1: j 1b\n"
     );

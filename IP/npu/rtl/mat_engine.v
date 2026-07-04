@@ -29,6 +29,7 @@ module mat_engine #(
 
     // ---- command port (CSR mirror) ----
     input  wire        go,
+    input  wire        abort_i,        // ADR-0038: return to IDLE (no AXI side effects)
     input  wire [2:0]  cmd,          // 0=CLR 1=OP 2=RESCALE
     input  wire [3:0]  arg_bank,     // OP/RESCALE: bank id; CLR: bank mask
     input  wire [7:0]  arg_rpt,
@@ -120,6 +121,8 @@ module mat_engine #(
         if (!resetn) begin
             state <= S_IDLE; done <= 1'b0; err_param <= 1'b0;
             t_we <= 1'b0; rd_i <= 2'd0; el_i <= 6'd0; rep_i <= 8'd0;
+        end else if (abort_i) begin
+            state <= S_IDLE; done <= 1'b0; err_param <= 1'b0; t_we <= 1'b0;
         end else begin
             t_we <= 1'b0;
             case (state)
