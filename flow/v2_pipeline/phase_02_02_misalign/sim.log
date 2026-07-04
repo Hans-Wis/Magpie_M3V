@@ -6,5 +6,5 @@
 PASS: misalign trap observed 3 precise traps, aligned lb/sb did not trap, no misaligned DBUS request
 - tb_misalign_trap.v:215: Verilog $finish
 - S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 735ns; walltime 0.002 s; speed 421.605 us/s
-- Verilator: cpu 0.002 s on 1 threads; allocated 18 MB
+- Verilator: $finish at 735ns; walltime 0.001 s; speed 544.408 us/s
+- Verilator: cpu 0.001 s on 1 threads; allocated 18 MB

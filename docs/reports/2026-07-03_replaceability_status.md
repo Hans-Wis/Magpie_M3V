@@ -13,7 +13,7 @@
 | 4 | 記憶體 ITCM 8K / DTCM 32K,128-bit | 🔴 MISSING(P1) | 現為 unified 4KB TCM、32-bit port。sizing/split 已記 P1(ADR-0034) |
 | 5 | 卸載 doorbell→DMA→compute→writeback→IRQ | 🟡 PARTIAL(最接近) | doorbell(CTRL.start)✅ 權重 DMA ✅ scalar compute ✅ writeback ✅ DONE IRQ ✅(gate_29/30..34);**缺 command-queue ring(P0②,本步進行中)**;compute 僅 scalar |
 | 6 | 例外/控制(traps + abort/reset) | 🟡 PARTIAL(2026-07-04 升級) | **P0⑤ 完成(ADR-0038)**:core trap→host(ERR_PC/ERR_CAUSE latch-once 對、ERR IRQ)、真 soft_reset/abort(burst-邊界 drain、AXI 乾淨、證據持久、ABORTED 入 fault namespace)、復原流程 gate_47 全驗。餘:hard-reset 區分、trap 向量豐富度(記錄) |
-| 7 | 軟體(TF→編譯→NPU 執行) | 🟡 PARTIAL(2026-07-04 再升級) | **ADR-0039**:第一個真 TFLM op(int8 FullyConnected,reference kernel 語義)走完整卸載迴圈(SSOT ring→doorbell→DMA→LOADACC fold→GEMV→gemmlowp requant→writeback→IRQ)**六個 corner 全 bit-exact**(gate_48;zp 極值/int32 wrap/doubling-high 乘數/fused-ReLU/純 bias/K8-64)。餘:TFLM runtime 整合、多 op/多 tile 模型 |
+| 7 | 軟體(TF→編譯→NPU 執行) | 🟢 GREEN-leaning(2026-07-04 三升) | **ADR-0041**:**真 .tflite 模型**(Keras→全 int8 量化 2 層 MLP)經 AOT 抽取(TF 僅離線,同 Coral edgetpu_compiler 形)+ TF-free runtime(SSOT codec lowering:column tiling、TFLM QuantizeMultiplier、fused-ReLU clamp)在 RTL 跑通,**中間層+最終輸出對 TFLite reference interpreter 全 bit-exact**,層間鏈接用 RTL 實際輸出(gate_49,含 provenance 重生成)。餘:per-channel quant、K>64 tiling、更多 op(CONV/POOL)、on-NPU repack |
 | 8 | 除錯(RVVI/RVFI trace port) | 🔴 MISSING(P1) | 未建 |
 
 **達成宣稱所需的最小剩餘工作(依關鍵序)**:P0② CQ(進行中)→ P0④ vector-CSR lockstep 契約 + Phase 3 RVV EXU → P0③ 矩陣 acc+requant(Phase 4/5,NumPy golden)→ P0⑤ traps/abort → Phase 6 TFLM e2e → P1(ITCM/DTCM、F、RVVI/RVFI)。

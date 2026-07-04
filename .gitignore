@@ -66,3 +66,4 @@ flow/v2_pipeline/**/.SG_SaveRestoreDB/
 flow/v2_pipeline/phase_20_npu_core_lockstep/ann_cov/
 mat_result.dump
 tflm_case/
+tflm_model/
