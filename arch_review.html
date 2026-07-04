@@ -122,7 +122,7 @@
     <li><a href="#s01">01 結論</a></li>
     <li><a href="#s02">02 現況架構</a></li>
     <li><a href="#s03">03 vs Coral</a></li>
-    <li><a href="#s04">04 連接路徑</a></li>
+    <li><a href="#s04">04 連接與記憶體</a></li>
     <li><a href="#s05">05 完整度</a></li>
     <li><a href="#s06">06 Cycle 評估</a></li>
     <li><a href="#s07">07 PPA / Fmax</a></li>
@@ -151,6 +151,7 @@
       <tr><td>外掛 cycle 開銷</td><td><span class="pill p">固定小常數</span></td><td>每 MAT 指令多 ~10–30 拍 setup；非 256 參數線性暴增</td></tr>
       <tr><td>外掛優勢</td><td><span class="pill g">SKU 彈性</span></td><td>mat_engine 可參數化 LANES；易做 shadow launch / CQ 硬解碼</td></tr>
       <tr><td>128-bit 統一</td><td><span class="pill b">Phase B</span></td><td>DMA + ITCM line；見 <a href="#s11">§11</a>；全系統 256b 不推薦</td></tr>
+      <tr><td>mat 資料路徑</td><td><span class="pill g">DTCM 256b eng</span></td><td>ITCM 只取指；mat 經 CSR 觸發，見 <a href="#s04">§04</a></td></tr>
     </tbody>
   </table>
 
@@ -290,7 +291,7 @@
 
 <!-- §04 -->
 <section class="sec" id="s04">
-  <div class="sec-head"><span class="sec-num">§04</span><h2>連接路徑：Scalar ↔ MAC ↔ AXI</h2></div>
+  <div class="sec-head"><span class="sec-num">§04</span><h2>連接路徑與記憶體分工：ITCM / DTCM / mat</h2></div>
 
   <figure>
     <div class="fig-top"><span>three paths</span><span class="tag">connectivity</span></div>
@@ -315,6 +316,149 @@
   </figure>
 
   <div class="note cyan"><b>dbus 解碼（ADR-0034/0035）：</b><code>addr[17]=1</code> → CSR mirror；<code>addr[16]=1</code> → DONE mailbox；否則 DTCM。Fetch 走 ITCM（Harvard）。</div>
+
+  <h3>4.1 Harvard 分離：ITCM 與 DTCM 各走各路</h3>
+  <p class="lead"><strong>mat_engine 不會存取 ITCM。</strong> ITCM 只服務 core 取指；矩陣運算元、accumulator 與 rescale 輸出全在 <strong>DTCM（npu_tcm）</strong>。指令維持 32-bit RV32 編碼，與資料面寬度（32/128/256-bit）無關。</p>
+
+  <figure>
+    <div class="fig-top"><span>harvard + mat data plane</span><span class="tag">ADR-0044</span></div>
+    <svg viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono,monospace" font-size="10">
+      <defs><marker id="arC" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0A5B67"/></marker>
+            <marker id="arM" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#8F5A10"/></marker>
+            <marker id="arB" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#37439A"/></marker></defs>
+      <!-- ITCM box -->
+      <rect x="30" y="25" width="200" height="100" rx="8" fill="#E6F4F6" stroke="#0E7C8C" stroke-width="2"/>
+      <text x="130" y="50" text-anchor="middle" fill="#0A5B67" font-weight="600">ITCM 8KB</text>
+      <text x="130" y="70" text-anchor="middle" fill="#4F5D6B">sequencer 韌體 / RVV</text>
+      <text x="130" y="88" text-anchor="middle" fill="#79848F">ibus 32-bit 取指</text>
+      <text x="130" y="108" text-anchor="middle" fill="#79848F">host 0x3002 載入</text>
+      <!-- Core -->
+      <rect x="280" y="40" width="160" height="70" rx="8" fill="#FFF8EE" stroke="#B4741A"/>
+      <text x="360" y="68" text-anchor="middle" fill="#8F5A10" font-weight="600">cpu_m1 sequencer</text>
+      <text x="360" y="88" text-anchor="middle" fill="#79848F">單發 issue</text>
+      <line x1="230" y1="75" x2="278" y2="75" stroke="#0E7C8C" stroke-width="1.5" marker-end="url(#arC)"/>
+      <text x="254" y="68" text-anchor="middle" fill="#0A5B67" font-size="9">ibus</text>
+      <!-- CSR -->
+      <rect x="280" y="140" width="160" height="55" rx="7" fill="#E6F4F6" stroke="#0E7C8C"/>
+      <text x="360" y="162" text-anchor="middle" fill="#0A5B67" font-weight="600">CSR mirror</text>
+      <text x="360" y="180" text-anchor="middle" fill="#79848F">dbus 32b @ 0x0002_xxxx</text>
+      <line x1="360" y1="110" x2="360" y2="138" stroke="#0E7C8C" stroke-width="1.5" marker-end="url(#arC)"/>
+      <text x="378" y="128" fill="#4F5D6B" font-size="9">sw MAT_*</text>
+      <!-- mat -->
+      <rect x="500" y="130" width="170" height="70" rx="8" fill="#FFF3E0" stroke="#B4741A" stroke-width="2"/>
+      <text x="585" y="158" text-anchor="middle" fill="#8F5A10" font-weight="600">mat_engine</text>
+      <text x="585" y="178" text-anchor="middle" fill="#79848F">mat_go → FSM</text>
+      <line x1="440" y1="168" x2="498" y2="168" stroke="#B4741A" stroke-width="1.5" marker-end="url(#arM)"/>
+      <text x="468" y="160" fill="#8F5A10" font-size="9">pulse</text>
+      <!-- DTCM -->
+      <rect x="30" y="220" width="640" height="120" rx="10" fill="none" stroke="#2E7D53" stroke-width="2"/>
+      <text x="50" y="242" fill="#2E7D53" font-weight="600">DTCM 32KB（npu_tcm）— mat 只連這裡</text>
+      <rect x="50" y="255" width="130" height="50" rx="6" fill="#EEF0FA" stroke="#4956B8"/>
+      <text x="115" y="276" text-anchor="middle" fill="#37439A">DMA ingress</text>
+      <text x="115" y="294" text-anchor="middle" fill="#79848F">32b（Phase B→128b）</text>
+      <rect x="210" y="255" width="130" height="50" rx="6" fill="#FAF6EC" stroke="#79848F"/>
+      <text x="275" y="276" text-anchor="middle" fill="#4F5D6B">core dbus</text>
+      <text x="275" y="294" text-anchor="middle" fill="#79848F">32b load/store</text>
+      <rect x="370" y="250" width="280" height="60" rx="7" fill="#D4EDDA" stroke="#2E7D53" stroke-width="2"/>
+      <text x="510" y="272" text-anchor="middle" fill="#2E7D53" font-weight="600">eng_a / eng_b 專用埠</text>
+      <text x="510" y="292" text-anchor="middle" fill="#4F5D6B">2×256-bit 讀（8 word window）</text>
+      <text x="510" y="308" text-anchor="middle" fill="#79848F">eng_we 32b 寫（rescale 輸出）</text>
+      <line x1="585" y1="200" x2="510" y2="248" stroke="#2E7D53" stroke-width="2" marker-end="url(#arM)"/>
+      <text x="560" y="228" fill="#2E7D53" font-size="9">256b×2</text>
+      <line x1="360" y1="195" x2="275" y2="253" stroke="#0E7C8C" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <!-- SHMEM -->
+      <rect x="720" y="255" width="150" height="50" rx="7" fill="#EEF0FA" stroke="#4956B8"/>
+      <text x="795" y="276" text-anchor="middle" fill="#37439A">shared mem</text>
+      <text x="795" y="294" text-anchor="middle" fill="#79848F">0x8000 + CQ</text>
+      <line x1="180" y1="280" x2="718" y2="280" stroke="#4956B8" stroke-width="1.5" marker-end="url(#arB)"/>
+      <text x="450" y="268" text-anchor="middle" fill="#37439A" font-size="9">AXI4-full DMA / WB</text>
+    </svg>
+    <div class="legend">
+      <span><i style="background:#0E7C8C"></i>32-bit 取指 / CSR 控制</span>
+      <span><i style="background:#2E7D53"></i>mat 256-bit eng 讀 DTCM</span>
+      <span><i style="background:#4956B8"></i>AXI DMA 灌入 DTCM</span>
+    </div>
+    <figcaption>Harvard：<b>ITCM = 程式</b>、<b>DTCM = 資料</b>。mat 運算元走 <b>eng 專用寬埠</b>，不走 ibus/dbus 取指路徑。</figcaption>
+  </figure>
+
+  <h3>4.2 埠寬度對照（誰用幾 bit）</h3>
+  <table class="tbl">
+    <thead><tr><th>埠</th><th>寬度</th><th>連到</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td><code>ibus</code></td><td><span class="pill b">32-bit</span></td><td>ITCM</td><td>取 RV32 指令（每請求 1 word）</td></tr>
+      <tr><td><code>dbus</code> TCM 區</td><td><span class="pill b">32-bit</span></td><td>DTCM</td><td>scalar / RVV load-store</td></tr>
+      <tr><td><code>dbus</code> CSR 區 <code>addr[17]=1</code></td><td><span class="pill b">32-bit</span></td><td>CSR mirror</td><td>設定 mat、DMA、CQ；<b>只傳位址與命令</b></td></tr>
+      <tr><td><code>eng_a</code> / <code>eng_b</code></td><td><span class="pill g">256-bit</span></td><td>DTCM only</td><td>mat 讀 int8 運算元（a/b tile）</td></tr>
+      <tr><td><code>eng_we</code></td><td><span class="pill b">32-bit</span></td><td>DTCM</td><td>MAT.RESCALE 打包寫回</td></tr>
+      <tr><td>DMA ingress</td><td><span class="pill b">32-bit</span>（Phase B→128b）</td><td>DTCM</td><td>LOAD_W 灌權重 / activation</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.3 矩陣運算如何觸發？（非 RV32 硬體 opcode）</h3>
+  <p>硬體<strong>沒有</strong> RV32 專用矩陣指令解碼器。CQ descriptor（<code>MAT.OP</code> / <code>MAT.RESCALE</code> 等）由 <strong>sequencer 韌體</strong>解讀，再經 32-bit CSR 寫入啟動 mat：</p>
+  <ol class="steps">
+    <li><b>取指</b><span class="sub">core 從 ITCM 執行一般 RV32 + RVV 韌體</span></li>
+    <li><b>解 descriptor</b><span class="sub"><code>cq_sequencer.c</code> 讀 shared-mem ring</span></li>
+    <li><b>寫 CSR</b><span class="sub"><code>MAT_A_ADDR</code>、<code>MAT_B_ADDR</code>、<code>MAT_CTRL</code>（32-bit store）</span></li>
+    <li><b>mat_go 脈衝</b><span class="sub"><code>npu_axil_regs</code> 產生 1-cycle pulse → mat_engine FSM</span></li>
+    <li><b>mat 自主讀寫 DTCM</b><span class="sub">256-bit eng 埠讀 a/b；計算後 32-bit 寫回（rescale）</span></li>
+  </ol>
+  <div class="note"><b>與 Coral 差異：</b>Coral ①② 在 core 內部匯流排完成；M3V 用 <b>外掛 mat + CSR 契約</b> 達成功能對等（ADR-0037/0040），不是 ISA opcode 直接驅動寬埠。</div>
+
+  <h3>4.4 mat_engine 256-bit 讀取語意（ADR-0040）</h3>
+  <table class="tbl">
+    <thead><tr><th>狀態 / 命令</th><th>eng 讀</th><th>行為</th></tr></thead>
+    <tbody>
+      <tr><td><code>CMD_OP</code>（S_RUN）</td><td><code>eng_a</code> + <code>eng_b</code> 各 256b</td><td>每拍 <b>256 MAC</b>（4 fused outer product × 64）；<code>a_ptr</code>/<code>b_ptr</code> 每拍 <b>+32 B</b></td></tr>
+      <tr><td><code>CMD_LOADACC</code></td><td><code>eng_a</code> 256b</td><td>8× int32 fold word broadcast 到 accumulator 列</td></tr>
+      <tr><td><code>CMD_RESCALE_PC</code></td><td><code>eng_a</code> 256b ×2</td><td>讀 per-channel mult（256b）+ shift（256b 視窗內 8 byte）</td></tr>
+      <tr><td><code>CMD_RESCALE</code></td><td>—</td><td>accumulator 算術；<b>32-bit</b> <code>eng_we</code> 逐 word 寫 DTCM</td></tr>
+    </tbody>
+  </table>
+  <p>256-bit window = 連續 <b>8 個 32-bit word</b>（32 B），對齊 DTCM <b>8-bank</b> 交錯（<code>bank = word_addr[2:0]</code>）；讀的是 <strong>int8 運算元</strong>，不是指令。</p>
+
+  <h3>4.5 典型 CQ 資料鏈（權重從哪來）</h3>
+  <figure>
+    <div class="fig-top"><span>cq mat pipeline</span><span class="tag">data ownership</span></div>
+    <svg viewBox="0 0 900 100" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono,monospace" font-size="10">
+      <rect x="30" y="35" width="110" height="40" rx="6" fill="#EEF0FA" stroke="#4956B8"/>
+      <text x="85" y="58" text-anchor="middle" fill="#37439A">LOAD_W</text>
+      <text x="85" y="72" text-anchor="middle" fill="#79848F" font-size="9">DMA 32b</text>
+      <text x="155" y="58" fill="#79848F">→</text>
+      <rect x="165" y="35" width="90" height="40" rx="6" fill="#D4EDDA" stroke="#2E7D53"/>
+      <text x="210" y="60" text-anchor="middle" fill="#2E7D53">DTCM</text>
+      <text x="270" y="58" fill="#79848F">→</text>
+      <rect x="280" y="35" width="110" height="40" rx="6" fill="#FFF3E0" stroke="#B4741A" stroke-width="2"/>
+      <text x="335" y="58" text-anchor="middle" fill="#8F5A10">MAT.OP</text>
+      <text x="335" y="72" text-anchor="middle" fill="#79848F" font-size="9">eng 256b×2</text>
+      <text x="405" y="58" fill="#79848F">→</text>
+      <rect x="415" y="35" width="120" height="40" rx="6" fill="#FFF3E0" stroke="#B4741A"/>
+      <text x="475" y="58" text-anchor="middle" fill="#8F5A10">MAT.RESCALE</text>
+      <text x="475" y="72" text-anchor="middle" fill="#79848F" font-size="9">eng_we 32b</text>
+      <text x="550" y="58" fill="#79848F">→</text>
+      <rect x="560" y="35" width="90" height="40" rx="6" fill="#D4EDDA" stroke="#2E7D53"/>
+      <text x="605" y="60" text-anchor="middle" fill="#2E7D53">DTCM</text>
+      <text x="665" y="58" fill="#79848F">→</text>
+      <rect x="675" y="35" width="110" height="40" rx="6" fill="#EEF0FA" stroke="#4956B8"/>
+      <text x="730" y="58" text-anchor="middle" fill="#37439A">STORE</text>
+      <text x="730" y="72" text-anchor="middle" fill="#79848F" font-size="9">DMA WB</text>
+      <text x="820" y="58" fill="#79848F">→ SHMEM</text>
+    </svg>
+    <figcaption>DMA 寬度只影響<strong>灌入 DTCM</strong>；mat 計算時的 <b>256-bit eng 讀取已獨立存在</b>（見 <a href="#s11">§11</a>：Phase B 128b 不等於 mat 埠加寬）。</figcaption>
+  </figure>
+
+  <h3>4.6 常見問題（FAQ）</h3>
+  <table class="tbl">
+    <thead><tr><th>問題</th><th>答案</th></tr></thead>
+    <tbody>
+      <tr><td>mat 會用 ITCM 嗎？</td><td><b>不會</b> — ITCM 只給 core 取 32-bit 指令</td></tr>
+      <tr><td>mat 會用 DTCM 嗎？</td><td><b>會</b> — 運算元與 rescale 輸出都在 DTCM</td></tr>
+      <tr><td>是 256-bit 存取嗎？</td><td><b>讀：是</b>（2×256b eng 埠）；<b>寫：32-bit</b>（rescale 打包）</td></tr>
+      <tr><td>RV32「矩陣指令」直接觸發嗎？</td><td><b>不是</b> — 韌體寫 CSR → <code>mat_go</code>；mat 獨立讀 DTCM</td></tr>
+      <tr><td>DMA 升到 128/256 會讓 mat 更快嗎？</td><td><b>間接</b> — 只縮短灌 DTCM 時間；256 MAC/c 計算拍不變</td></tr>
+      <tr><td>指令 32-bit 能配 256-bit 資料面嗎？</td><td><b>可以</b> — ISA 編碼與匯流排寬度正交；見 <a href="#s11">§11</a> 分層建議</td></tr>
+    </tbody>
+  </table>
 </section>
 
 <!-- §05 -->
@@ -683,6 +827,8 @@
       <tr><td>docs/reports/2026-07-03_replaceability_status.md</td><td>可取代性狀態</td></tr>
       <tr><td>docs/adr/0031–0044</td><td>scope、cpu 參數化、CQ、mat、RVV、memory</td></tr>
       <tr><td>docs/adr/0046（草案）</td><td>128-bit 統一資料面 spec；見 <a href="#s11">§11.2</a></td></tr>
+      <tr><td>IP/npu/rtl/mat_engine.v</td><td>256-bit eng 埠、MAT 命令 FSM</td></tr>
+      <tr><td>IP/npu/sw/cq_sequencer/cq_sequencer.c</td><td>CQ → CSR → mat_run 韌體鏈</td></tr>
       <tr><td>IP/npu/rtl/</td><td>現況 RTL</td></tr>
       <tr><td>M1V1/.../npu_coral/RvvCoreMiniAxi.sv</td><td>Coral 參考 emit</td></tr>
       <tr><td>lab/CPU/Ch5_NPU/docs/02_rvvcoreminiaxi_module_map.md</td><td>Coral 模組地圖</td></tr>
@@ -697,7 +843,7 @@
 <footer>
   <div class="wrap">
     <span>Magpie_M3V arch_review.html</span>
-    <span>updated 2026-07-04 · +§11 128-bit fabric</span>
+    <span>updated 2026-07-04 · §04 Harvard/mat 路徑 · §11 128-bit fabric</span>
   </div>
 </footer>
 

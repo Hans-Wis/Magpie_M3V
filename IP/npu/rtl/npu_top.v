@@ -60,7 +60,15 @@ module npu_top #(
     output wire [ 4:0] rvvi_v_vd,
     output wire [127:0] rvvi_v_wdata,
     output wire [31:0] rvvi_vl,
-    output wire [31:0] rvvi_vtype
+    output wire [31:0] rvvi_vtype,
+    output wire [31:0] rvfi_insn,
+    output wire [31:0] rvfi_trap_mtval,
+    output wire [31:0] rvfi_mstatus,
+    output wire        rvfi_mem_re,
+    output wire        rvfi_mem_we,
+    output wire [31:0] rvfi_mem_addr,
+    output wire [31:0] rvfi_mem_wdata,
+    output wire [ 3:0] rvfi_mem_wstrb
 );
     localparam [31:0] CORE_RESET_PC = 32'h0000_0000;
 
@@ -241,7 +249,12 @@ module npu_top #(
         .rvfi_trap(rvfi_trap), .rvfi_trap_cause(rvfi_trap_cause), .rvfi_intr(rvfi_intr),
         .rvfi_rd_addr(rvfi_rd_addr), .rvfi_rd_wdata(rvfi_rd_wdata),
         .rvvi_v_valid(rvvi_v_valid), .rvvi_v_vd(rvvi_v_vd),
-        .rvvi_v_wdata(rvvi_v_wdata), .rvvi_vl(rvvi_vl), .rvvi_vtype(rvvi_vtype)
+        .rvvi_v_wdata(rvvi_v_wdata), .rvvi_vl(rvvi_vl), .rvvi_vtype(rvvi_vtype),
+        .rvfi_insn(rvfi_insn), .rvfi_trap_mtval(rvfi_trap_mtval),
+        .rvfi_mstatus(rvfi_mstatus),
+        .rvfi_mem_re(rvfi_mem_re), .rvfi_mem_we(rvfi_mem_we),
+        .rvfi_mem_addr(rvfi_mem_addr), .rvfi_mem_wdata(rvfi_mem_wdata),
+        .rvfi_mem_wstrb(rvfi_mem_wstrb)
     );
 
     // ADR-0045: commit order counter (resets with the sequencer)

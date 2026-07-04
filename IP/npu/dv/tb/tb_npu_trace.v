@@ -135,14 +135,26 @@ module tb_npu_trace;
 
     integer retires = 0, traps = 0, vex_events = 0;
     reg [31:0] trap_pc = 32'hFFFF_FFFF;
+    reg [31:0] trap_insn = 32'h0, trap_mtval = 32'h0, trap_cause = 32'h0;
     reg [31:0] retires_at_trap = 32'hFFFF_FFFF;
+    integer mem_wr_cnt = 0;
+    reg [31:0] last_st_addr = 32'h0, last_st_data = 32'h0;
     always @(posedge clk) begin
         if (dut.rvfi_valid)   retires = retires + 1;
         if (dut.rvvi_v_valid) vex_events = vex_events + 1;
         if (dut.rvfi_trap) begin
             traps = traps + 1;
             trap_pc = dut.rvfi_pc;
+            trap_insn = dut.rvfi_insn;
+            trap_mtval = dut.rvfi_trap_mtval;
+            trap_cause = dut.rvfi_trap_cause;
             if (traps == 1) retires_at_trap = retires;
+        end
+        // ADR-0048 mem trace: count the handler's ERR_PC/ERR_CAUSE stores
+        if (dut.rvfi_mem_we) begin
+            mem_wr_cnt = mem_wr_cnt + 1;
+            last_st_addr = dut.rvfi_mem_addr;
+            last_st_data = dut.rvfi_mem_wdata;
         end
     end
 
@@ -162,6 +174,14 @@ module tb_npu_trace;
         chk(trap_pc, 32'h0000_0014, "rvfi_pc at trap == 0x14");
         chk(retires_at_trap, 32'd5, "5 retires before the trap");
         chk(vex_events, 32'd0, "rvvi silent on scalar firmware");
+        // ---- trace v1 (ADR-0048) ----
+        chk(trap_insn, 32'hFFFF_FFFF, "rvfi_insn at trap == the illegal word");
+        chk(trap_cause, 32'd2, "rvfi_trap_cause == illegal");
+        chk(trap_mtval, 32'hFFFF_FFFF, "rvfi_trap_mtval == faulting instr bits");
+        // handler stores ERR_PC (0x80(t1)) then ERR_CAUSE (0x58(t1)), t1=0x20000
+        chk(mem_wr_cnt, 32'd2, "mem trace saw the handler's two stores");
+        chk(last_st_addr, 32'h0002_0058, "last store addr == ERR_CAUSE mirror");
+        chk(last_st_data, 32'h8000_0002, "last store data == CORE_TRAP|illegal");
         // order counts retire + trap events (handler retires keep it moving)
         checks = checks + 1;
         if (dut.rvfi_order != {32'b0, retires} + {32'b0, traps}) begin

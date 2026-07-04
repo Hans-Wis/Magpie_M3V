@@ -108,6 +108,7 @@ module csr #(
 
     // RVV state exported for vset*/vexu EX calculation and privilege checks
     output [ 1:0]     mstatus_vs_o,
+    output [31:0]     mstatus_o,        // ADR-0048: architectural mstatus read view
     output [31:0]     vl_o,
     output [31:0]     vtype_o,
     output [31:0]     vstart_o,
@@ -222,6 +223,7 @@ module csr #(
                                1'b0, mstatus_mpie, 3'b0, mstatus_mie, 3'b0};
     // mie/mip layout: [11]=MEIE/MEIP, [7]=MTIE/MTIP, [3]=MSIE/MSIP (ADR-0019)
     wire [31:0] mie_val     = {20'b0, mie_meie, 3'b0, mie_mtie, 3'b0, mie_msie, 3'b0};
+    assign mstatus_o = mstatus_val;
     wire [31:0] mip_val     = {20'b0, (ext_pending | meip), 3'b0, mtip, 3'b0, msip, 3'b0};
     wire [31:0] mtvec_val   = {mtvec_base, 2'b00};
     wire [31:0] mtval_val   = mtval_reg;

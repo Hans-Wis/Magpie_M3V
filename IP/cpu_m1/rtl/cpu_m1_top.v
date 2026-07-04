@@ -90,7 +90,15 @@ module cpu_m1_top #(
     output     [ 4:0] rvvi_v_vd,
     output    [127:0] rvvi_v_wdata,
     output     [31:0] rvvi_vl,
-    output     [31:0] rvvi_vtype
+    output     [31:0] rvvi_vtype,
+    output     [31:0] rvfi_insn,
+    output     [31:0] rvfi_trap_mtval,
+    output     [31:0] rvfi_mstatus,
+    output            rvfi_mem_re,
+    output            rvfi_mem_we,
+    output     [31:0] rvfi_mem_addr,
+    output     [31:0] rvfi_mem_wdata,
+    output     [ 3:0] rvfi_mem_wstrb
 );
 
     // ---- core-facing native signals ----
@@ -232,7 +240,15 @@ module cpu_m1_top #(
         .rvvi_v_vd          (rvvi_v_vd),
         .rvvi_v_wdata       (rvvi_v_wdata),
         .rvvi_vl            (rvvi_vl),
-        .rvvi_vtype         (rvvi_vtype)
+        .rvvi_vtype         (rvvi_vtype),
+        .rvfi_insn          (rvfi_insn),
+        .rvfi_trap_mtval    (rvfi_trap_mtval),
+        .rvfi_mstatus       (rvfi_mstatus),
+        .rvfi_mem_re        (rvfi_mem_re),
+        .rvfi_mem_we        (rvfi_mem_we),
+        .rvfi_mem_addr      (rvfi_mem_addr),
+        .rvfi_mem_wdata     (rvfi_mem_wdata),
+        .rvfi_mem_wstrb     (rvfi_mem_wstrb)
     );
 
 endmodule

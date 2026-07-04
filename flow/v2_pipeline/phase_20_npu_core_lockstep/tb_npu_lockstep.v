@@ -145,6 +145,12 @@ module tb_npu_lockstep;
         end else if (npu_start_o && dut.rvfi_valid && !dut.rvfi_trap) begin
             /* verilator lint_off BLKSEQ */
             commit_instr = dut.itcm.mem[dut.rvfi_pc[12:2]];  // pc->insn join vs static ITCM (ADR-0045)
+            // ADR-0048: the port's insn field must equal the join on EVERY commit
+            if (dut.rvfi_insn !== commit_instr) begin
+                $display("FAIL: rvfi_insn %08x != itcm join %08x at pc %08x",
+                         dut.rvfi_insn, commit_instr, dut.rvfi_pc);
+                $finish;
+            end
             /* verilator lint_on BLKSEQ */
             // x0 writes (e.g. jalr x0) are architecturally invisible — normalize
             // them to "no writeback" exactly as Spike reports them.

@@ -57,7 +57,7 @@ module tb_equiv;
         .dbg_pc(r_dbgpc), .dbg_instr(r_dbginstr),        /* verilator lint_off PINCONNECTEMPTY */
         .rvfi_valid(), .rvfi_pc(), .rvfi_trap(), .rvfi_trap_cause(), .rvfi_intr(),
         .rvfi_rd_addr(), .rvfi_rd_wdata(),
-        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(),
+        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(), .rvfi_insn(), .rvfi_trap_mtval(), .rvfi_mstatus(), .rvfi_mem_re(), .rvfi_mem_we(), .rvfi_mem_addr(), .rvfi_mem_wdata(), .rvfi_mem_wstrb(),
         /* verilator lint_on PINCONNECTEMPTY */
  .dbg_state(r_dbgst));
 
@@ -98,7 +98,7 @@ module tb_equiv;
         .dbg_pc(d_dbgpc), .dbg_instr(d_dbginstr),        /* verilator lint_off PINCONNECTEMPTY */
         .rvfi_valid(), .rvfi_pc(), .rvfi_trap(), .rvfi_trap_cause(), .rvfi_intr(),
         .rvfi_rd_addr(), .rvfi_rd_wdata(),
-        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(),
+        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(), .rvfi_insn(), .rvfi_trap_mtval(), .rvfi_mstatus(), .rvfi_mem_re(), .rvfi_mem_we(), .rvfi_mem_addr(), .rvfi_mem_wdata(), .rvfi_mem_wstrb(),
         /* verilator lint_on PINCONNECTEMPTY */
  .dbg_state(d_dbgst));
 

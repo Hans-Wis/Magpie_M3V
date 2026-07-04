@@ -79,7 +79,22 @@ module core #(
     output     [ 4:0] rvvi_v_vd,
     output    [127:0] rvvi_v_wdata,
     output     [31:0] rvvi_vl,
-    output     [31:0] rvvi_vtype
+    output     [31:0] rvvi_vtype,
+
+    // ---- trace v1 (ADR-0048): insn + mem + trap CSR views ----
+    output     [31:0] rvfi_insn,       // instruction bits at commit
+    output     [31:0] rvfi_trap_mtval, // mtval value for the accepted trap
+    output     [31:0] rvfi_mstatus,    // PRE-commit architectural view: on a trap
+                                       // pulse this is the before-trap mstatus;
+                                       // the post-trap value shows on the next
+                                       // event (Codex ADR-0048 #2, documented).
+                                       // AMO/RV32A beat events are out of v1
+                                       // scope (IM profiles only, Codex #1).
+    output            rvfi_mem_re,     // retired instr performed a load
+    output            rvfi_mem_we,     // retired instr performed a store
+    output     [31:0] rvfi_mem_addr,
+    output     [31:0] rvfi_mem_wdata,
+    output     [ 3:0] rvfi_mem_wstrb
 );
 
     // =========================================================================
@@ -1167,6 +1182,7 @@ endgenerate
     wire [31:0] wb_irq_cause;       // priority-encoded interrupt mcause from csr (ADR-0019)
     wire [31:0] wb_trap_cause;
     wire [31:0] wb_trap_mtval;
+    wire [31:0] csr_mstatus_view;
     // CSR write happens in EX/WB stage (latched into ex_wb register)
     wire        wb_csr_we;
     wire        wb_vcfg_we;
@@ -1217,6 +1233,9 @@ endgenerate
     reg        ex_wb_is_ecall_r;
     reg        ex_wb_is_ebreak_r;
     reg [31:0] ex_wb_instr_r;
+    reg        ex_wb_mem_re_r, ex_wb_mem_we_r;       // ADR-0048 mem trace
+    reg [31:0] ex_wb_mem_addr_r, ex_wb_mem_wdata_r;
+    reg [ 3:0] ex_wb_mem_wstrb_r;
     reg        ex_wb_trigger_hit_r;
     reg [ 1:0] ex_wb_trigger_idx_r;
     reg        ex_wb_trigger_exec_r;
@@ -1357,6 +1376,7 @@ endgenerate
         .meip               (meip),
         .trap_cause        (wb_trap_cause),
         .trap_mtval        (wb_trap_mtval),
+        .mstatus_o         (csr_mstatus_view),
         .mtvec_o            (mtvec_o),
         .mepc_o             (mepc_o),
         .irq_pending        (irq_pending_raw),
@@ -1786,6 +1806,8 @@ endgenerate
             ex_wb_is_ecall_r        <= 1'b0;
             ex_wb_is_ebreak_r       <= 1'b0;
             ex_wb_instr_r           <= 32'h0;
+            ex_wb_mem_re_r          <= 1'b0;
+            ex_wb_mem_we_r          <= 1'b0;
             ex_wb_trigger_hit_r     <= 1'b0;
             ex_wb_trigger_idx_r     <= 2'd0;
             ex_wb_trigger_exec_r    <= 1'b0;
@@ -1818,6 +1840,8 @@ endgenerate
             ex_wb_is_ecall_r        <= 1'b0;
             ex_wb_is_ebreak_r       <= 1'b0;
             ex_wb_instr_r           <= 32'h0;
+            ex_wb_mem_re_r          <= 1'b0;
+            ex_wb_mem_we_r          <= 1'b0;
             ex_wb_trigger_hit_r     <= 1'b0;
             ex_wb_trigger_idx_r     <= 2'd0;
             ex_wb_trigger_exec_r    <= 1'b0;
@@ -1872,6 +1896,11 @@ endgenerate
             ex_wb_is_ecall_r        <= ex_mem_is_ecall_r;
             ex_wb_is_ebreak_r       <= ex_mem_is_ebreak_r;
             ex_wb_instr_r           <= ex_mem_instr_r;
+            ex_wb_mem_re_r          <= ex_mem_valid_r && ex_mem_is_load_r  && d_mem_valid;
+            ex_wb_mem_we_r          <= ex_mem_valid_r && ex_mem_is_store_r && d_mem_valid;
+            ex_wb_mem_addr_r        <= d_mem_addr;
+            ex_wb_mem_wdata_r       <= d_mem_wdata;
+            ex_wb_mem_wstrb_r       <= d_mem_wstrb;
             ex_wb_trigger_hit_r     <= ex_mem_trigger_hit_r || mem_trigger_hit;
             ex_wb_trigger_idx_r     <= ex_mem_trigger_hit_r ? ex_mem_trigger_idx_r : mem_trigger_idx;
             ex_wb_trigger_exec_r    <= ex_mem_trigger_hit_r;
@@ -1905,6 +1934,8 @@ endgenerate
             ex_wb_is_ecall_r        <= 1'b0;
             ex_wb_is_ebreak_r       <= 1'b0;
             ex_wb_instr_r           <= 32'h0;
+            ex_wb_mem_re_r          <= 1'b0;
+            ex_wb_mem_we_r          <= 1'b0;
             ex_wb_trigger_hit_r     <= 1'b0;
             ex_wb_trigger_idx_r     <= 2'd0;
             ex_wb_trigger_exec_r    <= 1'b0;
@@ -2145,5 +2176,15 @@ endgenerate
     assign rvvi_v_wdata  = ex_wb_vex_wdata_r;
     assign rvvi_vl       = csr_vl;
     assign rvvi_vtype    = csr_vtype;
+
+    // ---- trace v1 (ADR-0048) ----
+    assign rvfi_insn       = ex_wb_instr_r;
+    assign rvfi_trap_mtval = wb_trap_mtval;
+    assign rvfi_mstatus    = csr_mstatus_view;
+    assign rvfi_mem_re     = rvfi_valid && ex_wb_mem_re_r;
+    assign rvfi_mem_we     = rvfi_valid && ex_wb_mem_we_r;
+    assign rvfi_mem_addr   = ex_wb_mem_addr_r;
+    assign rvfi_mem_wdata  = ex_wb_mem_wdata_r;
+    assign rvfi_mem_wstrb  = ex_wb_mem_wstrb_r;
 
 endmodule

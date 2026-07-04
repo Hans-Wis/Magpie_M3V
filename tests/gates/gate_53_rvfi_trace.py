@@ -14,10 +14,11 @@ Checks here:
    hierarchical core peeks (grep guard) — everything through dut.rvfi_*.
 3. The port-sourced directed lockstep run itself (via the gate_31 harness).
 
-v0 bounds (recorded, Grok adoptions — row 8 stays PARTIAL): no rvfi_insn
-(pc->insn joined offline vs the static ITCM, sound because ADR-0044 bans
-self-modifying code), no mem trace / mcause / mtval / mstatus diff, vector
-trace valid within the implemented LMUL<=1 subset.
+v1 (ADR-0048): rvfi_insn (asserted == ITCM join on EVERY lockstep commit),
+rvfi_trap_mtval + rvfi_mstatus, and a WB-aligned mem trace (re/we/addr/
+wdata/wstrb — the trap TB watches the handler's two MMIO stores land on the
+ERR_CAUSE mirror with the exact data). Vector trace remains valid within
+the implemented LMUL<=1 subset.
 """
 
 import re
