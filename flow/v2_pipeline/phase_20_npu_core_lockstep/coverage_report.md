@@ -16,10 +16,10 @@
 | idu.v | 61 | 130 | 46.9% |
 | ifu.v | 6 | 6 | 100.0% |
 | mat_engine.v | 8 | 74 | 10.8% |
-| npu_axil_regs.v | 47 | 155 | 30.3% |
+| npu_axil_regs.v | 48 | 160 | 30.0% |
 | npu_dma.v | 6 | 75 | 8.0% |
 | npu_tcm.v | 24 | 48 | 50.0% |
-| npu_top.v | 24 | 32 | 75.0% |
+| npu_top.v | 28 | 40 | 70.0% |
 | pmp.v | 5 | 40 | 12.5% |
 | rfu.v | 10 | 12 | 83.3% |
 | tb_npu_lockstep.v | 60 | 64 | 93.8% |

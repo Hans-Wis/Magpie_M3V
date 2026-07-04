@@ -88,6 +88,8 @@ module npu_axil_regs #(
 
     // ---- ADR-0038 soft_reset/abort ----
     output wire        abort_req,
+    output reg         hard_req,      // ADR-0047: 1-cycle pulse on CTRL[3] write
+    input  wire        hard_busy,     // npu_top hard-reset FSM active (STATUS[9])
 
     // ---- level interrupt to host (out only) ----
     output wire        irq            // = irq_pending & CTRL.irq_enable
@@ -104,12 +106,13 @@ module npu_axil_regs #(
     reg [31:0] err_pc_q;
     reg        cq_busy_q, cq_err_q;
     reg        soft_rst_q;          // ADR-0038: abort in progress (drain then clear run state)
+    reg        hard_q;              // ADR-0047: hard reset in flight (cleared by domain reset)
     wire       engines_quiet = !dma_busy && !wb_busy && !mat_busy;
     assign     abort_req = soft_rst_q;
     assign     dma_len = dma_len_q[16:0];
     assign     wb_len  = wb_len_q[16:0];
     //  STATUS: [0]=npu_busy [1]=npu_done [2]=dma_busy [3]=dma_done [4]=irq_pending [5]=dma_err [6]=wb_busy [7]=wb_done
-    wire [31:0] status_w = {23'b0, soft_rst_q, wb_done, wb_busy, dma_err, irq_pending, dma_done, dma_busy, npu_done, npu_busy};
+    wire [31:0] status_w = {22'b0, hard_busy, soft_rst_q, wb_done, wb_busy, dma_err, irq_pending, dma_done, dma_busy, npu_done, npu_busy};
     wire [31:0] cq_mask_w = cq_ring_size_q - 32'd1;
     wire [31:0] cq_tail_next_w = (cq_tail_q + 32'd1) & cq_mask_w;
     wire [31:0] cq_status_w = {28'b0, cq_err_q, cq_busy_q, (cq_tail_next_w == cq_head_q), (cq_head_q == cq_tail_q)};
@@ -142,7 +145,7 @@ module npu_axil_regs #(
             mat_a_addr <= 32'b0; mat_b_addr <= 32'b0; mat_mult <= 32'b0;
             mat_rsp <= 32'b0; mat_clamp <= 32'b0; mat_out_base <= 32'h0000_0800;
             mat_go <= 1'b0; mat_cmd <= 3'b0; mat_bank <= 4'b0; mat_rpt <= 8'b0;
-            err_pc_q <= 32'b0; soft_rst_q <= 1'b0;
+            err_pc_q <= 32'b0; soft_rst_q <= 1'b0; hard_req <= 1'b0; hard_q <= 1'b0;
         end else begin
             dma_go <= 1'b0;                    // default: pulse is 1-cycle
             wb_go <= 1'b0;                     // default: pulse is 1-cycle
@@ -154,23 +157,36 @@ module npu_axil_regs #(
             if (soft_rst_q && engines_quiet) begin
                 soft_rst_q  <= 1'b0;
                 cq_busy_q   <= 1'b0;
-                if (err_cause_q == 32'b0) err_cause_q <= 32'd8;   // ABORTED
-                cq_err_q    <= 1'b1;
+                if (!hard_q) begin
+                    // soft only: evidence latch. A hard reset wipes everything
+                    // one pulse later — latching here would glitch the ERR IRQ
+                    // out to the host (Codex ADR-0047 finding #4).
+                    if (err_cause_q == 32'b0) err_cause_q <= 32'd8;   // ABORTED
+                    cq_err_q    <= 1'b1;
+                end
             end
             if (s_axi_awvalid && s_axi_awready) begin aw_seen <= 1'b1; wa_q <= s_axi_awaddr; end
             if (s_axi_wvalid  && s_axi_wready ) begin w_seen <= 1'b1; wd_q <= s_axi_wdata; wstrb_q <= s_axi_wstrb; end
 
+            hard_req <= 1'b0;
             if (wr_fire) begin
                 case (wa_q[7:2])
                     6'h01: begin                                                // 0x04 CTRL
-                        // ADR-0038: bit2 = soft_reset/abort request — halts the core
-                        // NOW (start cleared), engines drain, run state clears at
-                        // quiesce. bit2 is momentary (not stored).
-                        if (wd_q[2] && wstrb_q[0]) begin
+                        // ADR-0038: bit2 = soft_reset/abort (momentary): core halts
+                        // NOW, engines drain, run state clears at quiesce, FAULT
+                        // EVIDENCE PERSISTS. ADR-0047: bit4 = HARD reset (momentary;
+                        // bit3 is irq_enable!): same drain, then npu_top pulses a
+                        // domain reset — ALL register state returns to power-on.
+                        if (wd_q[4] && wstrb_q[0]) begin
+                            hard_req   <= 1'b1;
+                            hard_q     <= 1'b1;
+                            soft_rst_q <= 1'b1;                 // reuse the drain path
+                            ctrl_q     <= merge(ctrl_q, wd_q, wstrb_q) & 32'hFFFF_FFEA;
+                        end else if (wd_q[2] && wstrb_q[0]) begin
                             soft_rst_q <= 1'b1;
-                            ctrl_q     <= merge(ctrl_q, wd_q, wstrb_q) & 32'hFFFF_FFFA;
+                            ctrl_q     <= merge(ctrl_q, wd_q, wstrb_q) & 32'hFFFF_FFEA;
                         end else
-                            ctrl_q <= merge(ctrl_q, wd_q, wstrb_q) & 32'hFFFF_FFFB;
+                            ctrl_q <= merge(ctrl_q, wd_q, wstrb_q) & 32'hFFFF_FFEB;
                     end
                     6'h03: config_q <= merge(config_q, wd_q, wstrb_q);          // 0x0C CONFIG
                     // 0x10 SCRATCH written in the dedicated scratch_q block below
@@ -305,7 +321,7 @@ module npu_axil_regs #(
                 irq_pending <= 1'b0;                                  // CTRL.irq_clear (bit1)
         end
     end
-    assign irq = irq_pending & ctrl_q[3];                            // CTRL.irq_enable (bit3)
+    assign irq = ~hard_q & (irq_pending & ctrl_q[3]);                            // CTRL.irq_enable (bit3)
 
     // ---------- outputs to NPU core ----------
     assign npu_start  = ctrl_q[0];

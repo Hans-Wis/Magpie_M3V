@@ -96,32 +96,40 @@ module npu_top #(
     wire d_awready,d_wready,d_bvalid,d_arready,d_rvalid; wire [31:0] d_rdata; wire [1:0] d_bresp,d_rresp;
     wire i_awready,i_wready,i_bvalid,i_arready,i_rvalid; wire [31:0] i_rdata; wire [1:0] i_bresp,i_rresp;
 
-    wire c_awvalid = s_awvalid & (w_route==2'd0);
-    wire t_awvalid = s_awvalid & (w_route==2'd1);
-    wire d_awvalid = s_awvalid & (w_route==2'd2);
-    wire i_awvalid = s_awvalid & (w_route==2'd3);
-    wire c_wvalid  = s_wvalid & w_known & (w_route==2'd0);
-    wire t_wvalid  = s_wvalid & w_known & (w_route==2'd1);
-    wire d_wvalid  = s_wvalid & w_known & (w_route==2'd2);
-    wire i_wvalid  = s_wvalid & w_known & (w_route==2'd3);
+    // ADR-0047: once drain completes, stop ACCEPTING new host transactions so
+    // a polling host cannot starve the domain-reset pulse. Implemented by
+    // deasserting the slave-side READY (never by masking a routed valid —
+    // that would fake a handshake and swallow the transaction).
+    wire hard_freeze;
+    wire aw_ok = ~hard_freeze;                    // new AW acceptance allowed
+    wire w_ok  = ~hard_freeze | w_busy;           // in-flight write may finish
+    wire ar_ok = ~hard_freeze;                    // new AR acceptance allowed
+    wire c_awvalid = s_awvalid & aw_ok & (w_route==2'd0);
+    wire t_awvalid = s_awvalid & aw_ok & (w_route==2'd1);
+    wire d_awvalid = s_awvalid & aw_ok & (w_route==2'd2);
+    wire i_awvalid = s_awvalid & aw_ok & (w_route==2'd3);
+    wire c_wvalid  = s_wvalid & w_ok & w_known & (w_route==2'd0);
+    wire t_wvalid  = s_wvalid & w_ok & w_known & (w_route==2'd1);
+    wire d_wvalid  = s_wvalid & w_ok & w_known & (w_route==2'd2);
+    wire i_wvalid  = s_wvalid & w_ok & w_known & (w_route==2'd3);
     wire c_bready  = s_bready & (w_route==2'd0);
     wire t_bready  = s_bready & (w_route==2'd1);
     wire d_bready  = s_bready & (w_route==2'd2);
     wire i_bready  = s_bready & (w_route==2'd3);
-    wire c_arvalid = s_arvalid & (r_route==2'd0);
-    wire t_arvalid = s_arvalid & (r_route==2'd1);
-    wire d_arvalid = s_arvalid & (r_route==2'd2);
-    wire i_arvalid = s_arvalid & (r_route==2'd3);
+    wire c_arvalid = s_arvalid & ar_ok & (r_route==2'd0);
+    wire t_arvalid = s_arvalid & ar_ok & (r_route==2'd1);
+    wire d_arvalid = s_arvalid & ar_ok & (r_route==2'd2);
+    wire i_arvalid = s_arvalid & ar_ok & (r_route==2'd3);
     wire c_rready  = s_rready & (r_route==2'd0);
     wire t_rready  = s_rready & (r_route==2'd1);
     wire d_rready  = s_rready & (r_route==2'd2);
     wire i_rready  = s_rready & (r_route==2'd3);
 
-    assign s_awready = (w_route==2'd0)?c_awready : (w_route==2'd1)?t_awready : (w_route==2'd3)?i_awready : d_awready;
-    assign s_wready  = w_known ? ((w_route==2'd0)?c_wready : (w_route==2'd1)?t_wready : (w_route==2'd3)?i_wready : d_wready) : 1'b0;
+    assign s_awready = aw_ok & ((w_route==2'd0)?c_awready : (w_route==2'd1)?t_awready : (w_route==2'd3)?i_awready : d_awready);
+    assign s_wready  = w_ok & (w_known ? ((w_route==2'd0)?c_wready : (w_route==2'd1)?t_wready : (w_route==2'd3)?i_wready : d_wready) : 1'b0);
     assign s_bvalid  = (w_route==2'd0)?c_bvalid : (w_route==2'd1)?t_bvalid : (w_route==2'd3)?i_bvalid : d_bvalid;
     assign s_bresp   = (w_route==2'd0)?c_bresp  : (w_route==2'd1)?t_bresp  : (w_route==2'd3)?i_bresp  : d_bresp;
-    assign s_arready = (r_route==2'd0)?c_arready : (r_route==2'd1)?t_arready : (r_route==2'd3)?i_arready : d_arready;
+    assign s_arready = ar_ok & ((r_route==2'd0)?c_arready : (r_route==2'd1)?t_arready : (r_route==2'd3)?i_arready : d_arready);
     assign s_rvalid  = (r_route==2'd0)?c_rvalid : (r_route==2'd1)?t_rvalid : (r_route==2'd3)?i_rvalid : d_rvalid;
     assign s_rdata   = (r_route==2'd0)?c_rdata  : (r_route==2'd1)?t_rdata  : (r_route==2'd3)?i_rdata  : d_rdata;
     assign s_rresp   = (r_route==2'd0)?c_rresp  : (r_route==2'd1)?t_rresp  : (r_route==2'd3)?i_rresp  : d_rresp;
@@ -249,6 +257,12 @@ module npu_top #(
     wire [31:0] mat_a_addr, mat_b_addr, mat_mult, mat_rsp, mat_clamp, mat_out_base;
     wire        mat_go, mat_busy, mat_done, mat_err;
     wire        npu_abort;
+    wire        hard_req;
+    reg         hard_pending;
+    reg  [1:0]  hard_rst_cnt;
+    wire        hard_busy   = hard_pending | (hard_rst_cnt != 2'd0);
+    // ADR-0047: registers-only domain reset (memories persist; core held via start=0)
+    wire        domain_rstn = resetn & (hard_rst_cnt == 2'd0);
     wire [2:0]  mat_cmd;
     wire [3:0]  mat_bank;
     wire [7:0]  mat_rpt;
@@ -258,7 +272,7 @@ module npu_top #(
     wire [31:0]       eng_wdata;
 
     mat_engine #(.TCM_AW(TCM_AW)) u_mat (
-        .clk(clk), .resetn(resetn),
+        .clk(clk), .resetn(domain_rstn),
         .go(mat_go), .abort_i(npu_abort), .cmd(mat_cmd), .arg_bank(mat_bank), .arg_rpt(mat_rpt),
         .a_addr(mat_a_addr), .b_addr(mat_b_addr),
         .rs_mult(mat_mult), .rs_shift(mat_rsp[7:0]), .rs_zp(mat_rsp[15:8]),
@@ -269,9 +283,26 @@ module npu_top #(
         .t_we(eng_we), .t_waddr(eng_waddr), .t_wdata(eng_wdata)
     );
 
+    // ================= hard-reset FSM (ADR-0047) =================
+    wire hard_quiet = !dma_busy && !wb_busy && !mat_busy;
+    assign hard_freeze = (hard_pending && hard_quiet) || (hard_rst_cnt != 2'd0);
+    always @(posedge clk) begin
+        if (!resetn) begin
+            hard_pending <= 1'b0; hard_rst_cnt <= 2'd0;
+        end else begin
+            if (hard_req) hard_pending <= 1'b1;
+            if (hard_rst_cnt != 2'd0) begin
+                hard_rst_cnt <= hard_rst_cnt - 2'd1;
+            end else if (hard_pending && hard_quiet && !w_busy && !r_busy) begin
+                hard_pending <= 1'b0;
+                hard_rst_cnt <= 2'd2;      // registers -> power-on; SRAM persists
+            end
+        end
+    end
+
     // ================= CSR block =================
     npu_axil_regs csr (
-        .clk(clk), .resetn(resetn),
+        .clk(clk), .resetn(domain_rstn),
         .s_axi_awvalid(c_awvalid),.s_axi_awready(c_awready),.s_axi_awaddr(s_awaddr),.s_axi_awprot(s_awprot),
         .s_axi_wvalid(c_wvalid),.s_axi_wready(c_wready),.s_axi_wdata(s_wdata),.s_axi_wstrb(s_wstrb),
         .s_axi_bvalid(c_bvalid),.s_axi_bready(c_bready),.s_axi_bresp(c_bresp),
@@ -285,6 +316,7 @@ module npu_top #(
         .mat_go(mat_go),.mat_cmd(mat_cmd),.mat_bank(mat_bank),.mat_rpt(mat_rpt),
         .mat_busy(mat_busy),.mat_done(mat_done),.mat_err(mat_err),
         .abort_req(npu_abort),
+        .hard_req(hard_req), .hard_busy(hard_busy),
         .dma_src(dma_src),.dma_dst(dma_dst),.dma_len(dma_len),.dma_go(dma_go),
         .dma_busy(dma_busy),.dma_done(dma_done),.dma_err(dma_err),
         .wb_src(wb_src),.wb_dst(wb_dst),.wb_len(wb_len),.wb_go(wb_go),
@@ -319,7 +351,7 @@ module npu_top #(
     end
 
     npu_dma #(.BUF_AW(TCM_AW)) dma (
-        .clk(clk), .resetn(resetn),
+        .clk(clk), .resetn(domain_rstn),
         .go(dma_start), .abort_i(npu_abort), .write_mode(dma_start_write),
         .src_addr(dma_desc_addr), .dst_word(dma_desc_word), .len_beats(dma_desc_len),
         .busy(dma_busy_engine), .done(dma_done_engine),
