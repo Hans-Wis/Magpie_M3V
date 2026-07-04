@@ -99,7 +99,8 @@ module cpu_m1_axil_top #(
         .rvfi_rd_addr(), .rvfi_rd_wdata(),
         .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(),
         .rvfi_insn(), .rvfi_trap_mtval(), .rvfi_mstatus(),
-        .rvfi_mem_re(), .rvfi_mem_we(), .rvfi_mem_addr(), .rvfi_mem_wdata(), .rvfi_mem_wstrb()
+        .rvfi_mem_re(), .rvfi_mem_we(), .rvfi_mem_addr(), .rvfi_mem_wdata(), .rvfi_mem_wstrb(),
+        .rvfi_f_valid(), .rvfi_f_rd(), .rvfi_f_wdata()
         /* verilator lint_on PINCONNECTEMPTY */
     );
 

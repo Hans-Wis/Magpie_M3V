@@ -23,7 +23,8 @@
 
 module idu #(
     parameter RV32A = 0,
-    parameter EN_RVV = 0
+    parameter EN_RVV = 0,
+    parameter EN_F = 0
 ) (
     input  [31:0] instr,
 
@@ -87,6 +88,7 @@ module idu #(
     output            is_vexec,
 
     // Exception
+    output            is_fexec,    // ADR-0050: F opcode spaces (fexu judges ops)
     output            illegal
 );
 
@@ -128,8 +130,8 @@ module idu #(
     assign is_jal    = (opcode == `OPC_JAL);
     assign is_jalr   = (opcode == `OPC_JALR) && (funct3 == 3'b000);
     assign is_branch = (opcode == `OPC_BRANCH);
-    assign is_load   = (opcode == `OPC_LOAD);
-    assign is_store  = (opcode == `OPC_STORE);
+    assign is_load  = ((opcode == `OPC_LOAD)) | is_fmem_ld;
+    assign is_store = ((opcode == `OPC_STORE)) | is_fmem_st;
 
     wire amo_funct5_valid =
         (funct5 == `AMO_F5_ADD)  || (funct5 == `AMO_F5_SWAP) ||
@@ -189,7 +191,17 @@ module idu #(
     // encoding routes to vexu, which accepts only legal unit-stride vector
     // forms and flags the rest illegal (incl. would-be FLW/FSW — same trap
     // Spike raises without F).
-    wire is_vmem_opc = (opcode == 7'b0000111) || (opcode == 7'b0100111);
+    // ADR-0050: with scalar F, f3=010 in the FP mem spaces is FLW/FSW (a real
+    // scalar word load/store); without F it stays routed to vexu (illegal).
+    wire is_fmem_ld = (EN_F != 0) && (opcode == 7'b0000111) && (funct3 == 3'b010);
+    wire is_fmem_st = (EN_F != 0) && (opcode == 7'b0100111) && (funct3 == 3'b010);
+    wire is_vmem_opc = ((opcode == 7'b0000111) || (opcode == 7'b0100111)) &&
+                       !(is_fmem_ld || is_fmem_st);
+    wire is_fexec_w = (EN_F != 0) &&
+                      ((opcode == 7'b1010011) || (opcode == 7'b1000011) ||
+                       (opcode == 7'b1000111) || (opcode == 7'b1001011) ||
+                       (opcode == 7'b1001111)) || is_fmem_ld || is_fmem_st;
+    assign is_fexec = is_fexec_w;
     assign is_vexec = (EN_RVV != 0) &&
                       ((is_op_v &&
                         ((funct3 == 3'b000) || (funct3 == 3'b010) || (funct3 == 3'b011) ||
@@ -404,8 +416,8 @@ module idu #(
     // Write-back 控制
     // -------------------------------------------------------------------------
     assign rd_we = is_op | is_op_imm | is_lui | is_auipc
-                 | is_jal | is_jalr | is_load | is_csr | is_amo | is_vset
-                 | opv_mv_x_s;
+                 | is_jal | is_jalr | (is_load & ~is_fmem_ld) | is_csr | is_amo
+                 | is_vset | opv_mv_x_s;
 
     always @* begin
         case (1'b1)
@@ -438,7 +450,7 @@ module idu #(
     wire known_base_opcode =
         is_lui | is_auipc | is_jal | (is_branch && branch_funct3_valid)
       | is_load | is_store | is_op_imm | is_op | is_fence | is_amo
-      | is_jalr | is_csr | is_mret | is_vset | is_vexec;
+      | is_jalr | is_csr | is_mret | is_vset | is_vexec | is_fexec_w;
     wire known_opcode = known_base_opcode | is_dret;
 
     assign illegal = !known_opcode | bmu_slot_illegal;   // M1A A2: reserved OP/OP-IMM-shift slots trap (Spike parity)

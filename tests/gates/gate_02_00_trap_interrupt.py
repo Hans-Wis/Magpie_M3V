@@ -115,7 +115,7 @@ def test_csr_file_registers_read_mux_write_ops_and_direct_mtvec_mode():
             "localparam [1:0] mstatus_mpp = 2'b11;",  # ADR-0015: M-only MPP read-only WARL=M
             "reg [31:0] mtval_reg;",
             # ADR-0036 3A: mstatus grew SD + VS (EN_RVV-visible fields; zero when EN_RVV=0)
-            "wire [31:0] mstatus_val = {mstatus_sd, 18'b0, mstatus_mpp, mstatus_vs_visible,",
+            "wire [31:0] mstatus_val = {mstatus_sd, 16'b0, mstatus_fs_visible, mstatus_mpp,",  # ADR-0050: +FS,
         "wire [31:0] mie_val     = {20'b0, mie_meie, 3'b0, mie_mtie, 3'b0, mie_msie, 3'b0};",
         "wire [31:0] mip_val     = {20'b0, (ext_pending | meip), 3'b0, mtip, 3'b0, msip, 3'b0};",
         "wire [31:0] mtvec_val   = {mtvec_base, 2'b00};",

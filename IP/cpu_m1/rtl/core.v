@@ -23,7 +23,8 @@ module core #(
     parameter EN_RVC = 1,
     parameter EN_BP = 1,
     parameter EN_RAS = 1,
-    parameter EN_RVV = 0
+    parameter EN_RVV = 0,
+    parameter EN_F   = 0
 ) (
     input             clk,
     input             resetn,
@@ -94,7 +95,10 @@ module core #(
     output            rvfi_mem_we,     // retired instr performed a store
     output     [31:0] rvfi_mem_addr,
     output     [31:0] rvfi_mem_wdata,
-    output     [ 3:0] rvfi_mem_wstrb
+    output     [ 3:0] rvfi_mem_wstrb,
+    output            rvfi_f_valid,   // ADR-0050: F-reg commit (flw or F op)
+    output     [ 4:0] rvfi_f_rd,
+    output     [31:0] rvfi_f_wdata
 );
 
     // =========================================================================
@@ -482,6 +486,7 @@ endgenerate
     wire        id_md_is_div;
     wire        id_is_vset;
     wire        id_is_vexec;
+    wire        id_is_fexec;
     wire        id_illegal;
     wire        id_is_ecall;
     wire        id_is_ebreak;
@@ -489,7 +494,8 @@ endgenerate
     // Historical gate anchor: idu u_idu
     idu #(
         .RV32A(RV32A),
-        .EN_RVV(EN_RVV)
+        .EN_RVV(EN_RVV),
+        .EN_F(EN_F)
     ) u_idu (
         .instr         (if_ex_instr),
         .rd_idx        (id_rd_idx),
@@ -526,6 +532,7 @@ endgenerate
         .md_is_div     (id_md_is_div),
         .is_vset       (id_is_vset),
         .is_vexec      (id_is_vexec),
+        .is_fexec      (id_is_fexec),
         .illegal       (id_illegal)
     );
 
@@ -823,6 +830,61 @@ endgenerate
         (ex_wb_valid_r  && ex_wb_csr_we_r  && (ex_wb_csr_addr_r == `CSR_VCSR))  ?
             ex_wb_csr_next_val[2:1] : csr_vxrm;
 
+    // ================= ADR-0050 scalar F (fexu) =================
+    wire [2:0]   csr_frm;
+    wire         wb_fexec_we;
+    wire [1:0] csr_mstatus_fs_eff =
+        ((EN_F != 0) && ex_mem_valid_r && ex_mem_csr_we_r &&
+         (ex_mem_csr_addr_r == `CSR_MSTATUS)) ?
+        ex_mem_csr_next_val[`MSTATUS_FS_HI_BIT:`MSTATUS_FS_LO_BIT] :
+        ((EN_F != 0) && ex_wb_valid_r && ex_wb_csr_we_r &&
+         (ex_wb_csr_addr_r == `CSR_MSTATUS)) ?
+        ex_wb_csr_next_val[`MSTATUS_FS_HI_BIT:`MSTATUS_FS_LO_BIT] :
+        ((EN_F != 0) ? csr_mstatus_fs : 2'b00);
+    wire [2:0] eff_frm =
+        ((EN_F != 0) && ex_mem_valid_r && ex_mem_csr_we_r &&
+         (ex_mem_csr_addr_r == `CSR_FRM)) ? ex_mem_csr_next_val[2:0] :
+        ((EN_F != 0) && ex_mem_valid_r && ex_mem_csr_we_r &&
+         (ex_mem_csr_addr_r == `CSR_FCSR)) ? ex_mem_csr_next_val[7:5] :
+        ((EN_F != 0) && ex_wb_valid_r && ex_wb_csr_we_r &&
+         (ex_wb_csr_addr_r == `CSR_FRM)) ? ex_wb_csr_next_val[2:0] :
+        ((EN_F != 0) && ex_wb_valid_r && ex_wb_csr_we_r &&
+         (ex_wb_csr_addr_r == `CSR_FCSR)) ? ex_wb_csr_next_val[7:5] : csr_frm;
+
+    wire         fexu_q_hit, fexu_q_illegal, fexu_q_is_flw, fexu_q_is_fsw;
+    wire         fexu_q_fwe, fexu_q_xwe;
+    wire [4:0]   fexu_q_fd;
+    wire [31:0]  fexu_q_fdata, fexu_q_xdata, fexu_q_fsw_data;
+    wire [4:0]   fexu_q_flags;
+    wire         wb_f_we;
+    reg          ex_mem_f_we_r, ex_wb_f_we_r;
+    reg          ex_mem_f_flw_r, ex_wb_f_flw_r;
+    reg          ex_mem_f_exec_r, ex_wb_f_exec_r;
+    reg  [4:0]   ex_mem_f_fd_r, ex_wb_f_fd_r;
+    reg  [31:0]  ex_mem_f_data_r, ex_wb_f_data_r;
+    reg  [4:0]   ex_mem_f_flags_r, ex_wb_f_flags_r;
+
+    fexu #(.EN_F(EN_F)) u_fexu (
+        .clk(clk), .resetn(resetn),
+        .q_valid(if_ex_valid),
+        .q_instr(if_ex_instr),
+        .q_rs1(rs1_val),
+        .q_frm(eff_frm),
+        .q_hit(fexu_q_hit),
+        .q_illegal(fexu_q_illegal),
+        .q_is_flw(fexu_q_is_flw),
+        .q_is_fsw(fexu_q_is_fsw),
+        .q_fsw_data(fexu_q_fsw_data),
+        .q_fwe(fexu_q_fwe), .q_fd(fexu_q_fd), .q_fdata(fexu_q_fdata),
+        .q_xwe(fexu_q_xwe), .q_xdata(fexu_q_xdata),
+        .q_flags(fexu_q_flags),
+        .w_en(wb_f_we), .w_fd(ex_wb_f_fd_r),
+        .w_data(ex_wb_f_flw_r ? lsu_ld_result_wb : ex_wb_f_data_r)
+    );
+    wire id_f_fs_illegal = (EN_F != 0) && fexu_q_hit &&
+                           (csr_mstatus_fs_eff == 2'b00);
+    wire id_fexec_can_commit = fexu_q_hit && !fexu_q_illegal && !id_f_fs_illegal;
+
     wire         vexu_q_vxsat;
     wire         vexu_q_illegal, vexu_q_scalar_we, vexu_q_vrf_we;
     wire [31:0]  vexu_q_scalar;
@@ -883,6 +945,11 @@ endgenerate
     wire vex_raw_stall = vexu_query &&
                          ((ex_mem_valid_r && ex_mem_vex_flag_r) ||
                           (ex_wb_valid_r  && ex_wb_vex_flag_r));
+    // ADR-0050: F-reg RAW — an F op at EX waits out any in-flight F-reg write
+    // (F writes land at WB; conservative, mirrors the vector rule)
+    wire f_raw_stall = (EN_F != 0) && fexu_q_hit &&
+                       ((ex_mem_valid_r && ex_mem_f_we_r) ||
+                        (ex_wb_valid_r  && ex_wb_f_we_r));
     // 3C: a vector load/store holds at EX until its FSM finishes. The FSM is
     // started only with the pipeline behind DRAINED (EX/MEM + EX/WB empty):
     // no older instruction exists that could redirect/trap, and wb_take_irq
@@ -918,7 +985,7 @@ endgenerate
                                         (((EN_RVV == 0) || (csr_mstatus_vs_eff == 2'b00)) ||
                                          (id_is_vector_ro_csr && id_csr_we_logic));
     wire        id_illegal_eff = id_illegal | id_opv_vs_illegal | id_vector_csr_illegal |
-                                 vexu_q_illegal;
+                                 vexu_q_illegal | fexu_q_illegal | id_f_fs_illegal;
 
     // BP mispredict detection: direction plus predicted-target equality.
     // BTB target aliases are possible; a predicted-taken branch/JAL/JALR must
@@ -1088,7 +1155,7 @@ endgenerate
     /* verilator lint_off PINCONNECTEMPTY */
     lsu u_lsu_id (
         .addr_lo   (store_addr_lo),
-        .wdata_raw (rs2_val),
+        .wdata_raw (((EN_F != 0) && fexu_q_is_fsw) ? fexu_q_fsw_data : rs2_val),
         .funct3    (id_ls_funct3),
         .is_store  (id_is_store && if_ex_valid && !stall),
         .mem_rdata (32'h0),              // ID/EX 不用 ld_result
@@ -1204,6 +1271,7 @@ endgenerate
     reg  [31:0] id_csr_rdata;
     wire [31:0] mtvec_o, mepc_o;
     wire [ 1:0] csr_mstatus_vs;
+    wire [ 1:0] csr_mstatus_fs;
     wire [31:0] csr_vl;
     wire [31:0] csr_vtype;
     wire        irq_pending_raw;
@@ -1362,7 +1430,8 @@ endgenerate
     csr #(
         .RV32A(RV32A),
         .PMP_ENTRIES(PMP_ENTRIES),
-        .EN_RVV(EN_RVV)
+        .EN_RVV(EN_RVV),
+        .EN_F(EN_F)
     ) u_csr (
         .clk                (clk),
         .resetn             (resetn),
@@ -1411,6 +1480,10 @@ endgenerate
         .irq_pending        (irq_pending_raw),
         .irq_cause          (wb_irq_cause),
         .mstatus_vs_o       (csr_mstatus_vs),
+        .mstatus_fs_o       (csr_mstatus_fs),
+        .fexec_we           (wb_fexec_we),
+        .fflags_set         (ex_wb_f_flags_r),
+        .frm_o              (csr_frm),
         .vl_o               (csr_vl),
         .vtype_o            (csr_vtype),
         .vstart_o           (csr_vstart),
@@ -1443,6 +1516,14 @@ endgenerate
                 default    : ;
             endcase
         end
+        // ADR-0050: an F op at WB accrues fflags this cycle — overlay BEFORE the
+        // younger MEM-window csr forwards; a younger csrw to the F alias group
+        // in MEM wins by age (same rule the S2 vxsat overlay learned).
+        if ((EN_F != 0) && ex_wb_valid_r && ex_wb_f_exec_r &&
+            ((id_csr_addr == `CSR_FFLAGS) || (id_csr_addr == `CSR_FCSR)) &&
+            !(ex_mem_valid_r && ex_mem_csr_we_r &&
+              ((ex_mem_csr_addr_r == `CSR_FFLAGS) || (ex_mem_csr_addr_r == `CSR_FCSR))))
+            id_csr_rdata = id_csr_rdata | {27'b0, ex_wb_f_flags_r};
         // S2 (ADR-0049): a saturating vector op at WB sets vxsat this cycle —
         // overlay BEFORE the (younger) EX/MEM csr-write forwarding below so an
         // intervening csrw still wins by age.
@@ -1486,6 +1567,40 @@ endgenerate
         if ((EN_RVV != 0) && ex_mem_valid_r && ex_mem_vex_sat_r &&
             ((id_csr_addr == `CSR_VXSAT) || (id_csr_addr == `CSR_VCSR)))
             id_csr_rdata = id_csr_rdata | 32'h1;
+        // ADR-0050: EX/MEM-window cross-alias forwarding for fflags/frm/fcsr
+        // (mirror of the 3A vxsat/vxrm/vcsr block; exact-address hits are
+        // covered by the generic bypass above)
+        if ((EN_F != 0) && ex_mem_valid_r && ex_mem_csr_we_r &&
+            (ex_mem_csr_addr_r != id_csr_addr)) begin
+            case (id_csr_addr)
+                `CSR_FCSR: begin
+                    if (ex_mem_csr_addr_r == `CSR_FFLAGS)
+                        id_csr_rdata = {id_csr_rdata[31:5], ex_mem_csr_next_val[4:0]};
+                    if (ex_mem_csr_addr_r == `CSR_FRM)
+                        id_csr_rdata = {id_csr_rdata[31:8], ex_mem_csr_next_val[2:0],
+                                        id_csr_rdata[4:0]};
+                end
+                `CSR_FFLAGS: if (ex_mem_csr_addr_r == `CSR_FCSR)
+                    id_csr_rdata = {27'b0, ex_mem_csr_next_val[4:0]};
+                `CSR_FRM   : if (ex_mem_csr_addr_r == `CSR_FCSR)
+                    id_csr_rdata = {29'b0, ex_mem_csr_next_val[7:5]};
+                `CSR_MSTATUS:
+                    if ((ex_mem_csr_addr_r == `CSR_FFLAGS) ||
+                        (ex_mem_csr_addr_r == `CSR_FRM)   ||
+                        (ex_mem_csr_addr_r == `CSR_FCSR))
+                        id_csr_rdata = id_csr_rdata | 32'h8000_0000 |
+                                       (32'h3 << `MSTATUS_FS_LO_BIT);
+                default: ;
+            endcase
+        end
+        // ADR-0050: F op in the MEM window — fflags accrual + FS dirty
+        if ((EN_F != 0) && ex_mem_valid_r && ex_mem_f_exec_r &&
+            ((id_csr_addr == `CSR_FFLAGS) || (id_csr_addr == `CSR_FCSR)))
+            id_csr_rdata = id_csr_rdata | {27'b0, ex_mem_f_flags_r};
+        if ((EN_F != 0) && (id_csr_addr == `CSR_MSTATUS) &&
+            ((ex_mem_valid_r && ex_mem_f_exec_r) || (ex_wb_valid_r && ex_wb_f_exec_r)))
+            id_csr_rdata = id_csr_rdata | 32'h8000_0000 |
+                           (32'h3 << `MSTATUS_FS_LO_BIT);
         // 3B: vector-exec in EX/MEM clears vstart / dirties VS one commit ahead
         if ((EN_RVV != 0) && ex_mem_valid_r && ex_mem_vex_flag_r) begin
             if (id_csr_addr == `CSR_VSTART) id_csr_rdata = 32'h0;
@@ -1512,7 +1627,7 @@ endgenerate
         .wb_rd_idx    (ex_wb_rd_idx),
         .wb_is_load   (ex_wb_is_load),
         .md_busy      (md_busy),
-        .vex_stall    (vex_raw_stall || vex_mem_hold),
+        .vex_stall    (vex_raw_stall || vex_mem_hold || f_raw_stall),
         .stall        (stall),
         .operand_stall(hz_operand_stall)
     );
@@ -1560,6 +1675,9 @@ endgenerate
             ex_mem_vex_we_r          <= 1'b0;
             ex_mem_vex_sat_r         <= 1'b0;
             ex_mem_vex_grp_w_r       <= 1'b0;
+            ex_mem_f_we_r            <= 1'b0;
+            ex_mem_f_flw_r           <= 1'b0;
+            ex_mem_f_exec_r          <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
             ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_vex_vd_r          <= 5'd0;
@@ -1598,6 +1716,9 @@ endgenerate
             ex_mem_vex_we_r          <= 1'b0;
             ex_mem_vex_sat_r         <= 1'b0;
             ex_mem_vex_grp_w_r       <= 1'b0;
+            ex_mem_f_we_r            <= 1'b0;
+            ex_mem_f_flw_r           <= 1'b0;
+            ex_mem_f_exec_r          <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
             ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_is_branch_taken_r <= 1'b0;
@@ -1619,13 +1740,15 @@ endgenerate
             ex_mem_pc_r              <= if_ex_pc;
             ex_mem_alu_result_r      <= id_is_vset ? rvv_vl_next :
                                         vexu_q_scalar_we ? vexu_q_scalar :
-                                        (id_is_bmu ? bmu_result : alu_result);  // M1A A2 / RVV vset+vmv.x.s rd
+                                        ((EN_F != 0) && fexu_q_xwe) ? fexu_q_xdata :
+                                        (id_is_bmu ? bmu_result : alu_result);  // M1A A2 / RVV / F rd
             ex_mem_md_result_r       <= md_result;
             ex_mem_pc_plus_4_r       <= if_ex_pc_plus_4;
             ex_mem_pc_plus_imm_r     <= if_ex_pc_plus_imm;
             ex_mem_csr_rdata_r       <= id_csr_rdata;
             ex_mem_rd_idx_r          <= id_rd_idx;
-            ex_mem_rd_we_r           <= id_rd_we;
+            ex_mem_rd_we_r           <= id_rd_we ||
+                                        ((EN_F != 0) && id_fexec_can_commit && fexu_q_xwe);
             ex_mem_wb_sel_r          <= id_wb_sel;
             ex_mem_is_load_r         <= id_is_load || id_is_amo;
             ex_mem_is_mul_r          <= id_is_mul;
@@ -1652,6 +1775,13 @@ endgenerate
             ex_mem_vex_we_r          <= id_vexec_can_commit && vexu_q_vrf_we;
             ex_mem_vex_sat_r         <= id_vexec_can_commit && vexu_q_vxsat;
             ex_mem_vex_grp_w_r       <= id_vexec_can_commit && vexu_q_grp_w;
+            ex_mem_f_we_r            <= (EN_F != 0) && id_fexec_can_commit &&
+                                        (fexu_q_fwe || fexu_q_is_flw);
+            ex_mem_f_flw_r           <= (EN_F != 0) && id_fexec_can_commit && fexu_q_is_flw;
+            ex_mem_f_exec_r          <= (EN_F != 0) && id_fexec_can_commit;
+            ex_mem_f_fd_r            <= fexu_q_fd;
+            ex_mem_f_data_r          <= fexu_q_fdata;
+            ex_mem_f_flags_r         <= fexu_q_flags;
             ex_mem_vex_grp_parts_r   <= vexu_q_grp_parts;
             ex_mem_vex_flag_r        <= id_vexec_can_commit;
             ex_mem_vex_mem_r         <= id_vexec_can_commit && vexu_q_is_mem;
@@ -1698,6 +1828,9 @@ endgenerate
             ex_mem_vex_we_r          <= 1'b0;
             ex_mem_vex_sat_r         <= 1'b0;
             ex_mem_vex_grp_w_r       <= 1'b0;
+            ex_mem_f_we_r            <= 1'b0;
+            ex_mem_f_flw_r           <= 1'b0;
+            ex_mem_f_exec_r          <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
             ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_is_branch_taken_r <= 1'b0;
@@ -1852,6 +1985,9 @@ endgenerate
             ex_wb_vex_we_r          <= 1'b0;
             ex_wb_vex_sat_r         <= 1'b0;
             ex_wb_vex_grp_w_r       <= 1'b0;
+            ex_wb_f_we_r            <= 1'b0;
+            ex_wb_f_flw_r           <= 1'b0;
+            ex_wb_f_exec_r          <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
             ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_vex_vd_r          <= 5'd0;
@@ -1890,6 +2026,9 @@ endgenerate
             ex_wb_vex_we_r          <= 1'b0;
             ex_wb_vex_sat_r         <= 1'b0;
             ex_wb_vex_grp_w_r       <= 1'b0;
+            ex_wb_f_we_r            <= 1'b0;
+            ex_wb_f_flw_r           <= 1'b0;
+            ex_wb_f_exec_r          <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
             ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_is_branch_taken_r <= 1'b0;
@@ -1946,6 +2085,12 @@ endgenerate
             ex_wb_vex_we_r          <= ex_mem_vex_we_r;
             ex_wb_vex_sat_r         <= ex_mem_vex_sat_r;
             ex_wb_vex_grp_w_r       <= ex_mem_vex_grp_w_r;
+            ex_wb_f_we_r            <= ex_mem_f_we_r;
+            ex_wb_f_flw_r           <= ex_mem_f_flw_r;
+            ex_wb_f_exec_r          <= ex_mem_f_exec_r;
+            ex_wb_f_fd_r            <= ex_mem_f_fd_r;
+            ex_wb_f_data_r          <= ex_mem_f_data_r;
+            ex_wb_f_flags_r         <= ex_mem_f_flags_r;
             ex_wb_vex_grp_parts_r   <= ex_mem_vex_grp_parts_r;
             ex_wb_vex_flag_r        <= ex_mem_vex_flag_r;
             ex_wb_vex_mem_r         <= ex_mem_vex_mem_r;
@@ -1989,6 +2134,9 @@ endgenerate
             ex_wb_vex_we_r          <= 1'b0;
             ex_wb_vex_sat_r         <= 1'b0;
             ex_wb_vex_grp_w_r       <= 1'b0;
+            ex_wb_f_we_r            <= 1'b0;
+            ex_wb_f_flw_r           <= 1'b0;
+            ex_wb_f_exec_r          <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
             ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_is_branch_taken_r <= 1'b0;
@@ -2030,6 +2178,12 @@ endgenerate
                              !wb_take_trigger && !core_mem_stall;
     assign wb_vxsat_set   = wb_vex_we && ex_wb_vex_sat_r;
     wire   wb_vex_grp_w   = wb_vex_we && ex_wb_vex_grp_w_r;
+    assign wb_f_we        = (EN_F != 0) && ex_wb_f_we_r && ex_wb_valid_r &&
+                            !wb_take_irq && !wb_take_sync_trap &&
+                            !wb_take_data_trap && !wb_take_trigger && !core_mem_stall;
+    assign wb_fexec_we    = (EN_F != 0) && ex_wb_f_exec_r && ex_wb_valid_r &&
+                            !wb_take_irq && !wb_take_sync_trap &&
+                            !wb_take_data_trap && !wb_take_trigger && !core_mem_stall;
     assign wb_vexec_we    = ex_wb_vex_flag_r && ex_wb_valid_r && !wb_take_irq &&
                              !wb_take_sync_trap && !wb_take_data_trap &&
                              !wb_take_trigger && !core_mem_stall;
@@ -2252,5 +2406,8 @@ endgenerate
     assign rvfi_mem_addr   = ex_wb_mem_addr_r;
     assign rvfi_mem_wdata  = ex_wb_mem_wdata_r;
     assign rvfi_mem_wstrb  = ex_wb_mem_wstrb_r;
+    assign rvfi_f_valid    = wb_f_we;
+    assign rvfi_f_rd       = ex_wb_f_fd_r;
+    assign rvfi_f_wdata    = ex_wb_f_flw_r ? lsu_ld_result_wb : ex_wb_f_data_r;
 
 endmodule

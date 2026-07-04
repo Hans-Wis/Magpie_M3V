@@ -189,6 +189,9 @@
 `define CSR_INSTRETH 12'hC82
 `define CSR_VSTART   12'h008
 `define CSR_VXSAT    12'h009
+`define CSR_FFLAGS   12'h001
+`define CSR_FRM      12'h002
+`define CSR_FCSR     12'h003
 `define CSR_VXRM     12'h00A
 `define CSR_VCSR     12'h00F
 `define CSR_VL       12'hC20
@@ -230,6 +233,8 @@
 `define MSTATUS_MIE_BIT  3
 `define MSTATUS_MPIE_BIT 7
 `define MSTATUS_VS_LO_BIT 9
+`define MSTATUS_FS_LO_BIT 13
+`define MSTATUS_FS_HI_BIT 14
 `define MSTATUS_VS_HI_BIT 10
 `define MSTATUS_MPP_LO_BIT 11
 `define MSTATUS_MPP_HI_BIT 12

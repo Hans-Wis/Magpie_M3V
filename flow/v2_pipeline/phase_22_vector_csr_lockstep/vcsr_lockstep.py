@@ -17,7 +17,7 @@ from spike_commit import compare_commits, parse_dut_commits, parse_spike_commits
 
 ROOT = Path(__file__).resolve().parent
 SPIKE_BASE = 0x8000_0000
-VCSR_ISA = "rv32im_zve32x_zvl128b_zicsr_zifencei"
+VCSR_ISA = "rv32imf_zve32x_zvl128b_zicsr_zifencei"
 EBREAK_32 = 0x0010_0073
 
 

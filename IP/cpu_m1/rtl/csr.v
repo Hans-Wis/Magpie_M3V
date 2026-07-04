@@ -31,7 +31,8 @@
 module csr #(
     parameter RV32A = 0,
     parameter PMP_ENTRIES = 0,
-    parameter EN_RVV = 0
+    parameter EN_RVV = 0,
+    parameter EN_F = 0
 ) (
     input             clk,
     input             resetn,
@@ -54,6 +55,10 @@ module csr #(
     // RVV Stage 3B: a vector-execute instruction committed at WB
     // (clears vstart, sets mstatus.VS dirty — atomic with the VRF write)
     input             vexec_we,
+    // ADR-0050 F: fexec commit at WB (fflags accrual + mstatus.FS dirty)
+    input             fexec_we,
+    input  [4:0]      fflags_set,
+    output [ 2:0]     frm_o,
 
     // Counter input
     input             instr_retired,
@@ -108,6 +113,7 @@ module csr #(
 
     // RVV state exported for vset*/vexu EX calculation and privilege checks
     output [ 1:0]     mstatus_vs_o,
+    output [ 1:0]     mstatus_fs_o,
     output [31:0]     mstatus_o,        // ADR-0048: architectural mstatus read view
     output [31:0]     vl_o,
     output [31:0]     vtype_o,
@@ -143,6 +149,9 @@ module csr #(
     reg [ 2:0] dcsr_cause_reg;
     reg [ 6:0] vstart_reg;
     reg        vxsat_reg;
+    reg [4:0]  fflags_reg;      // ADR-0050
+    reg [2:0]  frm_reg;
+    reg [1:0]  mstatus_fs;      // mstatus[14:13]
     reg [ 1:0] vxrm_reg;
     reg [31:0] vl_reg;
     reg [31:0] vtype_reg;
@@ -219,10 +228,13 @@ module csr #(
     //   未列出的位址回 0 (mhartid / misa / mvendorid 等)
     // -------------------------------------------------------------------------
     wire [1:0]  mstatus_vs_visible = (EN_RVV != 0) ? mstatus_vs : 2'b00;
-    wire        mstatus_sd = (EN_RVV != 0) && (mstatus_vs == 2'b11);
+    wire [1:0]  mstatus_fs_visible = (EN_F != 0) ? mstatus_fs : 2'b00;
+    wire        mstatus_sd = ((EN_RVV != 0) && (mstatus_vs == 2'b11)) ||
+                             ((EN_F   != 0) && (mstatus_fs == 2'b11));
     // mstatus layout: [31]=SD, [12:11]=MPP, [10:9]=VS, [7]=MPIE, [3]=MIE
-    wire [31:0] mstatus_val = {mstatus_sd, 18'b0, mstatus_mpp, mstatus_vs_visible,
-                               1'b0, mstatus_mpie, 3'b0, mstatus_mie, 3'b0};
+    wire [31:0] mstatus_val = {mstatus_sd, 16'b0, mstatus_fs_visible, mstatus_mpp,
+                               mstatus_vs_visible, 1'b0, mstatus_mpie, 3'b0,
+                               mstatus_mie, 3'b0};
     // mie/mip layout: [11]=MEIE/MEIP, [7]=MTIE/MTIP, [3]=MSIE/MSIP (ADR-0019)
     wire [31:0] mie_val     = {20'b0, mie_meie, 3'b0, mie_mtie, 3'b0, mie_msie, 3'b0};
     assign mstatus_o = mstatus_val;
@@ -233,6 +245,8 @@ module csr #(
     wire [31:0] vxsat_val   = {31'b0, vxsat_reg};
     wire [31:0] vxrm_val    = {30'b0, vxrm_reg};
     wire [31:0] vcsr_val    = {29'b0, vxrm_reg, vxsat_reg};
+    wire [31:0] fcsr_val    = {24'b0, frm_reg, fflags_reg};
+    assign frm_o = (EN_F != 0) ? frm_reg : 3'b0;
     wire [31:0] vlenb_val   = 32'd16;
     // M1A A2 (ADR-0026): + misa.B (bit1) — Zba+Zbb+Zbs ratified as B; Spike --priv=m parity = 0x40001106
     localparam [25:0] MISA_EXT_BASE = (26'h1 << 8) | (26'h1 << 12) | (26'h1 << 2) | (26'h1 << 1);
@@ -254,6 +268,9 @@ module csr #(
                 `CSR_MTVAL   : csr_debug_read = mtval_val;
                 `CSR_MIP     : csr_debug_read = mip_val;
                 `CSR_VSTART  : csr_debug_read = (EN_RVV != 0) ? vstart_val : 32'h0;
+                `CSR_FFLAGS  : csr_debug_read = (EN_F != 0) ? {27'b0, fflags_reg} : 32'h0;
+                `CSR_FRM     : csr_debug_read = (EN_F != 0) ? {29'b0, frm_reg} : 32'h0;
+                `CSR_FCSR    : csr_debug_read = (EN_F != 0) ? fcsr_val : 32'h0;
                 `CSR_VXSAT   : csr_debug_read = (EN_RVV != 0) ? vxsat_val : 32'h0;
                 `CSR_VXRM    : csr_debug_read = (EN_RVV != 0) ? vxrm_val : 32'h0;
                 `CSR_VCSR    : csr_debug_read = (EN_RVV != 0) ? vcsr_val : 32'h0;
@@ -299,6 +316,9 @@ module csr #(
             `CSR_MTVAL   : csr_rdata = mtval_val;
             `CSR_MIP     : csr_rdata = mip_val;
             `CSR_VSTART  : csr_rdata = (EN_RVV != 0) ? vstart_val : 32'h0;
+            `CSR_FFLAGS  : csr_rdata = (EN_F != 0) ? {27'b0, fflags_reg} : 32'h0;
+            `CSR_FRM     : csr_rdata = (EN_F != 0) ? {29'b0, frm_reg} : 32'h0;
+            `CSR_FCSR    : csr_rdata = (EN_F != 0) ? fcsr_val : 32'h0;
             `CSR_VXSAT   : csr_rdata = (EN_RVV != 0) ? vxsat_val : 32'h0;
             `CSR_VXRM    : csr_rdata = (EN_RVV != 0) ? vxrm_val : 32'h0;
             `CSR_VCSR    : csr_rdata = (EN_RVV != 0) ? vcsr_val : 32'h0;
@@ -338,6 +358,9 @@ module csr #(
                 `CSR_MEPC,
                 `CSR_MCAUSE,
                 `CSR_MTVAL,
+                `CSR_FFLAGS,
+                `CSR_FRM,
+                `CSR_FCSR,
                 `CSR_VSTART,
                 `CSR_VXSAT,
                 `CSR_VXRM,
@@ -413,6 +436,26 @@ module csr #(
         end
         if ((EN_RVV != 0) && vcfg_we && (csr_raddr == `CSR_MSTATUS))
             csr_rdata = mstatus_val | 32'h8000_0000 | (32'h3 << `MSTATUS_VS_LO_BIT);
+        // ADR-0050: same-cycle WB write forwarding for the fflags/frm/fcsr alias
+        if ((EN_F != 0) && csr_we) begin
+            if (csr_waddr == `CSR_FFLAGS) begin
+                if (csr_raddr == `CSR_FCSR) csr_rdata = {24'b0, frm_reg, new_val[4:0]};
+            end
+            if (csr_waddr == `CSR_FRM) begin
+                if (csr_raddr == `CSR_FCSR) csr_rdata = {24'b0, new_val[2:0], fflags_reg};
+            end
+            if (csr_waddr == `CSR_FCSR) begin
+                if (csr_raddr == `CSR_FFLAGS) csr_rdata = {27'b0, new_val[4:0]};
+                if (csr_raddr == `CSR_FRM)    csr_rdata = {29'b0, new_val[7:5]};
+            end
+        end
+        // ADR-0050: same-cycle F-op commit (fflags accrual + FS dirty)
+        if ((EN_F != 0) && fexec_we) begin
+            if (csr_raddr == `CSR_FFLAGS) csr_rdata = csr_rdata | {27'b0, fflags_set};
+            if (csr_raddr == `CSR_FCSR)   csr_rdata = csr_rdata | {27'b0, fflags_set};
+            if (csr_raddr == `CSR_MSTATUS)
+                csr_rdata = csr_rdata | 32'h8000_0000 | (32'h3 << `MSTATUS_FS_LO_BIT);
+        end
         // 3B: same-cycle WB commit of a vector-execute op (vstart clear + VS dirty)
         if ((EN_RVV != 0) && vexec_we) begin
             if (csr_raddr == `CSR_VSTART) csr_rdata = 32'h0;
@@ -465,6 +508,9 @@ module csr #(
             dcsr_cause_reg <= 3'b0;
             vstart_reg   <= 7'h00;
             vxsat_reg    <= 1'b0;
+            fflags_reg   <= 5'b0;
+            frm_reg      <= 3'b0;
+            mstatus_fs   <= 2'b00;
             vxrm_reg     <= 2'b00;
             vl_reg       <= 32'h0;
             vtype_reg    <= 32'h8000_0000;
@@ -494,6 +540,8 @@ module csr #(
                         mstatus_mpie <= new_val[`MSTATUS_MPIE_BIT];
                         if (EN_RVV != 0)
                             mstatus_vs <= new_val[`MSTATUS_VS_HI_BIT:`MSTATUS_VS_LO_BIT];
+                        if (EN_F != 0)
+                            mstatus_fs <= new_val[`MSTATUS_FS_HI_BIT:`MSTATUS_FS_LO_BIT];
                         // mstatus.MPP is read-only WARL=M (M-only hart, ADR-0015): write ignored
                     end
                     `CSR_MIE     : begin
@@ -506,6 +554,19 @@ module csr #(
                     `CSR_MEPC    : mepc_reg    <= {new_val[31:1], 1'b0};
                     `CSR_MCAUSE  : mcause_reg  <= new_val;
                     `CSR_MTVAL   : mtval_reg   <= new_val;
+                    `CSR_FFLAGS  : if (EN_F != 0) begin
+                        fflags_reg <= new_val[4:0];
+                        mstatus_fs <= 2'b11;
+                    end
+                    `CSR_FRM     : if (EN_F != 0) begin
+                        frm_reg <= new_val[2:0];
+                        mstatus_fs <= 2'b11;
+                    end
+                    `CSR_FCSR    : if (EN_F != 0) begin
+                        frm_reg <= new_val[7:5];
+                        fflags_reg <= new_val[4:0];
+                        mstatus_fs <= 2'b11;
+                    end
                     `CSR_VSTART  : if (EN_RVV != 0) begin
                         vstart_reg <= new_val[6:0];
                         mstatus_vs <= 2'b11;
@@ -629,6 +690,12 @@ module csr #(
                 mstatus_vs <= 2'b11;
             end
 
+            // ADR-0050: F-op commit — sticky fflags accrual + FS dirty
+            if ((EN_F != 0) && fexec_we) begin
+                fflags_reg <= fflags_reg | fflags_set;
+                mstatus_fs <= 2'b11;
+            end
+
             // 4.4 硬體 trap entry / exit
             //     core.v 保證 trap_enter / trap_exit / csr_we 三者互斥；
             //     不過 trap_enter 在源碼順序上放在 csr_we 後面，
@@ -671,6 +738,7 @@ module csr #(
     assign dcsr_ebreakm_o = dcsr_ebreakm_reg;
     assign debug_csr_rdata = csr_debug_read(debug_csr_waddr);
     assign mstatus_vs_o = mstatus_vs_visible;
+    assign mstatus_fs_o = mstatus_fs_visible;
     assign vl_o         = (EN_RVV != 0) ? vl_reg : 32'h0;
     assign vxrm_o       = (EN_RVV != 0) ? vxrm_reg : 2'b00;
     assign vtype_o      = (EN_RVV != 0) ? vtype_reg : 32'h8000_0000;

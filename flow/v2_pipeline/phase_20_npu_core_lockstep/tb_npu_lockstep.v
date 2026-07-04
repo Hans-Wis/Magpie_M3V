@@ -158,8 +158,9 @@ module tb_npu_lockstep;
                       commit_count,
                       dut.rvfi_pc,
                       commit_instr,
-                      dut.rvfi_rd_addr,
-                      dut.rvfi_rd_wdata);
+                      dut.rvfi_f_valid ? (32'd64 + {27'b0, dut.rvfi_f_rd})
+                                       : {27'b0, dut.rvfi_rd_addr},
+                      dut.rvfi_f_valid ? dut.rvfi_f_wdata : dut.rvfi_rd_wdata);
             commit_count <= commit_count + 1;
         end
     end

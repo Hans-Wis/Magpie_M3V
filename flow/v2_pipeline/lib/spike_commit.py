@@ -17,8 +17,10 @@ TrapEvent = dict[str, tuple[int, int]]
 # the historical format parses identically (ADR-0036 3B).
 COMMIT_RE = re.compile(
     r"core\s+0:\s+3\s+0x(?P<pc>[0-9a-f]+)\s+\(0x(?P<instr>[0-9a-f]+)\)"
-    r"(?:(?:\s+(?!x\s*\d)\S+)*\s+x\s*(?P<rd>\d+)\s+0x(?P<wdata>[0-9a-f]+))?"
-)
+    r"(?:(?:\s+(?!x\s*\d)(?!f\s*\d)\S+)*"
+    r"(?:\s+x\s*(?P<rd>\d+)\s+0x(?P<wdata>[0-9a-f]+)"
+    r"|\s+f\s*(?P<frd>\d+)\s+0x(?P<fwdata>[0-9a-f]+)))?"
+)  # ADR-0050: F-reg writes surface as rd = 64+frd rows (32-bit low half)
 
 
 def run_spike(
@@ -325,11 +327,15 @@ def parse_spike_commits(
         instr = int(match.group("instr"), 16)
         if instr in stop_instrs:
             break
-        rd = int(match.group("rd") or "0")
-        wdata = int(match.group("wdata") or "0", 16)
-        if normalize_wdata_base:
+        if match.group("frd") is not None:
+            rd = 64 + int(match.group("frd"))
+            wdata = int(match.group("fwdata"), 16) & 0xFFFF_FFFF
+        else:
+            rd = int(match.group("rd") or "0")
+            wdata = int(match.group("wdata") or "0", 16)
+        if normalize_wdata_base and rd < 32:
             wdata = _eval_norm_wdata(instr, pc, rd, wdata)
-        if rd != 0:
+        if rd != 0 and rd < 32:
             assert wdata is not None, f"normalizer returned None for instr={instr:#x} pc={pc:#x}"
             norm_regs[rd] = wdata
         rows.append({"idx": len(rows), "pc": pc, "instr": instr, "rd": rd, "wdata": wdata})

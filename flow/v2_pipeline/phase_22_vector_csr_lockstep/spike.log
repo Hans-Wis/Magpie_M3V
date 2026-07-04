@@ -1,4 +1,4 @@
-core   0: >>>>  $xrv32i2p1_m2p0_zicsr2p0_zifencei2p0_zmmul1p0_zve32x1p0_zvl128b1p0_zvl32b1p0_zvl64b1p0
+core   0: >>>>  $xrv32i2p1_m2p0_f2p2_zicsr2p0_zifencei2p0_zmmul1p0_zve32x1p0_zvl128b1p0_zvl32b1p0_zvl64b1p0
 core   0: 0x80000000 (0x20000293) li      t0, 512
 core   0: 3 0x80000000 (0x20000293) x5  0x00000200
 core   0: 0x80000004 (0x3002a073) csrs    mstatus, t0

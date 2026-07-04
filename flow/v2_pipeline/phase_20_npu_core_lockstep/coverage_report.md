@@ -9,10 +9,11 @@
 | alu.v | 13 | 14 | 92.9% |
 | axil_decerr.v | 6 | 7 | 85.7% |
 | bmu.v | 3 | 48 | 6.2% |
-| core.v | 461 | 659 | 70.0% |
+| core.v | 485 | 710 | 68.3% |
 | cpu_m1_top.v | 16 | 26 | 61.5% |
-| csr.v | 56 | 267 | 21.0% |
+| csr.v | 59 | 299 | 19.7% |
 | div.v | 46 | 51 | 90.2% |
+| fexu.v | 79 | 128 | 61.7% |
 | idu.v | 61 | 130 | 46.9% |
 | ifu.v | 6 | 6 | 100.0% |
 | mat_engine.v | 8 | 74 | 10.8% |
@@ -32,204 +33,231 @@ Classes: debug-module paths (no DM in NPU socket), trap/CSR corners not in the
 rv32im lockstep corpus, and BP/RAS-mispredict arms that are unreachable by
 construction when EN_BP=EN_RAS=0 (EX resolve is the only redirect).
 
-  - core.v:641: ``WB_SEL_CSR  : ex_mem_fwd_val = ex_mem_csr_rdata_r;`
-  - core.v:771: `(ex_mem_csr_addr_r == `CSR_MSTATUS)) ?`
-  - core.v:774: `(ex_wb_csr_addr_r == `CSR_MSTATUS)) ?`
-  - core.v:806: `(ex_mem_valid_r && ex_mem_csr_we_r && (ex_mem_csr_addr_r == `CSR_VSTART)) ?`
-  - core.v:809: `(ex_wb_valid_r && ex_wb_csr_we_r && (ex_wb_csr_addr_r == `CSR_VSTART)) ?`
-  - core.v:818: `(ex_mem_valid_r && ex_mem_csr_we_r && (ex_mem_csr_addr_r == `CSR_VXRM)) ?`
-  - core.v:820: `(ex_mem_valid_r && ex_mem_csr_we_r && (ex_mem_csr_addr_r == `CSR_VCSR)) ?`
-  - core.v:822: `(ex_wb_valid_r  && ex_wb_csr_we_r  && (ex_wb_csr_addr_r == `CSR_VXRM))  ?`
-  - core.v:824: `(ex_wb_valid_r  && ex_wb_csr_we_r  && (ex_wb_csr_addr_r == `CSR_VCSR))  ?`
-  - core.v:1064: `function [31:0] amo_compute;`
-  - core.v:1068: `begin`
-  - core.v:1069: `case (op)`
-  - core.v:1070: ``AMO_OP_SWAP: amo_compute = rs2_val_f;`
-  - core.v:1071: ``AMO_OP_XOR : amo_compute = old_val ^ rs2_val_f;`
-  - core.v:1072: ``AMO_OP_OR  : amo_compute = old_val | rs2_val_f;`
-  - core.v:1073: ``AMO_OP_AND : amo_compute = old_val & rs2_val_f;`
-  - core.v:1074: ``AMO_OP_MIN : amo_compute = ($signed(old_val) < $signed(rs2_val_f)) ? old_val : rs2_val_f;`
-  - core.v:1075: ``AMO_OP_MAX : amo_compute = ($signed(old_val) > $signed(rs2_val_f)) ? old_val : rs2_val_f;`
-  - core.v:1076: ``AMO_OP_MINU: amo_compute = (old_val < rs2_val_f) ? old_val : rs2_val_f;`
-  - core.v:1077: ``AMO_OP_MAXU: amo_compute = (old_val > rs2_val_f) ? old_val : rs2_val_f;`
-  - core.v:1078: `default     : amo_compute = old_val + rs2_val_f;`
-  - core.v:1161: `assign d_mem_wstrb = ((EN_RVV != 0) && vexu_vm_active) ?`
-  - core.v:1177: `function is_vector_csr_addr;`
-  - core.v:1179: `begin`
-  - core.v:1180: `is_vector_csr_addr = (addr == `CSR_VSTART) ||`
-  - core.v:1185: `(addr == `CSR_VTYPE)  ||`
-  - core.v:1190: `function is_vector_ro_csr_addr;`
-  - core.v:1192: `begin`
-  - core.v:1193: `is_vector_ro_csr_addr = (addr == `CSR_VL) ||`
-  - core.v:1194: `(addr == `CSR_VTYPE) ||`
-  - core.v:1440: `case (id_csr_addr)`
-  - core.v:1441: ``CSR_VSTART: id_csr_rdata = 32'h0;`
-  - core.v:1442: ``CSR_VL    : id_csr_rdata = ex_mem_vcfg_vl_r;`
-  - core.v:1443: ``CSR_VTYPE : id_csr_rdata = ex_mem_vcfg_vtype_r;`
-  - core.v:1444: `default    : ;`
-  - core.v:1456: `id_csr_rdata = id_csr_rdata | 32'h1;`
-  - core.v:1463: `(ex_mem_csr_addr_r != id_csr_addr)) begin`
-  - core.v:1464: `case (id_csr_addr)`
-  - core.v:1465: ``CSR_VCSR: begin`
-  - core.v:1466: `if (ex_mem_csr_addr_r == `CSR_VXSAT)`
-  - core.v:1467: `id_csr_rdata = {csr_rdata[31:1], ex_mem_csr_next_val[0]};`
-  - core.v:1468: `if (ex_mem_csr_addr_r == `CSR_VXRM)`
-  - core.v:1469: `id_csr_rdata = {csr_rdata[31:3], ex_mem_csr_next_val[1:0], csr_rdata[0]};`
-  - core.v:1471: ``CSR_VXSAT: if (ex_mem_csr_addr_r == `CSR_VCSR)`
-  - core.v:1472: `id_csr_rdata = {31'b0, ex_mem_csr_next_val[0]};`
-  - core.v:1473: ``CSR_VXRM : if (ex_mem_csr_addr_r == `CSR_VCSR)`
-  - core.v:1474: `id_csr_rdata = {30'b0, ex_mem_csr_next_val[2:1]};`
-  - core.v:1475: ``CSR_MSTATUS:`
-  - core.v:1476: `if ((ex_mem_csr_addr_r == `CSR_VSTART) || (ex_mem_csr_addr_r == `CSR_VXSAT) ||`
-  - core.v:1478: `id_csr_rdata = csr_rdata | 32'h8000_0000 |`
-  - core.v:1480: `default: ;`
-  - core.v:1484: `id_csr_rdata = csr_rdata | 32'h8000_0000 | (32'h3 << `MSTATUS_VS_LO_BIT);`
-  - core.v:1489: `id_csr_rdata = id_csr_rdata | 32'h1;`
-  - core.v:1492: `if (id_csr_addr == `CSR_VSTART) id_csr_rdata = 32'h0;`
-  - core.v:1493: `if (id_csr_addr == `CSR_MSTATUS)`
-  - core.v:1494: `id_csr_rdata = csr_rdata | 32'h8000_0000 | (32'h3 << `MSTATUS_VS_LO_BIT);`
-  - core.v:1582: `end else if (debug_mode || debug_halt_enter) begin`
-  - core.v:1583: `ex_mem_valid_r           <= 1'b0;`
-  - core.v:1584: `ex_mem_rd_we_r           <= 1'b0;`
-  - core.v:1585: `ex_mem_is_load_r         <= 1'b0;`
-  - core.v:1586: `ex_mem_is_mul_r          <= 1'b0;`
-  - core.v:1587: `ex_mem_is_store_r        <= 1'b0;`
-  - core.v:1588: `ex_mem_is_amo_r          <= 1'b0;`
-  - core.v:1589: `ex_mem_amo_is_lr_r       <= 1'b0;`
-  - core.v:1590: `ex_mem_amo_is_sc_r       <= 1'b0;`
-  - core.v:1591: `ex_mem_amo_op_r          <= 4'h0;`
-  - core.v:1592: `ex_mem_store_wstrb_r     <= 4'h0;`
-  - core.v:1593: `ex_mem_is_mret_r         <= 1'b0;`
-  - core.v:1594: `ex_mem_is_dret_r         <= 1'b0;`
-  - core.v:1595: `ex_mem_is_misaligned_r   <= 1'b0;`
-  - core.v:1596: `ex_mem_is_misaligned_store_r <= 1'b0;`
-  - core.v:1597: `ex_mem_csr_we_r          <= 1'b0;`
-  - core.v:1598: `ex_mem_vcfg_we_r         <= 1'b0;`
-  - core.v:1599: `ex_mem_vex_we_r          <= 1'b0;`
-  - core.v:1600: `ex_mem_vex_sat_r         <= 1'b0;`
-  - core.v:1601: `ex_mem_vex_grp_w_r       <= 1'b0;`
-  - core.v:1602: `ex_mem_vex_flag_r        <= 1'b0;`
-  - core.v:1603: `ex_mem_vex_mem_r         <= 1'b0;`
-  - core.v:1604: `ex_mem_is_branch_taken_r <= 1'b0;`
-  - core.v:1605: `ex_mem_is_jal_r          <= 1'b0;`
-  - core.v:1606: `ex_mem_is_jalr_r         <= 1'b0;`
-  - core.v:1607: `ex_mem_illegal_r         <= 1'b0;`
-  - core.v:1608: `ex_mem_is_ecall_r        <= 1'b0;`
-  - core.v:1609: `ex_mem_is_ebreak_r       <= 1'b0;`
-  - core.v:1610: `ex_mem_instr_r           <= 32'h0;`
-  - core.v:1611: `ex_mem_mispredict_r      <= 1'b0;`
-  - core.v:1612: `ex_mem_bp_upd_valid_r    <= 1'b0;`
-  - core.v:1613: `ex_mem_pred_ras_r        <= 1'b0;`
-  - core.v:1614: `ex_mem_trigger_hit_r     <= 1'b0;`
-  - core.v:1615: `ex_mem_trigger_idx_r     <= 2'd0;`
-  - core.v:1616: `ex_mem_pmp_if_fault_r    <= 1'b0;`
-  - core.v:1617: `ex_mem_pmp_if_mtval_r    <= 32'h0;`
-  - core.v:1771: `if (ex_mem_valid_r && ex_mem_is_amo_r && pmp_data_fault) begin`
-  - core.v:1772: `amo_state <= AMO_DONE;`
-  - core.v:1773: `end else if (ex_mem_valid_r && ex_mem_is_amo_r && !ex_mem_is_misaligned_r &&`
-  - core.v:1774: `!debug_mode && !mem_side_effect_block) begin`
-  - core.v:1775: `if (ex_mem_sc_fail) begin`
-  - core.v:1776: `amo_state     <= AMO_DONE;`
-  - core.v:1777: `amo_result_r  <= 32'h1;`
-  - core.v:1778: `amo_res_valid <= 1'b0;`
-  - core.v:1779: `end else begin`
-  - core.v:1780: `case (amo_state)`
-  - core.v:1781: `AMO_IDLE: begin`
-  - core.v:1782: `if (ex_mem_amo_is_sc_r && ex_mem_sc_success) begin`
-  - core.v:1783: `amo_state     <= AMO_DONE;`
-  - core.v:1784: `amo_result_r  <= 32'h0;`
-  - core.v:1785: `amo_res_valid <= 1'b0;`
-  - core.v:1786: `end else if (ex_mem_amo_needs_load) begin`
-  - core.v:1787: `amo_state <= AMO_LOAD;`
-  - core.v:1790: `AMO_LOAD: begin`
-  - core.v:1791: `amo_result_r <= d_mem_rdata;`
-  - core.v:1792: `amo_wdata_r  <= amo_compute(ex_mem_amo_op_r, d_mem_rdata, ex_mem_store_wdata_r);`
-  - core.v:1793: `if (ex_mem_amo_is_lr_r) begin`
-  - core.v:1794: `amo_state     <= AMO_DONE;`
-  - core.v:1795: `amo_res_valid <= 1'b1;`
-  - core.v:1796: `amo_res_addr  <= ex_mem_alu_result_r[31:2];`
-  - core.v:1797: `end else begin`
-  - core.v:1798: `amo_state <= AMO_STORE;`
-  - core.v:1801: `AMO_STORE: begin`
-  - core.v:1802: `amo_state     <= AMO_DONE;`
-  - core.v:1803: `amo_res_valid <= 1'b0;`
-  - core.v:1805: `default: begin`
-  - core.v:1806: `if (ex_mem_advance_to_wb) begin`
-  - core.v:1807: `amo_state <= AMO_IDLE;`
-  - core.v:1817: `(d_mem_addr[31:2] == amo_res_addr)) begin`
-  - core.v:1818: `amo_res_valid <= 1'b0;`
-  - core.v:1878: `end else if (debug_mode || debug_halt_enter) begin`
-  - core.v:1879: `ex_wb_valid_r           <= 1'b0;`
-  - core.v:1880: `ex_wb_rd_we_r           <= 1'b0;`
-  - core.v:1881: `ex_wb_is_load_r         <= 1'b0;`
-  - core.v:1882: `ex_wb_is_amo_r          <= 1'b0;`
-  - core.v:1883: `ex_wb_amo_is_sc_r       <= 1'b0;`
-  - core.v:1884: `ex_wb_is_store_r        <= 1'b0;`
-  - core.v:1885: `ex_wb_is_misaligned_r       <= 1'b0;`
-  - core.v:1886: `ex_wb_is_misaligned_store_r <= 1'b0;`
-  - core.v:1887: `ex_wb_is_mret_r         <= 1'b0;`
-  - core.v:1888: `ex_wb_is_dret_r         <= 1'b0;`
-  - core.v:1889: `ex_wb_csr_we_r          <= 1'b0;`
-  - core.v:1890: `ex_wb_vcfg_we_r         <= 1'b0;`
-  - core.v:1891: `ex_wb_vex_we_r          <= 1'b0;`
-  - core.v:1892: `ex_wb_vex_sat_r         <= 1'b0;`
-  - core.v:1893: `ex_wb_vex_grp_w_r       <= 1'b0;`
-  - core.v:1894: `ex_wb_vex_flag_r        <= 1'b0;`
-  - core.v:1895: `ex_wb_vex_mem_r         <= 1'b0;`
-  - core.v:1896: `ex_wb_is_branch_taken_r <= 1'b0;`
-  - core.v:1897: `ex_wb_is_jal_r          <= 1'b0;`
-  - core.v:1898: `ex_wb_is_jalr_r         <= 1'b0;`
-  - core.v:1899: `ex_wb_illegal_r         <= 1'b0;`
-  - core.v:1900: `ex_wb_is_ecall_r        <= 1'b0;`
-  - core.v:1901: `ex_wb_is_ebreak_r       <= 1'b0;`
-  - core.v:1902: `ex_wb_instr_r           <= 32'h0;`
-  - core.v:1903: `ex_wb_mem_re_r          <= 1'b0;`
-  - core.v:1904: `ex_wb_mem_we_r          <= 1'b0;`
-  - core.v:1905: `ex_wb_trigger_hit_r     <= 1'b0;`
-  - core.v:1906: `ex_wb_trigger_idx_r     <= 2'd0;`
-  - core.v:1907: `ex_wb_trigger_exec_r    <= 1'b0;`
-  - core.v:1908: `ex_wb_trigger_load_r    <= 1'b0;`
-  - core.v:1909: `ex_wb_trigger_store_r   <= 1'b0;`
-  - core.v:1910: `ex_wb_pmp_if_fault_r    <= 1'b0;`
-  - core.v:1911: `ex_wb_pmp_if_mtval_r    <= 32'h0;`
-  - core.v:1912: `ex_wb_pmp_data_fault_r  <= 1'b0;`
-  - core.v:1913: `ex_wb_pmp_data_store_r  <= 1'b0;`
-  - core.v:2060: `wb_data_mux = amo_result_r;`
-  - core.v:2066: ``WB_SEL_CSR  : wb_data_mux = ex_wb_csr_rdata_r;`
-  - core.v:2082: ``MCAUSE_ILLEGAL_INSTRUCTION) :`
-  - core.v:2083: `wb_take_data_trap ?`
-  - core.v:2085: `(ex_wb_pmp_data_store_r ? `MCAUSE_STORE_ACCESS_FAULT :`
-  - core.v:2086: ``MCAUSE_LOAD_ACCESS_FAULT) :`
-  - core.v:2087: `(ex_wb_is_misaligned_store_r ? `MCAUSE_STORE_ADDR_MISALIGNED :`
-  - core.v:2088: ``MCAUSE_LOAD_ADDR_MISALIGNED)) :`
-  - core.v:2094: `ex_wb_instr_r) :`
-  - core.v:2119: `end else if (debug_resume_redirect) begin`
-  - core.v:2120: `pc_redirect     = 1'b1;`
-  - core.v:2121: `redirect_target = dpc_o;`
-  - core.v:2125: `end else if (ex_wb_valid_r && ex_wb_is_mret_r) begin`
-  - core.v:2126: `pc_redirect     = 1'b1;`
-  - core.v:2127: `redirect_target = mepc_o;`
-  - core.v:2128: `end else if (ex_wb_valid_r && ex_wb_is_dret_r && debug_mode) begin`
-  - core.v:2129: `pc_redirect     = 1'b1;`
-  - core.v:2130: `redirect_target = dpc_o;`
-  - core.v:2131: `end else if (debug_halt_enter) begin`
-  - core.v:2132: `pc_redirect     = 1'b1;`
-  - core.v:2133: `redirect_target = debug_halt_pc_w;`
-  - core.v:2134: `end else if (mem_ras_mispredict) begin`
-  - core.v:2136: `pc_redirect     = 1'b1;`
-  - core.v:2137: `redirect_target = mem_ras_actual_target;`
-  - core.v:2149: `ex_mem_pc_plus_4_r;`
-  - core.v:2173: `assign debug_entry_reason    = wb_take_trigger ?`
-  - core.v:2175: `ex_wb_trigger_load_r  ? DBG_ENTRY_TRIG_LD :`
-  - core.v:2176: `DBG_ENTRY_TRIG_ST) :`
-  - core.v:2193: `debug_halt_pending <= 1'b1;`
-  - core.v:2195: `debug_halt_pending <= 1'b0;`
-  - core.v:2197: `if (debug_dret_exit || debug_resume_exit) begin`
-  - core.v:2198: `debug_mode <= 1'b0;`
-  - core.v:2199: `debug_step_pending <= dcsr_step;`
-  - core.v:2201: `debug_mode <= 1'b1;`
-  - core.v:2202: `debug_step_pending <= 1'b0;`
-  - core.v:2211: `32'h0;`
+  - core.v:648: ``WB_SEL_CSR  : ex_mem_fwd_val = ex_mem_csr_rdata_r;`
+  - core.v:778: `(ex_mem_csr_addr_r == `CSR_MSTATUS)) ?`
+  - core.v:781: `(ex_wb_csr_addr_r == `CSR_MSTATUS)) ?`
+  - core.v:813: `(ex_mem_valid_r && ex_mem_csr_we_r && (ex_mem_csr_addr_r == `CSR_VSTART)) ?`
+  - core.v:816: `(ex_wb_valid_r && ex_wb_csr_we_r && (ex_wb_csr_addr_r == `CSR_VSTART)) ?`
+  - core.v:825: `(ex_mem_valid_r && ex_mem_csr_we_r && (ex_mem_csr_addr_r == `CSR_VXRM)) ?`
+  - core.v:827: `(ex_mem_valid_r && ex_mem_csr_we_r && (ex_mem_csr_addr_r == `CSR_VCSR)) ?`
+  - core.v:829: `(ex_wb_valid_r  && ex_wb_csr_we_r  && (ex_wb_csr_addr_r == `CSR_VXRM))  ?`
+  - core.v:831: `(ex_wb_valid_r  && ex_wb_csr_we_r  && (ex_wb_csr_addr_r == `CSR_VCSR))  ?`
+  - core.v:839: `(ex_mem_csr_addr_r == `CSR_MSTATUS)) ?`
+  - core.v:842: `(ex_wb_csr_addr_r == `CSR_MSTATUS)) ?`
+  - core.v:1131: `function [31:0] amo_compute;`
+  - core.v:1135: `begin`
+  - core.v:1136: `case (op)`
+  - core.v:1137: ``AMO_OP_SWAP: amo_compute = rs2_val_f;`
+  - core.v:1138: ``AMO_OP_XOR : amo_compute = old_val ^ rs2_val_f;`
+  - core.v:1139: ``AMO_OP_OR  : amo_compute = old_val | rs2_val_f;`
+  - core.v:1140: ``AMO_OP_AND : amo_compute = old_val & rs2_val_f;`
+  - core.v:1141: ``AMO_OP_MIN : amo_compute = ($signed(old_val) < $signed(rs2_val_f)) ? old_val : rs2_val_f;`
+  - core.v:1142: ``AMO_OP_MAX : amo_compute = ($signed(old_val) > $signed(rs2_val_f)) ? old_val : rs2_val_f;`
+  - core.v:1143: ``AMO_OP_MINU: amo_compute = (old_val < rs2_val_f) ? old_val : rs2_val_f;`
+  - core.v:1144: ``AMO_OP_MAXU: amo_compute = (old_val > rs2_val_f) ? old_val : rs2_val_f;`
+  - core.v:1145: `default     : amo_compute = old_val + rs2_val_f;`
+  - core.v:1228: `assign d_mem_wstrb = ((EN_RVV != 0) && vexu_vm_active) ?`
+  - core.v:1244: `function is_vector_csr_addr;`
+  - core.v:1246: `begin`
+  - core.v:1247: `is_vector_csr_addr = (addr == `CSR_VSTART) ||`
+  - core.v:1252: `(addr == `CSR_VTYPE)  ||`
+  - core.v:1257: `function is_vector_ro_csr_addr;`
+  - core.v:1259: `begin`
+  - core.v:1260: `is_vector_ro_csr_addr = (addr == `CSR_VL) ||`
+  - core.v:1261: `(addr == `CSR_VTYPE) ||`
+  - core.v:1513: `case (id_csr_addr)`
+  - core.v:1514: ``CSR_VSTART: id_csr_rdata = 32'h0;`
+  - core.v:1515: ``CSR_VL    : id_csr_rdata = ex_mem_vcfg_vl_r;`
+  - core.v:1516: ``CSR_VTYPE : id_csr_rdata = ex_mem_vcfg_vtype_r;`
+  - core.v:1517: `default    : ;`
+  - core.v:1527: `id_csr_rdata = id_csr_rdata | {27'b0, ex_wb_f_flags_r};`
+  - core.v:1537: `id_csr_rdata = id_csr_rdata | 32'h1;`
+  - core.v:1544: `(ex_mem_csr_addr_r != id_csr_addr)) begin`
+  - core.v:1545: `case (id_csr_addr)`
+  - core.v:1546: ``CSR_VCSR: begin`
+  - core.v:1547: `if (ex_mem_csr_addr_r == `CSR_VXSAT)`
+  - core.v:1548: `id_csr_rdata = {csr_rdata[31:1], ex_mem_csr_next_val[0]};`
+  - core.v:1549: `if (ex_mem_csr_addr_r == `CSR_VXRM)`
+  - core.v:1550: `id_csr_rdata = {csr_rdata[31:3], ex_mem_csr_next_val[1:0], csr_rdata[0]};`
+  - core.v:1552: ``CSR_VXSAT: if (ex_mem_csr_addr_r == `CSR_VCSR)`
+  - core.v:1553: `id_csr_rdata = {31'b0, ex_mem_csr_next_val[0]};`
+  - core.v:1554: ``CSR_VXRM : if (ex_mem_csr_addr_r == `CSR_VCSR)`
+  - core.v:1555: `id_csr_rdata = {30'b0, ex_mem_csr_next_val[2:1]};`
+  - core.v:1556: ``CSR_MSTATUS:`
+  - core.v:1557: `if ((ex_mem_csr_addr_r == `CSR_VSTART) || (ex_mem_csr_addr_r == `CSR_VXSAT) ||`
+  - core.v:1559: `id_csr_rdata = csr_rdata | 32'h8000_0000 |`
+  - core.v:1561: `default: ;`
+  - core.v:1565: `id_csr_rdata = csr_rdata | 32'h8000_0000 | (32'h3 << `MSTATUS_VS_LO_BIT);`
+  - core.v:1570: `id_csr_rdata = id_csr_rdata | 32'h1;`
+  - core.v:1575: `(ex_mem_csr_addr_r != id_csr_addr)) begin`
+  - core.v:1576: `case (id_csr_addr)`
+  - core.v:1577: ``CSR_FCSR: begin`
+  - core.v:1578: `if (ex_mem_csr_addr_r == `CSR_FFLAGS)`
+  - core.v:1579: `id_csr_rdata = {id_csr_rdata[31:5], ex_mem_csr_next_val[4:0]};`
+  - core.v:1580: `if (ex_mem_csr_addr_r == `CSR_FRM)`
+  - core.v:1581: `id_csr_rdata = {id_csr_rdata[31:8], ex_mem_csr_next_val[2:0],`
+  - core.v:1582: `id_csr_rdata[4:0]};`
+  - core.v:1584: ``CSR_FFLAGS: if (ex_mem_csr_addr_r == `CSR_FCSR)`
+  - core.v:1585: `id_csr_rdata = {27'b0, ex_mem_csr_next_val[4:0]};`
+  - core.v:1586: ``CSR_FRM   : if (ex_mem_csr_addr_r == `CSR_FCSR)`
+  - core.v:1587: `id_csr_rdata = {29'b0, ex_mem_csr_next_val[7:5]};`
+  - core.v:1588: ``CSR_MSTATUS:`
+  - core.v:1589: `if ((ex_mem_csr_addr_r == `CSR_FFLAGS) ||`
+  - core.v:1592: `id_csr_rdata = id_csr_rdata | 32'h8000_0000 |`
+  - core.v:1594: `default: ;`
+  - core.v:1600: `id_csr_rdata = id_csr_rdata | {27'b0, ex_mem_f_flags_r};`
+  - core.v:1603: `id_csr_rdata = id_csr_rdata | 32'h8000_0000 |`
+  - core.v:1607: `if (id_csr_addr == `CSR_VSTART) id_csr_rdata = 32'h0;`
+  - core.v:1608: `if (id_csr_addr == `CSR_MSTATUS)`
+  - core.v:1609: `id_csr_rdata = csr_rdata | 32'h8000_0000 | (32'h3 << `MSTATUS_VS_LO_BIT);`
+  - core.v:1700: `end else if (debug_mode || debug_halt_enter) begin`
+  - core.v:1701: `ex_mem_valid_r           <= 1'b0;`
+  - core.v:1702: `ex_mem_rd_we_r           <= 1'b0;`
+  - core.v:1703: `ex_mem_is_load_r         <= 1'b0;`
+  - core.v:1704: `ex_mem_is_mul_r          <= 1'b0;`
+  - core.v:1705: `ex_mem_is_store_r        <= 1'b0;`
+  - core.v:1706: `ex_mem_is_amo_r          <= 1'b0;`
+  - core.v:1707: `ex_mem_amo_is_lr_r       <= 1'b0;`
+  - core.v:1708: `ex_mem_amo_is_sc_r       <= 1'b0;`
+  - core.v:1709: `ex_mem_amo_op_r          <= 4'h0;`
+  - core.v:1710: `ex_mem_store_wstrb_r     <= 4'h0;`
+  - core.v:1711: `ex_mem_is_mret_r         <= 1'b0;`
+  - core.v:1712: `ex_mem_is_dret_r         <= 1'b0;`
+  - core.v:1713: `ex_mem_is_misaligned_r   <= 1'b0;`
+  - core.v:1714: `ex_mem_is_misaligned_store_r <= 1'b0;`
+  - core.v:1715: `ex_mem_csr_we_r          <= 1'b0;`
+  - core.v:1716: `ex_mem_vcfg_we_r         <= 1'b0;`
+  - core.v:1717: `ex_mem_vex_we_r          <= 1'b0;`
+  - core.v:1718: `ex_mem_vex_sat_r         <= 1'b0;`
+  - core.v:1719: `ex_mem_vex_grp_w_r       <= 1'b0;`
+  - core.v:1720: `ex_mem_f_we_r            <= 1'b0;`
+  - core.v:1721: `ex_mem_f_flw_r           <= 1'b0;`
+  - core.v:1722: `ex_mem_f_exec_r          <= 1'b0;`
+  - core.v:1723: `ex_mem_vex_flag_r        <= 1'b0;`
+  - core.v:1724: `ex_mem_vex_mem_r         <= 1'b0;`
+  - core.v:1725: `ex_mem_is_branch_taken_r <= 1'b0;`
+  - core.v:1726: `ex_mem_is_jal_r          <= 1'b0;`
+  - core.v:1727: `ex_mem_is_jalr_r         <= 1'b0;`
+  - core.v:1728: `ex_mem_illegal_r         <= 1'b0;`
+  - core.v:1729: `ex_mem_is_ecall_r        <= 1'b0;`
+  - core.v:1730: `ex_mem_is_ebreak_r       <= 1'b0;`
+  - core.v:1731: `ex_mem_instr_r           <= 32'h0;`
+  - core.v:1732: `ex_mem_mispredict_r      <= 1'b0;`
+  - core.v:1733: `ex_mem_bp_upd_valid_r    <= 1'b0;`
+  - core.v:1734: `ex_mem_pred_ras_r        <= 1'b0;`
+  - core.v:1735: `ex_mem_trigger_hit_r     <= 1'b0;`
+  - core.v:1736: `ex_mem_trigger_idx_r     <= 2'd0;`
+  - core.v:1737: `ex_mem_pmp_if_fault_r    <= 1'b0;`
+  - core.v:1738: `ex_mem_pmp_if_mtval_r    <= 32'h0;`
+  - core.v:1904: `if (ex_mem_valid_r && ex_mem_is_amo_r && pmp_data_fault) begin`
+  - core.v:1905: `amo_state <= AMO_DONE;`
+  - core.v:1906: `end else if (ex_mem_valid_r && ex_mem_is_amo_r && !ex_mem_is_misaligned_r &&`
+  - core.v:1907: `!debug_mode && !mem_side_effect_block) begin`
+  - core.v:1908: `if (ex_mem_sc_fail) begin`
+  - core.v:1909: `amo_state     <= AMO_DONE;`
+  - core.v:1910: `amo_result_r  <= 32'h1;`
+  - core.v:1911: `amo_res_valid <= 1'b0;`
+  - core.v:1912: `end else begin`
+  - core.v:1913: `case (amo_state)`
+  - core.v:1914: `AMO_IDLE: begin`
+  - core.v:1915: `if (ex_mem_amo_is_sc_r && ex_mem_sc_success) begin`
+  - core.v:1916: `amo_state     <= AMO_DONE;`
+  - core.v:1917: `amo_result_r  <= 32'h0;`
+  - core.v:1918: `amo_res_valid <= 1'b0;`
+  - core.v:1919: `end else if (ex_mem_amo_needs_load) begin`
+  - core.v:1920: `amo_state <= AMO_LOAD;`
+  - core.v:1923: `AMO_LOAD: begin`
+  - core.v:1924: `amo_result_r <= d_mem_rdata;`
+  - core.v:1925: `amo_wdata_r  <= amo_compute(ex_mem_amo_op_r, d_mem_rdata, ex_mem_store_wdata_r);`
+  - core.v:1926: `if (ex_mem_amo_is_lr_r) begin`
+  - core.v:1927: `amo_state     <= AMO_DONE;`
+  - core.v:1928: `amo_res_valid <= 1'b1;`
+  - core.v:1929: `amo_res_addr  <= ex_mem_alu_result_r[31:2];`
+  - core.v:1930: `end else begin`
+  - core.v:1931: `amo_state <= AMO_STORE;`
+  - core.v:1934: `AMO_STORE: begin`
+  - core.v:1935: `amo_state     <= AMO_DONE;`
+  - core.v:1936: `amo_res_valid <= 1'b0;`
+  - core.v:1938: `default: begin`
+  - core.v:1939: `if (ex_mem_advance_to_wb) begin`
+  - core.v:1940: `amo_state <= AMO_IDLE;`
+  - core.v:1950: `(d_mem_addr[31:2] == amo_res_addr)) begin`
+  - core.v:1951: `amo_res_valid <= 1'b0;`
+  - core.v:2014: `end else if (debug_mode || debug_halt_enter) begin`
+  - core.v:2015: `ex_wb_valid_r           <= 1'b0;`
+  - core.v:2016: `ex_wb_rd_we_r           <= 1'b0;`
+  - core.v:2017: `ex_wb_is_load_r         <= 1'b0;`
+  - core.v:2018: `ex_wb_is_amo_r          <= 1'b0;`
+  - core.v:2019: `ex_wb_amo_is_sc_r       <= 1'b0;`
+  - core.v:2020: `ex_wb_is_store_r        <= 1'b0;`
+  - core.v:2021: `ex_wb_is_misaligned_r       <= 1'b0;`
+  - core.v:2022: `ex_wb_is_misaligned_store_r <= 1'b0;`
+  - core.v:2023: `ex_wb_is_mret_r         <= 1'b0;`
+  - core.v:2024: `ex_wb_is_dret_r         <= 1'b0;`
+  - core.v:2025: `ex_wb_csr_we_r          <= 1'b0;`
+  - core.v:2026: `ex_wb_vcfg_we_r         <= 1'b0;`
+  - core.v:2027: `ex_wb_vex_we_r          <= 1'b0;`
+  - core.v:2028: `ex_wb_vex_sat_r         <= 1'b0;`
+  - core.v:2029: `ex_wb_vex_grp_w_r       <= 1'b0;`
+  - core.v:2030: `ex_wb_f_we_r            <= 1'b0;`
+  - core.v:2031: `ex_wb_f_flw_r           <= 1'b0;`
+  - core.v:2032: `ex_wb_f_exec_r          <= 1'b0;`
+  - core.v:2033: `ex_wb_vex_flag_r        <= 1'b0;`
+  - core.v:2034: `ex_wb_vex_mem_r         <= 1'b0;`
+  - core.v:2035: `ex_wb_is_branch_taken_r <= 1'b0;`
+  - core.v:2036: `ex_wb_is_jal_r          <= 1'b0;`
+  - core.v:2037: `ex_wb_is_jalr_r         <= 1'b0;`
+  - core.v:2038: `ex_wb_illegal_r         <= 1'b0;`
+  - core.v:2039: `ex_wb_is_ecall_r        <= 1'b0;`
+  - core.v:2040: `ex_wb_is_ebreak_r       <= 1'b0;`
+  - core.v:2041: `ex_wb_instr_r           <= 32'h0;`
+  - core.v:2042: `ex_wb_mem_re_r          <= 1'b0;`
+  - core.v:2043: `ex_wb_mem_we_r          <= 1'b0;`
+  - core.v:2044: `ex_wb_trigger_hit_r     <= 1'b0;`
+  - core.v:2045: `ex_wb_trigger_idx_r     <= 2'd0;`
+  - core.v:2046: `ex_wb_trigger_exec_r    <= 1'b0;`
+  - core.v:2047: `ex_wb_trigger_load_r    <= 1'b0;`
+  - core.v:2048: `ex_wb_trigger_store_r   <= 1'b0;`
+  - core.v:2049: `ex_wb_pmp_if_fault_r    <= 1'b0;`
+  - core.v:2050: `ex_wb_pmp_if_mtval_r    <= 32'h0;`
+  - core.v:2051: `ex_wb_pmp_data_fault_r  <= 1'b0;`
+  - core.v:2052: `ex_wb_pmp_data_store_r  <= 1'b0;`
+  - core.v:2214: `wb_data_mux = amo_result_r;`
+  - core.v:2220: ``WB_SEL_CSR  : wb_data_mux = ex_wb_csr_rdata_r;`
+  - core.v:2236: ``MCAUSE_ILLEGAL_INSTRUCTION) :`
+  - core.v:2237: `wb_take_data_trap ?`
+  - core.v:2239: `(ex_wb_pmp_data_store_r ? `MCAUSE_STORE_ACCESS_FAULT :`
+  - core.v:2240: ``MCAUSE_LOAD_ACCESS_FAULT) :`
+  - core.v:2241: `(ex_wb_is_misaligned_store_r ? `MCAUSE_STORE_ADDR_MISALIGNED :`
+  - core.v:2242: ``MCAUSE_LOAD_ADDR_MISALIGNED)) :`
+  - core.v:2248: `ex_wb_instr_r) :`
+  - core.v:2273: `end else if (debug_resume_redirect) begin`
+  - core.v:2274: `pc_redirect     = 1'b1;`
+  - core.v:2275: `redirect_target = dpc_o;`
+  - core.v:2279: `end else if (ex_wb_valid_r && ex_wb_is_mret_r) begin`
+  - core.v:2280: `pc_redirect     = 1'b1;`
+  - core.v:2281: `redirect_target = mepc_o;`
+  - core.v:2282: `end else if (ex_wb_valid_r && ex_wb_is_dret_r && debug_mode) begin`
+  - core.v:2283: `pc_redirect     = 1'b1;`
+  - core.v:2284: `redirect_target = dpc_o;`
+  - core.v:2285: `end else if (debug_halt_enter) begin`
+  - core.v:2286: `pc_redirect     = 1'b1;`
+  - core.v:2287: `redirect_target = debug_halt_pc_w;`
+  - core.v:2288: `end else if (mem_ras_mispredict) begin`
+  - core.v:2290: `pc_redirect     = 1'b1;`
+  - core.v:2291: `redirect_target = mem_ras_actual_target;`
+  - core.v:2303: `ex_mem_pc_plus_4_r;`
+  - core.v:2327: `assign debug_entry_reason    = wb_take_trigger ?`
+  - core.v:2329: `ex_wb_trigger_load_r  ? DBG_ENTRY_TRIG_LD :`
+  - core.v:2330: `DBG_ENTRY_TRIG_ST) :`
+  - core.v:2347: `debug_halt_pending <= 1'b1;`
+  - core.v:2349: `debug_halt_pending <= 1'b0;`
+  - core.v:2351: `if (debug_dret_exit || debug_resume_exit) begin`
+  - core.v:2352: `debug_mode <= 1'b0;`
+  - core.v:2353: `debug_step_pending <= dcsr_step;`
+  - core.v:2355: `debug_mode <= 1'b1;`
+  - core.v:2356: `debug_step_pending <= 1'b0;`
+  - core.v:2365: `32'h0;`
 
 Status: pass
 

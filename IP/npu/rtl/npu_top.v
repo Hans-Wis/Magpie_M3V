@@ -68,7 +68,10 @@ module npu_top #(
     output wire        rvfi_mem_we,
     output wire [31:0] rvfi_mem_addr,
     output wire [31:0] rvfi_mem_wdata,
-    output wire [ 3:0] rvfi_mem_wstrb
+    output wire [ 3:0] rvfi_mem_wstrb,
+    output wire        rvfi_f_valid,
+    output wire [ 4:0] rvfi_f_rd,
+    output wire [31:0] rvfi_f_wdata
 );
     localparam [31:0] CORE_RESET_PC = 32'h0000_0000;
 
@@ -212,7 +215,8 @@ module npu_top #(
         .EN_RVC(0),
         .EN_BP(0),
         .EN_RAS(0),
-        .EN_RVV(1)
+        .EN_RVV(1),
+        .EN_F(1)
     ) u_npu_core (
         .clk(clk),
         .resetn(core_resetn),
@@ -254,7 +258,9 @@ module npu_top #(
         .rvfi_mstatus(rvfi_mstatus),
         .rvfi_mem_re(rvfi_mem_re), .rvfi_mem_we(rvfi_mem_we),
         .rvfi_mem_addr(rvfi_mem_addr), .rvfi_mem_wdata(rvfi_mem_wdata),
-        .rvfi_mem_wstrb(rvfi_mem_wstrb)
+        .rvfi_mem_wstrb(rvfi_mem_wstrb),
+        .rvfi_f_valid(rvfi_f_valid), .rvfi_f_rd(rvfi_f_rd),
+        .rvfi_f_wdata(rvfi_f_wdata)
     );
 
     // ADR-0045: commit order counter (resets with the sequencer)

@@ -36,7 +36,8 @@ module cpu_m1_top #(
     parameter EN_RVC = 1,
     parameter EN_BP = 1,
     parameter EN_RAS = 1,
-    parameter EN_RVV = 0
+    parameter EN_RVV = 0,
+    parameter EN_F   = 0
 )(
     input             clk,
     input             resetn,
@@ -98,7 +99,10 @@ module cpu_m1_top #(
     output            rvfi_mem_we,
     output     [31:0] rvfi_mem_addr,
     output     [31:0] rvfi_mem_wdata,
-    output     [ 3:0] rvfi_mem_wstrb
+    output     [ 3:0] rvfi_mem_wstrb,
+    output            rvfi_f_valid,   // ADR-0050: F-reg commit
+    output     [ 4:0] rvfi_f_rd,
+    output     [31:0] rvfi_f_wdata
 );
 
     // ---- core-facing native signals ----
@@ -193,7 +197,8 @@ module cpu_m1_top #(
         .EN_RVC(EN_RVC),
         .EN_BP(EN_BP),
         .EN_RAS(EN_RAS),
-        .EN_RVV(EN_RVV)
+        .EN_RVV(EN_RVV),
+        .EN_F(EN_F)
     ) u_core(
         .clk                (clk),
         .resetn             (resetn),
@@ -248,7 +253,10 @@ module cpu_m1_top #(
         .rvfi_mem_we        (rvfi_mem_we),
         .rvfi_mem_addr      (rvfi_mem_addr),
         .rvfi_mem_wdata     (rvfi_mem_wdata),
-        .rvfi_mem_wstrb     (rvfi_mem_wstrb)
+        .rvfi_mem_wstrb     (rvfi_mem_wstrb),
+        .rvfi_f_valid       (rvfi_f_valid),
+        .rvfi_f_rd          (rvfi_f_rd),
+        .rvfi_f_wdata       (rvfi_f_wdata)
     );
 
 endmodule

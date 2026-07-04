@@ -7,7 +7,7 @@
 
 | # | 面向 | 狀態 | 證據 / 缺口 |
 |---|---|---|---|
-| 1 | 純量 ISA(RV32IMF_Zbb) | 🟡 PARTIAL | rv32im sequencer 已 lockstep 驗證(gate_31/32,8×10.8k commits);Zbb 在 RTL(bmu)但未入 NPU lockstep 語料;**F deferred**(記錄在案的 scope-cut,補回才算綠) |
+| 1 | 純量 ISA(RV32IMF_Zbb) | 🟡 PARTIAL-strong(2026-07-05 升級) | **ADR-0050 F1**:fexu + 完整 fcsr/FS 契約(fflags sticky/frm 轉發/FS dirty=vector 機具鏡射)、flw/fsw 走 scalar LSU、F-reg 寫入 lockstep 逐筆比對(rd=64+f);f1 directed 135 commits 對 Spike rv32imf 全符(NaN 矩陣/fclass/fcvt 全捨入/動態 rm)。續:F2 fadd/fsub/fmul、F3 FMA、F4 fdiv/fsqrt |
 | 2 | 向量(RVV Zve32x + vector CSR) | 🟢 GREEN-leaning(2026-07-04,Phase-A 收齊) | **ADR-0049 S1-S4 全落**:masked 執行/mask logicals/比較/min-max + sat/avg/scaling/nclip(vxsat/vxrm 契約)+ LMUL m2/m4 原子群寫 + **POOL kernels 對 TFLM golden bit-exact(含 half-away 捨入重建,雙引理)**——全部 Spike lockstep 權威(gate_56-59)。餘:slides/gather(workload 外)、m8、vlse RTL(裁定不做) |
 | 3 | 矩陣(256-MAC outer-product + acc + requant) | 🟡 PARTIAL-strong(2026-07-04 升級) | **ADR-0040**:引擎升 **256 MAC/cycle**(stripmine 4 outer products/拍,8×8×32b acc ×4 banks,TFLite-exact requant)——Coral 公開算力數字對齊;throughput gate 實測 rpt=64→17 拍。誠實偏離(Class B):2×256-bit 讀埠 vs Coral 128-bit(banked-SRAM 假設,Phase 7 PPA 收斂)。餘:per-channel quant、>8×8 tile 排程 |
 | 4 | 記憶體(ITCM 8K/DTCM 32K,128-bit) | 🟢 GREEN-leaning(2026-07-04 升級) | **ADR-0044**:ITCM 8KB(取指+0x3002 host 窗)/ DTCM 32KB Harvard 分割(鏡像載入契約,lockstep 免改);DTCM = 8-way banked 2R1W 結構模型 + 逐拍 bank 預算 checker(真 CQ batch 零違規、靈敏度已證)。誠實偏離:物理埠規格(Coral 單 128b vs 我們 8×32b 聚合)與 SRAM macro 對映歸 Phase 7 |

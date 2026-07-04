@@ -10,7 +10,7 @@ TOOLCHAIN_ENV    = LD_LIBRARY_PATH=$(TOOLCHAIN_LIBS)
 VERILATOR ?= /home/edauser/miniforge3/envs/magpie_claude/bin/verilator
 
 # 3A contract ISA (ADR-0036): vector config, no C, no F
-GCC_MARCH = rv32im_zve32x_zvl128b_zicsr_zifencei
+GCC_MARCH = rv32imf_zve32x_zvl128b_zicsr_zifencei
 GCC_MABI  = ilp32
 
 CPU_RTL_DIR = ../../../IP/cpu_m1/rtl
@@ -90,6 +90,9 @@ s3i:
 
 pool:
 	$(MAKE) FW_ASM=firmware_pool.S MIN_COMMITS=100 lockstep.log
+
+f1:
+	$(MAKE) FW_ASM=firmware_f1.S MIN_COMMITS=100 lockstep.log
 
 .PHONY: firmware_vrand.S
 firmware_vrand.S: gen_vector_random.py
