@@ -8,6 +8,9 @@ Constraints (the honest envelope of what 3B implements):
 - vector registers are always written before read; v0 only used as vmerge mask
 - vstart is never nonzero at a vector op (arithmetic w/ vstart!=0 = illegal, Spike-matched)
 - straight-line, ebreak terminator, fits 4KB TCM
+- 3C: unit-stride vle8/16/32 + vse8/16/32 against a scalar-initialized pool at
+  data_area; EEW picked legal for the live SEW/LMUL (EMUL<=1), base aligned to
+  EEW; every store is followed by a scalar lw probe of a touched word
 """
 
 from __future__ import annotations
@@ -27,10 +30,15 @@ def gen(seed: int, blocks: int) -> str:
         ".section .init",
         ".global _start",
         "_start:",
-        f"    /* vector-random seed={seed} blocks={blocks} (3B subset) */",
+        f"    /* vector-random seed={seed} blocks={blocks} (3B+3C subset) */",
         "    li   t0, 0x200",
         "    csrs mstatus, t0",
+        "    la   x31, data_area",
     ]
+    # scalar-init the 64-byte pool so vector loads always read defined memory
+    for w in range(16):
+        out.append(f"    li   t0, {rng.getrandbits(31)}")
+        out.append(f"    sw   t0, {w*4}(x31)")
     written: set[int] = set()
     vpool = list(range(1, 24))
 
@@ -81,12 +89,32 @@ def gen(seed: int, blocks: int) -> str:
             written.add(vd)
             wl = sorted(written)
 
+        # 3C: one unit-stride memory op per block (legal EEW for live config)
+        sewb = {"e8": 1, "e16": 2, "e32": 4}[sew]
+        lm_den = {"m1": 1, "mf2": 2, "mf4": 4, "mf8": 8}.get(lmul, 1)
+        vlmax_el = (16 // sewb) // lm_den
+        legal_eews = [b for b in (1, 2, 4) if vlmax_el * b <= 16]
+        if legal_eews and wl:
+            eewb = rng.choice(legal_eews)
+            off = rng.randrange(0, 64 - vlmax_el * eewb + 1, eewb) if vlmax_el * eewb < 64 else 0
+            suf = {1: "8", 2: "16", 4: "32"}[eewb]
+            out.append(f"    addi a1, x31, {off}")
+            if rng.random() < 0.5:
+                vd = rng.choice(vpool)
+                out.append(f"    vle{suf}.v v{vd}, (a1)")
+                written.add(vd)
+                wl = sorted(written)
+                out.append(f"    vmv.x.s {rng.choice(SCALARS)}, v{vd}")
+            else:
+                out.append(f"    vse{suf}.v v{rng.choice(wl)}, (a1)")
+                out.append(f"    lw   {rng.choice(SCALARS)}, {off & ~3}(x31)")
+
         # scalar-visible probe + checkpoint (P0④ discipline)
         pr = rng.choice(SCALARS)
         out.append(f"    vmv.x.s {pr}, v{rng.choice(wl)}")
         out.append("    csrr t4, vstart")
 
-    out.extend(["    ebreak", ""])
+    out.extend(["    ebreak", "", "    .balign 4", "data_area:", "    .zero 64", ""])
     return "\n".join(out) + "\n"
 
 

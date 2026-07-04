@@ -26,6 +26,7 @@ module vexu #(
     parameter EN_RVV = 0
 ) (
     input  wire         clk,
+    input  wire         resetn,
 
     // ---- EX-stage combinational query ----
     input  wire         q_valid,
@@ -44,7 +45,26 @@ module vexu #(
     // ---- WB-stage commit write port (driven by core.v) ----
     input  wire         w_en,
     input  wire [4:0]   w_vd,
-    input  wire [127:0] w_data
+    input  wire [127:0] w_data,
+
+    // ---- 3C unit-stride memory FSM (assemble buffer lives HERE, MEM-side;
+    //      the VRF is only written at WB commit like every other vector op).
+    //      core.v starts the FSM only when the pipeline behind is DRAINED
+    //      (EX/MEM and EX/WB empty), so a mid-op flush/IRQ is impossible by
+    //      construction and store beats are never wrong-path. ----
+    input  wire         m_start,       // accepted only in IDLE
+    input  wire         m_stall,       // core mem_stall freeze (ADR-0005 wrapper)
+    input  wire         m_flush,       // pc_redirect/debug (defensive; unreachable mid-op)
+    input  wire         m_advance,     // instruction left EX (clear result_valid)
+    input  wire [31:0]  m_rdata,       // core d_mem_rdata (wrapper d_rdata_q)
+    output wire         q_is_mem,
+    output wire         vm_active,
+    output wire         vm_result_valid,
+    output wire         vm_dvalid,
+    output wire         vm_we,
+    output wire [31:0]  vm_addr,
+    output wire [31:0]  vm_wdata,
+    output wire [3:0]   vm_wstrb
 );
     // ---------------- decode ----------------
     wire [2:0] f3    = q_instr[14:12];
@@ -73,15 +93,43 @@ module vexu #(
     wire lmul_gt1  = (vlmul == 3'b001) || (vlmul == 3'b010) || (vlmul == 3'b011);
     wire cfg_illegal = vill || lmul_gt1;         // m2/m4/m8 = 3B deferral
 
+    // ---------------- 3C unit-stride vector load/store decode ----------------
+    wire is_vload  = (q_instr[6:0] == 7'b0000111);   // LOAD-FP opcode space
+    wire is_vstore = (q_instr[6:0] == 7'b0100111);   // STORE-FP opcode space
+    wire is_vmem   = (EN_RVV != 0) && (is_vload || is_vstore);
+    assign q_is_mem = q_valid && is_vmem;
+    // width field: 000=EEW8, 101=EEW16, 110=EEW32 (010 = scalar FLW/FSW: no F -> illegal)
+    wire [1:0] eew_sel = (f3 == 3'b000) ? 2'd0 :
+                         (f3 == 3'b101) ? 2'd1 :
+                         (f3 == 3'b110) ? 2'd2 : 2'd3;
+    wire mem_enc_ok = (eew_sel != 2'd3) && vm &&              // unmasked unit-stride only
+                      (q_instr[28:26] == 3'b000) &&           // mew=0, mop=00 (unit-stride)
+                      (q_instr[24:20] == 5'b00000) &&         // lumop/sumop = 0
+                      (q_instr[31:29] == 3'b000);             // nf=0 (no segments)
+    // EMUL = (EEW/SEW)*LMUL must be <= 1 here <=> vlmax elements * EEW bytes <= 16
+    wire [2:0] frac_sh  = (vlmul == 3'b111) ? 3'd1 :
+                          (vlmul == 3'b110) ? 3'd2 :
+                          (vlmul == 3'b101) ? 3'd3 : 3'd0;
+    wire [4:0] vlmax_el = (5'd16 >> vsew) >> frac_sh;
+    wire [8:0] mem_span = {4'b0, vlmax_el} << eew_sel;        // bytes touched at vlmax
+    wire emul_ok  = (mem_span <= 9'd16);
+    // element alignment: base aligned to EEW => every element aligned (unit stride)
+    wire align_ok = (eew_sel == 2'd0) ||
+                    ((eew_sel == 2'd1) && !q_rs1[0]) ||
+                    ((eew_sel == 2'd2) && (q_rs1[1:0] == 2'b00));
+    wire mem_illegal = !mem_enc_ok || !emul_ok || !align_ok;
+
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs;
     // vstart!=0 on arithmetic = illegal (spec-allowed choice; MATCHES SPIKE —
     // caught by gate_42 lockstep: Spike trapped where the RTL executed).
-    // Vector loads/stores in 3C will honor vstart instead (they are resumable).
-    assign q_illegal = q_valid && ((EN_RVV == 0) || !known_op || cfg_illegal ||
-                                   (q_vstart != 32'h0) ||
-                                   ((op_add || op_sub) && !vm) ||   // masked add/sub = 3B deferral
-                                   (op_mv && (vs2_i != 5'd0)) ||
-                                   (op_merge && (vd_i == 5'd0)));
+    // Loads/stores are resumable: vstart is honored (start element), not illegal.
+    assign q_illegal = q_valid && ((EN_RVV == 0) || cfg_illegal ||
+                       (is_vmem ? mem_illegal :
+                        (!known_op ||
+                         (q_vstart != 32'h0) ||
+                         ((op_add || op_sub) && !vm) ||   // masked add/sub = 3B deferral
+                         (op_mv && (vs2_i != 5'd0)) ||
+                         (op_merge && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------
     reg [127:0] vrf [0:31];
@@ -138,11 +186,81 @@ module vexu #(
         end
     endgenerate
 
-    assign q_wdata = (vsew == 3'b000) ? res8 :
+    // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
+    localparam [1:0] VM_IDLE = 2'd0, VM_ISSUE = 2'd1, VM_CAP = 2'd2;
+    reg [1:0]   vm_state;
+    reg [4:0]   vm_idx;
+    reg [127:0] vm_buf;          // assemble buffer (loads); seeded with vd_old
+    reg         vm_done_r;
+
+    wire [4:0] vm_vl     = q_vl[4:0];       // <=16 elements under EMUL<=1
+    wire [4:0] vm_vstart = q_vstart[4:0];
+    wire       vm_none   = (q_vstart >= q_vl);
+    wire [4:0] vm_last   = vm_vl - 5'd1;
+
+    assign vm_active       = (vm_state != VM_IDLE);
+    assign vm_result_valid = vm_done_r;
+    assign vm_dvalid       = (vm_state == VM_ISSUE);
+    assign vm_we           = is_vstore;
+    assign vm_addr         = q_rs1 + ({27'b0, vm_idx} << eew_sel);
+    // store element from vs3 (= vd field) placed on its byte lane via wstrb
+    wire [7:0]  st8  = vd_old[{vm_idx[3:0], 3'b000} +: 8];
+    wire [15:0] st16 = vd_old[{vm_idx[2:0], 4'b0000} +: 16];
+    wire [31:0] st32 = vd_old[{vm_idx[1:0], 5'b00000} +: 32];
+    assign vm_wdata = (eew_sel == 2'd0) ? {4{st8}} :
+                      (eew_sel == 2'd1) ? {2{st16}} : st32;
+    assign vm_wstrb = (eew_sel == 2'd0) ? (4'b0001 << vm_addr[1:0]) :
+                      (eew_sel == 2'd1) ? (vm_addr[1] ? 4'b1100 : 4'b0011) : 4'b1111;
+    // load lane extract for the beat just captured (idx unchanged ISSUE->CAP)
+    wire [7:0]  ld8  = m_rdata[{vm_addr[1:0], 3'b000} +: 8];
+    wire [15:0] ld16 = vm_addr[1] ? m_rdata[31:16] : m_rdata[15:0];
+
+    always @(posedge clk) begin
+        if (!resetn || m_flush) begin
+            vm_state  <= VM_IDLE;
+            vm_done_r <= 1'b0;
+        end else if (m_advance && vm_done_r) begin
+            vm_done_r <= 1'b0;                       // instruction left EX
+        end else if (!m_stall) begin
+            case (vm_state)
+                VM_IDLE: if (m_start && !vm_done_r) begin
+                    if (vm_none) begin
+                        vm_done_r <= 1'b1;           // vl==0 / vstart>=vl: no beats
+                    end else begin
+                        vm_buf   <= vd_old;          // undisturbed below-vstart + tail
+                        vm_idx   <= vm_vstart;
+                        vm_state <= VM_ISSUE;
+                    end
+                end
+                VM_ISSUE: vm_state <= VM_CAP;        // beat fired this cycle
+                VM_CAP: begin
+                    if (is_vload) begin
+                        case (eew_sel)
+                            2'd0: vm_buf[{vm_idx[3:0], 3'b000} +: 8]       <= ld8;
+                            2'd1: vm_buf[{vm_idx[2:0], 4'b0000} +: 16]     <= ld16;
+                            default: vm_buf[{vm_idx[1:0], 5'b00000} +: 32] <= m_rdata;
+                        endcase
+                    end
+                    if (vm_idx == vm_last) begin
+                        vm_state  <= VM_IDLE;
+                        vm_done_r <= 1'b1;
+                    end else begin
+                        vm_idx   <= vm_idx + 5'd1;
+                        vm_state <= VM_ISSUE;
+                    end
+                end
+                default: vm_state <= VM_IDLE;
+            endcase
+        end
+    end
+
+    assign q_wdata = is_vmem ? vm_buf :
+                     (vsew == 3'b000) ? res8 :
                      (vsew == 3'b001) ? res16 : res32;
     assign q_vd    = vd_i;
-    // whole-instruction no-op when vstart>=vl (includes vl==0); vmv.x.s never writes
-    assign q_vrf_we = q_valid && !q_illegal && !op_mvxs && (q_vstart < q_vl);
+    // whole-instruction no-op when vstart>=vl (includes vl==0); vmv.x.s and
+    // vector STORES never write the VRF
+    assign q_vrf_we = q_valid && !q_illegal && !op_mvxs && !is_vstore && (q_vstart < q_vl);
 
     // ---------------- vmv.x.s (executes even when vl==0) ----------------
     wire [7:0]  e0_8  = vs2_data[7:0];

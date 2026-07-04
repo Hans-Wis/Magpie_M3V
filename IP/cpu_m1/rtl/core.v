@@ -574,6 +574,7 @@ endgenerate
     reg [31:0] ex_mem_vcfg_vtype_r;
     reg         ex_mem_vex_we_r;     // 3B: VRF write pending (vd/wdata below)
     reg         ex_mem_vex_flag_r;   // 3B: vector-exec commit (vstart clear / VS dirty)
+    reg         ex_mem_vex_mem_r;    // 3C: the committing vector op is a load/store
     reg [4:0]   ex_mem_vex_vd_r;
     reg [127:0] ex_mem_vex_wdata_r;
     reg        ex_mem_is_branch_taken_r;
@@ -778,10 +779,15 @@ endgenerate
     wire [4:0]   vexu_q_vd;
     wire [127:0] vexu_q_wdata;
     wire         wb_vex_we;
+    wire         vexu_q_is_mem, vexu_vm_active, vexu_vm_result_valid;
+    wire         vexu_vm_dvalid, vexu_vm_we;
+    wire [31:0]  vexu_vm_addr, vexu_vm_wdata;
+    wire [3:0]   vexu_vm_wstrb;
     wire         vexu_query = (EN_RVV != 0) && if_ex_valid && id_is_vexec;
 
     vexu #(.EN_RVV(EN_RVV)) u_vexu (
         .clk        (clk),
+        .resetn     (resetn),
         .q_valid    (vexu_query),
         .q_instr    (if_ex_instr),
         .q_vtype    (rvv_cur_vtype),
@@ -796,7 +802,20 @@ endgenerate
         .q_wdata    (vexu_q_wdata),
         .w_en       (wb_vex_we),
         .w_vd       (ex_wb_vex_vd_r),
-        .w_data     (ex_wb_vex_wdata_r)
+        .w_data     (ex_wb_vex_wdata_r),
+        .m_start    (vexu_m_start),
+        .m_stall    (mem_stall),
+        .m_flush    (pc_redirect || debug_halt_enter || debug_mode),
+        .m_advance  (id_advance_to_ex_mem),
+        .m_rdata    (d_mem_rdata),
+        .q_is_mem   (vexu_q_is_mem),
+        .vm_active  (vexu_vm_active),
+        .vm_result_valid(vexu_vm_result_valid),
+        .vm_dvalid  (vexu_vm_dvalid),
+        .vm_we      (vexu_vm_we),
+        .vm_addr    (vexu_vm_addr),
+        .vm_wdata   (vexu_vm_wdata),
+        .vm_wstrb   (vexu_vm_wstrb)
     );
     wire id_vexec_can_commit = vexu_query && !vexu_q_illegal &&
                                (csr_mstatus_vs_eff != 2'b00);
@@ -805,9 +824,36 @@ endgenerate
     wire vex_raw_stall = vexu_query &&
                          ((ex_mem_valid_r && ex_mem_vex_flag_r) ||
                           (ex_wb_valid_r  && ex_wb_vex_flag_r));
+    // 3C: a vector load/store holds at EX until its FSM finishes. The FSM is
+    // started only with the pipeline behind DRAINED (EX/MEM + EX/WB empty):
+    // no older instruction exists that could redirect/trap, and wb_take_irq
+    // needs a valid WB instruction — so a mid-op flush/IRQ is impossible by
+    // construction and store beats are never wrong-path/replayed.
+    // VS gate inside the hold (Codex 3C review finding #1): a legal vle*/vse*
+    // with mstatus.VS=Off must fall through to the illegal trap, not hold forever.
+    wire vex_mem_hold = vexu_query && vexu_q_is_mem && !vexu_q_illegal &&
+                        (csr_mstatus_vs_eff != 2'b00) &&
+                        !vexu_vm_result_valid;
+    wire vexu_m_start = vex_mem_hold &&
+                        !ex_mem_valid_r && !ex_wb_valid_r &&
+                        !pc_redirect && !warmup && !redirect_warmup && !debug_mode;
+    // Codex 3C review finding #3: a vmem op could complete its D-port beats and
+    // then be killed by an IRQ at ITS OWN WB slot — the handler would observe
+    // store data Spike has not written (interrupt mepc points AT the op). Gate
+    // interrupt acceptance while a vector-memory op is anywhere in flight
+    // (EX hold through WB commit) — a bounded instruction-boundary delay.
+    // Known limitation (finding #2, recorded): vector beats bypass data PMP and
+    // load/store triggers — unreachable today (NPU config has PMP_ENTRIES=0 and
+    // no debug module; host has EN_RVV=0) — must be plumbed before enabling RVV
+    // on a PMP/debug-bearing config.
+    wire vex_mem_inflight = (EN_RVV != 0) &&
+                            (vex_mem_hold || vexu_vm_active || vexu_vm_result_valid ||
+                             (ex_mem_valid_r && ex_mem_vex_mem_r) ||
+                             (ex_wb_valid_r  && ex_wb_vex_mem_r));
 
     wire        id_vset_can_commit = (EN_RVV != 0) && id_is_vset && (csr_mstatus_vs_eff != 2'b00);
-    wire        id_opv_vs_illegal = (EN_RVV != 0) && id_is_op_v && (csr_mstatus_vs_eff == 2'b00);
+    wire        id_opv_vs_illegal = (EN_RVV != 0) && (id_is_op_v || id_is_vexec) &&
+                                    (csr_mstatus_vs_eff == 2'b00);
     wire        id_vector_csr_illegal = id_is_vector_csr &&
                                         (((EN_RVV == 0) || (csr_mstatus_vs_eff == 2'b00)) ||
                                          (id_is_vector_ro_csr && id_csr_we_logic));
@@ -1039,15 +1085,21 @@ endgenerate
                         !ex_mem_trigger_hit_r && !ex_mem_pmp_if_fault_r;
     wire pmp_data_write = pmp_data_req && (ex_mem_is_store_r || amo_store_beat);
     wire pmp_data_read = pmp_data_req && !pmp_data_write;
-    assign d_mem_valid = (normal_mem_beat || amo_load_beat || amo_store_beat) &&
+    // 3C: the vector-memory FSM masters the D-port while it runs. It only runs
+    // with EX/MEM drained, so the scalar beat terms below are all 0 then.
+    assign d_mem_valid = ((normal_mem_beat || amo_load_beat || amo_store_beat) &&
                          !pc_redirect && !debug_mode && !ex_mem_is_misaligned_r &&
-                         !mem_side_effect_block && !pmp_data_fault;
+                         !mem_side_effect_block && !pmp_data_fault) ||
+                         ((EN_RVV != 0) && vexu_vm_dvalid && !pc_redirect && !debug_mode);
     // Original D-port valid redirect suppression:
     // !pc_redirect;
-    assign d_mem_addr  = ex_mem_alu_result_r;
-    assign d_mem_wdata = amo_store_beat ? (ex_mem_amo_is_sc_r ? ex_mem_store_wdata_r : amo_wdata_r) :
+    assign d_mem_addr  = ((EN_RVV != 0) && vexu_vm_active) ? vexu_vm_addr : ex_mem_alu_result_r;
+    assign d_mem_wdata = ((EN_RVV != 0) && vexu_vm_active) ? vexu_vm_wdata :
+                         amo_store_beat ? (ex_mem_amo_is_sc_r ? ex_mem_store_wdata_r : amo_wdata_r) :
                                           ex_mem_store_wdata_r;
-    assign d_mem_wstrb = (amo_store_beat && !pc_redirect && !debug_mode && !mem_side_effect_block) ? 4'hf :
+    assign d_mem_wstrb = ((EN_RVV != 0) && vexu_vm_active) ?
+                         ((vexu_vm_we && vexu_vm_dvalid && !pc_redirect && !debug_mode) ? vexu_vm_wstrb : 4'h0) :
+                         (amo_store_beat && !pc_redirect && !debug_mode && !mem_side_effect_block) ? 4'hf :
                          (ex_mem_is_store_r && ex_mem_valid_r && !pc_redirect && !debug_mode &&
                           !mem_side_effect_block) ?
                          ex_mem_store_wstrb_r : 4'h0;
@@ -1139,6 +1191,7 @@ endgenerate
     reg [31:0] ex_wb_vcfg_vtype_r;
     reg         ex_wb_vex_we_r;
     reg         ex_wb_vex_flag_r;
+    reg         ex_wb_vex_mem_r;
     reg [4:0]   ex_wb_vex_vd_r;
     reg [127:0] ex_wb_vex_wdata_r;
     reg        ex_wb_is_branch_taken_r;
@@ -1299,7 +1352,7 @@ endgenerate
         .pmp_addr_o         (pmp_addr_flat),
         .pmp_cfg_o          (pmp_cfg_flat)
     );
-    assign irq_pending = irq_pending_raw && !debug_mode;
+    assign irq_pending = irq_pending_raw && !debug_mode && !vex_mem_inflight;
 
     always @* begin
         id_csr_rdata = csr_rdata;
@@ -1377,7 +1430,7 @@ endgenerate
         .wb_rd_idx    (ex_wb_rd_idx),
         .wb_is_load   (ex_wb_is_load),
         .md_busy      (md_busy),
-        .vex_stall    (vex_raw_stall),
+        .vex_stall    (vex_raw_stall || vex_mem_hold),
         .stall        (stall),
         .operand_stall(hz_operand_stall)
     );
@@ -1424,6 +1477,7 @@ endgenerate
             ex_mem_vcfg_vtype_r      <= 32'h8000_0000;
             ex_mem_vex_we_r          <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
+            ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_vex_vd_r          <= 5'd0;
             ex_mem_vex_wdata_r       <= 128'h0;
             ex_mem_is_branch_taken_r <= 1'b0;
@@ -1459,6 +1513,7 @@ endgenerate
             ex_mem_vcfg_we_r         <= 1'b0;
             ex_mem_vex_we_r          <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
+            ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_is_branch_taken_r <= 1'b0;
             ex_mem_is_jal_r          <= 1'b0;
             ex_mem_is_jalr_r         <= 1'b0;
@@ -1510,6 +1565,7 @@ endgenerate
             ex_mem_vcfg_vtype_r      <= rvv_vtype_next;
             ex_mem_vex_we_r          <= id_vexec_can_commit && vexu_q_vrf_we;
             ex_mem_vex_flag_r        <= id_vexec_can_commit;
+            ex_mem_vex_mem_r         <= id_vexec_can_commit && vexu_q_is_mem;
             ex_mem_vex_vd_r          <= vexu_q_vd;
             ex_mem_vex_wdata_r       <= vexu_q_wdata;
             ex_mem_is_branch_taken_r <= branch_taken;
@@ -1552,6 +1608,7 @@ endgenerate
             ex_mem_vcfg_we_r         <= 1'b0;
             ex_mem_vex_we_r          <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
+            ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_is_branch_taken_r <= 1'b0;
             ex_mem_is_jal_r          <= 1'b0;
             ex_mem_is_jalr_r         <= 1'b0;
@@ -1703,6 +1760,7 @@ endgenerate
             ex_wb_vcfg_vtype_r      <= 32'h8000_0000;
             ex_wb_vex_we_r          <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
+            ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_vex_vd_r          <= 5'd0;
             ex_wb_vex_wdata_r       <= 128'h0;
             ex_wb_is_branch_taken_r <= 1'b0;
@@ -1736,6 +1794,7 @@ endgenerate
             ex_wb_vcfg_we_r         <= 1'b0;
             ex_wb_vex_we_r          <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
+            ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_is_branch_taken_r <= 1'b0;
             ex_wb_is_jal_r          <= 1'b0;
             ex_wb_is_jalr_r         <= 1'b0;
@@ -1787,6 +1846,7 @@ endgenerate
             ex_wb_vcfg_vtype_r      <= ex_mem_vcfg_vtype_r;
             ex_wb_vex_we_r          <= ex_mem_vex_we_r;
             ex_wb_vex_flag_r        <= ex_mem_vex_flag_r;
+            ex_wb_vex_mem_r         <= ex_mem_vex_mem_r;
             ex_wb_vex_vd_r          <= ex_mem_vex_vd_r;
             ex_wb_vex_wdata_r       <= ex_mem_vex_wdata_r;
             ex_wb_is_branch_taken_r <= ex_mem_is_branch_taken_r;
@@ -1821,6 +1881,7 @@ endgenerate
             ex_wb_vcfg_we_r         <= 1'b0;
             ex_wb_vex_we_r          <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
+            ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_is_branch_taken_r <= 1'b0;
             ex_wb_is_jal_r          <= 1'b0;
             ex_wb_is_jalr_r         <= 1'b0;

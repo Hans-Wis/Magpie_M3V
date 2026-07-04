@@ -130,6 +130,34 @@ architecture review: approve; flags adopted as stage gates — LMUL>1 needed onl
 (kernel widening path is fractional-only), LSU assemble buffer lives MEM-side not VRF (3C),
 128b forwarding before 3D perf claims, tail-profile doc+test before exit.
 
+## Stage 3C result (2026-07-04) — PL-design mode, second round
+
+**Gate_43 green**: directed vmem lockstep 110/110 commits (vle8/16/32, vse16/32, EEW!=SEW
+with EMUL=mf4, partial-vl stores with sentinels, whole-register store proving the
+undisturbed policy IN MEMORY, vl=0 no-ops, and a **vstart!=0 resumable load** — Spike
+executes it, lockstep-proving the arithmetic-only scope of the vstart-illegal rule).
+Random corpus extended with one legal-EEW unit-stride memory op per block against a
+scalar-initialized pool: 841/841 commits. Memory authority realized IN-STREAM (every
+vector-store target scalar-lw'ed back; every vector load reads scalar-sw-initialized
+data) — the P0④ post-run half, delivered through the commit stream itself.
+
+**Microarchitecture (per Grok's 3C flags):** the memory FSM + 128b assemble buffer live in
+vexu (MEM-side, never streaming into the VRF); 2-cycle-per-element ISSUE→CAP beats on the
+32b dbus gated by `mem_stall`; the FSM **starts only with EX/MEM+EX/WB drained**, so no
+older instruction exists during a run — wrong-path store beats and mid-op flush/IRQ are
+impossible by construction.
+
+**Codex review round — 3 findings, all real, dispositioned:**
+1. VS=Off deadlock on a legal vmem op (hold ignored the VS gate; the op could neither
+   start nor trap) → **fixed** (VS folded into `vex_mem_hold`).
+2. Vector beats bypass data PMP + load/store triggers → **recorded limitation**
+   (unreachable in every current config: NPU has PMP_ENTRIES=0 and no debug module, host
+   has EN_RVV=0; must be plumbed before RVV meets a PMP/debug-bearing config).
+3. A vmem op could finish its beats then be IRQ-killed at its own WB slot — the handler
+   would observe store data Spike has not written → **fixed** (interrupt acceptance gated
+   while a vector-memory op is in flight, EX hold through WB commit — a bounded
+   instruction-boundary delay; host trap/IRQ lockstep re-verified green).
+
 ## Labor division (§5)
 
 Grok+Gemini arch (done, this ADR) → Codex staged RTL (3A first: idu/csr/core `EN_RVV`

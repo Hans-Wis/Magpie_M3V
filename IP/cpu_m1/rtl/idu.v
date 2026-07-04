@@ -184,10 +184,16 @@ module idu #(
     wire opv_vsetvl   = is_op_v && (funct3 == 3'b111) && (instr[31:25] == 7'b1000000);
     assign is_vset = (EN_RVV != 0) && (opv_vsetvli || opv_vsetivli || opv_vsetvl);
 
-    // 3B execute-class OP-V (not funct3=111 config, not float 001/101)
-    assign is_vexec = (EN_RVV != 0) && is_op_v &&
-                      ((funct3 == 3'b000) || (funct3 == 3'b010) || (funct3 == 3'b011) ||
-                       (funct3 == 3'b100) || (funct3 == 3'b110));
+    // 3B execute-class OP-V (not funct3=111 config, not float 001/101).
+    // 3C adds the LOAD-FP/STORE-FP opcode spaces: with no scalar F, every such
+    // encoding routes to vexu, which accepts only legal unit-stride vector
+    // forms and flags the rest illegal (incl. would-be FLW/FSW — same trap
+    // Spike raises without F).
+    wire is_vmem_opc = (opcode == 7'b0000111) || (opcode == 7'b0100111);
+    assign is_vexec = (EN_RVV != 0) &&
+                      ((is_op_v &&
+                        ((funct3 == 3'b000) || (funct3 == 3'b010) || (funct3 == 3'b011) ||
+                         (funct3 == 3'b100) || (funct3 == 3'b110))) || is_vmem_opc);
     // vmv.x.s is the only 3B vector op with a scalar rd
     wire opv_mv_x_s = is_vexec && (funct3 == 3'b010) &&
                       (instr[31:26] == 6'b010000) && (instr[19:15] == 5'd0) && instr[25];
