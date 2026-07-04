@@ -41,7 +41,7 @@
 
 **Roadmap(對 Coral 對等,含缺漏 folded — 見 `docs/reviews/2026-07-03_coral_gap_review.md`)**:
 - **P0 缺漏:全部完成(2026-07-04)** ✅ ①writeback ②command queue ③矩陣 64-MAC+requant ④vector-CSR lockstep(隨 Phase 3)⑤traps/abort(ADR-0038,gate_47)。RING_OVERRUN 偵測 deferred(host-side ABI)。
-- Phase 3 RVV Zve32x EXU → Phase 4 GEMV/矩陣 64→256 MAC + CQ + NumPy golden → Phase 6 TFLM e2e → Phase 7 harden/PPA/+F。
+- Phase 3 RVV ✅(3A-3D,kernel=240)→ Phase 4 矩陣 64-MAC+requant ✅ → **Phase 6 首戰 ✅(ADR-0039:TFLM int8 FC 六 corner bit-exact e2e,gate_48)** → 續:TFLM runtime 整合/多 op、64→256 MAC、Phase 7 harden/PPA/+F。
 - **P1**:NPU traps/ERR_CAUSE、cache flush-before-doorbell、ITCM/DTCM sizing(8K/32K)、strided/2D DMA、RVVI/RVFI trace。
 - **scope-cut(已記錄):** scalar F(int8-first)、L0 I-cache、clock/power gating、double-buffer。
 
@@ -112,4 +112,4 @@
 
 **現況**:Phase 0+1+1.5 + Phase 2 Step2/Step4 + P0①writeback(ADR-0033)+ **P0②command queue(ADR-0035)** 完成;M3V gates 全綠(gate_30..39;僅 M1 時代 artifact gates 原生 fail,與本線無關)。**Coral 卸載迴圈(scalar 層)完整**:host 寫 ring → doorbell → sequencer 取 descriptor →(SSOT 解碼)LOAD_W/STORE 經 DMA 執行 → FENCE/IRQ/LAST → DONE/STATUS;MAT.OP/RESCALE 誠實 ERR 待矩陣引擎。
 **可替代性(User 問,2026-07-03 報告)**:尚不能宣稱取代 Coral——§3 清單 0/8 全綠;見 `docs/reports/2026-07-03_replaceability_status.md`。
-**進行中 = Phase 3 RVV Zve32x EXU(ADR-0036,User 裁示 2026-07-04)**:分段 3A✅→3B✅(PL-design 模式試驗,gate_42 directed+random 全符;Spike 語義:vstart≠0 算術 illegal、tail 無條件 undisturbed)→3C✅→**3D✅:Phase 3 出口達標——未修改的 Phase 0 clang kernel 於 RTL 跑出 240(gate_44,43/43 commits)**;§3 向量列升級 PARTIAL。**分工模式試驗中(User 2026-07-04)**:Fable 設計+實作,Codex 外科 review + Grok 架構複核 + Gemini 全上下文——3B 實測:Codex review 抓到 1 真 bug,模式有效。P0④ 契約已上線(per-commit checkpoint + post-run 記憶體權威)。Gemini 回補已完成(2026-07-04 review 入 docs/reviews;跑法=背景+檔案輪詢、單發內嵌,User 指定模式)。
+**Phase 3 完成(歷程)**:分段 3A✅→3B✅(PL-design 模式試驗,gate_42 directed+random 全符;Spike 語義:vstart≠0 算術 illegal、tail 無條件 undisturbed)→3C✅→**3D✅:Phase 3 出口達標——未修改的 Phase 0 clang kernel 於 RTL 跑出 240(gate_44,43/43 commits)**;§3 向量列升級 PARTIAL。**分工模式試驗中(User 2026-07-04)**:Fable 設計+實作,Codex 外科 review + Grok 架構複核 + Gemini 全上下文——3B 實測:Codex review 抓到 1 真 bug,模式有效。P0④ 契約已上線(per-commit checkpoint + post-run 記憶體權威)。Gemini 回補已完成(2026-07-04 review 入 docs/reviews;跑法=背景+檔案輪詢、單發內嵌,User 指定模式)。

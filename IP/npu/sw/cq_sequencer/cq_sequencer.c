@@ -30,6 +30,7 @@
 #define MAT_ST_DONE     2u
 #define MAT_ST_ERR      4u
 #define MAT_CMD_CLR     0u
+#define MAT_CMD_LOADACC 3u
 #define MAT_CMD_OP      1u
 #define MAT_CMD_RESCALE 2u
 
@@ -211,7 +212,8 @@ void main(void)
             /* ADR-0037: W2 = TCM source byte addr; 0 = legacy weight region.
              * Bound + alignment checked (no silent TCM aliasing). */
             uint32_t src_w;
-            if ((w2 & 3u) != 0u || (w2 + rows * cols * 4u) > 0x1000u)
+            if ((w2 & 3u) != 0u || rows * cols * 4u > 0x1000u ||
+                w2 > (0x1000u - rows * cols * 4u))
                 cq_halt(CQ_ERR_MAT_PARAM);
             src_w = (w2 != 0u) ? (w2 >> 2) : TCM_WEIGHT_W;
             dma_writeback(src_w, w1, rows * cols);
@@ -219,7 +221,21 @@ void main(void)
         }
         case CQ_OP_MAT_ACC_CLR:
             acc_mask_latch = w1;
-            mat_run(MAT_CMD_CLR, w1 & 0xFu, 1u);
+            if (w2 != 0u) {
+                /* ADR-0039: W2 = TCM byte addr of 8 int32 fold words
+                 * (input_offset*sum_w + bias); broadcast into every row of
+                 * each masked bank. Bound + alignment checked. */
+                uint32_t b;
+                if ((w2 & 3u) != 0u || w2 > (TCM_SCRATCH_B - 32u))
+                    cq_halt(CQ_ERR_MAT_PARAM);
+                for (b = 0u; b < 4u; b++)
+                    if (w1 & (1u << b)) {
+                        csr_write(CSR_MAT_A, w2);
+                        mat_run(MAT_CMD_LOADACC, b, 1u);
+                    }
+            } else {
+                mat_run(MAT_CMD_CLR, w1 & 0xFu, 1u);
+            }
             break;
         case CQ_OP_MAT_FENCE:
             drain_dma_wb();
@@ -229,8 +245,11 @@ void main(void)
             /* ADR-0037 bindings: W3 must be 0; RPT*8 must equal latched K;
              * int8-only engine (DTYPE=0); a/b must sit inside the TCM below
              * the scratch region (no silent aliasing — Codex 4B review) */
+            /* wrap-safe bounds: rpt*8 <= 2040 << TCM_SCRATCH_B, so compare
+             * the base against (limit - len) instead of forming base + len
+             * (uint32 wrap bypass — Codex Phase-6 finding) */
             if (w3 != 0u || (rpt * 8u) != cfg_k || cq_w0_dtype(w0) != 0u ||
-                (w1 + rpt * 8u) > TCM_SCRATCH_B || (w2 + rpt * 8u) > TCM_SCRATCH_B)
+                w1 > (TCM_SCRATCH_B - rpt * 8u) || w2 > (TCM_SCRATCH_B - rpt * 8u))
                 cq_halt(CQ_ERR_MAT_PARAM);
             csr_write(CSR_MAT_A, w1);
             csr_write(CSR_MAT_B, w2);

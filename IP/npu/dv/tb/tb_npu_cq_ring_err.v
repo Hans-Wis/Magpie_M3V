@@ -235,6 +235,20 @@ module tb_npu_cq_ring_err;
         axil_write(A_CTRL, 32'h0);
         axil_write(A_BASE, 32'h0000_0400);   // repair
 
+        // wrap-bypass guard (Codex Phase-6 finding): an aligned ACC_CLR bias
+        // pointer near 2^32 makes (w2 + 32) wrap small — the sanitizer must
+        // compare wrap-safe and halt MAT_PARAM, not alias/wrap the TCM
+        shared.mem[32'h108] = 32'h6;             // MAT_ACC_CLR at slot 2
+        shared.mem[32'h109] = 32'h1;             // bank0
+        shared.mem[32'h10A] = 32'hFFFF_FFE4;     // aligned; naive w2+32 wraps
+        shared.mem[32'h10B] = 32'h0;
+        axil_write(A_CQCTRL, 32'h0); axil_write(A_CQCTRL, 32'h1);
+        axil_write(A_CTRL, 32'h1);
+        wait_err();
+        axil_read(A_ERRC, rd); chk(rd, 32'd7, "ERR_CAUSE wrap-bypass MAT_PARAM");
+        axil_read(A_HEAD, rd); chk(rd, 32'd2, "HEAD frozen (wrap-bypass)");
+        axil_write(A_CTRL, 32'h0);
+
         // recovery-positive: good CFG+LAST at slot 2 completes, err cleared by toggle
         axil_write(A_CQCTRL, 32'h0); axil_write(A_CQCTRL, 32'h1);
         put_desc(2'd2, W0_CFG_LAST);

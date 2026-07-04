@@ -9,6 +9,10 @@
 //   CMD_OP      : arg_rpt serialized outer products; per rep the a/b pointers
 //                 advance +8 bytes (frozen stripmine). 4 TCM word reads + 1 MAC
 //                 cycle per rep. rpt==0 or bank>=4 -> err_param.
+//   CMD_LOADACC : clear + preload one bank: 8 int32 words read from TCM at
+//                 a_addr are BROADCAST down the rows (acc[r][c] = word[c]) —
+//                 the TFLM affine fold (input_offset*sum_w + bias) lands here
+//                 (ADR-0039). Uses the OP read path (a_addr, 8 words).
 //   CMD_RESCALE : TFLite/gemmlowp two-step requant of one bank, 64 int8 outputs
 //                 packed to 16 TCM words at out_base:
 //                   t = SaturatingRoundingDoublingHighMul(acc, mult_q31)
@@ -53,7 +57,8 @@ module mat_engine #(
     output reg  [TCM_AW-1:0] t_waddr,
     output reg  [31:0]       t_wdata
 );
-    localparam [2:0] CMD_CLR = 3'd0, CMD_OP = 3'd1, CMD_RESCALE = 3'd2;
+    localparam [2:0] CMD_CLR = 3'd0, CMD_OP = 3'd1, CMD_RESCALE = 3'd2, CMD_LOADACC = 3'd3;
+    localparam [3:0] S_LA = 4'd6;
     localparam [3:0] S_IDLE = 4'd0, S_RD = 4'd1, S_MAC = 4'd2,
                      S_RSC = 4'd3, S_RSW = 4'd4, S_FIN = 4'd5;
 
@@ -106,16 +111,19 @@ module mat_engine #(
     wire [7:0]         out8   = clampd[7:0];
 
     // ---- TCM read address (OP word fetch) ----
-    assign t_re    = (state == S_RD);
-    assign t_raddr = (rd_i[1] ? b_ptr[TCM_AW+1:2] : a_ptr[TCM_AW+1:2]) +
-                     {{(TCM_AW-1){1'b0}}, rd_i[0]};
+    assign t_re    = (state == S_RD) || (state == S_LA);
+    assign t_raddr = (state == S_LA) ?
+                     (a_ptr[TCM_AW+1:2] + {{(TCM_AW-3){1'b0}}, el_i[2:0]}) :
+                     ((rd_i[1] ? b_ptr[TCM_AW+1:2] : a_ptr[TCM_AW+1:2]) +
+                      {{(TCM_AW-1){1'b0}}, rd_i[0]});
 
     wire param_bad =
         (cmd == CMD_OP      && ((arg_bank >= 4'd4) || (arg_rpt == 8'd0) ||
                                 (a_addr[1:0] != 2'b00) || (b_addr[1:0] != 2'b00))) ||
         (cmd == CMD_RESCALE && ((arg_bank >= 4'd4) ||
                                 (rs_shift < 8'd31) || (rs_shift > 8'd62) ||
-                                (out_base[1:0] != 2'b00)));
+                                (out_base[1:0] != 2'b00))) ||
+        (cmd == CMD_LOADACC && ((arg_bank >= 4'd4) || (a_addr[1:0] != 2'b00)));
 
     always @(posedge clk) begin
         if (!resetn) begin
@@ -148,6 +156,7 @@ module mat_engine #(
                                 done <= 1'b1;              // single-cycle
                             end
                             CMD_OP:      state <= S_RD;
+                            CMD_LOADACC: state <= S_LA;
                             CMD_RESCALE: state <= S_RSC;
                             default:     begin err_param <= 1'b1; done <= 1'b1; end
                         endcase
@@ -200,6 +209,15 @@ module mat_engine #(
 
                 S_FIN: begin
                     state <= S_IDLE; done <= 1'b1;
+                end
+
+                S_LA: begin                                 // one column per cycle
+                    for (ci = 0; ci < 8; ci = ci + 1)
+                        acc[bank_q][ci*8 + {29'b0, el_i[2:0]}] <= t_rdata;
+                    if (el_i[2:0] == 3'd7) begin
+                        state <= S_IDLE; done <= 1'b1; el_i <= 6'd0;
+                    end else
+                        el_i <= el_i + 6'd1;
                 end
 
                 default: state <= S_IDLE;

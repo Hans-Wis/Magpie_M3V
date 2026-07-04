@@ -121,10 +121,11 @@
       "name": "MAT_ACC_CLR",
       "value": 6,
       "w1": "acc_mask",
-      "w2": "0",
+      "w2": "bias_tcm_byte (0 = plain clear; else 8x int32 fold words broadcast to all rows of each masked bank \u2014 ADR-0039)",
       "w3": "0",
       "fields": [
-        "acc_mask"
+        "acc_mask",
+        "bias_tcm_byte"
       ]
     },
     {
@@ -248,5 +249,8 @@
         "offset": 128
       }
     ]
-  }
+  },
+  "notes": [
+    "ADR-0039: MAT.ACC_CLR W2 nonzero = accumulator preload with the TFLM affine fold (input_offset*sum_w + bias), engine CMD_LOADACC."
+  ]
 }
