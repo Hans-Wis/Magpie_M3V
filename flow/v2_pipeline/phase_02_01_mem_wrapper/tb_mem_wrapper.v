@@ -140,6 +140,11 @@ module tb_mem_wrapper;
         .dm_acc_err         (dbg_dummy_acc_err),
         .dbg_pc            (dbg_pc),
         .dbg_instr         (dbg_instr),
+        /* verilator lint_off PINCONNECTEMPTY */
+        .rvfi_valid(), .rvfi_pc(), .rvfi_trap(), .rvfi_trap_cause(), .rvfi_intr(),
+        .rvfi_rd_addr(), .rvfi_rd_wdata(),
+        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(),
+        /* verilator lint_on PINCONNECTEMPTY */
         .dbg_state         (dbg_state)
     );
 
@@ -172,6 +177,11 @@ module tb_mem_wrapper;
         .dm_acc_err         (dbg_dummy2_acc_err),
         .dbg_pc            (ref_dbg_pc),
         .dbg_instr         (ref_dbg_instr),
+        /* verilator lint_off PINCONNECTEMPTY */
+        .rvfi_valid(), .rvfi_pc(), .rvfi_trap(), .rvfi_trap_cause(), .rvfi_intr(),
+        .rvfi_rd_addr(), .rvfi_rd_wdata(),
+        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(),
+        /* verilator lint_on PINCONNECTEMPTY */
         .dbg_state         (ref_dbg_state)
     );
 

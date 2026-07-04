@@ -92,7 +92,13 @@ module cpu_m1_axil_top #(
         .dm_acc_wdata       (32'h0),
         .dm_acc_rdata       (dbg_dummy_acc_rdata),
         .dm_acc_err         (dbg_dummy_acc_err),
-        .dbg_pc(dbg_pc), .dbg_instr(dbg_instr), .dbg_state(dbg_state)
+        .dbg_pc(dbg_pc), .dbg_instr(dbg_instr), .dbg_state(dbg_state),
+        // ADR-0045 trace port: unused in the host AXIL wrapper
+        /* verilator lint_off PINCONNECTEMPTY */
+        .rvfi_valid(), .rvfi_pc(), .rvfi_trap(), .rvfi_trap_cause(), .rvfi_intr(),
+        .rvfi_rd_addr(), .rvfi_rd_wdata(),
+        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype()
+        /* verilator lint_on PINCONNECTEMPTY */
     );
 
     axil_bridge u_axil (

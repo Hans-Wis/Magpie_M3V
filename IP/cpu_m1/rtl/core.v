@@ -63,7 +63,23 @@ module core #(
     // Debug
     output     [31:0] dbg_pc,
     output     [31:0] dbg_instr,
-    output     [ 2:0] dbg_state
+    output     [ 2:0] dbg_state,
+
+    // ---- RVFI/RVVI-lite trace port (ADR-0045): pure wire-outs of the WB
+    //      commit state — zero new pipeline logic. insn is joined offline
+    //      against the static ITCM (self-modifying code excluded, ADR-0044).
+    output            rvfi_valid,       // architectural commit
+    output     [31:0] rvfi_pc,
+    output            rvfi_trap,        // sync/data trap ACCEPTED at WB (1 pulse)
+    output     [31:0] rvfi_trap_cause,  // mcause code for the accepted trap
+    output            rvfi_intr,        // interrupt taken at WB
+    output     [ 4:0] rvfi_rd_addr,     // 0 when no rd write
+    output     [31:0] rvfi_rd_wdata,
+    output            rvvi_v_valid,     // vector register commit (EN_RVV)
+    output     [ 4:0] rvvi_v_vd,
+    output    [127:0] rvvi_v_wdata,
+    output     [31:0] rvvi_vl,
+    output     [31:0] rvvi_vtype
 );
 
     // =========================================================================
@@ -2113,5 +2129,21 @@ endgenerate
     assign dbg_pc    = if_ex_pc;
     assign dbg_instr = if_ex_instr;
     assign dbg_state = {stall, wb_take_irq, ex_wb_valid_r};
+
+    // ---- RVFI/RVVI-lite trace (ADR-0045): wire-outs only ----
+    assign rvfi_valid    = wb_instr_retired;
+    assign rvfi_pc       = ex_wb_pc_r;
+    // Codex ADR-0045 finding #2: qualify with the same WB-accept condition as
+    // wb_trap_enter, else a stalled trap pulses for multiple cycles.
+    assign rvfi_trap       = (wb_take_sync_trap || wb_take_data_trap) && !core_mem_stall;
+    assign rvfi_trap_cause = wb_trap_cause;
+    assign rvfi_intr       = wb_take_irq && !core_mem_stall;
+    assign rvfi_rd_addr  = (rfu_we && rfu_wr_idx != 5'd0) ? rfu_wr_idx : 5'd0;
+    assign rvfi_rd_wdata = (rfu_we && rfu_wr_idx != 5'd0) ? rfu_wr_data : 32'h0;
+    assign rvvi_v_valid  = wb_vex_we;
+    assign rvvi_v_vd     = ex_wb_vex_vd_r;
+    assign rvvi_v_wdata  = ex_wb_vex_wdata_r;
+    assign rvvi_vl       = csr_vl;
+    assign rvvi_vtype    = csr_vtype;
 
 endmodule

@@ -45,7 +45,22 @@ module npu_top #(
     // ---- to host / future core ----
     output wire        irq,
     output wire        npu_start,
-    output wire [31:0] npu_config
+    output wire [31:0] npu_config,
+
+    // ---- RVFI/RVVI-lite trace port (ADR-0045, Coral row 8) ----
+    output wire        rvfi_valid,
+    output wire [31:0] rvfi_pc,
+    output wire        rvfi_trap,
+    output wire [31:0] rvfi_trap_cause,
+    output wire        rvfi_intr,
+    output wire [ 4:0] rvfi_rd_addr,
+    output wire [31:0] rvfi_rd_wdata,
+    output wire [63:0] rvfi_order,      // commit counter (npu_top level)
+    output wire        rvvi_v_valid,
+    output wire [ 4:0] rvvi_v_vd,
+    output wire [127:0] rvvi_v_wdata,
+    output wire [31:0] rvvi_vl,
+    output wire [31:0] rvvi_vtype
 );
     localparam [31:0] CORE_RESET_PC = 32'h0000_0000;
 
@@ -213,8 +228,22 @@ module npu_top #(
         .dm_acc_err(core_dm_acc_err),
         .dbg_pc(core_dbg_pc),
         .dbg_instr(core_dbg_instr),
-        .dbg_state(core_dbg_state)
+        .dbg_state(core_dbg_state),
+        .rvfi_valid(rvfi_valid), .rvfi_pc(rvfi_pc),
+        .rvfi_trap(rvfi_trap), .rvfi_trap_cause(rvfi_trap_cause), .rvfi_intr(rvfi_intr),
+        .rvfi_rd_addr(rvfi_rd_addr), .rvfi_rd_wdata(rvfi_rd_wdata),
+        .rvvi_v_valid(rvvi_v_valid), .rvvi_v_vd(rvvi_v_vd),
+        .rvvi_v_wdata(rvvi_v_wdata), .rvvi_vl(rvvi_vl), .rvvi_vtype(rvvi_vtype)
     );
+
+    // ADR-0045: commit order counter (resets with the sequencer)
+    reg [63:0] rvfi_order_q;
+    assign rvfi_order = rvfi_order_q;
+    always @(posedge clk) begin
+        if (!resetn || !npu_start) rvfi_order_q <= 64'd0;
+        else if (rvfi_valid || rvfi_trap)   // retire OR trap event (Grok (b))
+                                   rvfi_order_q <= rvfi_order_q + 64'd1;
+    end
 
     // ================= matrix engine (ADR-0037) =================
     wire [31:0] mat_a_addr, mat_b_addr, mat_mult, mat_rsp, mat_clamp, mat_out_base;

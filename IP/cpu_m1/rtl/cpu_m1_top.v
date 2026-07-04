@@ -76,7 +76,21 @@ module cpu_m1_top #(
 
     output     [31:0] dbg_pc,
     output     [31:0] dbg_instr,
-    output     [ 2:0] dbg_state
+    output     [ 2:0] dbg_state,
+
+    // ---- RVFI/RVVI-lite trace (ADR-0045, forwarded from core) ----
+    output            rvfi_valid,
+    output     [31:0] rvfi_pc,
+    output            rvfi_trap,
+    output     [31:0] rvfi_trap_cause,
+    output            rvfi_intr,
+    output     [ 4:0] rvfi_rd_addr,
+    output     [31:0] rvfi_rd_wdata,
+    output            rvvi_v_valid,
+    output     [ 4:0] rvvi_v_vd,
+    output    [127:0] rvvi_v_wdata,
+    output     [31:0] rvvi_vl,
+    output     [31:0] rvvi_vtype
 );
 
     // ---- core-facing native signals ----
@@ -206,7 +220,19 @@ module cpu_m1_top #(
 
         .dbg_pc             (dbg_pc),
         .dbg_instr          (dbg_instr),
-        .dbg_state          (dbg_state)
+        .dbg_state          (dbg_state),
+        .rvfi_valid         (rvfi_valid),
+        .rvfi_pc            (rvfi_pc),
+        .rvfi_trap          (rvfi_trap),
+        .rvfi_trap_cause    (rvfi_trap_cause),
+        .rvfi_intr          (rvfi_intr),
+        .rvfi_rd_addr       (rvfi_rd_addr),
+        .rvfi_rd_wdata      (rvfi_rd_wdata),
+        .rvvi_v_valid       (rvvi_v_valid),
+        .rvvi_v_vd          (rvvi_v_vd),
+        .rvvi_v_wdata       (rvvi_v_wdata),
+        .rvvi_vl            (rvvi_vl),
+        .rvvi_vtype         (rvvi_vtype)
     );
 
 endmodule

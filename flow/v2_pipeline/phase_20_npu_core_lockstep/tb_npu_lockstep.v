@@ -107,11 +107,11 @@ module tb_npu_lockstep;
     // debug tap: log every committed VRF write (verification authority stays
     // with the scalar commit stream + memory compares; this is for triage)
     always @(posedge clk) begin
-        if (dut.u_npu_core.u_core.wb_vex_we)
+        if (dut.rvvi_v_valid)
             $fdisplay(vtrace_fd, "%08x,%0d,%032x",
-                      dut.u_npu_core.u_core.ex_wb_pc_r,
-                      dut.u_npu_core.u_core.ex_wb_vex_vd_r,
-                      dut.u_npu_core.u_core.ex_wb_vex_wdata_r);
+                      dut.rvfi_pc,
+                      dut.rvvi_v_vd,
+                      dut.rvvi_v_wdata);
     end
 
     always @(posedge clk) begin
@@ -126,14 +126,15 @@ module tb_npu_lockstep;
         // idles high by design, so ibus_req alone is not a violation — execution
         // is what the reset gating must prevent.) Keyed on the DUT's real start
         // level, not a TB flag, so there is no race with the AXI write completing.
-        if (!npu_start_o && dut.u_npu_core.u_core.wb_instr_retired) begin
+        if (!npu_start_o && dut.rvfi_valid) begin
             $display("FAIL: instruction committed before CTRL.start (fetch-before-load guard)");
             $fatal(1);
         end
 
-        if (npu_start_o && dut.u_npu_core.u_core.ex_wb_valid_r && dut.u_npu_core.u_core.ex_wb_illegal_r) begin
+        if (npu_start_o && dut.rvfi_trap &&
+            (dut.rvfi_trap_cause == 32'd2 || dut.rvfi_trap_cause == 32'd3)) begin
             $display("[%0t ns] stop on illegal/ebreak pc=%08x commits=%0d",
-                     $time, dut.u_npu_core.u_core.ex_wb_pc_r, commit_count);
+                     $time, dut.rvfi_pc, commit_count);
             if (commit_count < min_commits) begin
                 $display("FAIL: too few commits before ebreak (%0d < %0d)", commit_count, min_commits);
                 $fatal(1);
@@ -141,20 +142,18 @@ module tb_npu_lockstep;
             $fclose(trace_fd);
             $display("PASS: DUT commit trace wrote %0d commits before ebreak", commit_count);
             $finish;
-        end else if (npu_start_o && dut.u_npu_core.u_core.wb_instr_retired && !dut.u_npu_core.u_core.ex_wb_illegal_r) begin
+        end else if (npu_start_o && dut.rvfi_valid && !dut.rvfi_trap) begin
             /* verilator lint_off BLKSEQ */
-            commit_instr = dut.itcm.mem[dut.u_npu_core.u_core.ex_wb_pc_r[12:2]];  // EN_RVC=0: 32-bit only
+            commit_instr = dut.itcm.mem[dut.rvfi_pc[12:2]];  // pc->insn join vs static ITCM (ADR-0045)
             /* verilator lint_on BLKSEQ */
             // x0 writes (e.g. jalr x0) are architecturally invisible — normalize
             // them to "no writeback" exactly as Spike reports them.
             $fdisplay(trace_fd, "%0d,%08x,%08x,%0d,%08x",
                       commit_count,
-                      dut.u_npu_core.u_core.ex_wb_pc_r,
+                      dut.rvfi_pc,
                       commit_instr,
-                      (dut.u_npu_core.u_core.rfu_we && dut.u_npu_core.u_core.rfu_wr_idx != 5'd0)
-                          ? dut.u_npu_core.u_core.rfu_wr_idx : 5'd0,
-                      (dut.u_npu_core.u_core.rfu_we && dut.u_npu_core.u_core.rfu_wr_idx != 5'd0)
-                          ? dut.u_npu_core.u_core.rfu_wr_data : 32'h0);
+                      dut.rvfi_rd_addr,
+                      dut.rvfi_rd_wdata);
             commit_count <= commit_count + 1;
         end
     end

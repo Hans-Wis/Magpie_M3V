@@ -26,7 +26,7 @@ RESULT idx=2 observed_mepc=00000098 expected_mepc=00000098 handler_mepc=00000098
 RESULT idx=3 observed_mepc=000000a0 expected_mepc=000000a0 handler_mepc=000000a0 mcause=00000003 mtval=000000a0
 RESULT idx=4 observed_mepc=000000a8 expected_mepc=000000a8 handler_mepc=000000a8 mcause=00000004 mtval=00000119
 PASS: directed mepc CSR mask and synchronous trap precision completed
-- tb_mepc_directed.v:189: Verilog $finish
+- tb_mepc_directed.v:194: Verilog $finish
 - S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 2us; walltime 0.002 s; speed 1.005 ms/s
+- Verilator: $finish at 2us; walltime 0.002 s; speed 971.306 us/s
 - Verilator: cpu 0.002 s on 1 threads; allocated 17 MB

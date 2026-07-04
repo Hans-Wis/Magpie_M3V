@@ -14,7 +14,7 @@
 | 5 | 卸載(doorbell→DMA→compute→writeback→IRQ) | 🟢 GREEN-leaning(2026-07-04 升級) | **ADR-0043**:雙向 DMA + CQ ring + DONE/ERR/FULL 之上補齊 **2D/strided gather/scatter**(sequencer 迴圈、sanitizer 階梯含容量/wrap 守衛)、**host producer ABI**(RING_OVERRUN=生產者紀律、CqFull、fence-before-doorbell 契約入 00_isa_contract)。餘:SoC 真快取 flush(Phase 7)、device 端 overrun 偵測(deferred) |
 | 6 | 例外/控制(traps + abort/reset) | 🟡 PARTIAL(2026-07-04 升級) | **P0⑤ 完成(ADR-0038)**:core trap→host(ERR_PC/ERR_CAUSE latch-once 對、ERR IRQ)、真 soft_reset/abort(burst-邊界 drain、AXI 乾淨、證據持久、ABORTED 入 fault namespace)、復原流程 gate_47 全驗。餘:hard-reset 區分、trap 向量豐富度(記錄) |
 | 7 | 軟體(TF→編譯→NPU 執行) | 🟢 GREEN-leaning(2026-07-04 四升) | ADR-0041 MLP 之上,**ADR-0042:真 int8 CNN**(Conv2D **per-channel**(RESCALE_PC)+ K=72/128 **chunking** + host im2col)conv 中間層與最終輸出對 BUILTIN_REF 全 bit-exact(gate_50)。餘:POOL/更多 op、on-NPU repack、大模型 |
-| 8 | 除錯(RVVI/RVFI trace port) | 🔴 MISSING(P1) | 未建 |
+| 8 | 除錯(RVVI/RVFI) | 🟡 PARTIAL(2026-07-04 升級,原紅燈) | **ADR-0045**:RVFI/RVVI-lite trace port(npu_top 邊界;scalar retire/pc/trap+cause/intr/rd、vector WB commit+vl/vtype、order 計數)——**權威證據 = phase_20 lockstep 換源自 port 重跑全符(directed 1164 + random 10,809)**+ trap 可見性 gate_53。依 Grok 裁定 lite v0 不轉綠:v1 完成清單 = rvfi_insn、mem trace、mtval/mstatus、多退休(debugger-attach 級) |
 
 **達成宣稱所需的最小剩餘工作(依關鍵序)**:P0② CQ(進行中)→ P0④ vector-CSR lockstep 契約 + Phase 3 RVV EXU → P0③ 矩陣 acc+requant(Phase 4/5,NumPy golden)→ P0⑤ traps/abort → Phase 6 TFLM e2e → P1(ITCM/DTCM、F、RVVI/RVFI)。
 

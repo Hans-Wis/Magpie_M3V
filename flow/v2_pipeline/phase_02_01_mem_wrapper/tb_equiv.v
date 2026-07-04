@@ -54,7 +54,12 @@ module tb_equiv;
         .dm_acc_wdata       (32'h0),
         .dm_acc_rdata       (dbg_dummy_acc_rdata),
         .dm_acc_err         (dbg_dummy_acc_err),
-        .dbg_pc(r_dbgpc), .dbg_instr(r_dbginstr), .dbg_state(r_dbgst));
+        .dbg_pc(r_dbgpc), .dbg_instr(r_dbginstr),        /* verilator lint_off PINCONNECTEMPTY */
+        .rvfi_valid(), .rvfi_pc(), .rvfi_trap(), .rvfi_trap_cause(), .rvfi_intr(),
+        .rvfi_rd_addr(), .rvfi_rd_wdata(),
+        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(),
+        /* verilator lint_on PINCONNECTEMPTY */
+ .dbg_state(r_dbgst));
 
     // ---------- DUT (cpu_m1_top, valid/ready, combinational-read mem + waits) ----------
     reg  [31:0] dmem [0:MEMW-1];
@@ -90,7 +95,12 @@ module tb_equiv;
         .dm_acc_wdata       (32'h0),
         .dm_acc_rdata       (dbg_dummy_acc_rdata),
         .dm_acc_err         (dbg_dummy_acc_err),
-        .dbg_pc(d_dbgpc), .dbg_instr(d_dbginstr), .dbg_state(d_dbgst));
+        .dbg_pc(d_dbgpc), .dbg_instr(d_dbginstr),        /* verilator lint_off PINCONNECTEMPTY */
+        .rvfi_valid(), .rvfi_pc(), .rvfi_trap(), .rvfi_trap_cause(), .rvfi_intr(),
+        .rvfi_rd_addr(), .rvfi_rd_wdata(),
+        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(),
+        /* verilator lint_on PINCONNECTEMPTY */
+ .dbg_state(d_dbgst));
 
     // ---------- wait-state generators ----------
     integer icnt = 0, dcnt = 0; reg [15:0] ilfsr = 16'hACE1, dlfsr = 16'h1234;
