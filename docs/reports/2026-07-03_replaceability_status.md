@@ -9,7 +9,7 @@
 |---|---|---|---|
 | 1 | 純量 ISA(RV32IMF_Zbb) | 🟡 PARTIAL | rv32im sequencer 已 lockstep 驗證(gate_31/32,8×10.8k commits);Zbb 在 RTL(bmu)但未入 NPU lockstep 語料;**F deferred**(記錄在案的 scope-cut,補回才算綠) |
 | 2 | 向量 RVV Zve32x + vtype/vl/vstart/vxsat lockstep | 🟡 PARTIAL(2026-07-04 升級) | **Phase 3 出口已達**:P0④ 契約上線(gate_40/41);TFLM int8 kernel 子集(vset*/vle/vse/vwmul/vwadd/vredsum/vmv.*)lockstep 全驗,Phase 0 kernel 於 RTL 跑出 240(gate_44)。缺:完整 Zve32x 覆蓋(mask/saturating/strided/LMUL>1,記錄性延後) |
-| 3 | 矩陣 256-MAC + 8×8×32b acc + requant | 🟡 PARTIAL(2026-07-04 升級) | **64-MAC 外積引擎 + 4×8×8×32b acc + TFLite-exact requant 已落**(ADR-0037):gate_45 單元 1629 checks 對 NumPy golden 位元精確、gate_46 CQ 全鏈卸載 byte-exact。缺:64→256 MAC 放大、16 banks、weight-stationary、多 tile(記錄性延後) |
+| 3 | 矩陣(256-MAC outer-product + acc + requant) | 🟡 PARTIAL-strong(2026-07-04 升級) | **ADR-0040**:引擎升 **256 MAC/cycle**(stripmine 4 outer products/拍,8×8×32b acc ×4 banks,TFLite-exact requant)——Coral 公開算力數字對齊;throughput gate 實測 rpt=64→17 拍。誠實偏離(Class B):2×256-bit 讀埠 vs Coral 128-bit(banked-SRAM 假設,Phase 7 PPA 收斂)。餘:per-channel quant、>8×8 tile 排程 |
 | 4 | 記憶體 ITCM 8K / DTCM 32K,128-bit | 🔴 MISSING(P1) | 現為 unified 4KB TCM、32-bit port。sizing/split 已記 P1(ADR-0034) |
 | 5 | 卸載 doorbell→DMA→compute→writeback→IRQ | 🟡 PARTIAL(最接近) | doorbell(CTRL.start)✅ 權重 DMA ✅ scalar compute ✅ writeback ✅ DONE IRQ ✅(gate_29/30..34);**缺 command-queue ring(P0②,本步進行中)**;compute 僅 scalar |
 | 6 | 例外/控制(traps + abort/reset) | 🟡 PARTIAL(2026-07-04 升級) | **P0⑤ 完成(ADR-0038)**:core trap→host(ERR_PC/ERR_CAUSE latch-once 對、ERR IRQ)、真 soft_reset/abort(burst-邊界 drain、AXI 乾淨、證據持久、ABORTED 入 fault namespace)、復原流程 gate_47 全驗。餘:hard-reset 區分、trap 向量豐富度(記錄) |

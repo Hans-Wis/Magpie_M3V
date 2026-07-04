@@ -9,10 +9,9 @@
 //   CMD_OP      : arg_rpt serialized outer products; per rep the a/b pointers
 //                 advance +8 bytes (frozen stripmine). 4 TCM word reads + 1 MAC
 //                 cycle per rep. rpt==0 or bank>=4 -> err_param.
-//   CMD_LOADACC : clear + preload one bank: 8 int32 words read from TCM at
-//                 a_addr are BROADCAST down the rows (acc[r][c] = word[c]) —
-//                 the TFLM affine fold (input_offset*sum_w + bias) lands here
-//                 (ADR-0039). Uses the OP read path (a_addr, 8 words).
+//   CMD_LOADACC : clear + preload one bank in ONE cycle: 8 int32 words at
+//                 a_addr (32B-aligned) BROADCAST down the rows (acc[r][c] =
+//                 word[c]) — the TFLM affine fold lands here (ADR-0039/0040).
 //   CMD_RESCALE : TFLite/gemmlowp two-step requant of one bank, 64 int8 outputs
 //                 packed to 16 TCM words at out_base:
 //                   t = SaturatingRoundingDoublingHighMul(acc, mult_q31)
@@ -49,17 +48,19 @@ module mat_engine #(
     output reg         done,         // sticky until next accepted go
     output reg         err_param,    // sticky until next accepted go
 
-    // ---- TCM ports (combinational read; 1-write-per-cycle granted upstream) ----
-    output wire              t_re,
-    output wire [TCM_AW-1:0] t_raddr,
-    input  wire [31:0]       t_rdata,
+    // ---- TCM ports (ADR-0040: two 256-bit combinational read ports feed
+    //      4 outer products per cycle; write port unchanged) ----
+    output wire [TCM_AW-1:0] t_a_addr,
+    input  wire [255:0]      t_a_rdata,
+    output wire [TCM_AW-1:0] t_b_addr,
+    input  wire [255:0]      t_b_rdata,
     output reg               t_we,
     output reg  [TCM_AW-1:0] t_waddr,
     output reg  [31:0]       t_wdata
 );
     localparam [2:0] CMD_CLR = 3'd0, CMD_OP = 3'd1, CMD_RESCALE = 3'd2, CMD_LOADACC = 3'd3;
     localparam [3:0] S_LA = 4'd6;
-    localparam [3:0] S_IDLE = 4'd0, S_RD = 4'd1, S_MAC = 4'd2,
+    localparam [3:0] S_IDLE = 4'd0, S_RUN = 4'd1,
                      S_RSC = 4'd3, S_RSW = 4'd4, S_FIN = 4'd5;
 
     reg [3:0]  state;
@@ -67,8 +68,6 @@ module mat_engine #(
     reg [1:0]  bank_q;
     reg [7:0]  rpt_q, rep_i;
     reg [31:0] a_ptr, b_ptr;
-    reg [1:0]  rd_i;                 // which of the 4 words this rep
-    reg [63:0] a_vec, b_vec;
     reg [5:0]  el_i;                 // rescale element 0..63
     reg [31:0] pack_q;
 
@@ -78,14 +77,29 @@ module mat_engine #(
     reg signed [31:0] acc [0:3][0:63];
     integer ci, cj;
 
-    // ---- outer product (combinational, 64 MACs) ----
-    wire signed [7:0] av [0:7];
-    wire signed [7:0] bv [0:7];
-    genvar gk;
+    // ---- fused outer products (combinational, 4 lanes x 64 = 256 MACs) ----
+    // Lane j = one k-step; the tail (rpt%4) masks lanes uniformly across all
+    // 64 (r,c) cells. Every operand stays SIGNED end-to-end (int8 x int8 ->
+    // int17 lane product, 4-lane signed sum, int32 wrap into acc).
+    wire [8:0] rem = {1'b0, rpt_q} - {1'b0, rep_i};
+    wire [3:0] lane_en = (rem >= 9'd4) ? 4'b1111 :
+                         (rem == 9'd3) ? 4'b0111 :
+                         (rem == 9'd2) ? 4'b0011 : 4'b0001;
+    wire signed [31:0] psum [0:63];
+    genvar gj, gr, gc;
     generate
-        for (gk = 0; gk < 8; gk = gk + 1) begin : g_vec
-            assign av[gk] = a_vec[gk*8 +: 8];
-            assign bv[gk] = b_vec[gk*8 +: 8];
+        for (gr = 0; gr < 8; gr = gr + 1) begin : g_row
+            for (gc = 0; gc < 8; gc = gc + 1) begin : g_col
+                wire signed [16:0] lp [0:3];
+                for (gj = 0; gj < 4; gj = gj + 1) begin : g_lane
+                    wire signed [7:0] a8 = t_a_rdata[gj*64 + gr*8 +: 8];
+                    wire signed [7:0] b8 = t_b_rdata[gj*64 + gc*8 +: 8];
+                    assign lp[gj] = lane_en[gj] ? (a8 * b8) : 17'sd0;
+                end
+                assign psum[gr*8 + gc] =
+                    {{15{lp[0][16]}}, lp[0]} + {{15{lp[1][16]}}, lp[1]} +
+                    {{15{lp[2][16]}}, lp[2]} + {{15{lp[3][16]}}, lp[3]};
+            end
         end
     endgenerate
 
@@ -110,25 +124,22 @@ module mat_engine #(
                                 (withzp > cmax_x) ? cmax_x : withzp;
     wire [7:0]         out8   = clampd[7:0];
 
-    // ---- TCM read address (OP word fetch) ----
-    assign t_re    = (state == S_RD) || (state == S_LA);
-    assign t_raddr = (state == S_LA) ?
-                     (a_ptr[TCM_AW+1:2] + {{(TCM_AW-3){1'b0}}, el_i[2:0]}) :
-                     ((rd_i[1] ? b_ptr[TCM_AW+1:2] : a_ptr[TCM_AW+1:2]) +
-                      {{(TCM_AW-1){1'b0}}, rd_i[0]});
+    // ---- TCM wide read addresses (word index of the 8-word window) ----
+    assign t_a_addr = a_ptr[TCM_AW+1:2];
+    assign t_b_addr = b_ptr[TCM_AW+1:2];
 
     wire param_bad =
         (cmd == CMD_OP      && ((arg_bank >= 4'd4) || (arg_rpt == 8'd0) ||
-                                (a_addr[1:0] != 2'b00) || (b_addr[1:0] != 2'b00))) ||
+                                (a_addr[4:0] != 5'b0) || (b_addr[4:0] != 5'b0))) ||
         (cmd == CMD_RESCALE && ((arg_bank >= 4'd4) ||
                                 (rs_shift < 8'd31) || (rs_shift > 8'd62) ||
                                 (out_base[1:0] != 2'b00))) ||
-        (cmd == CMD_LOADACC && ((arg_bank >= 4'd4) || (a_addr[1:0] != 2'b00)));
+        (cmd == CMD_LOADACC && ((arg_bank >= 4'd4) || (a_addr[4:0] != 5'b0)));
 
     always @(posedge clk) begin
         if (!resetn) begin
             state <= S_IDLE; done <= 1'b0; err_param <= 1'b0;
-            t_we <= 1'b0; rd_i <= 2'd0; el_i <= 6'd0; rep_i <= 8'd0;
+            t_we <= 1'b0; el_i <= 6'd0; rep_i <= 8'd0;
         end else if (abort_i) begin
             state <= S_IDLE; done <= 1'b0; err_param <= 1'b0; t_we <= 1'b0;
         end else begin
@@ -145,7 +156,6 @@ module mat_engine #(
                         rep_i  <= 8'd0;
                         a_ptr  <= a_addr;
                         b_ptr  <= b_addr;
-                        rd_i   <= 2'd0;
                         el_i   <= 6'd0;
                         case (cmd)
                             CMD_CLR: begin
@@ -155,7 +165,7 @@ module mat_engine #(
                                             acc[ci][cj] <= 32'sd0;
                                 done <= 1'b1;              // single-cycle
                             end
-                            CMD_OP:      state <= S_RD;
+                            CMD_OP:      state <= S_RUN;
                             CMD_LOADACC: state <= S_LA;
                             CMD_RESCALE: state <= S_RSC;
                             default:     begin err_param <= 1'b1; done <= 1'b1; end
@@ -163,30 +173,15 @@ module mat_engine #(
                     end
                 end
 
-                S_RD: begin                                 // 4 word reads per rep
-                    case (rd_i)
-                        2'd0: a_vec[31:0]  <= t_rdata;
-                        2'd1: a_vec[63:32] <= t_rdata;
-                        2'd2: b_vec[31:0]  <= t_rdata;
-                        default: b_vec[63:32] <= t_rdata;
-                    endcase
-                    if (rd_i == 2'd3) begin rd_i <= 2'd0; state <= S_MAC; end
-                    else rd_i <= rd_i + 2'd1;
-                end
-
-                S_MAC: begin                                // one outer product
-                    for (ci = 0; ci < 8; ci = ci + 1)
-                        for (cj = 0; cj < 8; cj = cj + 1)
-                            acc[bank_q][ci*8 + cj] <=
-                                acc[bank_q][ci*8 + cj] + (av[ci] * bv[cj]);
-                    a_ptr <= a_ptr + 32'd8;
-                    b_ptr <= b_ptr + 32'd8;
-                    if (rep_i == rpt_q - 8'd1) begin
+                S_RUN: begin        // 4 fused outer products per cycle (256 MACs)
+                    for (ci = 0; ci < 64; ci = ci + 1)
+                        acc[bank_q][ci] <= acc[bank_q][ci] + psum[ci];
+                    a_ptr <= a_ptr + 32'd32;
+                    b_ptr <= b_ptr + 32'd32;
+                    if (rem <= 9'd4) begin
                         state <= S_IDLE; done <= 1'b1;
-                    end else begin
-                        rep_i <= rep_i + 8'd1;
-                        state <= S_RD;
-                    end
+                    end else
+                        rep_i <= rep_i + 8'd4;
                 end
 
                 S_RSC: begin                                // pack one byte/cycle
@@ -211,13 +206,11 @@ module mat_engine #(
                     state <= S_IDLE; done <= 1'b1;
                 end
 
-                S_LA: begin                                 // one column per cycle
+                S_LA: begin     // single-cycle fold preload: word c -> all rows
                     for (ci = 0; ci < 8; ci = ci + 1)
-                        acc[bank_q][ci*8 + {29'b0, el_i[2:0]}] <= t_rdata;
-                    if (el_i[2:0] == 3'd7) begin
-                        state <= S_IDLE; done <= 1'b1; el_i <= 6'd0;
-                    end else
-                        el_i <= el_i + 6'd1;
+                        for (cj = 0; cj < 8; cj = cj + 1)
+                            acc[bank_q][ci*8 + cj] <= t_a_rdata[cj*32 +: 32];
+                    state <= S_IDLE; done <= 1'b1;
                 end
 
                 default: state <= S_IDLE;

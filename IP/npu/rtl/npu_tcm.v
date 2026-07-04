@@ -40,9 +40,10 @@ module npu_tcm #(
     output wire [31:0]     core_i_rdata,
 
     // ---- matrix engine ports (ADR-0037): combinational read + granted write ----
-    input  wire            eng_re,
-    input  wire [AW-1:0]   eng_raddr,
-    output wire [31:0]     eng_rdata,
+    input  wire [AW-1:0]   eng_a_addr,
+    output wire [255:0]    eng_a_rdata,
+    input  wire [AW-1:0]   eng_b_addr,
+    output wire [255:0]    eng_b_rdata,
     input  wire            eng_we,
     input  wire [AW-1:0]   eng_waddr,
     input  wire [31:0]     eng_wdata,
@@ -60,7 +61,16 @@ module npu_tcm #(
     assign dma_rdata     = mem[dma_raddr];
     assign core_i_rdata  = mem[core_i_addr];
     assign core_d_rdata  = mem[core_d_addr];
-    assign eng_rdata     = mem[eng_raddr];
+    // ADR-0040: two 256-bit windows (8 consecutive words, index wraps in AW)
+    genvar gw;
+    generate
+        for (gw = 0; gw < 8; gw = gw + 1) begin : g_eng_wide
+            wire [AW-1:0] ia = eng_a_addr + gw[AW-1:0];
+            wire [AW-1:0] ib = eng_b_addr + gw[AW-1:0];
+            assign eng_a_rdata[gw*32 +: 32] = mem[ia];
+            assign eng_b_rdata[gw*32 +: 32] = mem[ib];
+        end
+    endgenerate
     // write priority (ADR-0037): dma > engine > core > host
     assign core_d_wgrant = core_d_we & ~dma_we & ~eng_we;
 

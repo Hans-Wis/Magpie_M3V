@@ -251,6 +251,7 @@
     ]
   },
   "notes": [
-    "ADR-0039: MAT.ACC_CLR W2 nonzero = accumulator preload with the TFLM affine fold (input_offset*sum_w + bias), engine CMD_LOADACC."
+    "ADR-0039: MAT.ACC_CLR W2 nonzero = accumulator preload with the TFLM affine fold (input_offset*sum_w + bias), engine CMD_LOADACC.",
+    "ADR-0040: 256 MAC/cycle stripmine (4 outer products/cycle inside the engine; RPT still counts outer products). MAT_OP a/b and ACC_CLR bias_tcm_byte must be 32-byte aligned (banked single-cycle SRAM assumption)."
   ]
 }

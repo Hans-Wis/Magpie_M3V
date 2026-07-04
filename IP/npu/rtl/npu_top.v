@@ -213,9 +213,10 @@ module npu_top #(
     wire [2:0]  mat_cmd;
     wire [3:0]  mat_bank;
     wire [7:0]  mat_rpt;
-    wire              eng_re, eng_we;
-    wire [TCM_AW-1:0] eng_raddr, eng_waddr;
-    wire [31:0]       eng_rdata, eng_wdata;
+    wire              eng_we;
+    wire [TCM_AW-1:0] eng_a_addr, eng_b_addr, eng_waddr;
+    wire [255:0]      eng_a_rdata, eng_b_rdata;
+    wire [31:0]       eng_wdata;
 
     mat_engine #(.TCM_AW(TCM_AW)) u_mat (
         .clk(clk), .resetn(resetn),
@@ -224,7 +225,8 @@ module npu_top #(
         .rs_mult(mat_mult), .rs_shift(mat_rsp[7:0]), .rs_zp(mat_rsp[15:8]),
         .rs_min(mat_clamp[7:0]), .rs_max(mat_clamp[15:8]), .out_base(mat_out_base),
         .busy(mat_busy), .done(mat_done), .err_param(mat_err),
-        .t_re(eng_re), .t_raddr(eng_raddr), .t_rdata(eng_rdata),
+        .t_a_addr(eng_a_addr), .t_a_rdata(eng_a_rdata),
+        .t_b_addr(eng_b_addr), .t_b_rdata(eng_b_rdata),
         .t_we(eng_we), .t_waddr(eng_waddr), .t_wdata(eng_wdata)
     );
 
@@ -307,7 +309,8 @@ module npu_top #(
         .core_i_en(core_i_en),.core_i_addr(core_i_addr),.core_i_rdata(core_i_rdata),
         .core_d_addr(core_d_addr),.core_d_rdata(core_d_rdata),
         .core_d_we(core_d_we),.core_d_wdata(dbus_wdata),.core_d_wstrb(dbus_wstrb),.core_d_wgrant(core_d_wgrant),
-        .eng_re(eng_re),.eng_raddr(eng_raddr),.eng_rdata(eng_rdata),
+        .eng_a_addr(eng_a_addr),.eng_a_rdata(eng_a_rdata),
+        .eng_b_addr(eng_b_addr),.eng_b_rdata(eng_b_rdata),
         .eng_we(eng_we),.eng_waddr(eng_waddr),.eng_wdata(eng_wdata)
     );
 

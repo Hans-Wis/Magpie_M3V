@@ -21,27 +21,36 @@ module tb_mat_engine;
     reg  [31:0] a_addr = 0, b_addr = 0, rs_mult = 0, out_base = 0;
     reg  [7:0]  rs_shift = 0, rs_zp = 0, rs_min = 0, rs_max = 0;
     wire        busy, done, err_param;
-    wire        t_re, t_we;
-    wire [9:0]  t_raddr, t_waddr;
+    wire        t_we;
+    wire [9:0]  t_a_addr, t_b_addr, t_waddr;
     wire [31:0] t_wdata;
 
     reg [31:0] mem [0:1023];
-    wire [31:0] t_rdata = mem[t_raddr];
+    wire [255:0] t_a_rdata, t_b_rdata;
+    genvar gw;
+    generate
+        for (gw = 0; gw < 8; gw = gw + 1) begin : g_wide
+            assign t_a_rdata[gw*32 +: 32] = mem[t_a_addr + gw[9:0]];
+            assign t_b_rdata[gw*32 +: 32] = mem[t_b_addr + gw[9:0]];
+        end
+    endgenerate
     always @(posedge clk) if (t_we) mem[t_waddr] <= t_wdata;
 
     mat_engine #(.TCM_AW(10)) dut (
         .clk(clk), .resetn(resetn),
-        .go(go), .cmd(cmd), .arg_bank(arg_bank), .arg_rpt(arg_rpt),
+        .go(go), .abort_i(1'b0), .cmd(cmd), .arg_bank(arg_bank), .arg_rpt(arg_rpt),
         .a_addr(a_addr), .b_addr(b_addr),
         .rs_mult(rs_mult), .rs_shift(rs_shift), .rs_zp(rs_zp),
         .rs_min(rs_min), .rs_max(rs_max), .out_base(out_base),
         .busy(busy), .done(done), .err_param(err_param),
-        .t_re(t_re), .t_raddr(t_raddr), .t_rdata(t_rdata),
+        .t_a_addr(t_a_addr), .t_a_rdata(t_a_rdata),
+        .t_b_addr(t_b_addr), .t_b_rdata(t_b_rdata),
         .t_we(t_we), .t_waddr(t_waddr), .t_wdata(t_wdata)
     );
 
     integer errors = 0, checks = 0;
 
+    integer go_cycles;
     task pulse_go;
         integer guard;
         begin
@@ -50,6 +59,7 @@ module tb_mat_engine;
             guard = 0;
             while (!done && guard < 5000) begin @(posedge clk); guard = guard + 1; end
             if (!done) begin errors = errors + 1; $display("  FAIL: engine timeout"); end
+            go_cycles = guard;
         end
     endtask
 
@@ -153,6 +163,41 @@ module tb_mat_engine;
         $fclose(fin); $fclose(fexp);
         $display("part2: %0d sequences", n);
 
+        // ---------- throughput + tail known-answer (ADR-0040 guards) ----------
+        // a=3, b=5 everywhere -> acc = 15*rpt exactly; RESCALE mult=0.5 shift=35
+        // gives 30 for rpt=64 and 31 for rpt=65 - a broken tail mask (extra or
+        // missing lanes) lands on a different byte (Codex review adoption).
+        // Cycles: GO->done <= ceil(rpt/4) + 6 shell; rpt=65 forces the tail.
+        for (i = 0; i < 132; i = i + 1) begin
+            mem[i] = 32'h03030303;
+            mem[256 + i] = 32'h05050505;
+        end
+        cmd = 3'd0; arg_bank = 4'hF; pulse_go();
+        cmd = 3'd1; arg_bank = 4'd0; arg_rpt = 8'd64; a_addr = 32'h0; b_addr = 32'h400;
+        pulse_go();
+        checks = checks + 1;
+        if (go_cycles > 16 + 6) begin
+            errors = errors + 1;
+            $display("  FAIL throughput rpt=64: %0d cycles (limit 22)", go_cycles);
+        end
+        $display("throughput rpt=64: %0d cycles", go_cycles);
+        cmd = 3'd2; rs_mult = 32'h4000_0000; rs_shift = 8'd35; rs_zp = 8'd0;
+        rs_min = 8'h80; rs_max = 8'h7F; out_base = 32'h0000_0C00;
+        pulse_go();
+        for (i = 0; i < 16; i = i + 1)
+            chk8(mem[10'h300 + i][7:0], 8'd30, 2900 + i);
+        cmd = 3'd0; arg_bank = 4'hF; pulse_go();
+        cmd = 3'd1; arg_bank = 4'd0; arg_rpt = 8'd65; pulse_go();
+        checks = checks + 1;
+        if (go_cycles > 17 + 6) begin
+            errors = errors + 1;
+            $display("  FAIL throughput rpt=65: %0d cycles (limit 23)", go_cycles);
+        end
+        $display("throughput rpt=65: %0d cycles", go_cycles);
+        cmd = 3'd2; pulse_go();
+        for (i = 0; i < 16; i = i + 1)
+            chk8(mem[10'h300 + i][7:0], 8'd31, 2950 + i);
+
         // ---------- param errors ----------
         cmd = 3'd1; arg_bank = 4'd4; arg_rpt = 8'd1; a_addr = 0; b_addr = 0;
         pulse_go();
@@ -166,6 +211,16 @@ module tb_mat_engine;
         pulse_go();
         checks = checks + 1;
         if (!err_param) begin errors = errors + 1; $display("  FAIL: rpt=0 not flagged"); end
+        // ADR-0040: 32B alignment now enforced (banked-SRAM honesty)
+        cmd = 3'd1; arg_rpt = 8'd1; a_addr = 32'h10; b_addr = 32'h200;
+        pulse_go();
+        checks = checks + 1;
+        if (!err_param) begin errors = errors + 1; $display("  FAIL: a 32B-align not flagged"); end
+        cmd = 3'd3; arg_bank = 4'd0; a_addr = 32'h24;
+        pulse_go();
+        checks = checks + 1;
+        if (!err_param) begin errors = errors + 1; $display("  FAIL: loadacc align not flagged"); end
+        a_addr = 32'h0;
 
         $display("MAT_ENGINE: %0d checks, %0d errors", checks, errors);
         if (errors == 0) $display("MAT_ENGINE_PASS");
