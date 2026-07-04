@@ -78,3 +78,18 @@ vrand 1386 commits(vxrm churn + sticky/clear probes,gate_57 語料下限)全符;
 路徑(單元 TB 隔離定位)。**Codex 1 真發現(修+corner)**:WB-sat overlay 壓過較年輕的
 MEM csrw 清除(年齡序 guard)。其餘捨入公式/vssra wrap/vnclip 重建/vasubu 語義經 Codex
 對 RVV 1.0 規格逐項驗證 CLEAN。
+
+## S3 結果(2026-07-04)
+
+LMUL m2/m4 依裁定落地:vexu 內 **VM_GRP multi-beat**(drained-start 復用 vmem hold;每拍
+一 part 入 staging;part 視圖 = 暫存器索引 + 元素窗 + v0 位移全部隨 part 平移)+ **WB 原子
+群寫**(part0 走管線為權威值,parts 1..N-1 從 staging 同緣寫;w_grp/w_parts 隨管線帶 kill
+資格;mask-dest 比較單暫存器寫,q_grp_w 排除)。合法性:m8 仍禁、群組對齊(vd/vs2/vs1)、
+widen/redsum/nclip 維持自身規則、**vmem 維持 EMUL≤1(vlmax_el 補整數 LMUL 乘項)**。
+驗證:s3 directed 72 commits(部件邊界 vl、跨部件遮罩、後部件飽和、群組比較、奇-vd 終結子)
++ s3i(OPMVV .vv 未對齊 vs1 illegal)+ vrand 1324 commits(m2/m4 configs、對齊暫存器池)
++ kernel/全 targets 重綠。**Bring-up 抓到 2 個真 bug**:①STORE-FP opcode 經 f6 aliasing
+滑進 is_grp(其他使用點都有 is_vmem 優先序,新路徑漏了)→ vse@m4 靜默不落 store;
+②e16/m2+vse16(EMUL=2)滑過 legality → 群組記憶體越界寫錯源。**Codex 1 真發現**:
+OPMVV .vv(vaadd 族)vs1 對齊檢查漏(aligned random 池的盲區,與 S1 同類)→ 修 + s3i。
+gate_42 的 3B 誠實界守衛隨 S3 更新(m8 仍禁)。

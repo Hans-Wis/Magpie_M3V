@@ -8,7 +8,7 @@
 | # | 面向 | 狀態 | 證據 / 缺口 |
 |---|---|---|---|
 | 1 | 純量 ISA(RV32IMF_Zbb) | 🟡 PARTIAL | rv32im sequencer 已 lockstep 驗證(gate_31/32,8×10.8k commits);Zbb 在 RTL(bmu)但未入 NPU lockstep 語料;**F deferred**(記錄在案的 scope-cut,補回才算綠) |
-| 2 | 向量(RVV Zve32x + vector CSR) | 🟡 PARTIAL-strong(2026-07-04 升級) | 3A-3D 之上,**ADR-0049 S1**:masked 執行、mask logicals×8、整數比較→mask、vmin/vmax(max-pool 原語)——random+directed lockstep 全符。續:S2 saturating、S3 LMUL m2/m4、S4 POOL runtime |
+| 2 | 向量(RVV Zve32x + vector CSR) | 🟡 PARTIAL-strong(S1-S3) | ADR-0049:masked 執行/mask logicals/比較/min-max(S1)+ sat/avg/scaling/nclip + vxsat/vxrm 契約(S2)+ **LMUL m2/m4 register groups 原子 commit**(S3)——directed+random lockstep 全符(gate_56-58)。餘:S4 POOL runtime、slides/gather(workload 外)、m8 |
 | 3 | 矩陣(256-MAC outer-product + acc + requant) | 🟡 PARTIAL-strong(2026-07-04 升級) | **ADR-0040**:引擎升 **256 MAC/cycle**(stripmine 4 outer products/拍,8×8×32b acc ×4 banks,TFLite-exact requant)——Coral 公開算力數字對齊;throughput gate 實測 rpt=64→17 拍。誠實偏離(Class B):2×256-bit 讀埠 vs Coral 128-bit(banked-SRAM 假設,Phase 7 PPA 收斂)。餘:per-channel quant、>8×8 tile 排程 |
 | 4 | 記憶體(ITCM 8K/DTCM 32K,128-bit) | 🟢 GREEN-leaning(2026-07-04 升級) | **ADR-0044**:ITCM 8KB(取指+0x3002 host 窗)/ DTCM 32KB Harvard 分割(鏡像載入契約,lockstep 免改);DTCM = 8-way banked 2R1W 結構模型 + 逐拍 bank 預算 checker(真 CQ batch 零違規、靈敏度已證)。誠實偏離:物理埠規格(Coral 單 128b vs 我們 8×32b 聚合)與 SRAM macro 對映歸 Phase 7 |
 | 5 | 卸載(doorbell→DMA→compute→writeback→IRQ) | 🟢 GREEN-leaning(2026-07-04 升級) | **ADR-0043**:雙向 DMA + CQ ring + DONE/ERR/FULL 之上補齊 **2D/strided gather/scatter**(sequencer 迴圈、sanitizer 階梯含容量/wrap 守衛)、**host producer ABI**(RING_OVERRUN=生產者紀律、CqFull、fence-before-doorbell 契約入 00_isa_contract)。餘:SoC 真快取 flush(Phase 7)、device 端 overrun 偵測(deferred) |

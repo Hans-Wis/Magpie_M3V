@@ -1,6 +1,6 @@
-[30485 ns] stop on illegal/ebreak pc=000015a8 commits=1386
-PASS: DUT commit trace wrote 1386 commits before ebreak
+[37325 ns] stop on illegal/ebreak pc=000014b0 commits=1324
+PASS: DUT commit trace wrote 1324 commits before ebreak
 - ../phase_20_npu_core_lockstep/tb_npu_lockstep.v:144: Verilog $finish
 - S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 30us; walltime 0.016 s; speed 1.882 ms/s
+- Verilator: $finish at 37us; walltime 0.016 s; speed 2.376 ms/s
 - Verilator: cpu 0.016 s on 1 threads; allocated 17 MB

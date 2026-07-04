@@ -46,7 +46,9 @@ def test_vector_alu_random_lockstep():
 
 def test_generator_stays_in_3b_envelope():
     gen = (PHASE / "gen_vector_random.py").read_text()
-    # honest-envelope guards: no m2/m4/m8 configs, no C, vstart never nonzero at a vector op
-    assert '"m2"' not in gen and '"m4"' not in gen and '"m8"' not in gen
+    # honest-envelope guards (ADR-0049 S3 extended the envelope to m2/m4,
+    # verified by gate_58; m8 remains deferred-illegal): no m8, no C,
+    # vstart never nonzero at a vector op
+    assert '"m8"' not in gen
     assert "vstart" in gen  # documented constraint present
     assert "vmv.x.s" in gen and "csrr t2, vl" in gen  # probe + checkpoint discipline

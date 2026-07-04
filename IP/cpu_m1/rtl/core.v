@@ -604,7 +604,9 @@ endgenerate
     reg [31:0] ex_mem_vcfg_vl_r;
     reg [31:0] ex_mem_vcfg_vtype_r;
     reg         ex_mem_vex_we_r;
-    reg        ex_mem_vex_sat_r, ex_wb_vex_sat_r;     // 3B: VRF write pending (vd/wdata below)
+    reg        ex_mem_vex_sat_r, ex_wb_vex_sat_r;
+    reg        ex_mem_vex_grp_w_r, ex_wb_vex_grp_w_r;      // S3 atomic group write
+    reg [2:0]  ex_mem_vex_grp_parts_r, ex_wb_vex_grp_parts_r;     // 3B: VRF write pending (vd/wdata below)
     reg         ex_mem_vex_flag_r;   // 3B: vector-exec commit (vstart clear / VS dirty)
     reg         ex_mem_vex_mem_r;    // 3C: the committing vector op is a load/store
     reg [4:0]   ex_mem_vex_vd_r;
@@ -828,6 +830,8 @@ endgenerate
     wire [127:0] vexu_q_wdata;
     wire         wb_vex_we;
     wire         vexu_q_is_mem, vexu_vm_active, vexu_vm_result_valid;
+    wire         vexu_q_is_grp, vexu_q_grp_w;
+    wire [2:0]   vexu_q_grp_parts;
     wire         vexu_vm_dvalid, vexu_vm_we;
     wire [31:0]  vexu_vm_addr, vexu_vm_wdata;
     wire [3:0]   vexu_vm_wstrb;
@@ -859,6 +863,11 @@ endgenerate
         .m_advance  (id_advance_to_ex_mem),
         .m_rdata    (d_mem_rdata),
         .q_is_mem   (vexu_q_is_mem),
+        .q_is_grp   (vexu_q_is_grp),
+        .q_grp_w    (vexu_q_grp_w),
+        .q_grp_parts(vexu_q_grp_parts),
+        .w_grp      (wb_vex_grp_w),
+        .w_parts    (ex_wb_vex_grp_parts_r),
         .vm_active  (vexu_vm_active),
         .vm_result_valid(vexu_vm_result_valid),
         .vm_dvalid  (vexu_vm_dvalid),
@@ -881,7 +890,8 @@ endgenerate
     // construction and store beats are never wrong-path/replayed.
     // VS gate inside the hold (Codex 3C review finding #1): a legal vle*/vse*
     // with mstatus.VS=Off must fall through to the illegal trap, not hold forever.
-    wire vex_mem_hold = vexu_query && vexu_q_is_mem && !vexu_q_illegal &&
+    wire vex_mem_hold = vexu_query && (vexu_q_is_mem || vexu_q_is_grp) &&
+                        !vexu_q_illegal &&
                         (csr_mstatus_vs_eff != 2'b00) &&
                         !vexu_vm_result_valid;
     wire vexu_m_start = vex_mem_hold &&
@@ -1549,6 +1559,7 @@ endgenerate
             ex_mem_vcfg_vtype_r      <= 32'h8000_0000;
             ex_mem_vex_we_r          <= 1'b0;
             ex_mem_vex_sat_r         <= 1'b0;
+            ex_mem_vex_grp_w_r       <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
             ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_vex_vd_r          <= 5'd0;
@@ -1586,6 +1597,7 @@ endgenerate
             ex_mem_vcfg_we_r         <= 1'b0;
             ex_mem_vex_we_r          <= 1'b0;
             ex_mem_vex_sat_r         <= 1'b0;
+            ex_mem_vex_grp_w_r       <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
             ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_is_branch_taken_r <= 1'b0;
@@ -1639,6 +1651,8 @@ endgenerate
             ex_mem_vcfg_vtype_r      <= rvv_vtype_next;
             ex_mem_vex_we_r          <= id_vexec_can_commit && vexu_q_vrf_we;
             ex_mem_vex_sat_r         <= id_vexec_can_commit && vexu_q_vxsat;
+            ex_mem_vex_grp_w_r       <= id_vexec_can_commit && vexu_q_grp_w;
+            ex_mem_vex_grp_parts_r   <= vexu_q_grp_parts;
             ex_mem_vex_flag_r        <= id_vexec_can_commit;
             ex_mem_vex_mem_r         <= id_vexec_can_commit && vexu_q_is_mem;
             ex_mem_vex_vd_r          <= vexu_q_vd;
@@ -1683,6 +1697,7 @@ endgenerate
             ex_mem_vcfg_we_r         <= 1'b0;
             ex_mem_vex_we_r          <= 1'b0;
             ex_mem_vex_sat_r         <= 1'b0;
+            ex_mem_vex_grp_w_r       <= 1'b0;
             ex_mem_vex_flag_r        <= 1'b0;
             ex_mem_vex_mem_r         <= 1'b0;
             ex_mem_is_branch_taken_r <= 1'b0;
@@ -1836,6 +1851,7 @@ endgenerate
             ex_wb_vcfg_vtype_r      <= 32'h8000_0000;
             ex_wb_vex_we_r          <= 1'b0;
             ex_wb_vex_sat_r         <= 1'b0;
+            ex_wb_vex_grp_w_r       <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
             ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_vex_vd_r          <= 5'd0;
@@ -1873,6 +1889,7 @@ endgenerate
             ex_wb_vcfg_we_r         <= 1'b0;
             ex_wb_vex_we_r          <= 1'b0;
             ex_wb_vex_sat_r         <= 1'b0;
+            ex_wb_vex_grp_w_r       <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
             ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_is_branch_taken_r <= 1'b0;
@@ -1928,6 +1945,8 @@ endgenerate
             ex_wb_vcfg_vtype_r      <= ex_mem_vcfg_vtype_r;
             ex_wb_vex_we_r          <= ex_mem_vex_we_r;
             ex_wb_vex_sat_r         <= ex_mem_vex_sat_r;
+            ex_wb_vex_grp_w_r       <= ex_mem_vex_grp_w_r;
+            ex_wb_vex_grp_parts_r   <= ex_mem_vex_grp_parts_r;
             ex_wb_vex_flag_r        <= ex_mem_vex_flag_r;
             ex_wb_vex_mem_r         <= ex_mem_vex_mem_r;
             ex_wb_vex_vd_r          <= ex_mem_vex_vd_r;
@@ -1969,6 +1988,7 @@ endgenerate
             ex_wb_vcfg_we_r         <= 1'b0;
             ex_wb_vex_we_r          <= 1'b0;
             ex_wb_vex_sat_r         <= 1'b0;
+            ex_wb_vex_grp_w_r       <= 1'b0;
             ex_wb_vex_flag_r        <= 1'b0;
             ex_wb_vex_mem_r         <= 1'b0;
             ex_wb_is_branch_taken_r <= 1'b0;
@@ -2009,6 +2029,7 @@ endgenerate
                              !wb_take_sync_trap && !wb_take_data_trap &&
                              !wb_take_trigger && !core_mem_stall;
     assign wb_vxsat_set   = wb_vex_we && ex_wb_vex_sat_r;
+    wire   wb_vex_grp_w   = wb_vex_we && ex_wb_vex_grp_w_r;
     assign wb_vexec_we    = ex_wb_vex_flag_r && ex_wb_valid_r && !wb_take_irq &&
                              !wb_take_sync_trap && !wb_take_data_trap &&
                              !wb_take_trigger && !core_mem_stall;

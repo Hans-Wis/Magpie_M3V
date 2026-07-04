@@ -20,7 +20,11 @@ import random
 from pathlib import Path
 
 CONFIGS = [("e8", "mf4"), ("e8", "mf2"), ("e8", "m1"),
-           ("e16", "mf2"), ("e16", "m1"), ("e32", "m1")]
+           ("e16", "mf2"), ("e16", "m1"), ("e32", "m1"),
+           # S3 (ADR-0049): register groups — vector regs must be group-aligned
+           ("e8", "m2"), ("e16", "m2"), ("e32", "m2"),
+           ("e8", "m4"), ("e16", "m4")]
+ALIGN = {"m1": 1, "m2": 2, "m4": 4, "mf2": 1, "mf4": 1, "mf8": 1}
 SCALARS = [f"x{i}" for i in range(5, 16)]   # t0..a5 pool for li/probes
 
 
@@ -40,10 +44,12 @@ def gen(seed: int, blocks: int) -> str:
         out.append(f"    li   t0, {rng.getrandbits(31)}")
         out.append(f"    sw   t0, {w*4}(x31)")
     written: set[int] = set()
-    vpool = list(range(1, 24))
 
     for _ in range(blocks):
         sew, lmul = rng.choice(CONFIGS)
+        al = ALIGN[lmul]
+        vpool = [v for v in range(1, 24) if v % al == 0] if al > 1 else list(range(1, 24))
+        written = {v for v in written if v % al == 0} if al > 1 else written
         avl = rng.choice([0, 1, 2, 3, 4, 7, 8, 15, 16, 31, 100])
         ta = rng.choice(["ta", "tu"])
         out.append(f"    li   a0, {avl}")
@@ -163,7 +169,8 @@ def gen(seed: int, blocks: int) -> str:
         # 3C: one unit-stride memory op per block (legal EEW for live config)
         sewb = {"e8": 1, "e16": 2, "e32": 4}[sew]
         lm_den = {"m1": 1, "mf2": 2, "mf4": 4, "mf8": 8}.get(lmul, 1)
-        vlmax_el = (16 // sewb) // lm_den
+        lm_mul = {"m2": 2, "m4": 4}.get(lmul, 1)
+        vlmax_el = (16 // sewb) * lm_mul // lm_den
         legal_eews = [b for b in (1, 2, 4) if vlmax_el * b <= 16]
         if legal_eews and wl:
             eewb = rng.choice(legal_eews)
