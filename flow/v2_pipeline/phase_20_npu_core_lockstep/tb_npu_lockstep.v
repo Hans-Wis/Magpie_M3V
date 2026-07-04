@@ -80,6 +80,7 @@ module tb_npu_lockstep;
 
     // ---- commit trace (same format/peek style as tb_spike_lockstep.v) ----
     integer trace_fd;
+    integer vtrace_fd;   // debug tap (ADR-0036): committed VRF writes, pc,vd,data128
     integer commit_count;
     integer watchdog;
     integer max_cycles;
@@ -95,8 +96,19 @@ module tb_npu_lockstep;
             $fatal(1);
         end
         $fdisplay(trace_fd, "idx,pc,instr,rd,wdata");
+        vtrace_fd = $fopen("dut_vrf.trace", "w");
         commit_count = 0;
         watchdog = 0;
+    end
+
+    // debug tap: log every committed VRF write (verification authority stays
+    // with the scalar commit stream + memory compares; this is for triage)
+    always @(posedge clk) begin
+        if (dut.u_npu_core.u_core.wb_vex_we)
+            $fdisplay(vtrace_fd, "%08x,%0d,%032x",
+                      dut.u_npu_core.u_core.ex_wb_pc_r,
+                      dut.u_npu_core.u_core.ex_wb_vex_vd_r,
+                      dut.u_npu_core.u_core.ex_wb_vex_wdata_r);
     end
 
     always @(posedge clk) begin

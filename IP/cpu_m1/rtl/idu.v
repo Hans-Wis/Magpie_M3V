@@ -81,6 +81,10 @@ module idu #(
 
     // RVV Stage 3A config instruction (OP-V funct3=111: vsetvli/vsetivli/vsetvl)
     output            is_vset,
+    // RVV Stage 3B: OP-V execute-class funct3s (OPIVV/OPMVV/OPIVI/OPIVX/OPMVX) —
+    // routed to vexu at EX; op-level legality is vexu's q_illegal. Float funct3s
+    // (001/101) stay unknown-opcode illegal (Zve32x has no vector FP).
+    output            is_vexec,
 
     // Exception
     output            illegal
@@ -179,6 +183,14 @@ module idu #(
     wire opv_vsetivli = is_op_v && (funct3 == 3'b111) && (instr[31:30] == 2'b11);
     wire opv_vsetvl   = is_op_v && (funct3 == 3'b111) && (instr[31:25] == 7'b1000000);
     assign is_vset = (EN_RVV != 0) && (opv_vsetvli || opv_vsetivli || opv_vsetvl);
+
+    // 3B execute-class OP-V (not funct3=111 config, not float 001/101)
+    assign is_vexec = (EN_RVV != 0) && is_op_v &&
+                      ((funct3 == 3'b000) || (funct3 == 3'b010) || (funct3 == 3'b011) ||
+                       (funct3 == 3'b100) || (funct3 == 3'b110));
+    // vmv.x.s is the only 3B vector op with a scalar rd
+    wire opv_mv_x_s = is_vexec && (funct3 == 3'b010) &&
+                      (instr[31:26] == 6'b010000) && (instr[19:15] == 5'd0) && instr[25];
 
     // -------------------------------------------------------------------------
     // Immediate mux
@@ -386,7 +398,8 @@ module idu #(
     // Write-back 控制
     // -------------------------------------------------------------------------
     assign rd_we = is_op | is_op_imm | is_lui | is_auipc
-                 | is_jal | is_jalr | is_load | is_csr | is_amo | is_vset;
+                 | is_jal | is_jalr | is_load | is_csr | is_amo | is_vset
+                 | opv_mv_x_s;
 
     always @* begin
         case (1'b1)
@@ -419,7 +432,7 @@ module idu #(
     wire known_base_opcode =
         is_lui | is_auipc | is_jal | (is_branch && branch_funct3_valid)
       | is_load | is_store | is_op_imm | is_op | is_fence | is_amo
-      | is_jalr | is_csr | is_mret | is_vset;
+      | is_jalr | is_csr | is_mret | is_vset | is_vexec;
     wire known_opcode = known_base_opcode | is_dret;
 
     assign illegal = !known_opcode | bmu_slot_illegal;   // M1A A2: reserved OP/OP-IMM-shift slots trap (Spike parity)

@@ -16,7 +16,7 @@ GCC_MABI  = ilp32
 CPU_RTL_DIR = ../../../IP/cpu_m1/rtl
 NPU_RTL_DIR = ../../../IP/npu/rtl
 CPU_SRCS = $(addprefix $(CPU_RTL_DIR)/, rfu.v alu.v bmu.v idu.v ifu.v lsu.v csr.v \
-           trigger.v pmp.v mul.v div.v forward.v hazard.v bp.v ras.v cdec.v core.v cpu_m1_top.v)
+           trigger.v pmp.v mul.v div.v forward.v hazard.v bp.v ras.v cdec.v vexu.v core.v cpu_m1_top.v)
 NPU_SRCS = $(addprefix $(NPU_RTL_DIR)/, npu_top.v npu_axil_regs.v npu_dma.v npu_tcm.v axil_decerr.v)
 TB_RTL   = ../phase_20_npu_core_lockstep/tb_npu_lockstep.v
 EXTRA_V ?=
@@ -27,7 +27,9 @@ VFLAGS = --binary --timing -j 4 --top-module tb_npu_lockstep --timescale 1ns/1ns
 
 SIM_BIN = obj_dir/Vtb_npu_lockstep
 
-.PHONY: all grid vill clean firmware.elf firmware_spike.elf firmware.hex
+.PHONY: all grid vill valu vrand clean firmware.elf firmware_spike.elf firmware.hex
+SEED ?= 20260704
+BLOCKS ?= 56
 
 all: grid
 
@@ -70,3 +72,13 @@ lockstep.log: sim.log firmware_spike.elf vcsr_lockstep.py
 clean:
 	rm -rf obj_dir sim.log firmware.elf firmware.hex firmware_spike.elf \
 	    dut_commit.trace spike.log spike_commit.trace lockstep.log lockstep_report.md
+
+valu:
+	$(MAKE) FW_ASM=firmware_valu.S MIN_COMMITS=60 lockstep.log
+
+.PHONY: firmware_vrand.S
+firmware_vrand.S: gen_vector_random.py
+	python3 gen_vector_random.py --seed $(SEED) --blocks $(BLOCKS) --out $@
+
+vrand: firmware_vrand.S
+	$(MAKE) FW_ASM=firmware_vrand.S MIN_COMMITS=800 lockstep.log

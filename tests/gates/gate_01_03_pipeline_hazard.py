@@ -66,7 +66,8 @@ def test_hazard_detects_load_use_and_muldiv_busy_stalls():
         "wire load_use_stall = id_valid && em_valid && em_is_load && em_rd_we &&",
         "(em_rd_idx != 5'd0) && load_use_match_em;",
         "wire muldiv_stall = id_valid && id_is_muldiv && md_busy;",
-        "assign stall = load_use_stall | muldiv_stall;",
+        # ADR-0036 3B: + vex_stall (RVV RAW; tied 0 in host EN_RVV=0 config)
+        "assign stall = load_use_stall | muldiv_stall | vex_stall;",
     ]:
         assert required in text
 

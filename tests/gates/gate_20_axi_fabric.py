@@ -24,7 +24,7 @@ LINT_WAIVERS = ["-Wno-DECLFILENAME", "-Wno-MULTITOP", "-Wno-UNUSEDSIGNAL"]
 CPU_M1_DIR = ROOT / "IP/cpu_m1/rtl"
 CPU_M1_RTL = [CPU_M1_DIR / f"{m}.v" for m in (
     "rfu", "alu", "bmu", "idu", "ifu", "lsu", "csr", "trigger", "pmp",
-    "mul", "div", "forward", "hazard", "bp", "ras", "cdec", "core", "cpu_m1_top")]
+    "mul", "div", "forward", "hazard", "bp", "ras", "cdec", "vexu", "core", "cpu_m1_top")]
 CPU_M1_ARGS = [f"-I{CPU_M1_DIR}", "-Wno-TIMESCALEMOD"]
 
 

@@ -51,6 +51,9 @@ module csr #(
     input             vcfg_we,
     input  [31:0]     vcfg_vl,
     input  [31:0]     vcfg_vtype,
+    // RVV Stage 3B: a vector-execute instruction committed at WB
+    // (clears vstart, sets mstatus.VS dirty — atomic with the VRF write)
+    input             vexec_we,
 
     // Counter input
     input             instr_retired,
@@ -103,10 +106,11 @@ module csr #(
     output            irq_pending,
     output [31:0]     irq_cause,        // priority-encoded interrupt mcause (MEI>MSI>MTI)
 
-    // RVV state exported for vset* EX calculation and privilege checks
+    // RVV state exported for vset*/vexu EX calculation and privilege checks
     output [ 1:0]     mstatus_vs_o,
     output [31:0]     vl_o,
     output [31:0]     vtype_o,
+    output [31:0]     vstart_o,
 
     // PMP CSRs (ADR-0024). Flattened as 8 entries so PMP_ENTRIES=0/4/8 can share ports.
     output [32*8-1:0] pmp_addr_o,
@@ -405,6 +409,12 @@ module csr #(
         end
         if ((EN_RVV != 0) && vcfg_we && (csr_raddr == `CSR_MSTATUS))
             csr_rdata = mstatus_val | 32'h8000_0000 | (32'h3 << `MSTATUS_VS_LO_BIT);
+        // 3B: same-cycle WB commit of a vector-execute op (vstart clear + VS dirty)
+        if ((EN_RVV != 0) && vexec_we) begin
+            if (csr_raddr == `CSR_VSTART) csr_rdata = 32'h0;
+            if (csr_raddr == `CSR_MSTATUS)
+                csr_rdata = mstatus_val | 32'h8000_0000 | (32'h3 << `MSTATUS_VS_LO_BIT);
+        end
     end
 
     // -------------------------------------------------------------------------
@@ -607,6 +617,10 @@ module csr #(
                 vstart_reg <= 7'h00;
                 mstatus_vs <= 2'b11;
             end
+            if ((EN_RVV != 0) && vexec_we) begin
+                vstart_reg <= 7'h00;
+                mstatus_vs <= 2'b11;
+            end
 
             // 4.4 硬體 trap entry / exit
             //     core.v 保證 trap_enter / trap_exit / csr_we 三者互斥；
@@ -652,6 +666,7 @@ module csr #(
     assign mstatus_vs_o = mstatus_vs_visible;
     assign vl_o         = (EN_RVV != 0) ? vl_reg : 32'h0;
     assign vtype_o      = (EN_RVV != 0) ? vtype_reg : 32'h8000_0000;
+    assign vstart_o     = (EN_RVV != 0) ? {25'b0, vstart_reg} : 32'h0;
     genvar pmp_g;
     generate
         for (pmp_g = 0; pmp_g < 8; pmp_g = pmp_g + 1) begin : g_pmp_flatten

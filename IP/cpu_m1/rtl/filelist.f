@@ -15,5 +15,6 @@ IP/cpu_m1/rtl/hazard.v
 IP/cpu_m1/rtl/bp.v
 IP/cpu_m1/rtl/ras.v
 IP/cpu_m1/rtl/cdec.v
+IP/cpu_m1/rtl/vexu.v
 IP/cpu_m1/rtl/core.v
 IP/cpu_m1/rtl/cpu_m1_top.v

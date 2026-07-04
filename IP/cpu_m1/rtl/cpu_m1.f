@@ -16,5 +16,6 @@ hazard.v
 bp.v
 ras.v
 cdec.v
+vexu.v
 core.v
 cpu_m1_top.v

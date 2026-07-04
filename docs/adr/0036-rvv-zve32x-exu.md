@@ -91,7 +91,7 @@ skipping the memory-region compare; host config elaborating with `EN_RVV=1`.
 
 **Gates 40/41 green.** `gate_40`: vset{i}vl{i}/vsetvl grid (SEW×LMUL incl. mf4/mf2, AVL
 boundaries, vsetivli, tail/mask bits, keep-vl x0 matrix, register-vtype form) + dense csrr
-checkpoints — 134 commits, 100% match vs Spike `rv32im_zve32x_zvl128b`. `gate_41`: vill
+checkpoints — 146 commits, 100% match vs Spike `rv32im_zve32x_zvl128b`. `gate_41`: vill
 ladder (e8mf8/e16mf4/e32mf2 fractional violations, reserved vlmul=100, e64, reserved vtype
 bits — injected via vsetvl rs2) + recovery — 51 commits matched. Host equivalence: EN_RVV=0
 default, phase_03_00 lockstep re-run pass, full suite = pre-existing failures only.
@@ -103,6 +103,32 @@ effects), giving stale reads in the EX/MEM (1-apart) and WB (same-cycle, 2-apart
 Fixed in both windows (core.v overlay + csr.v same-cycle alias forward); adjacent-pair cases
 added to the gate_40 firmware permanently. Two source-literal assertions in
 `gate_02_00` were synced to the governed mstatus/illegal-path changes.
+
+## Stage 3B result (2026-07-04) — PL-design mode trial
+
+**Gate_42 green** (directed 69/69 + mixed random 819/819 commits vs Spike); gates 40/41 and
+the full suite re-green (host EN_RVV=0 lockstep unchanged; one hazard.v source-literal gate
+synced). Implementation BY THE PL (mode trial per User 2026-07-04): `vexu.v` (VRF 32x128b,
+combinational EX compute, WB-commit with scalar-rd kill rules so trap/IRQ replay never sees
+partial VRF state), conservative RAW stall (<=2 bubbles, 128b forwarding = recorded perf
+debt), effective-config forwarding at EX (incl. the **3A latent fix**: vset-in-flight at
+EX/WB was not forwarded to a vset/vop at EX), csr/core vstart+VS read-forward windows,
+COMMIT_RE extended for Spike RVV commit lines (backward compatible), VRF debug tap.
+
+**Spike-matched semantics DISCOVERED by lockstep (contract corrections):**
+1. **Arithmetic with vstart!=0 traps illegal** — Spike's spec-allowed choice; the plan's
+   earlier claim ("not illegal", Grok) was wrong. Scoped to the arithmetic subset; 3C
+   loads/stores stay resumable (Grok re-review confirms scoping is the 3C blocker to watch).
+2. **Tail policy = UNDISTURBED regardless of vta** — this Spike build implements
+   tail-agnostic as undisturbed, not all-1s. Recorded as the ISA-profile choice; directed
+   tail case + clang-emission check before Phase 3 exit (parity guard).
+
+**Review round (new labor model):** Codex surgical review found **one real bug** the random
+corpus missed — masked (vm=0) vadd/vsub was accepted and executed unmasked; fixed
+(q_illegal now rejects it; masked forms other than vmerge = recorded 3B deferral). Grok
+architecture review: approve; flags adopted as stage gates — LMUL>1 needed only post-kernel
+(kernel widening path is fractional-only), LSU assemble buffer lives MEM-side not VRF (3C),
+128b forwarding before 3D perf claims, tail-profile doc+test before exit.
 
 ## Labor division (§5)
 

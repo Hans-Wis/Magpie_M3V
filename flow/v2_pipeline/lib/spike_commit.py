@@ -11,9 +11,13 @@ from pathlib import Path
 Commit = dict[str, int]
 TrapEvent = dict[str, tuple[int, int]]
 
+# The scalar x-write may be preceded by vector-status tokens on RVV commit lines
+# (e.g. "e32 m1 l4 v3 0x<128b> c8_vstart 0x0 x30 0x1239" for vmv.x.s) — skip any
+# token that does not begin the x-write. Plain scalar lines skip zero tokens, so
+# the historical format parses identically (ADR-0036 3B).
 COMMIT_RE = re.compile(
     r"core\s+0:\s+3\s+0x(?P<pc>[0-9a-f]+)\s+\(0x(?P<instr>[0-9a-f]+)\)"
-    r"(?:\s+x\s*(?P<rd>\d+)\s+0x(?P<wdata>[0-9a-f]+))?"
+    r"(?:(?:\s+(?!x\s*\d)\S+)*\s+x\s*(?P<rd>\d+)\s+0x(?P<wdata>[0-9a-f]+))?"
 )
 
 

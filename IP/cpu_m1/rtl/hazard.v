@@ -38,6 +38,10 @@ module hazard (
     // M-unit 狀態
     input         md_busy,
 
+    // RVV 3B: vector op at EX must wait out an in-flight VRF commit (core.v
+    // computes the condition; tied 0 when EN_RVV=0 — host behavior unchanged)
+    input         vex_stall,
+
     output        stall,
     // M1A A1: the producer-in-MEM-not-ready RAW component alone — core.v gates the DIV
     // M-unit operand capture (md_start) on this, so a div never latches a stale operand
@@ -60,7 +64,7 @@ module hazard (
     // ---- Muldiv ----
     wire muldiv_stall = id_valid && id_is_muldiv && md_busy;
 
-    assign stall = load_use_stall | muldiv_stall;
+    assign stall = load_use_stall | muldiv_stall | vex_stall;
     assign operand_stall = load_use_stall;
 
 endmodule
