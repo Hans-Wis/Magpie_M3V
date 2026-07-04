@@ -2,7 +2,7 @@ OUTPUT_ARCH("riscv")
 ENTRY(_start)
 MEMORY
 {
-  ram (rwx) : ORIGIN = 0x80000000, LENGTH = 4K
+  ram (rwx) : ORIGIN = 0x80000000, LENGTH = 8K
 }
 SECTIONS
 {

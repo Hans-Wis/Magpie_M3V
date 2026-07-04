@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ADR-0036 gate_42 — mixed vector/scalar random generator (Stage 3B subset).
+"""ADR-0036/0049 — mixed vector/scalar random generator (3B+3C+S1 subset).
 
 Constraints (the honest envelope of what 3B implements):
 - configs: legal SEW x LMUL with LMUL in {m1, mf2, mf4} only (m2+ = deferred-illegal)
@@ -82,12 +82,60 @@ def gen(seed: int, blocks: int) -> str:
                 out.append(f"    vmv.v.i v0, {rng.randint(-16, 15)}")
                 vd = rng.choice([v for v in vpool if v != 0])
                 out.append(f"    vmerge.vvm v{vd}, v{rng.choice(wl)}, v{rng.choice(wl)}, v0")
-            else:
+            elif kind < 0.94:
                 sr = rng.choice(SCALARS)
                 out.append(f"    li   {sr}, {rng.randint(-2048, 2047)}")
                 out.append(f"    vsub.vx v{vd}, v{rng.choice(wl)}, {sr}")
+            else:
+                out.append(f"    vmv.v.v v{vd}, v{rng.choice(wl)}")
             written.add(vd)
             wl = sorted(written)
+
+        # ---- S1 (ADR-0049): mask pipeline — compare -> logical -> masked arith
+        # + min/max; corners: vl in {0,1,VLMAX}, alternating/all-0/all-1 masks,
+        # signed edges (Grok DV list)
+        if wl:
+            cmp_op = rng.choice(["vmseq.vv", "vmsne.vv", "vmslt.vv", "vmsltu.vv",
+                                 "vmsle.vv", "vmsleu.vv"])
+            out.append(f"    {cmp_op} v0, v{rng.choice(wl)}, v{rng.choice(wl)}")
+            if rng.random() < 0.5:
+                cmp2 = rng.choice(["vmsgt.vx", "vmsgtu.vx", "vmseq.vi", "vmsne.vi"])
+                vtmp = rng.choice([v for v in vpool if v != 0])
+                if cmp2.endswith(".vx"):
+                    sr = rng.choice(SCALARS)
+                    edge = rng.choice([-1, 0, 127, -128, rng.randint(-2048, 2047)])
+                    out.append(f"    li   {sr}, {edge}")
+                    out.append(f"    {cmp2[:-3]}.vx v{vtmp}, v{rng.choice(wl)}, {sr}")
+                else:
+                    out.append(f"    {cmp2[:-3]}.vi v{vtmp}, v{rng.choice(wl)}, {rng.randint(-16, 15)}")
+                mlog = rng.choice(["vmand.mm", "vmor.mm", "vmxor.mm", "vmnand.mm",
+                                   "vmnor.mm", "vmxnor.mm", "vmandn.mm", "vmorn.mm"])
+                out.append(f"    {mlog} v0, v0, v{vtmp}")
+                written.add(vtmp)
+            # masked arithmetic under the freshly built v0
+            vd2 = rng.choice([v for v in vpool if v != 0])
+            marith = rng.choice([
+                f"vadd.vv v{vd2}, v{rng.choice(wl)}, v{rng.choice(wl)}, v0.t",
+                f"vsub.vv v{vd2}, v{rng.choice(wl)}, v{rng.choice(wl)}, v0.t",
+                f"vadd.vi v{vd2}, v{rng.choice(wl)}, {rng.randint(-16, 15)}, v0.t",
+                f"vmax.vv v{vd2}, v{rng.choice(wl)}, v{rng.choice(wl)}, v0.t",
+                f"vmin.vv v{vd2}, v{rng.choice(wl)}, v{rng.choice(wl)}, v0.t",
+            ])
+            out.append(f"    {marith}")
+            written.add(vd2)
+            # unmasked min/max (max pool shape)
+            vd3 = rng.choice(vpool)
+            mm = rng.choice(["vmax.vv", "vmaxu.vv", "vmin.vv", "vminu.vv",
+                             "vmax.vx", "vminu.vx"])
+            if mm.endswith(".vx"):
+                sr = rng.choice(SCALARS)
+                out.append(f"    li   {sr}, {rng.choice([-1, 0, 1, 127, -128])}")
+                out.append(f"    {mm[:-3]}.vx v{vd3}, v{rng.choice(wl)}, {sr}")
+            else:
+                out.append(f"    {mm[:-3]}.vv v{vd3}, v{rng.choice(wl)}, v{rng.choice(wl)}")
+            written.add(vd3)
+            wl = sorted(written)
+            out.append(f"    vmv.x.s {rng.choice(SCALARS)}, v0")   # mask reg probe
 
         # 3C: one unit-stride memory op per block (legal EEW for live config)
         sewb = {"e8": 1, "e16": 2, "e32": 4}[sew]

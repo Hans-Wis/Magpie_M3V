@@ -94,6 +94,25 @@ module vexu #(
     wire op_mvsx  = is_opmvx && (f6 == 6'b010000) && (vs2_i == 5'd0) && vm; // vmv.s.x
     wire op_widen = op_wmul || op_waddw;
 
+    // ---------------- S1 (ADR-0049): min/max, compares, mask logicals ----------------
+    wire op_minu  = (f6 == 6'b000100) && (is_opivv || is_opivx);
+    wire op_min   = (f6 == 6'b000101) && (is_opivv || is_opivx);
+    wire op_maxu  = (f6 == 6'b000110) && (is_opivv || is_opivx);
+    wire op_max   = (f6 == 6'b000111) && (is_opivv || is_opivx);
+    wire op_mm    = op_minu || op_min || op_maxu || op_max;
+
+    // integer compares -> ONE BIT per element into a mask register
+    wire f6_cmp   = (f6[5:3] == 3'b011) && (is_opivv || is_opivx || is_opivi);
+    wire cmp_form_ok =
+        (f6[2:0] == 3'b000 || f6[2:0] == 3'b001) ? 1'b1 :                 // vmseq/vmsne
+        (f6[2:0] == 3'b010 || f6[2:0] == 3'b011) ? (is_opivv || is_opivx) : // vmslt[u]
+        (f6[2:0] == 3'b100 || f6[2:0] == 3'b101) ? 1'b1 :                 // vmsle[u]
+                                                   (is_opivx || is_opivi); // vmsgt[u]
+    wire op_cmp   = f6_cmp && cmp_form_ok;
+
+    // mask-register logicals (bits 0..vl-1); vm bit is 1 in the encoding
+    wire op_mlog  = is_opmvv && (f6[5:3] == 3'b011) && vm;
+
     // ---------------- config legality ----------------
     wire        vill  = q_vtype[31];
     wire [2:0]  vlmul = q_vtype[2:0];
@@ -138,7 +157,8 @@ module vexu #(
                           (op_wmul && (vd_i == vs2_i)));
 
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
-                    op_wmul || op_waddw || op_redsum || op_mvsx;
+                    op_wmul || op_waddw || op_redsum || op_mvsx ||
+                    op_mm || op_cmp || op_mlog;
     // vstart!=0 on arithmetic = illegal (spec-allowed choice; MATCHES SPIKE —
     // caught by gate_42 lockstep: Spike trapped where the RTL executed).
     // Loads/stores are resumable: vstart is honored (start element), not illegal.
@@ -147,9 +167,12 @@ module vexu #(
                         (!known_op ||
                          (q_vstart != 32'h0) ||
                          widen_illegal ||
-                         ((op_add || op_sub) && !vm) ||   // masked add/sub = 3B deferral
                          (op_mv && (vs2_i != 5'd0)) ||
-                         (op_merge && (vd_i == 5'd0)))));
+                         (op_merge && (vd_i == 5'd0)) ||
+                         // S1 (Codex, Spike-confirmed): a MASKED body op may not
+                         // write v0 (dest overlaps the mask); mask-DEST compares
+                         // targeting v0 remain legal.
+                         ((op_add || op_sub || op_mm) && !vm && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------
     reg [127:0] vrf [0:31];
@@ -175,34 +198,99 @@ module vexu #(
             wire [7:0] a = vs2_data[gi*8 +: 8];
             wire [7:0] b = is_opivv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
             wire       m = v0_data[gi];
+            wire signed [7:0] as = a, bs = b;
             wire [7:0] r = op_add   ? (a + b) :
                            op_sub   ? (a - b) :
+                           op_min   ? ((as < bs) ? a : b) :
+                           op_minu  ? ((a < b)  ? a : b) :
+                           op_max   ? ((as > bs) ? a : b) :
+                           op_maxu  ? ((a > b)  ? a : b) :
                            op_merge ? (m ? b : a) :
                                       b;                   // vmv.v.*
-            wire active = (gi >= q_vstart) && (gi < q_vl);
+            wire active = (gi >= q_vstart) && (gi < q_vl) &&
+                          (op_merge || vm || m);           // S1: masked-off = undisturbed
             assign res8[gi*8 +: 8] = active ? r : vd_old[gi*8 +: 8];
         end
         for (gi = 0; gi < 8; gi = gi + 1) begin : g_sew16
             wire [15:0] a = vs2_data[gi*16 +: 16];
             wire [15:0] b = is_opivv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
             wire        m = v0_data[gi];
+            wire signed [15:0] as = a, bs = b;
             wire [15:0] r = op_add   ? (a + b) :
                             op_sub   ? (a - b) :
+                            op_min   ? ((as < bs) ? a : b) :
+                            op_minu  ? ((a < b)  ? a : b) :
+                            op_max   ? ((as > bs) ? a : b) :
+                            op_maxu  ? ((a > b)  ? a : b) :
                             op_merge ? (m ? b : a) :
                                        b;
-            wire active = (gi >= q_vstart) && (gi < q_vl);
+            wire active = (gi >= q_vstart) && (gi < q_vl) &&
+                          (op_merge || vm || m);
             assign res16[gi*16 +: 16] = active ? r : vd_old[gi*16 +: 16];
         end
         for (gi = 0; gi < 4; gi = gi + 1) begin : g_sew32
             wire [31:0] a = vs2_data[gi*32 +: 32];
             wire [31:0] b = is_opivv ? vs1_data[gi*32 +: 32] : scalar_b;
             wire        m = v0_data[gi];
+            wire signed [31:0] as = a, bs = b;
             wire [31:0] r = op_add   ? (a + b) :
                             op_sub   ? (a - b) :
+                            op_min   ? ((as < bs) ? a : b) :
+                            op_minu  ? ((a < b)  ? a : b) :
+                            op_max   ? ((as > bs) ? a : b) :
+                            op_maxu  ? ((a > b)  ? a : b) :
                             op_merge ? (m ? b : a) :
                                        b;
-            wire active = (gi >= q_vstart) && (gi < q_vl);
+            wire active = (gi >= q_vstart) && (gi < q_vl) &&
+                          (op_merge || vm || m);
             assign res32[gi*32 +: 32] = active ? r : vd_old[gi*32 +: 32];
+        end
+
+        // ---- S1: compares -> mask bits (per SEW element count) ----
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_cmp8
+            wire [7:0] a = vs2_data[gi*8 +: 8];
+            wire [7:0] b = is_opivv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
+            wire signed [7:0] as = a, bs = b;
+            wire c = (f6[2:0] == 3'b000) ? (a == b)  :
+                     (f6[2:0] == 3'b001) ? (a != b)  :
+                     (f6[2:0] == 3'b010) ? (a < b)   :
+                     (f6[2:0] == 3'b011) ? (as < bs) :
+                     (f6[2:0] == 3'b100) ? (a <= b)  :
+                     (f6[2:0] == 3'b101) ? (as <= bs):
+                     (f6[2:0] == 3'b110) ? (a > b)   :
+                                           (as > bs);
+            wire en = (gi < q_vl) && (vm || v0_data[gi]);
+            assign cmp_bits8[gi] = en ? c : vd_old[gi];
+        end
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_cmp16
+            wire [15:0] a = vs2_data[gi*16 +: 16];
+            wire [15:0] b = is_opivv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
+            wire signed [15:0] as = a, bs = b;
+            wire c = (f6[2:0] == 3'b000) ? (a == b)  :
+                     (f6[2:0] == 3'b001) ? (a != b)  :
+                     (f6[2:0] == 3'b010) ? (a < b)   :
+                     (f6[2:0] == 3'b011) ? (as < bs) :
+                     (f6[2:0] == 3'b100) ? (a <= b)  :
+                     (f6[2:0] == 3'b101) ? (as <= bs):
+                     (f6[2:0] == 3'b110) ? (a > b)   :
+                                           (as > bs);
+            wire en = (gi < q_vl) && (vm || v0_data[gi]);
+            assign cmp_bits16[gi] = en ? c : vd_old[gi];
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_cmp32
+            wire [31:0] a = vs2_data[gi*32 +: 32];
+            wire [31:0] b = is_opivv ? vs1_data[gi*32 +: 32] : scalar_b;
+            wire signed [31:0] as = a, bs = b;
+            wire c = (f6[2:0] == 3'b000) ? (a == b)  :
+                     (f6[2:0] == 3'b001) ? (a != b)  :
+                     (f6[2:0] == 3'b010) ? (a < b)   :
+                     (f6[2:0] == 3'b011) ? (as < bs) :
+                     (f6[2:0] == 3'b100) ? (a <= b)  :
+                     (f6[2:0] == 3'b101) ? (as <= bs):
+                     (f6[2:0] == 3'b110) ? (a > b)   :
+                                           (as > bs);
+            wire en = (gi < q_vl) && (vm || v0_data[gi]);
+            assign cmp_bits32[gi] = en ? c : vd_old[gi];
         end
     endgenerate
 
@@ -327,7 +415,32 @@ module vexu #(
                           (vsew == 3'b001) ? {vd_old[127:16], q_rs1[15:0]} :
                                              {vd_old[127:32], q_rs1[31:0]};
 
+    // ---- S1 result assembly: compares + mask logicals ----
+    wire [15:0] cmp_bits8;
+    wire [7:0]  cmp_bits16;
+    wire [3:0]  cmp_bits32;
+    wire [127:0] res_cmp = (vsew == 3'b000) ? {vd_old[127:16], cmp_bits8}  :
+                           (vsew == 3'b001) ? {vd_old[127:8],  cmp_bits16} :
+                                              {vd_old[127:4],  cmp_bits32};
+    wire [127:0] mlog_full =
+        (f6[2:0] == 3'b000) ?  (vs2_data & ~vs1_data) :   // vmandn
+        (f6[2:0] == 3'b001) ?  (vs2_data &  vs1_data) :   // vmand
+        (f6[2:0] == 3'b010) ?  (vs2_data |  vs1_data) :   // vmor
+        (f6[2:0] == 3'b011) ?  (vs2_data ^  vs1_data) :   // vmxor
+        (f6[2:0] == 3'b100) ?  (vs2_data | ~vs1_data) :   // vmorn
+        (f6[2:0] == 3'b101) ? ~(vs2_data &  vs1_data) :   // vmnand
+        (f6[2:0] == 3'b110) ? ~(vs2_data |  vs1_data) :   // vmnor
+                              ~(vs2_data ^  vs1_data);    // vmxnor
+    wire [127:0] res_mlog;
+    generate
+        for (gi = 0; gi < 128; gi = gi + 1) begin : g_mlog
+            assign res_mlog[gi] = (gi < q_vl) ? mlog_full[gi] : vd_old[gi];
+        end
+    endgenerate
+
     assign q_wdata = is_vmem ? vm_buf :
+                     op_cmp  ? res_cmp :
+                     op_mlog ? res_mlog :
                      op_widen ? ((vsew == 3'b000) ? res_w8 : res_w16) :
                      op_redsum ? res_red :
                      op_mvsx ? res_sx :

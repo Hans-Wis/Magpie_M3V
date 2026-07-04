@@ -27,7 +27,7 @@ VFLAGS = --binary --timing -j 4 --top-module tb_npu_lockstep --timescale 1ns/1ns
 
 SIM_BIN = obj_dir/Vtb_npu_lockstep
 
-.PHONY: all grid vill valu vrand vmem vwide clean firmware.elf firmware_spike.elf firmware.hex
+.PHONY: all grid vill valu vrand vmem vwide s1 clean firmware.elf firmware_spike.elf firmware.hex
 SEED ?= 20260704
 BLOCKS ?= 44
 
@@ -75,6 +75,9 @@ clean:
 
 valu:
 	$(MAKE) FW_ASM=firmware_valu.S MIN_COMMITS=60 lockstep.log
+
+s1:
+	$(MAKE) FW_ASM=firmware_s1.S MIN_COMMITS=80 lockstep.log
 
 .PHONY: firmware_vrand.S
 firmware_vrand.S: gen_vector_random.py
