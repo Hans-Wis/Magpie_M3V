@@ -111,7 +111,32 @@ directed+random → commit。**逐子片把關,B1 證完才進 B2**(同 Phase-A 
     成長的 m2/m4 需 multi-beat,同既有 widening/narrowing ≤m1 限制,列 roadmap)②**`vle32@e32/mf2`
     (vlmax=2)DUT trap 為 illegal**——Grok/Gemini 皆判與 B2 無關的 latent vsetvli/vmem fractional-
     LMUL 議題,待與 Spike 並跑確認(可能真 bug)。
-- **B3 __/ B4 __**（續）。
+- **B3 完成(2026-07-05)= carry/borrow(vadc/vsbc/vmadc/vmsbc)**:
+  - **Grok spec 存 `docs/reviews/2026-07-05_phase_b3_carry_spec_grok.md`**(§1-§7:encoding/datapath/
+    active-policy/legality/beats_op/hookup/golden),照它實作。
+  - **arithmetic 路(vadc/vsbc → 向量 vd)**:併入 per-SEW `r` ternary(`op_adc:a+b+m` /
+    `op_sbc:a-b-m`,m=`v0_view[gi]`=carry-in 1 位);`op_adcsbc` 加進 `active`(force-active,
+    v0 是 carry **操作元非 predicate**,同 vmerge 精神,全 body element 都算/寫);加進 `beats_op`
+    → m2/m4 群組經既有 part_res/grp_stage 自動多拍。
+  - **mask 路(vmadc/vmsbc → mask vd)**:新增 g_madc8/16/32 產 SEW+1 寬 carry/borrow-out
+    (`sum[SEW]`=carry、`dif[SEW]`=borrow=`a<b+bin` 無號,**非** signed underflow);cin=`vm?0:v0[i]`。
+    以 `mask_dest = op_cmp || op_madcb` **泛化既有 compare mask-write 路**(res_cmp/cmp_seg/
+    grp_mask_acc/grp_cmp_res/q_grp_w/grp_align 全改用 mask_dest)→ 複用 compare 的單暫存器目標 +
+    m2/m4 mask 累積,零新 FSM。
+  - **legality(spec §4 完整)**:`op_adcsbc && (vm||vd==0)` 非法(vm=1 保留非法;vd==0 撞 carry
+    源 v0);`op_madcb && !vm && vd==0` 非法(僅 carry-in 形讀 v0 才撞,vm=1 寫 mask 到 v0 合法);
+    vsbc/vmsbc decode 排除 is_opivi → 無立即數形自動非法;vstart≠0 沿用全域 known_op 規則。
+    f6 010010(vsbc)與 OPMVV vzext/vsext 靠 f3 分離(disjoint)。
+  - **Spike lockstep `--isa=rv32imf_zve32x_zvl128b` 178 commits 全符**:firmware_b3.S 覆蓋
+    e8/e16/e32×m1 全形式(vvm/vxm/vim/vv/vx/vi)+ carry/borrow 邊界(a+b+cin=2^SEW、a<b+bin)+
+    vmadc/vmsbc 兩形(vm=0 vd≠0 / vm=1 vd==v0 合法)+ **e8/m2 群組 smoke**(splat 源 + self-compare
+    carry mask,驗 beats_op 群組路);terminator = `vadc.vvm v0,..`(vd==0)DUT+Spike 同點 trap。
+  - **回歸全綠**:b1/b2/s1/s2/s3/grid/vill/vrand(**1324 commits**)+ NPU 子系統無回歸。
+  - **三方 review**:Grok spec(arch)+ lockstep(authority)+ **Gemini 全上下文一致性 review 判
+    completely clean**(legality matrix / SEW+1 carry-borrow / f3 disjoint / mask multi-beat 四維皆
+    conformant,無 gap)。有別 B1/B2 各被抓一 legality gap,B3 從 spec 一次到位(主動套用 masked-vd0
+    教訓 + Grok spec 已含完整 §4 matrix)。
+- **B4 __**（whole-register move,續)。
 
 ## 附:Grok 架構複核(2026-07-05,全文歸檔 docs/reviews/2026-07-05_phase_b_encoding_grok.md)
 

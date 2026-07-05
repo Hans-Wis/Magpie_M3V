@@ -169,6 +169,22 @@ module vexu #(
                     ((ext_vf2 && ((vsew == 3'b001) || (vsew == 3'b010))) ||
                      (ext_vf4 &&  (vsew == 3'b010)));
 
+    // ---------------- Phase-B B3 (ADR-0055): carry/borrow ----------------
+    // vadc/vsbc  -> vector vd  = a +/- b +/- carry(v0[i]); v0 is a carry OPERAND
+    //               (NOT a predicate), so body is force-active; vm=1 illegal.
+    // vmadc/vmsbc -> mask  vd  = carry/borrow-OUT bit; vm selects carry-in presence.
+    // OPI* f6 space. vsbc's f6=010010 aliases OPMVV ext_enc (vzext/vsext) but is
+    // disjoint by f3 (OPIVV/X here vs OPMVV there). vstart!=0 caught globally.
+    // vsbc/vmsbc have NO OPIVI form (subtract-with-borrow has no imm encoding).
+    wire op_adc   = (f6 == 6'b010000) && (is_opivv || is_opivx || is_opivi);
+    wire op_madc  = (f6 == 6'b010001) && (is_opivv || is_opivx || is_opivi);
+    wire op_sbc   = (f6 == 6'b010010) && (is_opivv || is_opivx);
+    wire op_msbc  = (f6 == 6'b010011) && (is_opivv || is_opivx);
+    wire op_adcsbc = op_adc  || op_sbc;    // vector-dest carry add/sub (beats_op class)
+    wire op_madcb  = op_madc || op_msbc;   // mask-dest carry/borrow-out (op_cmp class)
+    // unified mask-dest predicate: single-register dest, group-source, WB writes one reg
+    wire mask_dest = op_cmp || op_madcb;
+
     // ---------------- config legality ----------------
     wire        vill  = q_vtype[31];
     wire [2:0]  vlmul = q_vtype[2:0];
@@ -187,8 +203,8 @@ module vexu #(
     wire is_vmem   = (EN_RVV != 0) && (is_vload || is_vstore);
     assign q_is_mem = q_valid && is_vmem;
     assign q_is_grp = q_valid && is_grp && !q_illegal;    // hold/beats (incl. cmp)
-    // WB group WRITE excludes mask-dest compares (single-register dest)
-    assign q_grp_w  = q_valid && is_grp && !op_cmp && !q_illegal;
+    // WB group WRITE excludes mask-dest ops (compares + vmadc/vmsbc: single-reg dest)
+    assign q_grp_w  = q_valid && is_grp && !mask_dest && !q_illegal;
     assign q_grp_parts = grp_parts;
     // width field: 000=EEW8, 101=EEW16, 110=EEW32 (010 = scalar FLW/FSW: no F -> illegal)
     wire [1:0] eew_sel = (f3 == 3'b000) ? 2'd0 :
@@ -234,12 +250,12 @@ module vexu #(
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
                     op_wmul || op_waddw || op_redsum || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
-                    op_nsr || op_vext;
+                    op_nsr || op_vext || op_adcsbc || op_madcb;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
     wire beats_op  = op_add || op_sub || op_mv || op_merge || op_mm ||
-                     op_s2same || op_cmp || op_b1;
+                     op_s2same || op_cmp || op_b1 || op_adcsbc || op_madcb;
     // NOTE: memory opcodes alias the f6-based arith decodes (every other use
     // site is guarded by an is_vmem priority mux) — exclude them here too.
     wire is_grp    = (grp_parts != 3'd1) && beats_op && !is_vmem;
@@ -249,7 +265,7 @@ module vexu #(
     // register-group alignment (vd for writes except mask-dest; sources)
     wire [4:0] grp_amask = lmul_m4 ? 5'd3 : lmul_m2 ? 5'd1 : 5'd0;
     wire grp_align_illegal = is_grp &&
-        ((!op_cmp && ((vd_i & grp_amask[4:0]) != 5'd0)) ||
+        ((!mask_dest && ((vd_i & grp_amask[4:0]) != 5'd0)) ||
          ((vs2_i & grp_amask) != 5'd0) ||
          // .vv source includes OPMVV vector-vector forms (vaadd family) —
          // Codex S3 finding: is_opivv alone missed them
@@ -271,6 +287,12 @@ module vexu #(
                          // write v0 (dest overlaps the mask); mask-DEST compares
                          // targeting v0 remain legal.
                          nc_illegal || grp_only_illegal || grp_align_illegal ||
+                         // B3: vadc/vsbc read v0 as carry => vm=1 illegal, vd==0
+                         // always illegal (dest would overlap carry operand v0).
+                         (op_adcsbc && (vm || (vd_i == 5'd0))) ||
+                         // B3: vmadc/vmsbc write mask; with vm=0 they also READ v0
+                         // as carry-in, so vd==0 illegal only in that carry-in form.
+                         (op_madcb && !vm && (vd_i == 5'd0)) ||
                          ((op_add || op_sub || op_mm || op_s2same || op_nc ||
                            op_b1 || op_nsr || op_vext) &&
                           !vm && (vd_i == 5'd0)))));
@@ -334,6 +356,8 @@ module vexu #(
             wire signed [7:0] sra_r = as >>> b[2:0];   // self-determined signed -> arithmetic
             wire [7:0] r = op_add   ? (a + b) :
                            op_sub   ? (a - b) :
+                           op_adc   ? (a + b + {7'b0, m}) : // B3: vadc, carry-in v0[i]
+                           op_sbc   ? (a - b - {7'b0, m}) : // B3: vsbc, borrow-in v0[i]
                            op_rsub  ? (b - a) :             // B1: vrsub
                            op_and   ? (a & b) :
                            op_or    ? (a | b) :
@@ -348,7 +372,7 @@ module vexu #(
                            op_merge ? (m ? b : a) :
                                       b;                   // vmv.v.*
             wire active = (gi >= vst_view) && (gi < vl_view) &&
-                          (op_merge || vm || m);           // S1: masked-off = undisturbed
+                          (op_merge || op_adcsbc || vm || m); // S1 masked-off=undist; B3 v0=carry not mask
             assign res8[gi*8 +: 8] = active ? r : vd_old[gi*8 +: 8];
         end
         for (gi = 0; gi < 8; gi = gi + 1) begin : g_sew16
@@ -359,6 +383,8 @@ module vexu #(
             wire signed [15:0] sra_r = as >>> b[3:0];
             wire [15:0] r = op_add   ? (a + b) :
                             op_sub   ? (a - b) :
+                            op_adc   ? (a + b + {15'b0, m}) : // B3: vadc
+                            op_sbc   ? (a - b - {15'b0, m}) : // B3: vsbc
                             op_rsub  ? (b - a) :
                             op_and   ? (a & b) :
                             op_or    ? (a | b) :
@@ -373,7 +399,7 @@ module vexu #(
                             op_merge ? (m ? b : a) :
                                        b;
             wire active = (gi >= vst_view) && (gi < vl_view) &&
-                          (op_merge || vm || m);
+                          (op_merge || op_adcsbc || vm || m); // B3: v0=carry, force active
             assign res16[gi*16 +: 16] = active ? r : vd_old[gi*16 +: 16];
         end
         for (gi = 0; gi < 4; gi = gi + 1) begin : g_sew32
@@ -384,6 +410,8 @@ module vexu #(
             wire signed [31:0] sra_r = as >>> b[4:0];
             wire [31:0] r = op_add   ? (a + b) :
                             op_sub   ? (a - b) :
+                            op_adc   ? (a + b + {31'b0, m}) : // B3: vadc
+                            op_sbc   ? (a - b - {31'b0, m}) : // B3: vsbc
                             op_rsub  ? (b - a) :
                             op_and   ? (a & b) :
                             op_or    ? (a | b) :
@@ -398,7 +426,7 @@ module vexu #(
                             op_merge ? (m ? b : a) :
                                        b;
             wire active = (gi >= vst_view) && (gi < vl_view) &&
-                          (op_merge || vm || m);
+                          (op_merge || op_adcsbc || vm || m); // B3: v0=carry, force active
             assign res32[gi*32 +: 32] = active ? r : vd_old[gi*32 +: 32];
         end
 
@@ -447,6 +475,37 @@ module vexu #(
                                            (as > bs);
             wire en = (gi < vl_view) && (vm || v0_view[gi]);
             assign cmp_bits32[gi] = en ? c : cmpd_view[gi];
+        end
+
+        // ---- B3: vmadc/vmsbc carry/borrow-OUT -> mask bits (SEW+1 wide) ----
+        // cin = 0 when vm=1 (no carry-in form), else v0[i]. Unsigned only:
+        // vmadc bit = carry-out of (a+b+cin); vmsbc bit = borrow = (a < b+bin).
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_madc8
+            wire [7:0] a = vs2_data[gi*8 +: 8];
+            wire [7:0] b = is_opivv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
+            wire       cin = vm ? 1'b0 : v0_view[gi];
+            wire [8:0] sum = {1'b0, a} + {1'b0, b} + {8'b0, cin};
+            wire [8:0] dif = {1'b0, a} - {1'b0, b} - {8'b0, cin};
+            wire       c   = op_msbc ? dif[8] : sum[8];
+            assign madc_bits8[gi] = (gi < vl_view) ? c : cmpd_view[gi];
+        end
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_madc16
+            wire [15:0] a = vs2_data[gi*16 +: 16];
+            wire [15:0] b = is_opivv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
+            wire        cin = vm ? 1'b0 : v0_view[gi];
+            wire [16:0] sum = {1'b0, a} + {1'b0, b} + {16'b0, cin};
+            wire [16:0] dif = {1'b0, a} - {1'b0, b} - {16'b0, cin};
+            wire        c   = op_msbc ? dif[16] : sum[16];
+            assign madc_bits16[gi] = (gi < vl_view) ? c : cmpd_view[gi];
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_madc32
+            wire [31:0] a = vs2_data[gi*32 +: 32];
+            wire [31:0] b = is_opivv ? vs1_data[gi*32 +: 32] : scalar_b;
+            wire        cin = vm ? 1'b0 : v0_view[gi];
+            wire [32:0] sum = {1'b0, a} + {1'b0, b} + {32'b0, cin};
+            wire [32:0] dif = {1'b0, a} - {1'b0, b} - {32'b0, cin};
+            wire        c   = op_msbc ? dif[32] : sum[32];
+            assign madc_bits32[gi] = (gi < vl_view) ? c : cmpd_view[gi];
         end
     endgenerate
 
@@ -512,7 +571,7 @@ module vexu #(
                 VM_GRP: begin
                     grp_stage[grp_p] <= part_res;
                     grp_sat_q <= grp_sat_q | part_sat_or;
-                    if (op_cmp)
+                    if (mask_dest)
                         grp_mask_acc <= (grp_mask_acc & ~(mask_nl << elem_base)) |
                                         ({112'b0, cmp_seg} << elem_base);
                     if ({1'b0, grp_p} + 3'd1 == grp_parts) begin
@@ -842,9 +901,9 @@ module vexu #(
     wire [127:0] part_res = op_s2same ? res_s2 :
                             (vsew == 3'b000) ? res8 :
                             (vsew == 3'b001) ? res16 : res32;
-    wire [15:0] cmp_seg  = (vsew == 3'b000) ? cmp_bits8 :
-                           (vsew == 3'b001) ? {8'b0, cmp_bits16} :
-                                              {12'b0, cmp_bits32};
+    wire [15:0] cmp_seg  = (vsew == 3'b000) ? seg8 :
+                           (vsew == 3'b001) ? {8'b0, seg16} :
+                                              {12'b0, seg32};
     wire [127:0] mask_nl = (vsew == 3'b000) ? 128'hFFFF :
                            (vsew == 3'b001) ? 128'hFF : 128'hF;
     // group compare: bits < vl from the accumulator, tail from the dest reg
@@ -855,9 +914,17 @@ module vexu #(
     wire [15:0] cmp_bits8;
     wire [7:0]  cmp_bits16;
     wire [3:0]  cmp_bits32;
-    wire [127:0] res_cmp = (vsew == 3'b000) ? {cmpd_old[127:16], cmp_bits8}  :
-                           (vsew == 3'b001) ? {cmpd_old[127:8],  cmp_bits16} :
-                                              {cmpd_old[127:4],  cmp_bits32};
+    wire [15:0] madc_bits8;
+    wire [7:0]  madc_bits16;
+    wire [3:0]  madc_bits32;
+    // B3: vmadc/vmsbc reuse the compare mask-write path (res_cmp / cmp_seg /
+    // grp_mask_acc) — pick the carry/borrow bits when op_madcb.
+    wire [15:0] seg8  = op_madcb ? madc_bits8  : cmp_bits8;
+    wire [7:0]  seg16 = op_madcb ? madc_bits16 : cmp_bits16;
+    wire [3:0]  seg32 = op_madcb ? madc_bits32 : cmp_bits32;
+    wire [127:0] res_cmp = (vsew == 3'b000) ? {cmpd_old[127:16], seg8}  :
+                           (vsew == 3'b001) ? {cmpd_old[127:8],  seg16} :
+                                              {cmpd_old[127:4],  seg32};
     wire [127:0] mlog_full =
         (f6[2:0] == 3'b000) ?  (vs2_data & ~vs1_data) :   // vmandn
         (f6[2:0] == 3'b001) ?  (vs2_data &  vs1_data) :   // vmand
@@ -875,9 +942,9 @@ module vexu #(
     endgenerate
 
     assign q_wdata = is_vmem ? vm_buf :
-                     (is_grp && op_cmp) ? grp_cmp_res :
+                     (is_grp && mask_dest) ? grp_cmp_res :
                      (is_grp) ? grp_stage[0] :
-                     op_cmp  ? res_cmp :
+                     mask_dest ? res_cmp :
                      op_mlog ? res_mlog :
                      op_s2same ? res_s2 :
                      (op_nc || op_nsr) ? res_nc :
