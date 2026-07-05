@@ -243,7 +243,8 @@ module vexu #(
                          // write v0 (dest overlaps the mask); mask-DEST compares
                          // targeting v0 remain legal.
                          nc_illegal || grp_only_illegal || grp_align_illegal ||
-                         ((op_add || op_sub || op_mm || op_s2same || op_nc) &&
+                         ((op_add || op_sub || op_mm || op_s2same || op_nc ||
+                           op_b1) &&
                           !vm && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------

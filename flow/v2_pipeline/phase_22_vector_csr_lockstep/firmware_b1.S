@@ -140,6 +140,12 @@ _start:
     vxor.vx  v8, v4, t2        /* 0x5A ^ 3 = 0x59 */
     vmv.x.s  t3, v8
 
+    /* terminator: masked B1 op writing v0 = ILLEGAL (dest overlaps the mask
+       source; the 3-way review's B1 gap — Codex+Gemini both caught it). Both
+       DUT and Spike trap illegal here; lockstep matches the trap. */
+    li   a0, 16
+    vsetvli t1, a0, e8, m1, ta, ma
+    vand.vv v0, v1, v2, v0.t
     ebreak
 
 .section .data

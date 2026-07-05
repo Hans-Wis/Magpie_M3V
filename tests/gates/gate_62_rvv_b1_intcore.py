@@ -37,7 +37,7 @@ def _run(target, min_commits):
 
 @pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
 def test_b1_directed_lockstep():
-    _run("b1", 110)
+    _run("b1", 115)
 
 
 def test_b1_corpus_covers_all_ops():

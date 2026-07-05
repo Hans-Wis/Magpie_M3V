@@ -84,6 +84,12 @@ directed+random → commit。**逐子片把關,B1 證完才進 B2**(同 Phase-A 
   `sra_r` 修(recurring Verilog gotcha,memory 已記)。**Spike lockstep `--isa=zve32x_zvl128b`
   118 commits 全符**(gate_62;全 form×SEW×LMUL m1/m2,含 shamt≥SEW 截斷、vsra sign edge)。
   既有 vector 測試(grid/s1/s2/s3/vrand)全綠無回歸。
+  **三方 review(Codex/Gemini/Grok)抓到 118-commit lockstep 漏的一個真洞**:masked-body
+  `vd==v0` 非法檢查漏 op_b1(masked vm=0 + vd=v0 dest 與 mask 源 v0 重疊,RVV §5.3 應 illegal;
+  現有檢查涵蓋 add/sub/mm/s2same/nc 卻漏 B1)。**Codex 與 Gemini 獨立都抓到**(random 語料 vd≠0
+  排除故漏,同 ADR-0049 S1 盲區)。修=`op_b1` 加進該檢查;firmware 加 illegal terminator
+  (`vand.vv v0,v1,v2,v0.t`)——DUT+Spike 同點 trap illegal,lockstep **120 commits** 匹配(沒修
+  會執行而分歧)。Grok 確認 B1 乾淨、給 B2 指引(narrowing 先,複用 vnclip bus + 2*SEW shift)。
   **測試基建修**:`-mno-relax` 加進 phase_22 firmware 編譯——`la`/data-table 位址在 DUT(base
   0x0)會被 relaxation 收成 `li`(絕對定址),Spike(base 0x8000_0000)不能 → instr 編碼分歧;
   `-mno-relax` 強制 PC-relative,兩邊一致。(這解鎖了 data-table + vse/lw 逐 element 驗證法。)
