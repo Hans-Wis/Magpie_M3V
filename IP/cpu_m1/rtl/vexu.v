@@ -205,6 +205,19 @@ module vexu #(
                         ((vd_i  & vmvr_amask) != 5'd0) ||
                         ((vs2_i & vmvr_amask) != 5'd0));
 
+    // ---------------- Phase-C C1 (ADR-0056): same-width integer multiply ----------
+    // OPMVV/OPMVX. f6: mul=100101 mulh=100111 mulhu=100100 mulhsu=100110. vmul keeps
+    // the low SEW bits (sign-agnostic); the high variants take the upper SEW bits of
+    // the 2*SEW product with the per-variant sign (ss/uu/su). f3 keeps these disjoint
+    // from vsll (OPIV*, f6=100101) and vmv<nr>r (OPIVI, f6=100111). OPMVX operand =
+    // rs1 truncated to SEW (Spike-probed golden: -2^31*2 -> mul 0, mulh/mulhsu -1,
+    // mulhu 1). Same-shape body op: joins beats_op for m2/m4 groups.
+    wire op_mul    = (f6 == 6'b100101) && (is_opmvv || is_opmvx);
+    wire op_mulh   = (f6 == 6'b100111) && (is_opmvv || is_opmvx);
+    wire op_mulhu  = (f6 == 6'b100100) && (is_opmvv || is_opmvx);
+    wire op_mulhsu = (f6 == 6'b100110) && (is_opmvv || is_opmvx);
+    wire op_muls   = op_mul || op_mulh || op_mulhu || op_mulhsu;
+
     // ---------------- config legality ----------------
     wire        vill  = q_vtype[31];
     wire [2:0]  vlmul = q_vtype[2:0];
@@ -272,12 +285,12 @@ module vexu #(
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
                     op_wmul || op_waddw || op_redsum || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
-                    op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr;
+                    op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr || op_muls;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
     wire beats_op  = op_add || op_sub || op_mv || op_merge || op_mm ||
-                     op_s2same || op_cmp || op_b1 || op_adcsbc || op_madcb;
+                     op_s2same || op_cmp || op_b1 || op_adcsbc || op_madcb || op_muls;
     // NOTE: memory opcodes alias the f6-based arith decodes (every other use
     // site is guarded by an is_vmem priority mux) — exclude them here too.
     wire is_grp    = (grp_parts != 3'd1) && beats_op && !is_vmem;
@@ -317,7 +330,7 @@ module vexu #(
                          // as carry-in, so vd==0 illegal only in that carry-in form.
                          (op_madcb && !vm && (vd_i == 5'd0)) ||
                          ((op_add || op_sub || op_mm || op_s2same || op_nc ||
-                           op_b1 || op_nsr || op_vext) &&
+                           op_b1 || op_nsr || op_vext || op_muls) &&
                           !vm && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------
@@ -539,6 +552,60 @@ module vexu #(
             assign madc_bits32[gi] = (gi < vl_view) ? c : cmpd_view[gi];
         end
     endgenerate
+
+    // ---- C1: same-width integer multiply -> low SEW / high SEW of 2*SEW product ----
+    // ss/uu/su products kept in self-determined signed/unsigned wires (avoids the
+    // signed-in-ternary zero-extend trap). Body op: masked-off / <vstart / >=vl kept.
+    wire [127:0] res_mul8, res_mul16, res_mul32;
+    generate
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_mul8
+            wire [7:0] a = vs2_data[gi*8 +: 8];
+            wire [7:0] b = is_opmvv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
+            wire signed [7:0]  as = a, bs = b;
+            wire signed [15:0] p_ss = as * bs;                    // signed*signed
+            wire        [15:0] p_uu = a * b;                      // unsigned*unsigned
+            wire signed [15:0] p_su = as * $signed({1'b0, b});    // signed*unsigned
+            wire [7:0] r = op_mul   ? p_ss[7:0]  :   // low bits: sign-agnostic
+                           op_mulh  ? p_ss[15:8] :
+                           op_mulhu ? p_uu[15:8] :
+                                      p_su[15:8];    // mulhsu
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_mul8[gi*8 +: 8] = active ? r : vd_old[gi*8 +: 8];
+        end
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_mul16
+            wire [15:0] a = vs2_data[gi*16 +: 16];
+            wire [15:0] b = is_opmvv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
+            wire signed [15:0] as = a, bs = b;
+            wire signed [31:0] p_ss = as * bs;
+            wire        [31:0] p_uu = a * b;
+            wire signed [31:0] p_su = as * $signed({1'b0, b});
+            wire [15:0] r = op_mul   ? p_ss[15:0]  :
+                            op_mulh  ? p_ss[31:16] :
+                            op_mulhu ? p_uu[31:16] :
+                                       p_su[31:16];
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_mul16[gi*16 +: 16] = active ? r : vd_old[gi*16 +: 16];
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_mul32
+            wire [31:0] a = vs2_data[gi*32 +: 32];
+            wire [31:0] b = is_opmvv ? vs1_data[gi*32 +: 32] : scalar_b;
+            wire signed [31:0] as = a, bs = b;
+            wire signed [63:0] p_ss = as * bs;
+            wire        [63:0] p_uu = a * b;
+            wire signed [63:0] p_su = as * $signed({1'b0, b});
+            wire [31:0] r = op_mul   ? p_ss[31:0]  :
+                            op_mulh  ? p_ss[63:32] :
+                            op_mulhu ? p_uu[63:32] :
+                                       p_su[63:32];
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_mul32[gi*32 +: 32] = active ? r : vd_old[gi*32 +: 32];
+        end
+    endgenerate
+    wire [127:0] res_mul = (vsew == 3'b000) ? res_mul8 :
+                           (vsew == 3'b001) ? res_mul16 : res_mul32;
 
     // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
     localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
@@ -948,7 +1015,8 @@ module vexu #(
                      (is_grp ? grp_sat_q : part_sat_or);
 
     // per-part combinational result for the group beats (arith class)
-    wire [127:0] part_res = op_s2same ? res_s2 :
+    wire [127:0] part_res = op_muls ? res_mul :
+                            op_s2same ? res_s2 :
                             (vsew == 3'b000) ? res8 :
                             (vsew == 3'b001) ? res16 : res32;
     wire [15:0] cmp_seg  = (vsew == 3'b000) ? seg8 :
@@ -995,6 +1063,7 @@ module vexu #(
                      (is_grp && mask_dest) ? grp_cmp_res :
                      (is_grp) ? grp_stage[0] :
                      mask_dest ? res_cmp :
+                     op_muls ? res_mul :
                      op_mlog ? res_mlog :
                      op_s2same ? res_s2 :
                      (op_nc || op_nsr) ? res_nc :
