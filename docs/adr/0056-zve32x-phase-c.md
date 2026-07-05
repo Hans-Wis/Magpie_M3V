@@ -109,5 +109,16 @@ Coral(Kelvin)ML datapath 依賴整數乘法 + MAC(卷積/FC 內積)與 reduction
     綠。gate_70。
   - **三方**:Spike golden(authority)+ **Gemini clean fully compliant**(product sizing/p_su sign-mix/
     mux/gating/kernel 保留/decoder updates 五項 verified,無 review 修)。
-- **C4c/d / C5 __**(續:C4c widening MAC vwmacc[u/su/us](2SEW acc 讀 vd_old wide)→ C4d widening reduction
-  vwredsum[u](**OPIVV** wide acc)→ C5 vsmul)。
+- **C4c 完成(2026-07-05,@<pending>)= widening MAC vwmaccu/vwmacc/vwmaccsu/vwmaccus**:
+  - decode:f6=111100 vwmaccu(u*u)/111101 vwmacc(s*s)/111111 vwmaccsu(**signed vs1 × unsigned vs2**)/
+    111110 vwmaccus(**unsigned rs1 × signed vs2,.vx only**);op_wmaccany。**su/us 符號角色在 vs1/vs2 且與
+    vwmulsu 相反**(Spike-probe 釘死:vs2=−128 vs1=255 vd=0 → maccu 32640/macc 128/maccsu −128/maccus −32640)。
+  - datapath(擴 g_w8/g_w16):p_maccsu=nbs*$signed({1'b0,na})(signed vs1 × unsigned vs2);mac_prod=
+    maccu?p_uu:macc?p_ss:maccsu?p_maccsu:p_su(**vwmaccus 復用 p_su**);macc_res=mac_prod+vd_old_wide
+    (mod 2^(2*SEW));r=op_wmaccany?macc_res:op_wmulany?prod:ws_res。vd = 2*SEW accumulator。
+  - **Spike lockstep 151 commits**(4 MAC×.vv/.vx(vwmaccus .vx only)×SEW8/16 reseeded acc + narrow-overlap
+    illegal terminator)。回歸 kernel/pool/vwide/vrand 綠;gate_71。
+  - **三方**:Spike golden(authority)+ **Gemini fully clean**(4 sign 變體含 maccsu/maccus swap 對到
+    −128/−32640、accumulator width/mod、.vx gating、decoder/overlap、非擾 C4a/b/kernel 五項 verified,無
+    review 修)。
+- **C4d / C5 __**(續:C4d widening reduction vwredsum[u](**OPIVV** wide 2*SEW accumulator)→ C5 vsmul)。
