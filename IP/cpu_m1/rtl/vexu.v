@@ -136,6 +136,18 @@ module vexu #(
                      op_avg || op_ssrl || op_ssra;
     wire op_nc     = op_nclipu || op_nclip;
 
+    // ---------------- Phase-B B1 (ADR-0055): bitwise / shift / vrsub ----------------
+    // same-shape element-wise ALU: join the per-SEW mux + beats_op (m2/m4 groups).
+    wire op_and   = (f6 == 6'b001001) && (is_opivv || is_opivx || is_opivi);
+    wire op_or    = (f6 == 6'b001010) && (is_opivv || is_opivx || is_opivi);
+    wire op_xor   = (f6 == 6'b001011) && (is_opivv || is_opivx || is_opivi);
+    wire op_rsub  = (f6 == 6'b000011) && (is_opivx || is_opivi);   // vrsub: b - a (no vv)
+    wire op_sll   = (f6 == 6'b100101) && (is_opivv || is_opivx || is_opivi);
+    wire op_srl   = (f6 == 6'b101000) && (is_opivv || is_opivx || is_opivi);
+    wire op_sra   = (f6 == 6'b101001) && (is_opivv || is_opivx || is_opivi);
+    wire op_b1    = op_and || op_or || op_xor || op_rsub ||
+                    op_sll || op_srl || op_sra;
+
     // ---------------- config legality ----------------
     wire        vill  = q_vtype[31];
     wire [2:0]  vlmul = q_vtype[2:0];
@@ -194,12 +206,12 @@ module vexu #(
 
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
                     op_wmul || op_waddw || op_redsum || op_mvsx ||
-                    op_mm || op_cmp || op_mlog || op_s2same || op_nc;
+                    op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
     wire beats_op  = op_add || op_sub || op_mv || op_merge || op_mm ||
-                     op_s2same || op_cmp;
+                     op_s2same || op_cmp || op_b1;
     // NOTE: memory opcodes alias the f6-based arith decodes (every other use
     // site is guarded by an is_vmem priority mux) — exclude them here too.
     wire is_grp    = (grp_parts != 3'd1) && beats_op && !is_vmem;
@@ -290,8 +302,16 @@ module vexu #(
             wire [7:0] b = is_opivv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
             wire       m = v0_view[gi];
             wire signed [7:0] as = a, bs = b;
+            wire signed [7:0] sra_r = as >>> b[2:0];   // self-determined signed -> arithmetic
             wire [7:0] r = op_add   ? (a + b) :
                            op_sub   ? (a - b) :
+                           op_rsub  ? (b - a) :             // B1: vrsub
+                           op_and   ? (a & b) :
+                           op_or    ? (a | b) :
+                           op_xor   ? (a ^ b) :
+                           op_sll   ? (a << b[2:0]) :
+                           op_srl   ? (a >> b[2:0]) :
+                           op_sra   ? sra_r :          
                            op_min   ? ((as < bs) ? a : b) :
                            op_minu  ? ((a < b)  ? a : b) :
                            op_max   ? ((as > bs) ? a : b) :
@@ -307,8 +327,16 @@ module vexu #(
             wire [15:0] b = is_opivv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
             wire        m = v0_view[gi];
             wire signed [15:0] as = a, bs = b;
+            wire signed [15:0] sra_r = as >>> b[3:0];
             wire [15:0] r = op_add   ? (a + b) :
                             op_sub   ? (a - b) :
+                            op_rsub  ? (b - a) :
+                            op_and   ? (a & b) :
+                            op_or    ? (a | b) :
+                            op_xor   ? (a ^ b) :
+                            op_sll   ? (a << b[3:0]) :
+                            op_srl   ? (a >> b[3:0]) :
+                            op_sra   ? sra_r :          
                             op_min   ? ((as < bs) ? a : b) :
                             op_minu  ? ((a < b)  ? a : b) :
                             op_max   ? ((as > bs) ? a : b) :
@@ -324,8 +352,16 @@ module vexu #(
             wire [31:0] b = is_opivv ? vs1_data[gi*32 +: 32] : scalar_b;
             wire        m = v0_view[gi];
             wire signed [31:0] as = a, bs = b;
+            wire signed [31:0] sra_r = as >>> b[4:0];
             wire [31:0] r = op_add   ? (a + b) :
                             op_sub   ? (a - b) :
+                            op_rsub  ? (b - a) :
+                            op_and   ? (a & b) :
+                            op_or    ? (a | b) :
+                            op_xor   ? (a ^ b) :
+                            op_sll   ? (a << b[4:0]) :
+                            op_srl   ? (a >> b[4:0]) :
+                            op_sra   ? sra_r :          
                             op_min   ? ((as < bs) ? a : b) :
                             op_minu  ? ((a < b)  ? a : b) :
                             op_max   ? ((as > bs) ? a : b) :

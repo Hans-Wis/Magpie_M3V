@@ -43,13 +43,13 @@ FW_ASM ?= firmware_vcsr_grid.S
 MIN_COMMITS ?= 40
 
 firmware.elf: $(FW_ASM) ../phase_20_npu_core_lockstep/firmware.lds
-	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc -Os -march=$(GCC_MARCH) -mabi=$(GCC_MABI) \
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc -Os -march=$(GCC_MARCH) -mabi=$(GCC_MABI) -mno-relax \
 	    -nostartfiles -nostdlib -ffreestanding \
 	    -Wl,-Bstatic,-T,../phase_20_npu_core_lockstep/firmware.lds,--strip-debug \
 	    -o $@ $(FW_ASM)
 
 firmware_spike.elf: $(FW_ASM) ../phase_20_npu_core_lockstep/firmware_spike.lds
-	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc -Os -march=$(GCC_MARCH) -mabi=$(GCC_MABI) \
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc -Os -march=$(GCC_MARCH) -mabi=$(GCC_MABI) -mno-relax \
 	    -nostartfiles -nostdlib -ffreestanding \
 	    -Wl,-Bstatic,-T,../phase_20_npu_core_lockstep/firmware_spike.lds,--strip-debug \
 	    -o $@ $(FW_ASM)
@@ -81,6 +81,9 @@ s1:
 
 s2:
 	$(MAKE) FW_ASM=firmware_s2.S MIN_COMMITS=90 lockstep.log
+
+b1:
+	$(MAKE) FW_ASM=firmware_b1.S MIN_COMMITS=90 lockstep.log
 
 s3:
 	$(MAKE) FW_ASM=firmware_s3.S MIN_COMMITS=70 lockstep.log
@@ -128,11 +131,11 @@ vdot_i8.o: $(KERNEL_SRC)
 	clang --target=riscv32 -march=$(KERNEL_MARCH) -mabi=ilp32 -O2 -c $(KERNEL_SRC) -o $@
 
 kernel: vdot_i8.o
-	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc -Os -march=$(GCC_MARCH) -mabi=$(GCC_MABI) \
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc -Os -march=$(GCC_MARCH) -mabi=$(GCC_MABI) -mno-relax \
 	    -nostartfiles -nostdlib -ffreestanding \
 	    -Wl,-Bstatic,-T,../phase_20_npu_core_lockstep/firmware.lds,--strip-debug \
 	    -o firmware.elf crt_kernel.S vdot_i8.o
-	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc -Os -march=$(GCC_MARCH) -mabi=$(GCC_MABI) \
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc -Os -march=$(GCC_MARCH) -mabi=$(GCC_MABI) -mno-relax \
 	    -nostartfiles -nostdlib -ffreestanding \
 	    -Wl,-Bstatic,-T,../phase_20_npu_core_lockstep/firmware_spike.lds,--strip-debug \
 	    -o firmware_spike.elf crt_kernel.S vdot_i8.o
