@@ -70,6 +70,6 @@ def test_descriptors_round_trip_the_ssot_codec():
     assert [d["op"] for d in ops] == ["MAT_CFG", "MAT_LOAD_W", "MAT_ACC_CLR",
                                       "MAT_OP", "MAT_RESCALE", "MAT_STORE"]
     clr = ops[2]
-    assert clr["bias_tcm_byte"] == 0x680, "W2!=0 => LOADACC semantics (Grok lint)"
+    assert clr["bias_tcm_byte"] == 0x700, "W2!=0 => LOADACC semantics (Grok lint)"
     assert ops[3]["rpt"] == 64, "RPT = FC depth (one outer product per rep)"
     assert ops[0]["k"] == 512 and ops[5]["last"] == 1 and ops[5]["irq"] == 1

@@ -4,7 +4,7 @@
 #define MAILBOX_BASE    CQ_MAILBOX_BASE
 #define TCM_SCRATCH_B   0x00000F00u
 #define TCM_SCRATCH_W   (TCM_SCRATCH_B >> 2)
-#define TCM_WEIGHT_B    0x00000680u   /* ADR-0043: moved 0x400->0x600->0x680 (text+bss growth) */
+#define TCM_WEIGHT_B    0x00000700u   /* ADR-0043/0052: 0x400->0x600->0x680->0x700 (batched-prefetch code growth) */
 #define TCM_WEIGHT_W    (TCM_WEIGHT_B >> 2)
 
 #define CSR_CTRL        0x04u
@@ -46,6 +46,11 @@
 #define CQ_EVENT_BUSY   2u
 #define CQ_EVENT_IDLE   4u
 
+/* ADR-0052: descriptors are prefetched a batch at a time to amortize the
+ * per-descriptor ring DMA round-trip. 8 x 16B = 128B fits the 0xF00..0x1000
+ * scratch region with margin (16 would exactly fill it). */
+#define BATCH_N         8u
+
 static volatile uint32_t *const csr = (volatile uint32_t *)CSR_BASE;
 static volatile uint32_t *const mailbox = (volatile uint32_t *)MAILBOX_BASE;
 static volatile cq_desc_t *const scratch = (volatile cq_desc_t *)TCM_SCRATCH_B;
@@ -82,12 +87,14 @@ __attribute__((naked, section(".init"))) void _start(void)
     );
 }
 
-static uint32_t csr_read(uint32_t off)
+/* noinline: these are called ~30x; keeping them as real calls (vs -Os inlining
+ * each expansion) reclaims the code budget the ADR-0052 batch loop needs. */
+static __attribute__((noinline)) uint32_t csr_read(uint32_t off)
 {
     return csr[off >> 2];
 }
 
-static void csr_write(uint32_t off, uint32_t value)
+static __attribute__((noinline)) void csr_write(uint32_t off, uint32_t value)
 {
     csr[off >> 2] = value;
 }
@@ -99,24 +106,14 @@ static void cq_halt(uint32_t cause)
         ;
 }
 
-static void wait_dma_done(void)
+static void wait_done(uint32_t done_bit)
 {
     uint32_t st;
     do {
         st = csr_read(CSR_STATUS);
         if (st & STATUS_DMA_ERR)
             cq_halt(CQ_ERR_DMA_FAULT);
-    } while ((st & STATUS_DMA_DONE) == 0u);
-}
-
-static void wait_wb_done(void)
-{
-    uint32_t st;
-    do {
-        st = csr_read(CSR_STATUS);
-        if (st & STATUS_DMA_ERR)
-            cq_halt(CQ_ERR_DMA_FAULT);
-    } while ((st & STATUS_WB_DONE) == 0u);
+    } while ((st & done_bit) == 0u);
 }
 
 static void drain_dma_wb(void)
@@ -135,7 +132,7 @@ static void dma_read(uint32_t src, uint32_t dst_word, uint32_t len_words)
     csr_write(CSR_DMA_DST, dst_word);
     csr_write(CSR_DMA_LEN, len_words);
     csr_write(CSR_DMA_GO, 1u);
-    wait_dma_done();
+    wait_done(STATUS_DMA_DONE);
 }
 
 static void mat_run(uint32_t cmd, uint32_t bank, uint32_t rpt)
@@ -155,7 +152,7 @@ static void dma_writeback(uint32_t src_word, uint32_t dst, uint32_t len_words)
     csr_write(CSR_WB_DST, dst);
     csr_write(CSR_WB_LEN, len_words);
     csr_write(CSR_WB_GO, 1u);
-    wait_wb_done();
+    wait_done(STATUS_WB_DONE);
 }
 
 void main(void)
@@ -166,6 +163,13 @@ void main(void)
             ;
     }
 
+    /* ADR-0052: ring config is loop-invariant — read once, not per descriptor. */
+    uint32_t ring_base = csr_read(CSR_CQ_RING_BASE);
+    uint32_t ring_size = csr_read(CSR_CQ_RING_SIZE);
+    uint32_t ring_mask = ring_size - 1u;
+    if ((ring_base & 0xFu) != 0u)
+        cq_halt(CQ_ERR_DESC_ALIGN);
+
     for (;;) {
         uint32_t head = csr_read(CSR_CQ_HEAD);
         uint32_t tail = csr_read(CSR_CQ_TAIL);
@@ -173,17 +177,27 @@ void main(void)
             continue;
 
         csr_write(CSR_CQ_EVENT, CQ_EVENT_BUSY);
-        uint32_t ring_base = csr_read(CSR_CQ_RING_BASE);
-        uint32_t ring_size = csr_read(CSR_CQ_RING_SIZE);
-        if ((ring_base & 0xFu) != 0u)
-            cq_halt(CQ_ERR_DESC_ALIGN);
 
-        dma_read(ring_base + (head << 4), TCM_SCRATCH_W, 4u);
+        /* ADR-0052 batched prefetch: one dma_read pulls up to BATCH_N contiguous
+         * descriptors (bounded by the pending count and the ring-wrap edge) into
+         * the local scratch buffer; each then executes in ring order with the
+         * identical engine command stream and per-descriptor HEAD advance. The
+         * ring-fetch DMA round-trips drop from one-per-descriptor to one-per-batch;
+         * the wrapped tail (if any) is handled by the next outer iteration. */
+        uint32_t hidx    = head & ring_mask;
+        uint32_t pending = (tail - head) & ring_mask;
+        uint32_t to_wrap = ring_size - hidx;
+        uint32_t n = pending;
+        if (n > to_wrap) n = to_wrap;
+        if (n > BATCH_N)  n = BATCH_N;
 
-        uint32_t w0 = scratch->w0;
-        uint32_t w1 = scratch->w1;
-        uint32_t w2 = scratch->w2;
-        uint32_t w3 = scratch->w3;
+        dma_read(ring_base + (hidx << 4), TCM_SCRATCH_W, n << 2);
+
+        for (uint32_t bi = 0u; bi < n; bi++) {
+        uint32_t w0 = scratch[bi].w0;
+        uint32_t w1 = scratch[bi].w1;
+        uint32_t w2 = scratch[bi].w2;
+        uint32_t w3 = scratch[bi].w3;
         uint32_t op = cq_w0_opcode(w0);
 
         if (w0 & CQ_W0_RSVD_MASK)
@@ -228,8 +242,11 @@ void main(void)
             /* ADR-0037: W2 = TCM source byte addr; 0 = legacy weight region.
              * Bound + alignment checked (no silent TCM aliasing). */
             uint32_t src_w;
-            if ((w2 & 3u) != 0u || rows * cols * 4u > 0x1000u ||
-                w2 > (0x1000u - rows * cols * 4u))
+            /* ADR-0052 (Codex #2): source ceiling is the scratch base, not the
+             * TCM top — the 0xF00.. region now holds the batch descriptor
+             * prefetch buffer, which must not be observable as a STORE source. */
+            if ((w2 & 3u) != 0u || rows * cols * 4u > TCM_SCRATCH_B ||
+                w2 > (TCM_SCRATCH_B - rows * cols * 4u))
                 cq_halt(CQ_ERR_MAT_PARAM);
             src_w = (w2 != 0u) ? (w2 >> 2) : TCM_WEIGHT_W;
             if (dstride == 0u) {
@@ -309,10 +326,12 @@ void main(void)
         if (cq_w0_irq(w0))
             csr_write(CSR_CQ_EVENT, CQ_EVENT_IRQ);
 
-        csr_write(CSR_CQ_HEAD, (head + 1u) & (ring_size - 1u));
+        head = (head + 1u) & ring_mask;
+        csr_write(CSR_CQ_HEAD, head);
         if (cq_w0_last(w0)) {
             csr_write(CSR_CQ_EVENT, CQ_EVENT_IDLE);
             *mailbox = 1u;
         }
+        }   /* end per-descriptor batch loop */
     }
 }

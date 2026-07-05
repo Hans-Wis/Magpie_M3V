@@ -9,7 +9,7 @@
     producer discipline — free-space math across wrap, all-or-nothing push
     (CqFull), and the fence hook ordered STRICTLY before the TAIL doorbell
     (cache-flush-before-doorbell contract; SoC integration = Phase 7).
-(c) Firmware footprint guard: text+bss must stay below the 0x680 weight
+(c) Firmware footprint guard: text+bss must stay below the 0x700 weight
     region — LOAD_W overwriting live statics was a real near-miss this phase.
 """
 
@@ -98,5 +98,5 @@ def test_firmware_stays_below_weight_region():
     if r.returncode != 0:
         pytest.skip("riscv size tool unavailable — not-run")
     text, data, bss = [int(x) for x in r.stdout.splitlines()[1].split()[:3]]
-    assert text + data + bss <= 0x680, \
-        f"firmware {text + data + bss}B collides with the 0x680 weight region"
+    assert text + data + bss <= 0x700, \
+        f"firmware {text + data + bss}B collides with the 0x700 weight region"

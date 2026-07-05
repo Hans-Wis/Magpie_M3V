@@ -210,10 +210,10 @@ module tb_npu_p05;
         $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.tcm.mem);
         $readmemh("IP/npu/sw/cq_sequencer/firmware.hex", dut.itcm.mem);
         for (i = 0; i < 8; i = i + 1)
-            axil_write(32'h3001_0680 + i*4,
+            axil_write(32'h3001_0700 + i*4,
                        {a_byte(i*4+3), a_byte(i*4+2), a_byte(i*4+1), a_byte(i*4)});
         for (i = 0; i < 8; i = i + 1)
-            axil_write(32'h3001_06C0 + i*4,
+            axil_write(32'h3001_0740 + i*4,
                        {b_byte(i*4+3), b_byte(i*4+2), b_byte(i*4+1), b_byte(i*4)});
         shared.mem[32'h100] = 32'h0000_0001;
         shared.mem[32'h101] = 32'h0008_0008;
@@ -224,8 +224,8 @@ module tb_npu_p05;
         shared.mem[32'h106] = 32'h0;
         shared.mem[32'h107] = 32'h0;
         shared.mem[32'h108] = 32'h0004_0003;
-        shared.mem[32'h109] = 32'h0000_0680;
-        shared.mem[32'h10A] = 32'h0000_06C0;
+        shared.mem[32'h109] = 32'h0000_0700;
+        shared.mem[32'h10A] = 32'h0000_0740;
         shared.mem[32'h10B] = 32'h0;
         shared.mem[32'h10C] = 32'h0000_0004;
         shared.mem[32'h10D] = 32'h54C4_699A;

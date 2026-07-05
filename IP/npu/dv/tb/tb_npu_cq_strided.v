@@ -153,7 +153,7 @@ module tb_npu_cq_strided;
         shared.mem[32'h103] = 32'h0000_0304;  // rows=3 cols=4
         shared.mem[32'h104] = 32'h0000_5005;  // STORE | IRQ | LAST
         shared.mem[32'h105] = 32'h8000_1800;
-        shared.mem[32'h106] = 32'h0000_0680;  // src TCM byte (weight region)
+        shared.mem[32'h106] = 32'h0000_0700;  // src TCM byte (weight region, ADR-0052)
         shared.mem[32'h107] = 32'h0000_0304;  // contiguous (stride 0)
 
         axil_write(A_BASE, 32'h0000_0400);
@@ -171,7 +171,7 @@ module tb_npu_cq_strided;
         axil_write(A_CQCTRL, 32'h0); axil_write(A_CQCTRL, 32'h1);
         shared.mem[32'h108] = 32'h0000_5005;  // STORE | IRQ | LAST
         shared.mem[32'h109] = 32'h8000_1900;
-        shared.mem[32'h10A] = 32'h0000_0680;
+        shared.mem[32'h10A] = 32'h0000_0700;
         shared.mem[32'h10B] = 32'h0006_0304;  // dstride=6, rows=3, cols=4
         axil_write(A_TAIL, 32'd3);
         axil_write(A_CTRL, 32'h1);

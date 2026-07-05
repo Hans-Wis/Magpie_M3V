@@ -29,7 +29,7 @@ sys.path.insert(0, str(ROOT / "IP/npu/golden"))
 import cq_codec  # noqa: E402  (SSOT — generated)
 from tflm_fc import wrap32  # noqa: E402
 
-TCM_BLOB_B = 0x680
+TCM_BLOB_B = 0x700
 A_OFF = 0x240                # a-vectors (past the 0x800 MAT_OUT hole gap map)
 MAT_OUT_B = 0x800
 SHARED_BLOB_B = 0x2000

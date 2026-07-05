@@ -148,12 +148,12 @@ module tb_npu_cq_mat;
         resetn = 1'b1;
         @(posedge clk);
 
-        // a @ TCM 0x680, b @ TCM 0x6C0 (32 bytes each), via the host AXI window
+        // a @ TCM 0x700, b @ TCM 0x740 (32 bytes each), via the host AXI window (ADR-0052)
         for (i = 0; i < 8; i = i + 1)
-            axil_write(32'h3001_0680 + i*4,
+            axil_write(32'h3001_0700 + i*4,
                        {a_byte(i*4+3), a_byte(i*4+2), a_byte(i*4+1), a_byte(i*4)});
         for (i = 0; i < 8; i = i + 1)
-            axil_write(32'h3001_06C0 + i*4,
+            axil_write(32'h3001_0740 + i*4,
                        {b_byte(i*4+3), b_byte(i*4+2), b_byte(i*4+1), b_byte(i*4)});
 
         // ring @ shared word 0x100: CFG, ACC_CLR, OP, RESCALE, STORE(LAST|IRQ)
@@ -166,8 +166,8 @@ module tb_npu_cq_mat;
         shared.mem[32'h106] = 32'h0;
         shared.mem[32'h107] = 32'h0;
         shared.mem[32'h108] = 32'h0004_0003;  // MAT_OP RPT=4
-        shared.mem[32'h109] = 32'h0000_0680;  // a (TCM byte)
-        shared.mem[32'h10A] = 32'h0000_06C0;  // b
+        shared.mem[32'h109] = 32'h0000_0700;  // a (TCM byte)
+        shared.mem[32'h10A] = 32'h0000_0740;  // b
         shared.mem[32'h10B] = 32'h0;          // W3 must be 0
         shared.mem[32'h10C] = 32'h0000_0004;  // MAT_RESCALE
         shared.mem[32'h10D] = 32'h54C4_699A;  // mult (v4 worked example)
@@ -200,8 +200,8 @@ module tb_npu_cq_mat;
         axil_write(A_CQCTRL, 32'h0);
         axil_write(A_CQCTRL, 32'h1);
         shared.mem[32'h114] = 32'h0004_0003;  // MAT_OP
-        shared.mem[32'h115] = 32'h0000_0680;
-        shared.mem[32'h116] = 32'h0000_06C0;
+        shared.mem[32'h115] = 32'h0000_0700;
+        shared.mem[32'h116] = 32'h0000_0740;
         shared.mem[32'h117] = 32'h0000_0011;  // W3 != 0 -> MAT_PARAM
         axil_write(A_TAIL, 32'd6);
         axil_write(A_CTRL, 32'h1);
@@ -214,8 +214,8 @@ module tb_npu_cq_mat;
         axil_write(A_CQCTRL, 32'h0);
         axil_write(A_CQCTRL, 32'h1);
         shared.mem[32'h118] = 32'h0004_0043;  // MAT_OP, DTYPE=i16 (bit6)
-        shared.mem[32'h119] = 32'h0000_0680;
-        shared.mem[32'h11A] = 32'h0000_06C0;
+        shared.mem[32'h119] = 32'h0000_0700;
+        shared.mem[32'h11A] = 32'h0000_0740;
         shared.mem[32'h11B] = 32'h0;
         axil_write(A_TAIL, 32'd7);
         axil_write(A_CTRL, 32'h1);

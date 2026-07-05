@@ -1,7 +1,7 @@
 # ADR-0052 — CQ autonomous MAT_OP:批次預取消軟體序列化稅(架構確認)
 
-- Status: **PROPOSED**(§2 架構確認;User 裁示 2026-07-05「走新 step 2:CQ autonomous MAT_OP」)。
-  純 **firmware** 改動(`cq_sequencer.c`),**不動 RTL、不動 SSOT**。review 後才落。
+- Status: **ACCEPTED**(§2 架構確認 + 實作驗證完成 2026-07-05;User 裁示「走新 step 2」+「移 weight region 0x680→0x700」)。
+  實作=firmware(`cq_sequencer.c`)+ **User 核准的 memory-map bump**(weight 0x680→0x700,§6);不動 RTL、不動 SSOT。
 - Date: 2026-07-05
 - Mode: Fable 設計 + Grok 架構複核(見附)+ 我方獨立分析。
 - Relates: ADR-0035(command queue)、ADR-0037/0039/0042(matrix 命令)、ADR-0043(producer ABI)、
@@ -122,7 +122,47 @@ FIFO)= **RTL,scope-creep,defer**(Grok 早先:engine 側 double-buffer 對同 ban
 
 accepted 後:我方外科改 `cq_sequencer.c`(或 Codex)→ `make -C IP/npu/sw/cq_sequencer` 重生
 firmware.hex → 跑 gate_36/37/39/46/47/53/54 全綠 + throughput 出數字 → 處理 gate_39 MMIO-shadow
-重生 → Codex review diff → commit。**BATCH_N 起手 16**(可調);**不動 RTL/SSOT**。
+重生 → Codex review diff → commit。**BATCH_N 起手 8**(Grok);**不動 RTL/SSOT**。
+
+## §6 實作結果(2026-07-05)
+
+**批次預取落地(BATCH_N=8),但實作揭露一個 firmware-only 無法規避的約束(User 裁示處理)**:
+- **footprint 撞牆**:sequencer firmware 有凍結預算 `text+data+bss < TCM_WEIGHT_B`(gate_51 守衛;
+  weight region 0x680 被 golden/TB/gate 共用契約)。原 firmware 1620B(僅 44B headroom);批次預取
+  即使 `noinline`(csr_read/write/cq_halt/dma_read/writeback,回收 116B)+ `-Oz` + gc-sections
+  仍 **1716B,超 0x680 達 52B**。批次的 loop+wrap+min-clamp 機具是固有成本,N 大小不影響。
+- **決策(User 2026-07-05:「移 weight region 0x680→0x700」)**:**scope 從「firmware-only」擴為
+  含 memory-map bump**(ADR-0043 weight region 第三次移位:0x400→0x600→0x680→**0x700**)。
+  firmware 1716B < 0x700(margin 76B)。cascade 更新(bit-exact 逐一驗):cq_sequencer.c(TCM_WEIGHT_B)、
+  golden tflm_fc.py/tflm_runtime.py(TCM_BLOB_B,參數化 a/b/bias 自動跟隨)、tb_npu_cq_mat/equiv/
+  smoke/strided/hard_reset/p05(硬編碼 a@0x700/b@0x740、STORE src、weight readback)、gate_48
+  (bias assert)、gate_51(footprint guard 0x680→0x700)。gate_51 codec 測試值(0x680,與 memory-map
+  無關)保留。對齊/容量已驗:0x700 32B 對齊、k_dim=64 blob 尾 0xD40<0xF00、gate_46 a/b 尾 0x760<
+  MAT_OUT 0x800、weight 容量 544→512 words(測試最大載入 <512)。
+- **驗證(20 gate 全綠,bit-exact 保住)**:gate_36/37/46(ring/等價/矩陣 e2e 逐位)、gate_48/49/50
+  (TFLM FC/MLP/CNN 逐位)、gate_39(MMIO-shadow lockstep,**自動保持,無需重生**)、gate_47/51/54/53
+  (traps/offload/hard-reset/trace)、gate_45/52/35/38(mat golden/memory/SSOT/ERR)。
+- **等價 gate 未需修比對器**:gate_37 本就容忍「CQ transport may add descriptor fetches」(E1/E3
+  框定天然成立),批次改變 descriptor-fetch DMA 但 engine 命令流不變 → 原樣綠。
+- **throughput(結構性保證)**:firmware 每 batch 一次 `dma_read`(源碼可驗);gate_46 的 5-descriptor
+  環一次抓取 → **fetch DMA 5→1**;一般 N-descriptor 層 → `ceil(N/8)`(Grok 68-desc 例:68→9,~7.6×)。
+- **size 技巧記錄**:`-Os` 把 csr_read/write(~30 呼叫)全 inline 進 main 很肥;`noinline` 於高頻小
+  函式回收 ~116B。weight region 每次 text 成長就 bump(既有模式)。
+
+## §7 Codex review 處置(2026-07-05)
+
+- **Finding 1(High)→ 記為 deviation(不加碼)**:批次 DMA 若在 descriptor `bi>0` faults,
+  `wait_done` 在 dispatch 前 `cq_halt`,descriptors `0..bi-1` 未執行、HEAD 停在批起點;舊單發
+  fetch 迴圈會先執行 `0..bi-1` 再於 `bi` 的 fetch fault。**判斷:批次只讀 ring 內有效已 commit
+  slot(to_wrap + pending 界定),ring 是有效連續 buffer;mid-batch 讀取 fault 需 host 把 ring 配到
+  錯誤記憶體 = host 誤配,同 RING_OVERRUN 類 host-discipline 偏離。且 ADR-0035 deviation #2 已記
+  「DMA_FAULT on descriptor fetch 未有 CQ-level directed test」。** ∴ 記為誠實界偏離:批次 fetch
+  fault 的 per-descriptor 顆粒度不保留(有效 ring 讀取不預期 fault;faulting ring = host 紀律)。
+- **Finding 2(Medium)→ 已修驗**:batch buffer 現佔 0xF00..0xF80(多個 descriptor),而 MAT_STORE
+  src 上限原為 0x1000 → 可讀回未 dispatch 的預取 descriptor(舊碼 scratch 只存 1 個 16B descriptor)。
+  修法:STORE src 天花板 `0x1000 → TCM_SCRATCH_B(0xF00)`——**scratch/descriptor-prefetch buffer 為
+  firmware-private,禁當 STORE source**。constant-only(firmware 1716→1720B,仍 margin 72);gate_46/
+  51/48 的合法 STORE(src 0x700/0x800,皆 <0xF00)全綠。
 
 ---
 
