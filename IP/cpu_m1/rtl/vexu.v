@@ -162,6 +162,21 @@ module vexu #(
     wire op_vmsif = is_opmvv && (f6 == 6'b010100) && (vs1_i == 5'b00011);
     wire op_vms   = op_vmsbf || op_vmsof || op_vmsif;
     wire op_viota = is_opmvv && (f6 == 6'b010100) && (vs1_i == 5'b10000);
+    // Phase-D D2a/D2b (ADR-0057): slides. f6=001110 (up) / 001111 (down). OPIVX/OPIVI
+    // = vslideup/vslidedown (off = rs1 unsigned / uimm zext). OPMVX = vslide1up/down
+    // (off=1; inject scalar rs1[SEW-1:0] at the boundary). Spike-probed legality
+    // (Grok WRONG on both): vstart!=0 illegal (NOT honored) -> the global rule matches;
+    // slideup-family vd==vs2 illegal (require_noover), slidedown vd==vs2 legal. m1-only.
+    // Golden src[10..17]: slideup2=[.,.,10,11..15], slidedown2=[12..17,0,0], slide1up
+    // inject@[0], slide1down inject@[vl-1].
+    wire op_vslideup  = (f6 == 6'b001110) && (is_opivx || is_opivi);
+    wire op_vslidedn  = (f6 == 6'b001111) && (is_opivx || is_opivi);
+    wire op_vslide1up = (f6 == 6'b001110) && is_opmvx;
+    wire op_vslide1dn = (f6 == 6'b001111) && is_opmvx;
+    wire op_slideup   = op_vslideup || op_vslide1up;
+    wire op_slidedn   = op_vslidedn || op_vslide1dn;
+    wire op_slide     = op_slideup || op_slidedn;
+    wire op_vslide1   = op_vslide1up || op_vslide1dn;
     wire op_widen = op_wmulany || op_wmaccany || op_waddsub;
 
     // ---------------- S1 (ADR-0049): min/max, compares, mask logicals ----------------
@@ -370,13 +385,16 @@ module vexu #(
     // vd==vs2 allowance does NOT apply). Scoped to dst LMUL=m1 (grp_only_illegal),
     // so the simple same-register overlap check suffices.
     wire vext_illegal = op_vext && (vd_i == vs2_i);
+    // D2: slideup/vslide1up dest may not overlap the source (require_noover, Spike-
+    // probed illegal); slidedown vd==vs2 is legal (reads ahead).
+    wire slide_illegal = op_slideup && (vd_i == vs2_i);
 
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
                     op_wmulany || op_wmaccany || op_waddsub || op_red || op_wred || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
                     op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr ||
                     op_muls || op_mac || op_vsmul ||
-                    op_vcpop || op_vfirst || op_vid || op_vms || op_viota;
+                    op_vcpop || op_vfirst || op_vid || op_vms || op_viota || op_slide;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
@@ -409,7 +427,7 @@ module vexu #(
                        (is_vmem ? mem_illegal :
                         (!known_op ||
                          (q_vstart != 32'h0) ||
-                         widen_illegal || vext_illegal ||
+                         widen_illegal || vext_illegal || slide_illegal ||
                          (op_mv && (vs2_i != 5'd0)) ||
                          (op_merge && (vd_i == 5'd0)) ||
                          // S1 (Codex, Spike-confirmed): a MASKED body op may not
@@ -425,7 +443,7 @@ module vexu #(
                          (op_madcb && !vm && (vd_i == 5'd0)) ||
                          ((op_add || op_sub || op_mm || op_s2same || op_nc ||
                            op_b1 || op_nsr || op_vext || op_muls || op_mac || op_vsmul ||
-                           op_vid || op_viota) &&
+                           op_vid || op_viota || op_slide) &&
                           !vm && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------
@@ -885,6 +903,55 @@ module vexu #(
     endgenerate
     wire [127:0] res_viota = (vsew == 3'b000) ? res_viota8 :
                              (vsew == 3'b001) ? res_viota16 : res_viota32;
+
+    // ---- D2 slides (m1). Barrel-shift vs2 by off elements; blend with vd_old for
+    // undisturbed lanes; slidedown zero-fills the top; slide1 injects rs1 at the
+    // boundary. vstart!=0 is illegal so the body always starts at element 0. ----
+    wire [31:0] slide_off_raw = op_vslide1 ? 32'd1 :
+                                is_opivi   ? {27'b0, vs1_i} : q_rs1;
+    wire [5:0]  off_c  = (slide_off_raw > 32'd16) ? 6'd16 : slide_off_raw[5:0];
+    wire [9:0]  shamt  = {4'b0, off_c} << (vsew + 3'd3);   // element offset -> bit shift
+    wire [127:0] vs2_up = vs2_data << shamt;               // toward higher elements
+    wire [127:0] vs2_dn = vs2_data >> shamt;               // toward lower (zero-fill top)
+    wire [31:0]  last_idx = vl_view - 32'd1;               // vslide1down inject index
+    wire [127:0] res_slide8, res_slide16, res_slide32;
+    generate
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_sl8
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
+            wire [7:0] up_v = (op_vslide1up && gi == 0) ? q_rs1[7:0] :
+                              ({26'b0, gi[4:0]} >= {26'b0, off_c[4:0]}) ? vs2_up[gi*8 +: 8] : vd_old[gi*8 +: 8];
+            wire [6:0] dn_idx8 = {2'b0, gi[4:0]} + {1'b0, off_c};   // Codex: zero-fill uses the
+            wire       dn_ok8  = dn_idx8 < vlmax_el;                 // FRACTIONAL vlmax, not 16
+            wire [7:0] dn_v = (op_vslide1dn && ({27'b0, gi[4:0]} == last_idx)) ? q_rs1[7:0] :
+                              dn_ok8 ? vs2_dn[gi*8 +: 8] : 8'b0;
+            wire [7:0] sv = op_slideup ? up_v : dn_v;
+            assign res_slide8[gi*8 +: 8] = active ? sv : vd_old[gi*8 +: 8];
+        end
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_sl16
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
+            wire [15:0] up_v = (op_vslide1up && gi == 0) ? q_rs1[15:0] :
+                               ({26'b0, gi[4:0]} >= {26'b0, off_c[4:0]}) ? vs2_up[gi*16 +: 16] : vd_old[gi*16 +: 16];
+            wire [6:0]  dn_idx16 = {2'b0, gi[4:0]} + {1'b0, off_c};
+            wire        dn_ok16  = dn_idx16 < vlmax_el;
+            wire [15:0] dn_v = (op_vslide1dn && ({27'b0, gi[4:0]} == last_idx)) ? q_rs1[15:0] :
+                               dn_ok16 ? vs2_dn[gi*16 +: 16] : 16'b0;
+            wire [15:0] sv = op_slideup ? up_v : dn_v;
+            assign res_slide16[gi*16 +: 16] = active ? sv : vd_old[gi*16 +: 16];
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_sl32
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
+            wire [31:0] up_v = (op_vslide1up && gi == 0) ? q_rs1 :
+                               ({26'b0, gi[4:0]} >= {26'b0, off_c[4:0]}) ? vs2_up[gi*32 +: 32] : vd_old[gi*32 +: 32];
+            wire [6:0]  dn_idx32 = {2'b0, gi[4:0]} + {1'b0, off_c};
+            wire        dn_ok32  = dn_idx32 < vlmax_el;
+            wire [31:0] dn_v = (op_vslide1dn && ({27'b0, gi[4:0]} == last_idx)) ? q_rs1 :
+                               dn_ok32 ? vs2_dn[gi*32 +: 32] : 32'b0;
+            wire [31:0] sv = op_slideup ? up_v : dn_v;
+            assign res_slide32[gi*32 +: 32] = active ? sv : vd_old[gi*32 +: 32];
+        end
+    endgenerate
+    wire [127:0] res_slide = (vsew == 3'b000) ? res_slide8 :
+                             (vsew == 3'b001) ? res_slide16 : res_slide32;
 
     // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
     localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
@@ -1434,6 +1501,7 @@ module vexu #(
                      op_wred ? res_wred :
                      op_vid ? res_vid :
                      op_viota ? res_viota :
+                     op_slide ? res_slide :
                      op_mvsx ? res_sx :
                      (vsew == 3'b000) ? res8 :
                      (vsew == 3'b001) ? res16 : res32;
