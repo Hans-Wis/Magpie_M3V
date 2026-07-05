@@ -33,11 +33,32 @@ Class B 偏離已記)與吞吐數字(256 MAC/cycle 對齊)——本階段**保�
 > synthesis**——上表「疑似限制」是**結構推論,非量測**。故本 ADR 第一項實作前置動作 =
 > **先量路徑**(見 §4 執行序 step 0/2)。
 >
-> **step 0 已部分執行(2026-07-05,in-sandbox yosys)**:`read_verilog -sv; proc; flatten;
-> techmap; ltp` — `ltp` 因累加回授無法給單一 topological 深度(完整 abc mapping >280s
-> timeout),但 loop 警告**直接指到 `mat_engine.v:199/205`(S_RUN 的 `acc += psum` 累加)
-> 與 line 90(rem/lane_en)** → **確認 loop-carried 累加結構為真**(§3.2 forwarding 方案
-> 正是為此)。**精確 gate 深度 / ns 仍須外部 DC(step 2)**——結構已證,數字未證,誠實記錄。
+> **step 0/2 已完成(2026-07-05,真 Synopsys DC + TSMC28,取代 yosys 估計)**:見下 §2.5。
+> **量測直接推翻本節「S_RUN 首要嫌疑」的推論**——保留原文以存誠實界紀錄:先量再動擋掉了
+> 一次誤判。
+
+## §2.5 量測結果(Synopsys DC X-2025.06-SP2 + TSMC 28HPC+,2026-07-05)
+
+flow = `flow/dc_tsmc28/`(照 lab `rv32_lab18` 結構;`tcbn28hpcplusbwp40p140` tt 0.9V 25C
+= **cpu_m1 那次 699MHz 的同一顆庫**)。mat_engine 純 std cell(內部無 SRAM)。方法:256-bit
+`t_a/t_b_rdata` input_delay≈0(等同 ADR S0 registered-read 模型),兩組 clock 目標交叉驗證。
+
+| 目標 clk | 結果 | worst path 終點 | 意義 |
+|---|---|---|---|
+| 2.0ns(500MHz) | slack 0(達標)| S_RUN(`rep_i→acc_reg`)與 S_RSC(`rs_mult→pack_q`)**並列 slack 0** | DC 一達標就用慢 cell 平衡,兩路皆 0 → 僅證 Fmax≥500MHz |
+| **1.2ns(積極)** | **WNS −0.17、255 違規** | **30/30 worst 全 `→pack_q_reg`(S_RSC requant)** | **真 critical path = requant;S_RUN 完全掉出 worst-30** |
+
+**量測定論(數字取代推論)**:
+1. **mat_engine Fmax ≈ 730 MHz**(critical path 1.25ns 邏輯 + ~0.12 uncertainty/setup ≈ 1.37ns
+   min period)。面積 85.7K µm²(max effort)/ 76.6K(relaxed),~97K cells。
+2. **真 critical path = S_RSC 的 32×32 signed requant 乘法**(`acc_el * cur_mult` → 64b →
+   SRDHM → RoundingDivideByPOT → pack_q)。worst path = `el_i_reg→pack_q_reg[30]`,64 level,
+   cell 鏈是典型 FA1D/XNR2/AOI 乘法器 partial-product tree + 進位。**S_RUN 的 256-MAC 累加
+   在積極時序下不是瓶頸**(掉出 worst-30)。
+3. **premise 推翻**:「mat_engine 256-MAC 是 npu_top critical path、先流水 S_RUN」**不成立**
+   ——mat_engine ~730MHz **快於 cpu_m1 ~699MHz**,整個引擎不是系統瓶頸;且引擎內部的瓶頸是
+   requant 非 MAC。**若照原 ADR 只流水 S_RUN,等於優化一條非關鍵路徑,requant 會立刻變新
+   天花板,Fmax 原地不動。** 這正是 §4「先量再動」的價值實證。
 
 **判斷**:S_RUN 是 npu_top Fmax 首要嫌疑(寬組合樹 + 同拍回授),**先切**;S_RSC 是次要
 且**條件性**(僅當 requant-bound 或 synth 證明其 slack ≤ S_RUN 才動)。**不先切 S_RSC**
@@ -117,18 +138,24 @@ B(多引擎/Coral 4-wide)REJECTED = 換平台;C(CPU 向量化 MAC)REJECTED = 破
   CPU 仍卡 store 時無用。
 - **#3 engine 側 double-buffer(acc)**:**無益**——同 bank 累加本質序列,forwarding 已解 RAW。
 
-### 執行序(強制 → 選配)+ 驗證 hook + green-wash 守衛
+### 執行序(**2026-07-05 依 §2.5 量測重排**)+ 驗證 hook + green-wash 守衛
+
+> 原序(step 0 yosys → step 1 流水 S_RUN → step 2 DC…)已作廢:DC 量測證 mat_engine
+> ~730MHz(快於 cpu_m1),且引擎內瓶頸是 requant 非 MAC。**流水 S_RUN 從「強制第一」降為
+> 「選配/暫不做」**。重排如下:
 
 | 序 | 工作 | 強制性 | 驗證 hook / 守衛 |
 |---|---|---|---|
-| **0** | **in-sandbox yosys 結構路徑定位**(synth 到通用庫,比 S_RUN vs S_RSC 邏輯級數) | **強制**(便宜、先於外部 DC) | 產 gate-level longest-path 報告入 docs/reviews;確認路徑在 S_RUN 才動它 |
-| **1** | **S_RUN 3-stage pipe + acc_fwd bypass + per-bank inflight drain** | **強制** | mat_golden.py 全 corner 不變 + directed mat op;**throughput gate 重定 baseline** |
-| **2** | **mat_engine→npu_top DC/Genus trial**(28HPC+,**sandbox 外**) | **強制** | 報 Fmax/面積;定 S_RUN vs S_RSC slack;決定 step 4 是否跑 |
-| **3** | **CQ autonomous MAT_OP**(消 per-op A/B/CTRL store) | **強制**(perf ROI) | gate_35..39 CQ 等價 + gate_48/49/50 TFLM e2e bit-exact |
-| **4** | **S_RSC 2-stage pipe**(reg 乘積 → reg round/sat) | **條件**(synth 證 S_RSC slack ≤ S_RUN 或 requant-bound) | mat_golden.py rescale 向量 bit-exact |
-| **5** | **TCM read register + 選配 S0 ping-pong** | **選配**(step 2 證讀 mux 在關鍵路徑才做) | throughput gate 多 rep 鏈 |
-| **6** | **128b single-port / weight-stationary** | **Defer**(簽核後面積/功耗) | 需新 ADR + 餵料契約 |
-| **7** | **VCS / Spyglass / coverage 簽核** | **強制終點** | 既有簽核 gate + bypass/drain reachable-state 覆蓋 |
+| **0** | **mat_engine DC TSMC28 Fmax + 路徑定位** | ✅ **已完成**(§2.5) | Fmax≈730MHz、critical=S_RSC requant、S_RUN 非瓶頸 |
+| **1** | **npu_top 全 DC**(含 TCM SRAM macro / AXI-Lite CSR / DMA path) | **強制** | 找**系統級**真瓶頸(mat_engine 已非嫌疑);需 SRAM .db(見 lab sram/ 流程) |
+| **2** | **CQ autonomous MAT_OP**(消 per-op A/B/CTRL store,~10 拍/op 軟體稅) | **強制**(**perf 最高 ROI**——Grok+量測皆指此非 MAC 路徑) | gate_35..39 CQ 等價 + gate_48/49/50 TFLM e2e bit-exact |
+| **3** | **S_RSC requant 2-stage pipe**(reg 32×32 乘積 → reg round/sat/pack) | **條件**(僅當 step 1 證 npu_top 想推 >730MHz 且路徑仍在 requant) | mat_golden.py rescale 向量 bit-exact |
+| **4** | **S_RUN 3-stage pipe + acc_fwd bypass**(§3 契約仍有效,備用) | **選配/暫不做**(非關鍵路徑;僅若未來 tile/lane 擴張使 MAC 重回關鍵才啟用) | mat_golden.py 全 corner 不變 + throughput 重 baseline |
+| **5** | **TCM read register / 128b weight-stationary** | **Defer**(簽核後面積/功耗) | 需新 ADR + 餵料契約 |
+| **6** | **VCS / Spyglass / coverage 簽核** | **強制終點** | 既有簽核 gate |
+
+**§3 的 S_RUN 3-stage + acc_fwd 契約不作廢**——它是正確的 MAC 流水方案,只是**量測證明現在不需要**;
+若未來擴 tile/lane 或 npu_top synth 顯示 MAC 重回關鍵路徑,直接取用(備用契約)。
 
 **green-wash 守衛(本階段特有)**:
 1. **throughput gate 重定 baseline 不得掩蓋回歸**——必須明文 assert:(a) 穩態 == 1 rep/cycle、

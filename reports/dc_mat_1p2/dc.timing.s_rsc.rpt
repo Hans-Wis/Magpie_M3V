@@ -1,0 +1,177 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 5
+Design : mat_engine
+Version: X-2025.06-SP2
+Date   : Sun Jul  5 10:56:29 2026
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: tt0p9v25c   Library: tcbn28hpcplusbwp40p140tt0p9v25c
+Wire Load Model Mode: segmented
+
+  Startpoint: t_wdata_reg[31]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: t_wdata[31]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  mat_engine         ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  t_wdata_reg[31]/CP (DFQD2BWP40P140)      0.00 #     0.00 r
+  t_wdata_reg[31]/Q (DFQD2BWP40P140)       0.06       0.06 f
+  t_wdata[31] (out)                        0.00       0.06 f
+  data arrival time                                   0.06
+
+  clock clk (rise edge)                    1.20       1.20
+  clock network delay (ideal)              0.00       1.20
+  clock uncertainty                       -0.10       1.10
+  output external delay                   -0.30       0.80
+  data required time                                  0.80
+  -----------------------------------------------------------
+  data required time                                  0.80
+  data arrival time                                  -0.06
+  -----------------------------------------------------------
+  slack (MET)                                         0.74
+
+
+  Startpoint: t_wdata_reg[30]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: t_wdata[30]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  mat_engine         ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  t_wdata_reg[30]/CP (DFQD2BWP40P140)      0.00 #     0.00 r
+  t_wdata_reg[30]/Q (DFQD2BWP40P140)       0.06       0.06 f
+  t_wdata[30] (out)                        0.00       0.06 f
+  data arrival time                                   0.06
+
+  clock clk (rise edge)                    1.20       1.20
+  clock network delay (ideal)              0.00       1.20
+  clock uncertainty                       -0.10       1.10
+  output external delay                   -0.30       0.80
+  data required time                                  0.80
+  -----------------------------------------------------------
+  data required time                                  0.80
+  data arrival time                                  -0.06
+  -----------------------------------------------------------
+  slack (MET)                                         0.74
+
+
+  Startpoint: t_wdata_reg[29]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: t_wdata[29]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  mat_engine         ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  t_wdata_reg[29]/CP (DFQD2BWP40P140)      0.00 #     0.00 r
+  t_wdata_reg[29]/Q (DFQD2BWP40P140)       0.06       0.06 f
+  t_wdata[29] (out)                        0.00       0.06 f
+  data arrival time                                   0.06
+
+  clock clk (rise edge)                    1.20       1.20
+  clock network delay (ideal)              0.00       1.20
+  clock uncertainty                       -0.10       1.10
+  output external delay                   -0.30       0.80
+  data required time                                  0.80
+  -----------------------------------------------------------
+  data required time                                  0.80
+  data arrival time                                  -0.06
+  -----------------------------------------------------------
+  slack (MET)                                         0.74
+
+
+  Startpoint: t_wdata_reg[28]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: t_wdata[28]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  mat_engine         ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  t_wdata_reg[28]/CP (DFQD2BWP40P140)      0.00 #     0.00 r
+  t_wdata_reg[28]/Q (DFQD2BWP40P140)       0.06       0.06 f
+  t_wdata[28] (out)                        0.00       0.06 f
+  data arrival time                                   0.06
+
+  clock clk (rise edge)                    1.20       1.20
+  clock network delay (ideal)              0.00       1.20
+  clock uncertainty                       -0.10       1.10
+  output external delay                   -0.30       0.80
+  data required time                                  0.80
+  -----------------------------------------------------------
+  data required time                                  0.80
+  data arrival time                                  -0.06
+  -----------------------------------------------------------
+  slack (MET)                                         0.74
+
+
+  Startpoint: t_wdata_reg[27]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: t_wdata[27]
+            (output port clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  mat_engine         ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  clock clk (rise edge)                    0.00       0.00
+  clock network delay (ideal)              0.00       0.00
+  t_wdata_reg[27]/CP (DFQD2BWP40P140)      0.00 #     0.00 r
+  t_wdata_reg[27]/Q (DFQD2BWP40P140)       0.06       0.06 f
+  t_wdata[27] (out)                        0.00       0.06 f
+  data arrival time                                   0.06
+
+  clock clk (rise edge)                    1.20       1.20
+  clock network delay (ideal)              0.00       1.20
+  clock uncertainty                       -0.10       1.10
+  output external delay                   -0.30       0.80
+  data required time                                  0.80
+  -----------------------------------------------------------
+  data required time                                  0.80
+  data arrival time                                  -0.06
+  -----------------------------------------------------------
+  slack (MET)                                         0.74
+
+
+1

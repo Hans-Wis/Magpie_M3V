@@ -1,0 +1,7 @@
+work/
+alib-*/
+command.log
+default.svf
+*.log
+synth_mat_1p2.tcl
+filenames.log
