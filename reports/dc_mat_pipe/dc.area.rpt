@@ -1,0 +1,30 @@
+ 
+****************************************
+Report : area
+Design : mat_engine
+Version: X-2025.06-SP2
+Date   : Sun Jul  5 12:48:27 2026
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp40p140tt0p9v25c (File: /home/edauser/project/PDK/TSMC28/logic/tcbn28hpcplusbwp40p140_180b/AN61001_20180509/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp40p140_180a/tcbn28hpcplusbwp40p140tt0p9v25c.db)
+
+Number of ports:                          759
+Number of nets:                        106543
+Number of cells:                        94654
+Number of combinational cells:          85973
+Number of sequential cells:              8681
+Number of macros/black boxes:               0
+Number of buf/inv:                      15626
+Number of references:                     119
+
+Combinational area:              64873.619799
+Buf/Inv area:                     4046.616055
+Noncombinational area:           16573.535859
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                 81447.155657
+Total area:                 undefined
+1

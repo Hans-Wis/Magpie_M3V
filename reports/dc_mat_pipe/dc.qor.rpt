@@ -1,0 +1,85 @@
+Information: Updating design information... (UID-85)
+Warning: Design 'mat_engine' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+ 
+****************************************
+Report : qor
+Design : mat_engine
+Version: X-2025.06-SP2
+Date   : Sun Jul  5 12:48:26 2026
+****************************************
+
+
+  Timing Path Group 'clk'
+  -----------------------------------
+  Levels of Logic:              30.00
+  Critical Path Length:          1.03
+  Critical Path Slack:           0.00
+  Critical Path Clk Period:      1.20
+  Total Negative Slack:          0.00
+  No. of Violating Paths:        0.00
+  Worst Hold Violation:         -0.05
+  Total Hold Violation:       -260.35
+  No. of Hold Violations:     8676.00
+  -----------------------------------
+
+
+  Cell Count
+  -----------------------------------
+  Hierarchical Cell Count:          0
+  Hierarchical Port Count:          0
+  Leaf Cell Count:              94654
+  Buf/Inv Cell Count:           15626
+  Buf Cell Count:                 663
+  Inv Cell Count:               14963
+  CT Buf/Inv Cell Count:            0
+  Combinational Cell Count:     85973
+  Sequential Cell Count:         8681
+  Macro Count:                      0
+  -----------------------------------
+
+
+  Area
+  -----------------------------------
+  Combinational Area:    64873.619799
+  Noncombinational Area: 16573.535859
+  Buf/Inv Area:           4046.616055
+  Total Buffer Area:           263.97
+  Total Inverter Area:        3782.65
+  Macro/Black Box Area:      0.000000
+  Net Area:                  0.000000
+  -----------------------------------
+  Cell Area:             81447.155657
+  Design Area:           81447.155657
+
+
+  Design Rules
+  -----------------------------------
+  Total Number of Nets:        106543
+  Nets With Violations:             0
+  Max Trans Violations:             0
+  Max Cap Violations:               0
+  -----------------------------------
+
+
+  Hostname: eda
+
+  Compile CPU Statistics
+  -----------------------------------------
+  Resource Sharing:                   22.22
+  Logic Optimization:                 87.40
+  Mapping Optimization:              133.65
+  -----------------------------------------
+  Overall Compile Time:              471.32
+  Overall Compile Wall Clock Time:   472.18
+
+  --------------------------------------------------------------------
+
+  Design  WNS: 0.00  TNS: 0.00  Number of Violating Paths: 0
+
+
+  Design (Hold)  WNS: 0.05  TNS: 260.35  Number of Violating Paths: 8676
+
+  --------------------------------------------------------------------
+
+
+1
