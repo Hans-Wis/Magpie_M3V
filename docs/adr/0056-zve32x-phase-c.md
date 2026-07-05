@@ -97,5 +97,17 @@ Coral(Kelvin)ML datapath 依賴整數乘法 + MAC(卷積/FC 內積)與 reduction
   - **三方**:Grok arch(EMUL/require_noover)+ Spike golden(authority)+ **Gemini completely clean fully
     compliant**(sign/zero ext、wide-vs2、subtract direction、overlap gates、legacy kernel 保留 五項
     verified,無 review 修)。
-- **C4b/c/d / C5 __**(續:C4b widening mul vwmulu/vwmulsu → C4c widening MAC vwmacc[u/su/us] → C4d widening
-  reduction vwredsum[u] → C5 vsmul)。
+- **C4b 完成(2026-07-05,@<pending>)= widening multiply vwmul/vwmulu/vwmulsu(.vv/.vx)**:
+  - decode:既有 op_wmul(僅 .vv)擴 OPMVX,新增 op_wmulu(111000 u*u)/op_wmulsu(111010 signed vs2 *
+    unsigned vs1);op_wmulany = 三者。
+  - datapath(擴 g_w8/g_w16):三種完整 2*SEW 積 p_ss=nas*nbs / p_uu=na*nb / **p_su=nas*$signed({1'b0,nb})**
+    (vs2 signed × vs1 unsigned);prod = wmulu?p_uu:wmulsu?p_su:p_ss;r = op_wmulany?prod:ws_res(共用 C4a
+    add/sub loop)。op_widen/widen_narrow_vs2/known_op 皆改 op_wmulany。vwmul.vv 預設 p_ss=nas*nbs,byte-
+    identical 保 Phase-0 kernel。
+  - **Spike golden(vs2=−128,vs1=255):vwmul 128 / vwmulu 32640 / vwmulsu −32640 逐項符**;lockstep 109
+    commits(三變體×.vv/.vx×SEW8/16 + narrow-overlap illegal terminator)。回歸 kernel/pool/vwide/vrand
+    綠。gate_70。
+  - **三方**:Spike golden(authority)+ **Gemini clean fully compliant**(product sizing/p_su sign-mix/
+    mux/gating/kernel 保留/decoder updates 五項 verified,無 review 修)。
+- **C4c/d / C5 __**(續:C4c widening MAC vwmacc[u/su/us](2SEW acc 讀 vd_old wide)→ C4d widening reduction
+  vwredsum[u](**OPIVV** wide acc)→ C5 vsmul)。

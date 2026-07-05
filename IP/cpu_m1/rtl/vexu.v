@@ -95,7 +95,15 @@ module vexu #(
     wire op_merge = f6_merge && !vm;             // vmerge.v*m (mask = v0)
     wire op_mvxs  = is_opmvv && (f6 == 6'b010000) && (vs1_i == 5'd0) && vm;
     // ---- 3D (the Phase 0 kernel set) ----
-    wire op_wmul  = is_opmvv && (f6 == 6'b111011) && vm;   // vwmul.vv  (s*s -> 2*SEW)
+    // Phase-C C4b (ADR-0056): widening multiply family — full 2*SEW product (no
+    // low/high select). f6=111000 vwmulu (u*u), 111010 vwmulsu (signed vs2 *
+    // unsigned vs1/rs1), 111011 vwmul (s*s). OPMVV/OPMVX (vwmul.vv was the Phase-0
+    // kernel op; .vx and the u/su variants are new). Golden-probed vs2=-128 vs1=255:
+    // vwmul 128 / vwmulu 32640 / vwmulsu -32640.
+    wire op_wmul   = (f6 == 6'b111011) && (is_opmvv || is_opmvx) && vm;
+    wire op_wmulu  = (f6 == 6'b111000) && (is_opmvv || is_opmvx) && vm;
+    wire op_wmulsu = (f6 == 6'b111010) && (is_opmvv || is_opmvx) && vm;
+    wire op_wmulany = op_wmul || op_wmulu || op_wmulsu;
     // Phase-C C4a (ADR-0056): full widening add/sub — OPMVV/OPMVX f6=110xxx, vm=1.
     // f6[2]=wide-vs2 (.wv/.wx, vs2 already 2*SEW), f6[1]=subtract, f6[0]=signed.
     // dest 2*SEW = op_a +/- ext(vs1|rs1); narrows sign/zero-extend per f6[0].
@@ -113,7 +121,7 @@ module vexu #(
     // m1-only (group reductions stay grp_only_illegal). f6=000000 = the old vredsum.
     wire op_red = is_opmvv && (f6[5:3] == 3'b000) && vm;
     wire op_mvsx  = is_opmvx && (f6 == 6'b010000) && (vs2_i == 5'd0) && vm; // vmv.s.x
-    wire op_widen = op_wmul || op_waddsub;
+    wire op_widen = op_wmulany || op_waddsub;
 
     // ---------------- S1 (ADR-0049): min/max, compares, mask logicals ----------------
     wire op_minu  = (f6 == 6'b000100) && (is_opivv || is_opivx);
@@ -302,7 +310,7 @@ module vexu #(
     // vs2 is narrow (dest must not overlap it) for vwmul and the .vv/.vx add/sub;
     // for .wv/.wx vs2 is already 2*SEW so vd==vs2 is legal. vs1 is a narrow VECTOR
     // only in the OPMVV forms (in OPMVX the vs1 field is rs1, no register overlap).
-    wire widen_narrow_vs2 = op_wmul || (op_waddsub && !ws_wide);
+    wire widen_narrow_vs2 = op_wmulany || (op_waddsub && !ws_wide);
     wire widen_illegal = op_widen &&
                          (!widen_lmul_ok || (vsew == 3'b010) ||
                           (is_opmvv && (vd_i == vs1_i)) ||
@@ -315,7 +323,7 @@ module vexu #(
     wire vext_illegal = op_vext && (vd_i == vs2_i);
 
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
-                    op_wmul || op_waddsub || op_red || op_mvsx ||
+                    op_wmulany || op_waddsub || op_red || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
                     op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr ||
                     op_muls || op_mac;
@@ -811,33 +819,38 @@ module vexu #(
     wire [127:0] res_w8, res_w16;
     generate
         for (gi = 0; gi < 8; gi = gi + 1) begin : g_w8
-            wire signed [7:0]  a = vs2_data[gi*8 +: 8];    // narrow vs2 (wmul)
-            wire signed [7:0]  n = vs1_data[gi*8 +: 8];    // narrow vs1 (wmul .vv)
-            wire signed [15:0] prod = a * n;               // vwmul.vv: s*s -> 2*SEW
+            wire [7:0]  na = vs2_data[gi*8 +: 8];          // narrow vs2
+            wire [7:0]  nb = is_opmvv ? vs1_data[gi*8 +: 8] : scalar_b[7:0]; // narrow vs1/rs1
+            // C4b widening mul: full 2*SEW product, sign per variant (ss/uu/su).
+            wire signed [7:0]  nas = na, nbs = nb;
+            wire signed [15:0] p_ss = nas * nbs;                   // vwmul
+            wire        [15:0] p_uu = na * nb;                     // vwmulu
+            wire signed [15:0] p_su = nas * $signed({1'b0, nb});   // vwmulsu (vs2 signed)
+            wire [15:0] prod = op_wmulu ? p_uu : op_wmulsu ? p_su : p_ss;
             // C4a add/sub: op_a (wide vs2 or ext narrow vs2) +/- ext(vs1|rs1).
-            wire [7:0]  na = vs2_data[gi*8 +: 8];
-            wire [7:0]  nb = is_opmvv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
             wire [15:0] wa = vs2_data[gi*16 +: 16];        // wide vs2 (.wv/.wx)
             wire [15:0] na_x = ws_signed ? {{8{na[7]}}, na} : {8'b0, na};
             wire [15:0] nb_x = ws_signed ? {{8{nb[7]}}, nb} : {8'b0, nb};
             wire [15:0] wopa = ws_wide ? wa : na_x;
             wire [15:0] ws_res = ws_sub ? (wopa - nb_x) : (wopa + nb_x);
-            wire [15:0] r = op_wmul ? prod : ws_res;
+            wire [15:0] r = op_wmulany ? prod : ws_res;
             wire active = (gi < q_vl);
             assign res_w8[gi*16 +: 16] = active ? r : vd_old[gi*16 +: 16];
         end
         for (gi = 0; gi < 4; gi = gi + 1) begin : g_w16
-            wire signed [15:0] a = vs2_data[gi*16 +: 16];
-            wire signed [15:0] n = vs1_data[gi*16 +: 16];
-            wire signed [31:0] prod = a * n;
             wire [15:0] na = vs2_data[gi*16 +: 16];
             wire [15:0] nb = is_opmvv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
+            wire signed [15:0] nas = na, nbs = nb;
+            wire signed [31:0] p_ss = nas * nbs;
+            wire        [31:0] p_uu = na * nb;
+            wire signed [31:0] p_su = nas * $signed({1'b0, nb});
+            wire [31:0] prod = op_wmulu ? p_uu : op_wmulsu ? p_su : p_ss;
             wire [31:0] wa = vs2_data[gi*32 +: 32];
             wire [31:0] na_x = ws_signed ? {{16{na[15]}}, na} : {16'b0, na};
             wire [31:0] nb_x = ws_signed ? {{16{nb[15]}}, nb} : {16'b0, nb};
             wire [31:0] wopa = ws_wide ? wa : na_x;
             wire [31:0] ws_res = ws_sub ? (wopa - nb_x) : (wopa + nb_x);
-            wire [31:0] r = op_wmul ? prod : ws_res;
+            wire [31:0] r = op_wmulany ? prod : ws_res;
             wire active = (gi < q_vl);
             assign res_w16[gi*32 +: 32] = active ? r : vd_old[gi*32 +: 32];
         end
