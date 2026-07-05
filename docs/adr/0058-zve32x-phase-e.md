@@ -47,4 +47,11 @@ Roadmap = ADR-0054 §3 Phase-E。承 Phase-A/B/C/D 全綠。Phase-E = 昂貴/低
   **三方 Codex+Grok+Gemini:Codex 抓真 bug=segment load tail lanes(vl<VLMAX)排空整 seg_buf(stale tail)
   而非 undisturbed;directed test 只觀 active lane 遮蔽(green-wash!)。修=drain byte-wise blend 舊 field
   register(seg_drain)+ partial-vl test 驗。Grok in-scope 結構正確(未抓 tail)。Gemini quota-blocked。**
-- **其餘 Phase-E(gather/compress/indexed/strided/ff)未做。剩 Phase-F(m8)。**
+- **E3 完成(2026-07-05)= vrgather.vv/.vx/.vi**:vd[i]=(index>=vlmax)?0:vs2[index],index=vs1[i](SEW)/
+  rs1/uimm。OPIVV/OPIVX/OPIVI f6=001100。m1 組合 crossbar(idx[3:0]/[2:0]/[1:0] 選 lane,OOR 用
+  **vlmax_el** fractional-aware→0)。require_noover:vd==vs2 illegal、.vv vd==vs1 illegal;vstart≠0
+  illegal(全域);masked-vd0。**vrgatherei16(f6=001110 OPIVV)deferred**(16-bit index 需 EMUL>1 index
+  群組)。lockstep 73c(.vv/.vx/.vi×SEW8/16/32+OOR+broadcast+masked+overlap terminator);回歸全綠;
+  gate_79。**三方:Codex + Grok 皆 no correctness bug(crossbar/OOR-vlmax_el/index source/legality
+  全 verified;Grok 確認 OOR 用完整 idx 非截斷 mux bits 故無 fractional aliasing)。Gemini quota-blocked。**
+- **其餘 Phase-E(vcompress/indexed/strided/ff/vrgatherei16)未做。剩 Phase-F(m8)。**

@@ -177,6 +177,14 @@ module vexu #(
     wire op_slidedn   = op_vslidedn || op_vslide1dn;
     wire op_slide     = op_slideup || op_slidedn;
     wire op_vslide1   = op_vslide1up || op_vslide1dn;
+    // Phase-E E3 (ADR-0058): vrgather.vv/.vx/.vi — vd[i] = vs2[index], index = vs1[i]
+    // (SEW) / rs1 / uimm; out-of-range index (>=vlmax) -> 0. OPIVV/OPIVX/OPIVI f6=001100.
+    // require_noover: vd may not overlap vs2 or vs1 (Spike-probed illegal). vstart!=0
+    // illegal (global). m1-only. Combinational crossbar. vrgatherei16 (f6=001110 OPIVV)
+    // deferred (16-bit index -> EMUL>1 index register group). Golden src[10..17]
+    // idx[3,0,7,2,9,1,5,4] -> [13,10,17,12,0,11,15,14]; .vx/.vi broadcast vs2[idx].
+    wire op_vrgather = (f6 == 6'b001100) && (is_opivv || is_opivx || is_opivi);
+    wire vrg_illegal = op_vrgather && ((vd_i == vs2_i) || (is_opivv && (vd_i == vs1_i)));
     wire op_widen = op_wmulany || op_wmaccany || op_waddsub;
 
     // ---------------- S1 (ADR-0049): min/max, compares, mask logicals ----------------
@@ -424,7 +432,7 @@ module vexu #(
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
                     op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr ||
                     op_muls || op_mac || op_vsmul || op_vdivr ||
-                    op_vcpop || op_vfirst || op_vid || op_vms || op_viota || op_slide;
+                    op_vcpop || op_vfirst || op_vid || op_vms || op_viota || op_slide || op_vrgather;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
@@ -457,7 +465,7 @@ module vexu #(
                        (is_vmem ? mem_illegal :
                         (!known_op ||
                          (q_vstart != 32'h0) ||
-                         widen_illegal || vext_illegal || slide_illegal ||
+                         widen_illegal || vext_illegal || slide_illegal || vrg_illegal ||
                          (op_mv && (vs2_i != 5'd0)) ||
                          (op_merge && (vd_i == 5'd0)) ||
                          // S1 (Codex, Spike-confirmed): a MASKED body op may not
@@ -473,7 +481,7 @@ module vexu #(
                          (op_madcb && !vm && (vd_i == 5'd0)) ||
                          ((op_add || op_sub || op_mm || op_s2same || op_nc ||
                            op_b1 || op_nsr || op_vext || op_muls || op_mac || op_vsmul || op_vdivr ||
-                           op_vid || op_viota || op_slide) &&
+                           op_vid || op_viota || op_slide || op_vrgather) &&
                           !vm && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------
@@ -1039,6 +1047,38 @@ module vexu #(
     endgenerate
     wire [127:0] res_slide = (vsew == 3'b000) ? res_slide8 :
                              (vsew == 3'b001) ? res_slide16 : res_slide32;
+
+    // ---- E3 vrgather: vd[i] = (index >= vlmax) ? 0 : vs2[index] (combinational
+    // crossbar, m1). index = vs1[i] (.vv) / rs1 (.vx) / uimm (.vi). ----
+    wire [127:0] res_rg8, res_rg16, res_rg32;
+    generate
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_rg8
+            wire [31:0] idx = is_opivv ? {24'b0, vs1_data[gi*8 +: 8]} :
+                              is_opivi ? {27'b0, vs1_i} : q_rs1;
+            wire oor = (idx >= {25'b0, vlmax_el});
+            wire [7:0] gval = oor ? 8'b0 : vs2_data[idx[3:0]*8 +: 8];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
+            assign res_rg8[gi*8 +: 8] = active ? gval : vd_old[gi*8 +: 8];
+        end
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_rg16
+            wire [31:0] idx = is_opivv ? {16'b0, vs1_data[gi*16 +: 16]} :
+                              is_opivi ? {27'b0, vs1_i} : q_rs1;
+            wire oor = (idx >= {25'b0, vlmax_el});
+            wire [15:0] gval = oor ? 16'b0 : vs2_data[idx[2:0]*16 +: 16];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
+            assign res_rg16[gi*16 +: 16] = active ? gval : vd_old[gi*16 +: 16];
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_rg32
+            wire [31:0] idx = is_opivv ? vs1_data[gi*32 +: 32] :
+                              is_opivi ? {27'b0, vs1_i} : q_rs1;
+            wire oor = (idx >= {25'b0, vlmax_el});
+            wire [31:0] gval = oor ? 32'b0 : vs2_data[idx[1:0]*32 +: 32];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
+            assign res_rg32[gi*32 +: 32] = active ? gval : vd_old[gi*32 +: 32];
+        end
+    endgenerate
+    wire [127:0] res_rg = (vsew == 3'b000) ? res_rg8 :
+                          (vsew == 3'b001) ? res_rg16 : res_rg32;
 
     // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
     localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
@@ -1659,6 +1699,7 @@ module vexu #(
                      op_vid ? res_vid :
                      op_viota ? res_viota :
                      op_slide ? res_slide :
+                     op_vrgather ? res_rg :
                      op_mvsx ? res_sx :
                      (vsew == 3'b000) ? res8 :
                      (vsew == 3'b001) ? res16 : res32;
