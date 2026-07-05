@@ -148,6 +148,27 @@ module vexu #(
     wire op_b1    = op_and || op_or || op_xor || op_rsub ||
                     op_sll || op_srl || op_sra;
 
+    // ---------------- Phase-B B2a (ADR-0055): narrowing shift (vnsrl/vnsra) ----
+    // wide 2*SEW source >> shamt -> SEW dest (low bits). Reuses the vnclip wide
+    // datapath minus round/clip. Only SEW8/16 (2*SEW=16/32) — SEW32 narrowing
+    // needs a 64-bit source, absent in Zve32x (same rule as vnclip).
+    wire op_nsrl  = (f6 == 6'b101100) && (is_opivv || is_opivx || is_opivi);
+    wire op_nsra  = (f6 == 6'b101101) && (is_opivv || is_opivx || is_opivi);
+    wire op_nsr   = op_nsrl || op_nsra;
+
+    // ---------------- Phase-B B2b (ADR-0055): vzext/vsext.vf2/vf4 ----------------
+    // OPMVV f6=010010 (gated by f3 -> disjoint from OPIVV vsbc, which shares f6).
+    // vs1 selects variant: [2:1]=11 vf2 / 10 vf4 / 01 vf8; [0]=1 sign, 0 zero.
+    // Zve32x: no e64 source -> vf8 always illegal; vf4 needs SEW32 (src8), vf2
+    // needs SEW>=16 (src SEW/2). Extends the low SEW/2 (or SEW/4) source lane.
+    wire ext_enc  = is_opmvv && (f6 == 6'b010010) && (vs1_i[4:3] == 2'b00);
+    wire ext_vf2  = (vs1_i[2:1] == 2'b11);
+    wire ext_vf4  = (vs1_i[2:1] == 2'b10);
+    wire ext_sext = vs1_i[0];
+    wire op_vext  = ext_enc &&
+                    ((ext_vf2 && ((vsew == 3'b001) || (vsew == 3'b010))) ||
+                     (ext_vf4 &&  (vsew == 3'b010)));
+
     // ---------------- config legality ----------------
     wire        vill  = q_vtype[31];
     wire [2:0]  vlmul = q_vtype[2:0];
@@ -204,9 +225,16 @@ module vexu #(
                           (vd_i == vs1_i) ||
                           (op_wmul && (vd_i == vs2_i)));
 
+    // B2b (Grok review): vext is widening-class for register layout — the wider
+    // dest may not overlap the NARROWER source (Spike require_noover; narrowing's
+    // vd==vs2 allowance does NOT apply). Scoped to dst LMUL=m1 (grp_only_illegal),
+    // so the simple same-register overlap check suffices.
+    wire vext_illegal = op_vext && (vd_i == vs2_i);
+
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
                     op_wmul || op_waddw || op_redsum || op_mvsx ||
-                    op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1;
+                    op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
+                    op_nsr || op_vext;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
@@ -216,7 +244,7 @@ module vexu #(
     // site is guarded by an is_vmem priority mux) — exclude them here too.
     wire is_grp    = (grp_parts != 3'd1) && beats_op && !is_vmem;
     wire grp_only_illegal = (grp_parts != 3'd1) &&
-        (op_widen || op_redsum || op_nc ||
+        (op_widen || op_redsum || op_nc || op_nsr || op_vext ||
          !beats_op && !op_mvxs && !op_mvsx && !op_mlog && !is_vmem);
     // register-group alignment (vd for writes except mask-dest; sources)
     wire [4:0] grp_amask = lmul_m4 ? 5'd3 : lmul_m2 ? 5'd1 : 5'd0;
@@ -228,7 +256,7 @@ module vexu #(
          ((is_opivv || is_opmvv) && ((vs1_i & grp_amask) != 5'd0)));
     // narrowing legality mirrors widening (source EMUL = 2*LMUL <= 1); the
     // low-part destination overlap (vd == vs2) is spec-legal for narrowing.
-    wire nc_illegal = op_nc && (!widen_lmul_ok || (vsew == 3'b010));
+    wire nc_illegal = (op_nc || op_nsr) && (!widen_lmul_ok || (vsew == 3'b010));
     // vstart!=0 on arithmetic = illegal (spec-allowed choice; MATCHES SPIKE —
     // caught by gate_42 lockstep: Spike trapped where the RTL executed).
     // Loads/stores are resumable: vstart is honored (start element), not illegal.
@@ -236,7 +264,7 @@ module vexu #(
                        (is_vmem ? mem_illegal :
                         (!known_op ||
                          (q_vstart != 32'h0) ||
-                         widen_illegal ||
+                         widen_illegal || vext_illegal ||
                          (op_mv && (vs2_i != 5'd0)) ||
                          (op_merge && (vd_i == 5'd0)) ||
                          // S1 (Codex, Spike-confirmed): a MASKED body op may not
@@ -244,7 +272,7 @@ module vexu #(
                          // targeting v0 remain legal.
                          nc_illegal || grp_only_illegal || grp_align_illegal ||
                          ((op_add || op_sub || op_mm || op_s2same || op_nc ||
-                           op_b1) &&
+                           op_b1 || op_nsr || op_vext) &&
                           !vm && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------
@@ -578,6 +606,7 @@ module vexu #(
     wire [7:0]  nc_sat8;
     wire [3:0]  nc_sat16;
     wire [127:0] res_s2_8, res_s2_16, res_s2_32, res_nc8, res_nc16;
+    wire [127:0] res_ext16, res_ext32;   // B2b vzext/vsext
 
     generate
         for (gi = 0; gi < 16; gi = gi + 1) begin : g_s2_8
@@ -733,11 +762,15 @@ module vexu #(
                        (q_vxrm == 2'd2) ? 1'b0 :
                                           (~b_d & any_lo);
             wire signed [15:0] vs = v;
+            wire        [15:0] nsrl_w = v >> d;            // B2a vnsrl: logical
+            wire signed [15:0] nsra_w = vs >>> d;          // B2a vnsra: arithmetic (self-det signed)
             wire signed [16:0] rs = {vs[15], $unsigned(vs >>> d)} + {16'b0, inc};
             wire        [16:0] ru = {1'b0, v >> d} + {16'b0, inc};
             wire s_ov = (rs > 17'sd127) || (rs < -17'sd128);
             wire u_ov = (ru > 17'd255);
-            wire [7:0] r = op_nclip ? (s_ov ? (rs[16] ? 8'h80 : 8'h7F) : rs[7:0])
+            wire [7:0] r = op_nsrl  ? nsrl_w[7:0] :
+                           op_nsra  ? nsra_w[7:0] :
+                           op_nclip ? (s_ov ? (rs[16] ? 8'h80 : 8'h7F) : rs[7:0])
                                     : (u_ov ? 8'hFF : ru[7:0]);
             wire en = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
             assign res_nc8[gi*8 +: 8] = en ? r : vd_old[gi*8 +: 8];
@@ -757,15 +790,36 @@ module vexu #(
                        (q_vxrm == 2'd2) ? 1'b0 :
                                           (~b_d & any_lo);
             wire signed [31:0] vs = v;
+            wire        [31:0] nsrl_w = v >> d;
+            wire signed [31:0] nsra_w = vs >>> d;
             wire signed [32:0] rs = {vs[31], $unsigned(vs >>> d)} + {32'b0, inc};
             wire        [32:0] ru = {1'b0, v >> d} + {32'b0, inc};
             wire s_ov = (rs > 33'sd32767) || (rs < -33'sd32768);
             wire u_ov = (ru > 33'd65535);
-            wire [15:0] r = op_nclip ? (s_ov ? (rs[32] ? 16'h8000 : 16'h7FFF) : rs[15:0])
+            wire [15:0] r = op_nsrl  ? nsrl_w[15:0] :
+                            op_nsra  ? nsra_w[15:0] :
+                            op_nclip ? (s_ov ? (rs[32] ? 16'h8000 : 16'h7FFF) : rs[15:0])
                                      : (u_ov ? 16'hFFFF : ru[15:0]);
             wire en = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
             assign res_nc16[gi*16 +: 16] = en ? r : vd_old[gi*16 +: 16];
             assign nc_sat16[gi] = en && (op_nclip ? s_ov : u_ov);
+        end
+
+        // ---- B2b vzext/vsext: SEW/2 (vf2) or SEW/4 (vf4) source -> SEW dest ----
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_ext16   // dst e16, vf2 (src 8b)
+            wire [7:0]  s = vs2_data[gi*8 +: 8];
+            wire [15:0] e = ext_sext ? {{8{s[7]}}, s} : {8'b0, s};
+            wire en = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
+            assign res_ext16[gi*16 +: 16] = en ? e : vd_old[gi*16 +: 16];
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_ext32   // dst e32, vf2 (src 16b) / vf4 (src 8b)
+            wire [15:0] s2 = vs2_data[gi*16 +: 16];
+            wire [7:0]  s4 = vs2_data[gi*8 +: 8];
+            wire [31:0] e2 = ext_sext ? {{16{s2[15]}}, s2} : {16'b0, s2};
+            wire [31:0] e4 = ext_sext ? {{24{s4[7]}},  s4} : {24'b0, s4};
+            wire [31:0] e  = ext_vf4 ? e4 : e2;
+            wire en = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
+            assign res_ext32[gi*32 +: 32] = en ? e : vd_old[gi*32 +: 32];
         end
     endgenerate
 
@@ -826,7 +880,8 @@ module vexu #(
                      op_cmp  ? res_cmp :
                      op_mlog ? res_mlog :
                      op_s2same ? res_s2 :
-                     op_nc  ? res_nc :
+                     (op_nc || op_nsr) ? res_nc :
+                     op_vext ? ((vsew == 3'b001) ? res_ext16 : res_ext32) :
                      op_widen ? ((vsew == 3'b000) ? res_w8 : res_w16) :
                      op_redsum ? res_red :
                      op_mvsx ? res_sx :

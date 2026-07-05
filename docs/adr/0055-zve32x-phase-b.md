@@ -93,7 +93,25 @@ directed+random → commit。**逐子片把關,B1 證完才進 B2**(同 Phase-A 
   **測試基建修**:`-mno-relax` 加進 phase_22 firmware 編譯——`la`/data-table 位址在 DUT(base
   0x0)會被 relaxation 收成 `li`(絕對定址),Spike(base 0x8000_0000)不能 → instr 編碼分歧;
   `-mno-relax` 強制 PC-relative,兩邊一致。(這解鎖了 data-table + vse/lw 逐 element 驗證法。)
-- **B2 __/ B3 __/ B4 __**（續）。
+- **B2 完成(2026-07-05)= narrowing + extension**:
+  - **B2a**:vnsrl/vnsra(.wv/.wx/.wi)——複用 vnclip 寬 bus(g_nc8/g_nc16)去掉 round/clip,取
+    (2*SEW 源 >> d) 低 SEW 位;d 沿用 vnclip 的 b[3:0]/b[4:0]=log2(2*SEW);vnsra 用自決定 signed
+    wire。只 SEW8/16(SEW32 narrowing 需 64b 源,Zve32x 無)。
+  - **B2b**:vzext/vsext.vf2/vf4——OPMVV f6=010010(f3 gate,與 OPIVV vsbc 不撞);vs1[2:1]=11/10
+    選 vf2/vf4、[0]=sext;低 SEW/2 或 SEW/4 lane 零/符延伸;vf2 需 SEW≥16、vf4 需 SEW32、vf8 一律
+    非法。res_ext 全暫存器填(元素數不變,異於 narrowing 的半填)。
+  - **三方 review(Codex/Gemini/Grok,User 指定「一起完成 B2」)**:Codex 無 defect(7 項)、
+    Gemini 全一致。**Grok 抓到真 gap:vext 缺 overlap 檢查**(vext 是 widening-class,vd 不得與
+    narrower 源 vs2 重疊,require_noover;narrowing 的 vd==vs2 允許不適用)——**已修**
+    `vext_illegal = op_vext && (vd_i==vs2_i)`;terminator 改 `vsext.vf2 v3,v3` 驗證(沒修會執行而
+    Spike trap 分歧)。**主動套用 B1 教訓**:masked-vd0 檢查一開始就含 op_nsr/op_vext(Gemini 確認)。
+  - **Spike lockstep `--isa=zve32x_zvl128b` 92 commits 全符**(gate_63);b1/grid/s2/vrand + NPU
+    子系統全綠無回歸。
+  - **記錄的 scope/latent(roadmap 續)**:①**vext/vnsr = dst m1-only**(grp_only_illegal;EMUL
+    成長的 m2/m4 需 multi-beat,同既有 widening/narrowing ≤m1 限制,列 roadmap)②**`vle32@e32/mf2`
+    (vlmax=2)DUT trap 為 illegal**——Grok/Gemini 皆判與 B2 無關的 latent vsetvli/vmem fractional-
+    LMUL 議題,待與 Spike 並跑確認(可能真 bug)。
+- **B3 __/ B4 __**（續）。
 
 ## 附:Grok 架構複核(2026-07-05,全文歸檔 docs/reviews/2026-07-05_phase_b_encoding_grok.md)
 
