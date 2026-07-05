@@ -16,7 +16,11 @@
 | 7 | 軟體(TF→編譯→NPU 執行) | 🟢 GREEN-leaning(2026-07-04 四升) | ADR-0041 MLP 之上,**ADR-0042:真 int8 CNN**(Conv2D **per-channel**(RESCALE_PC)+ K=72/128 **chunking** + host im2col)conv 中間層與最終輸出對 BUILTIN_REF 全 bit-exact(gate_50)。餘:POOL/更多 op、on-NPU repack、大模型 |
 | 8 | 除錯(RVVI/RVFI) | 🟢 GREEN-leaning(2026-07-04 二升) | ADR-0045 v0 之上,**ADR-0048 trace v1**:`rvfi_insn`(**每筆 lockstep commit 斷言 == ITCM join**,1164+10,809 全符)、`rvfi_trap_mtval`/`rvfi_mstatus`(pre-commit view 明文)、WB 對齊 **mem trace**(trap TB 逐筆驗 handler 兩筆 MMIO store 位址+資料)。範圍註記:AMO beat trace 限 A-profile 未來工作;RVVI 多退休格式化屬工具鏈 |
 
-**達成宣稱所需的最小剩餘工作(依關鍵序)**:P0② CQ(進行中)→ P0④ vector-CSR lockstep 契約 + Phase 3 RVV EXU → P0③ 矩陣 acc+requant(Phase 4/5,NumPy golden)→ P0⑤ traps/abort → Phase 6 TFLM e2e → P1(ITCM/DTCM、F、RVVI/RVFI)。
+**達成宣稱所需的最小剩餘工作(2026-07-05 更新,功能補齊已完成)**:功能面 8 列全綠(1 GREEN + 6 GREEN-leaning + 3 列 PARTIAL-strong),紅燈 0。剩餘 = **簽核面**,非功能面:
+1. **架構優化(未開工)**:外掛單發 MAC vs Coral 4-wide → Grok Route A(MAC tree pipelining、128-bit weight-stationary port、double-buffer);mat_engine 256-MAC 組合邏輯疑為 critical path(DC trial ~699MHz TSMC 28)。
+2. **簽核(未開工)**:VCS signoff(sandbox 外)、Spyglass lint/CDC、code coverage 收斂、SRAM macro 對映、SoC 真快取 flush、誠實偏離(Class B port 寬度)PPA 收斂。
+3. **功能殘留(GREEN-leaning 列內小缺口)**:矩陣 >8×8 tile 排程 / 大模型(MobileNet 級)e2e / device 端 overrun 偵測 / AMO trace / RVVI 多退休格式化。
+**宣稱門檻**:即使功能 8/8,「取代 Coral」仍需上述簽核 + 真實 MobileNet 級模型 e2e bit-exact + 偏離收斂或帶 PPA 證據接受。
 
 ## 附錄:Gemini 全上下文覆核狀態
 
