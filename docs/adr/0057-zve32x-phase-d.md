@@ -45,4 +45,16 @@ mask-dest(vms*)/vector-dest(vid/viota)走 vd 寫路。每片 gate + directed + i
     **全 dismiss**:#1 always@flow syntax=false positive(實際 always@*,同 C3/C4d 誤讀)、#2 vstart 檢查
     =已由全域規則處理(terminator 證)、#3 m2 mis-execute=grp_only_illegal 已 trap(非 mis-exec;m1-only
     scope-cut)、#4 vid vs2=Gemini 把 funct6 當 vs2(reserved-encoding edge,assembler 不 emit)。
-- **D1b / D2a / D2b __**(續:D1b vmsbf/vmsof/vmsif/viota → D2a vslide1up/down → D2b vslideup/down)。
+- **D1b 完成(2026-07-05,@<pending>)= vmsbf/vmsof/vmsif.m(mask dest)+ viota.m(vector dest)**:
+  - decode:VMUNARY0 f6=010100,vs1 選 op(vmsbf=00001/vmsof=00010/vmsif=00011/viota=10000)。F=vs2 首個
+    active set bit;vmsbf i<F、vmsof i==F、vmsif i<=F;viota vd[i]=# active set bits in [0,i)。
+  - datapath:單一 always@* scan(mbits=active set bit,run/preset 追蹤 [0,i) 的 count/any-set);
+    vms_raw 依 op 選;vms bits 經 seg8/16/32 走既有 compare **mask_dest res_cmp 路**(op_vms 加 mask_dest);
+    viota 走 res_viota per-SEW → q_wdata。m1-only、vstart≠0 illegal、masked viota 寫 v0 illegal。
+  - **Spike-probe 再推翻 Grok**:Grok 判「vms* vd==v0 always illegal」,實跑 vmsif.m v0,v2(unmasked vd==v0)
+    正常執行 → vms* 當 compare 處理(mask-dest,vd==v0 合法)。empty mask:vmsbf/vmsif=全 1、vmsof/viota=全 0。
+  - **Spike lockstep 67 commits**(四 op masked/unmasked/empty + viota SEW8/16/32 + viota@vstart≠0 terminator);
+    回歸整 suite(b3 mask_dest/s1 compares/pool/vrand 1324)綠。gate_75。
+  - **三方**:Grok(vd==v0 flag 被 Spike 推翻)+ Spike golden(authority)+ Gemini **fully clean**(prefix 邏輯含
+    no-set-bit / viota count / mask-vs-vector dest / m1+vstart / latch-free / SEW slicing 六項 verified,無改)。
+- **D2a / D2b __**(續:D2a vslide1up/down → D2b vslideup/down)。

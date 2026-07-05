@@ -148,6 +148,20 @@ module vexu #(
     wire op_vcpop  = is_opmvv && (f6 == 6'b010000) && (vs1_i == 5'b10000);
     wire op_vfirst = is_opmvv && (f6 == 6'b010000) && (vs1_i == 5'b10001);
     wire op_vid    = is_opmvv && (f6 == 6'b010100) && (vs1_i == 5'b10001);
+    // Phase-D D1b (ADR-0057): mask-scan set + prefix. VMUNARY0 f6=010100. Let
+    // F = first ACTIVE set bit in vs2 (active = vm||v0[i]) over [0,vl).
+    //   vmsbf.m (vs1=00001): vd[i]=1 iff i<F                (mask dest)
+    //   vmsof.m (vs1=00010): vd[i]=1 iff i==F               (mask dest)
+    //   vmsif.m (vs1=00011): vd[i]=1 iff i<=F               (mask dest)
+    //   viota.m (vs1=10000): vd[i]=# active set bits in [0,i)  (vector dest)
+    // Maskable (masked: inactive vd undisturbed); m1-only; vstart!=0 illegal. vms*
+    // vd==v0 legal (Spike-probed, like compares). Golden mask {2,3,6}: vmsbf 0x03,
+    // vmsif 0x07, vmsof 0x04, viota [0,0,0,1,2,2,2,3].
+    wire op_vmsbf = is_opmvv && (f6 == 6'b010100) && (vs1_i == 5'b00001);
+    wire op_vmsof = is_opmvv && (f6 == 6'b010100) && (vs1_i == 5'b00010);
+    wire op_vmsif = is_opmvv && (f6 == 6'b010100) && (vs1_i == 5'b00011);
+    wire op_vms   = op_vmsbf || op_vmsof || op_vmsif;
+    wire op_viota = is_opmvv && (f6 == 6'b010100) && (vs1_i == 5'b10000);
     wire op_widen = op_wmulany || op_wmaccany || op_waddsub;
 
     // ---------------- S1 (ADR-0049): min/max, compares, mask logicals ----------------
@@ -232,7 +246,7 @@ module vexu #(
     wire op_adcsbc = op_adc  || op_sbc;    // vector-dest carry add/sub (beats_op class)
     wire op_madcb  = op_madc || op_msbc;   // mask-dest carry/borrow-out (op_cmp class)
     // unified mask-dest predicate: single-register dest, group-source, WB writes one reg
-    wire mask_dest = op_cmp || op_madcb;
+    wire mask_dest = op_cmp || op_madcb || op_vms;  // D1b: vms* single-mask-reg dest
 
     // ---------------- Phase-B B4 (ADR-0055): whole-register move vmv<nr>r.v ----
     // OPIVI f6=100111, vm=1; simm5 (vs1 field) = nr-1, legal {0,1,3,7} -> nr{1,2,4,8}.
@@ -362,7 +376,7 @@ module vexu #(
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
                     op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr ||
                     op_muls || op_mac || op_vsmul ||
-                    op_vcpop || op_vfirst || op_vid;
+                    op_vcpop || op_vfirst || op_vid || op_vms || op_viota;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
@@ -411,7 +425,7 @@ module vexu #(
                          (op_madcb && !vm && (vd_i == 5'd0)) ||
                          ((op_add || op_sub || op_mm || op_s2same || op_nc ||
                            op_b1 || op_nsr || op_vext || op_muls || op_mac || op_vsmul ||
-                           op_vid) &&
+                           op_vid || op_viota) &&
                           !vm && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------
@@ -823,6 +837,54 @@ module vexu #(
     endgenerate
     wire [127:0] res_vid = (vsew == 3'b000) ? res_vid8 :
                            (vsew == 3'b001) ? res_vid16 : res_vid32;
+
+    // ---- D1b vmsbf/vmsof/vmsif (mask) + viota (vector). One scan over the mask ----
+    // mbits[i] = active set bit; preset/run track "any set / count set" in [0,i).
+    // vms_raw = per-op mask bit assuming active; viota_pk = per-element prefix count.
+    reg  [15:0] mbits;
+    reg  [15:0] vms_raw;
+    reg  [127:0] viota_pk;
+    reg  [4:0]  run;
+    reg         preset;
+    integer     di;
+    always @* begin
+        for (di = 0; di < 16; di = di + 1)
+            mbits[di] = (di < q_vl) && vs2_data[di] && (vm || v0_data[di]);
+        run = 5'd0; preset = 1'b0;
+        for (di = 0; di < 16; di = di + 1) begin
+            viota_pk[di*8 +: 8] = {3'b0, run};       // count of set bits in [0,di)
+            vms_raw[di] = op_vmsbf ? ~(preset | mbits[di]) :  // i<F
+                          op_vmsif ? ~preset :                // i<=F
+                                     (~preset & mbits[di]);   // vmsof: i==F
+            if (mbits[di]) begin run = run + 5'd1; preset = 1'b1; end
+        end
+    end
+    // vms mask output: active lanes get vms_raw, inactive/tail keep the old mask reg.
+    wire [15:0] vms_bits;
+    generate
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_vms
+            wire en = (gi < q_vl) && (vm || v0_data[gi]);
+            assign vms_bits[gi] = en ? vms_raw[gi] : cmpd_old[gi];
+        end
+    endgenerate
+    // viota vector output (count fits SEW; masked-off / tail undisturbed).
+    wire [127:0] res_viota8, res_viota16, res_viota32;
+    generate
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_viota8
+            wire en = (gi < q_vl) && (vm || v0_data[gi]);
+            assign res_viota8[gi*8 +: 8] = en ? viota_pk[gi*8 +: 8] : vd_old[gi*8 +: 8];
+        end
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_viota16
+            wire en = (gi < q_vl) && (vm || v0_data[gi]);
+            assign res_viota16[gi*16 +: 16] = en ? {8'b0, viota_pk[gi*8 +: 8]} : vd_old[gi*16 +: 16];
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_viota32
+            wire en = (gi < q_vl) && (vm || v0_data[gi]);
+            assign res_viota32[gi*32 +: 32] = en ? {24'b0, viota_pk[gi*8 +: 8]} : vd_old[gi*32 +: 32];
+        end
+    endgenerate
+    wire [127:0] res_viota = (vsew == 3'b000) ? res_viota8 :
+                             (vsew == 3'b001) ? res_viota16 : res_viota32;
 
     // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
     localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
@@ -1334,9 +1396,9 @@ module vexu #(
     wire [3:0]  madc_bits32;
     // B3: vmadc/vmsbc reuse the compare mask-write path (res_cmp / cmp_seg /
     // grp_mask_acc) — pick the carry/borrow bits when op_madcb.
-    wire [15:0] seg8  = op_madcb ? madc_bits8  : cmp_bits8;
-    wire [7:0]  seg16 = op_madcb ? madc_bits16 : cmp_bits16;
-    wire [3:0]  seg32 = op_madcb ? madc_bits32 : cmp_bits32;
+    wire [15:0] seg8  = op_vms ? vms_bits       : op_madcb ? madc_bits8  : cmp_bits8;
+    wire [7:0]  seg16 = op_vms ? vms_bits[7:0]  : op_madcb ? madc_bits16 : cmp_bits16;
+    wire [3:0]  seg32 = op_vms ? vms_bits[3:0]  : op_madcb ? madc_bits32 : cmp_bits32;
     wire [127:0] res_cmp = (vsew == 3'b000) ? {cmpd_old[127:16], seg8}  :
                            (vsew == 3'b001) ? {cmpd_old[127:8],  seg16} :
                                               {cmpd_old[127:4],  seg32};
@@ -1371,6 +1433,7 @@ module vexu #(
                      op_red ? res_red :
                      op_wred ? res_wred :
                      op_vid ? res_vid :
+                     op_viota ? res_viota :
                      op_mvsx ? res_sx :
                      (vsew == 3'b000) ? res8 :
                      (vsew == 3'b001) ? res16 : res32;
