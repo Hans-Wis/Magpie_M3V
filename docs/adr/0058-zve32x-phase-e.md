@@ -38,4 +38,13 @@ Roadmap = ADR-0054 §3 Phase-E。承 Phase-A/B/C/D 全綠。Phase-E = 昂貴/低
   - **三方**:Grok arch(E1 do-now,E2 defer)+ Spike golden(authority)+ **Gemini clean fully
     compliant**(decode disjoint / special cases+constants / signed-div trunc+$unsigned / masking
     五項 verified,無 review 修)。
-- **E2 segment = DEFER(見 §1)。其餘 Phase-E(gather/compress/indexed/strided/ff)未做。**
+- **E2 完成(2026-07-05,minimal stub,User 核准)= segment load/store vlseg<nf>/vsseg<nf>**:
+  scope=nf=2..8, EEW=SEW, LMUL=1, unmasked, vstart=0, unit-stride(out-of-scope LMUL>1/EEW≠SEW/masked
+  刻意 illegal=DUT 較 Spike 嚴,scope-cut 不測)。實作=vmem FSM 擴充:seg_off byte 累加 + seg_fld field
+  計數 + vm_idx element;load 逐 beat 存 seg_buf[field][element],末拍 VM_SEGWR 逐 reg 排空到 vd..vd+nf-1
+  (唯一 vrf 寫 block,q_vrf_we=0 如 vmvr);store 逐 beat 從 vrf[vd_i+seg_fld] 取。Spike lockstep 90c
+  (vlseg2/3/4 + vsseg2 + SEW8/16/32 + partial-vl tail);vmem 非-segment 路不變(110);gate_78。
+  **三方 Codex+Grok+Gemini:Codex 抓真 bug=segment load tail lanes(vl<VLMAX)排空整 seg_buf(stale tail)
+  而非 undisturbed;directed test 只觀 active lane 遮蔽(green-wash!)。修=drain byte-wise blend 舊 field
+  register(seg_drain)+ partial-vl test 驗。Grok in-scope 結構正確(未抓 tail)。Gemini quota-blocked。**
+- **其餘 Phase-E(gather/compress/indexed/strided/ff)未做。剩 Phase-F(m8)。**

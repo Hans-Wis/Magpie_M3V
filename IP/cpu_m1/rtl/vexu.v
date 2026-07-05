@@ -377,7 +377,24 @@ module vexu #(
     wire align_ok = (eew_sel == 2'd0) ||
                     ((eew_sel == 2'd1) && !q_rs1[0]) ||
                     ((eew_sel == 2'd2) && (q_rs1[1:0] == 2'b00));
-    wire mem_illegal = !mem_enc_ok || !emul_ok || !align_ok;
+    // Phase-E E2 stub (ADR-0058, User-approved minimal scope): segment load/store
+    // vlseg<nf>/vsseg<nf> with nf=2..8, EEW=SEW, LMUL=1, unmasked, vstart=0, unit-stride.
+    // element-major/field-minor: mem beat k = element(k/nf), field(k%nf). Loads write nf
+    // regs vd..vd+nf-1; stores read vs3..vs3+nf-1. Out of stub scope (kept illegal): EMUL
+    // groups (LMUL>1), EEW!=SEW, masked. Golden-probed vlseg2/3 deinterleave.
+    wire [2:0] seg_nf_m1 = q_instr[31:29];             // nf-1
+    wire [3:0] seg_nf    = {1'b0, seg_nf_m1} + 4'd1;   // 1..8
+    wire       is_seg    = is_vmem && (seg_nf_m1 != 3'b000);
+    wire seg_ok = (eew_sel != 2'd3) && vm &&
+                  (q_instr[28:26] == 3'b000) &&                 // mew=0, unit-stride
+                  (q_instr[24:20] == 5'b00000) &&               // lumop/sumop=0
+                  (vlmul == 3'b000) &&                          // LMUL=1 (stub)
+                  ({1'b0, eew_sel} == vsew) &&                  // EEW == SEW (stub)
+                  (q_vstart == 32'h0) &&                        // vstart=0 (stub)
+                  (({1'b0, vd_i} + {2'b0, seg_nf}) <= 6'd32) && // vd..vd+nf-1 in range
+                  align_ok;
+    wire mem_illegal = is_seg ? !seg_ok :
+                       (!mem_enc_ok || !emul_ok || !align_ok);
 
     // 3D widening legality: dst EEW = 2*SEW needs SEW<=16 and dst EMUL = 2*LMUL
     // <= 1 (single register group) => LMUL must be fractional. Overlap (match
@@ -507,6 +524,10 @@ module vexu #(
         // otherwise a stall would idempotently re-write the same reg (power waste).
         if ((vm_state == VM_VMVR) && !m_stall)
             vrf[vd_i + {2'b0, vmvr_p}] <= vrf[vs2_i + {2'b0, vmvr_p}];
+        // E2: segment load drain — one field register per cycle (single writer; the
+        // core WB port is idle for segment since q_vrf_we is forced 0).
+        if ((vm_state == VM_SEGWR) && !m_stall)
+            vrf[vd_i + {2'b0, vmvr_p}] <= seg_drain;   // tail lanes kept undisturbed
     end
 
     // ---------------- operand B (vector / scalar / imm broadcast) ----------------
@@ -1021,12 +1042,31 @@ module vexu #(
 
     // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
     localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
-                     VM_VMVR = 3'd4;                     // B4: whole-register copy loop
+                     VM_VMVR = 3'd4, VM_SEGWR = 3'd5;    // B4 copy loop / E2 segment drain
     reg [2:0]   vm_state;
     reg [4:0]   vm_idx;
     reg [2:0]   vmvr_p;          // B4: register index within the nr-register group
     reg [127:0] vm_buf;          // assemble buffer (loads); seeded with vd_old
     reg         vm_done_r;
+    // E2 segment (stub): per-field assemble buffers + field counter + byte-offset accum.
+    reg [127:0] seg_buf [0:7];
+    reg [2:0]   seg_fld;
+    reg [8:0]   seg_off;         // running byte offset from rs1
+    wire        seg_last = (seg_fld + 3'd1 == seg_nf[2:0]);
+    wire [127:0] seg_src = vrf[vd_i + {2'b0, seg_fld}];   // store source: (vs3+f)
+    // E2 (Codex finding): the drain must keep tail lanes (element >= vl) undisturbed —
+    // seg_buf beyond vl is stale, so blend it with the old field register byte-wise.
+    wire [5:0]   seg_act_bytes = {1'b0, q_vl[4:0]} << eew_sel;   // vl * EEW bytes (<=16)
+    wire [127:0] seg_old_p = vrf[vd_i + {2'b0, vmvr_p}];         // old (vd+p) for the tail
+    wire [127:0] seg_drain;
+    genvar sgb;
+    generate
+        for (sgb = 0; sgb < 16; sgb = sgb + 1) begin : g_segdrain
+            assign seg_drain[sgb*8 +: 8] = ({2'b0, sgb[3:0]} < seg_act_bytes)
+                                           ? seg_buf[vmvr_p][sgb*8 +: 8]
+                                           : seg_old_p[sgb*8 +: 8];
+        end
+    endgenerate
 
     wire [4:0] vm_vl     = q_vl[4:0];       // <=16 elements under EMUL<=1
     wire [4:0] vm_vstart = q_vstart[4:0];
@@ -1037,11 +1077,15 @@ module vexu #(
     assign vm_result_valid = vm_done_r;
     assign vm_dvalid       = (vm_state == VM_ISSUE);
     assign vm_we           = is_vstore;
-    assign vm_addr         = q_rs1 + ({27'b0, vm_idx} << eew_sel);
-    // store element from vs3 (= vd field) placed on its byte lane via wstrb
-    wire [7:0]  st8  = vd_old[{vm_idx[3:0], 3'b000} +: 8];
-    wire [15:0] st16 = vd_old[{vm_idx[2:0], 4'b0000} +: 16];
-    wire [31:0] st32 = vd_old[{vm_idx[1:0], 5'b00000} +: 32];
+    // segment beats walk a contiguous byte offset; scalar path is element*eew.
+    assign vm_addr         = is_seg ? (q_rs1 + {23'b0, seg_off})
+                                    : (q_rs1 + ({27'b0, vm_idx} << eew_sel));
+    // store element from vs3 (= vd field) placed on its byte lane via wstrb. For
+    // segment the source is the current field register (vs3+seg_fld) at element vm_idx.
+    wire [127:0] st_src = is_seg ? seg_src : vd_old;
+    wire [7:0]  st8  = st_src[{vm_idx[3:0], 3'b000} +: 8];
+    wire [15:0] st16 = st_src[{vm_idx[2:0], 4'b0000} +: 16];
+    wire [31:0] st32 = st_src[{vm_idx[1:0], 5'b00000} +: 32];
     assign vm_wdata = (eew_sel == 2'd0) ? {4{st8}} :
                       (eew_sel == 2'd1) ? {2{st16}} : st32;
     assign vm_wstrb = (eew_sel == 2'd0) ? (4'b0001 << vm_addr[1:0]) :
@@ -1066,6 +1110,16 @@ module vexu #(
                         // illegal upstream, so this always starts at register 0).
                         vmvr_p   <= 3'd0;
                         vm_state <= VM_VMVR;
+                    end else if (is_seg) begin
+                        // E2: segment beats walk element-major/field-minor from rs1.
+                        if (vm_none) begin
+                            vm_done_r <= 1'b1;          // vl==0
+                        end else begin
+                            seg_fld  <= 3'd0;
+                            seg_off  <= 9'd0;
+                            vm_idx   <= 5'd0;           // vstart=0 (stub)
+                            vm_state <= VM_ISSUE;
+                        end
                     end else if (is_grp) begin
                         // S3: register-group beats — one part per cycle into
                         // staging; drained-start means nothing else vector is
@@ -1111,7 +1165,33 @@ module vexu #(
                         vmvr_p <= vmvr_p + 3'd1;
                 end
                 VM_ISSUE: vm_state <= VM_CAP;        // beat fired this cycle
-                VM_CAP: begin
+                VM_CAP: if (is_seg) begin
+                    // E2: capture the loaded element into field seg_fld; walk (field,
+                    // element) and the contiguous byte offset. On the last beat a load
+                    // drains its nf field buffers to vd..vd+nf-1 (VM_SEGWR); a store is
+                    // done (memory already written beat-by-beat).
+                    if (is_vload) begin
+                        case (eew_sel)
+                            2'd0: seg_buf[seg_fld][{vm_idx[3:0], 3'b000} +: 8]   <= ld8;
+                            2'd1: seg_buf[seg_fld][{vm_idx[2:0], 4'b0000} +: 16] <= ld16;
+                            default: seg_buf[seg_fld][{vm_idx[1:0], 5'b00000} +: 32] <= m_rdata;
+                        endcase
+                    end
+                    seg_off <= seg_off + (9'd1 << eew_sel);
+                    if (seg_last) begin
+                        seg_fld <= 3'd0;
+                        if (vm_idx == vm_last) begin
+                            if (is_vload) begin vmvr_p <= 3'd0; vm_state <= VM_SEGWR; end
+                            else          begin vm_done_r <= 1'b1; vm_state <= VM_IDLE; end
+                        end else begin
+                            vm_idx   <= vm_idx + 5'd1;
+                            vm_state <= VM_ISSUE;
+                        end
+                    end else begin
+                        seg_fld  <= seg_fld + 3'd1;
+                        vm_state <= VM_ISSUE;
+                    end
+                end else begin
                     if (is_vload) begin
                         case (eew_sel)
                             2'd0: vm_buf[{vm_idx[3:0], 3'b000} +: 8]       <= ld8;
@@ -1126,6 +1206,15 @@ module vexu #(
                         vm_idx   <= vm_idx + 5'd1;
                         vm_state <= VM_ISSUE;
                     end
+                end
+                VM_SEGWR: begin
+                    // vrf[vd+vmvr_p] <= seg_buf[vmvr_p] lands in the write block; drain
+                    // all nf field buffers, then retire.
+                    if (({1'b0, vmvr_p} + 4'd1) >= seg_nf) begin
+                        vm_state  <= VM_IDLE;
+                        vm_done_r <= 1'b1;
+                    end else
+                        vmvr_p <= vmvr_p + 3'd1;
                 end
                 default: vm_state <= VM_IDLE;
             endcase
@@ -1579,6 +1668,7 @@ module vexu #(
     // vmvr writes its nr registers from the FSM copy loop, never via the WB port.
     assign q_vrf_we = q_valid && !q_illegal && !op_mvxs && !is_vstore && !op_vmvr &&
                       !op_vcpop && !op_vfirst &&   // D1a: scalar-dest, no VRF write
+                      !is_seg &&                   // E2: segment load drains via the FSM
                       (q_vstart < q_vl);
 
     // ---------------- vmv.x.s (executes even when vl==0) ----------------
