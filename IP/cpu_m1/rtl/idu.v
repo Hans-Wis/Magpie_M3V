@@ -206,9 +206,14 @@ module idu #(
                       ((is_op_v &&
                         ((funct3 == 3'b000) || (funct3 == 3'b010) || (funct3 == 3'b011) ||
                          (funct3 == 3'b100) || (funct3 == 3'b110))) || is_vmem_opc);
-    // vmv.x.s is the only 3B vector op with a scalar rd
-    wire opv_mv_x_s = is_vexec && (funct3 == 3'b010) &&
-                      (instr[31:26] == 6'b010000) && (instr[19:15] == 5'd0) && instr[25];
+    // vector ops that write a scalar GPR rd: vmv.x.s + (Phase-D D1a) vcpop.m/vfirst.m.
+    // All are OPMVV f6=010000 (VWXUNARY0); vs1 field selects: 0=vmv.x.s, 10000=vcpop,
+    // 10001=vfirst. (vmv.x.s also needs vm=1; the mask-scan ones are maskable.)
+    wire opv_vwx0   = is_vexec && (funct3 == 3'b010) && (instr[31:26] == 6'b010000);
+    wire opv_mv_x_s = opv_vwx0 && (instr[19:15] == 5'd0) && instr[25];
+    wire opv_vcpop  = opv_vwx0 && (instr[19:15] == 5'b10000);
+    wire opv_vfirst = opv_vwx0 && (instr[19:15] == 5'b10001);
+    wire opv_scalar_rd = opv_mv_x_s || opv_vcpop || opv_vfirst;
 
     // -------------------------------------------------------------------------
     // Immediate mux
@@ -417,7 +422,7 @@ module idu #(
     // -------------------------------------------------------------------------
     assign rd_we = is_op | is_op_imm | is_lui | is_auipc
                  | is_jal | is_jalr | (is_load & ~is_fmem_ld) | is_csr | is_amo
-                 | is_vset | opv_mv_x_s;
+                 | is_vset | opv_scalar_rd;
 
     always @* begin
         case (1'b1)

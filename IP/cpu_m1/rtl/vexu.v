@@ -138,6 +138,16 @@ module vexu #(
     // m1-only (group reductions stay grp_only_illegal). f6=000000 = the old vredsum.
     wire op_red = is_opmvv && (f6[5:3] == 3'b000) && vm;
     wire op_mvsx  = is_opmvx && (f6 == 6'b010000) && (vs2_i == 5'd0) && vm; // vmv.s.x
+    // Phase-D D1a (ADR-0057): mask-scan simple set. OPMVV; vs1 field selects the op.
+    // VWXUNARY0 (f6=010000): vcpop.m (vs1=10000 -> scalar rd = popcount of active
+    // vs2 mask bits), vfirst.m (vs1=10001 -> scalar rd = first active set index, else
+    // -1). VMUNARY0 (f6=010100): vid.v (vs1=10001 -> vd[i]=i, vs2 ignored). Maskable;
+    // vstart!=0 illegal (Spike-probed: vcpop TRAPS at vstart!=0 — Grok's "exempt" flag
+    // was wrong). m1-only (m2/m4 grp_only_illegal). Golden: mask {2,3,6} -> vcpop 3,
+    // vfirst 2, vid [0..7]; masked by v0={3,6,7} -> vcpop 2, vfirst 3.
+    wire op_vcpop  = is_opmvv && (f6 == 6'b010000) && (vs1_i == 5'b10000);
+    wire op_vfirst = is_opmvv && (f6 == 6'b010000) && (vs1_i == 5'b10001);
+    wire op_vid    = is_opmvv && (f6 == 6'b010100) && (vs1_i == 5'b10001);
     wire op_widen = op_wmulany || op_wmaccany || op_waddsub;
 
     // ---------------- S1 (ADR-0049): min/max, compares, mask logicals ----------------
@@ -351,7 +361,8 @@ module vexu #(
                     op_wmulany || op_wmaccany || op_waddsub || op_red || op_wred || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
                     op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr ||
-                    op_muls || op_mac || op_vsmul;
+                    op_muls || op_mac || op_vsmul ||
+                    op_vcpop || op_vfirst || op_vid;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
@@ -399,7 +410,8 @@ module vexu #(
                          // as carry-in, so vd==0 illegal only in that carry-in form.
                          (op_madcb && !vm && (vd_i == 5'd0)) ||
                          ((op_add || op_sub || op_mm || op_s2same || op_nc ||
-                           op_b1 || op_nsr || op_vext || op_muls || op_mac || op_vsmul) &&
+                           op_b1 || op_nsr || op_vext || op_muls || op_mac || op_vsmul ||
+                           op_vid) &&
                           !vm && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------
@@ -792,6 +804,25 @@ module vexu #(
     endgenerate
     wire [127:0] res_smul = (vsew == 3'b000) ? res_smul8 :
                             (vsew == 3'b001) ? res_smul16 : res_smul32;
+
+    // ---- D1a vid.v: vd[i] = i (element index, SEW-wide). vs2 ignored. m1-only. ----
+    wire [127:0] res_vid8, res_vid16, res_vid32;
+    generate
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_vid8
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
+            assign res_vid8[gi*8 +: 8] = active ? gi[7:0] : vd_old[gi*8 +: 8];
+        end
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_vid16
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
+            assign res_vid16[gi*16 +: 16] = active ? {12'b0, gi[3:0]} : vd_old[gi*16 +: 16];
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_vid32
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || v0_view[gi]);
+            assign res_vid32[gi*32 +: 32] = active ? {30'b0, gi[1:0]} : vd_old[gi*32 +: 32];
+        end
+    endgenerate
+    wire [127:0] res_vid = (vsew == 3'b000) ? res_vid8 :
+                           (vsew == 3'b001) ? res_vid16 : res_vid32;
 
     // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
     localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
@@ -1339,6 +1370,7 @@ module vexu #(
                      op_widen ? ((vsew == 3'b000) ? res_w8 : res_w16) :
                      op_red ? res_red :
                      op_wred ? res_wred :
+                     op_vid ? res_vid :
                      op_mvsx ? res_sx :
                      (vsew == 3'b000) ? res8 :
                      (vsew == 3'b001) ? res16 : res32;
@@ -1347,15 +1379,44 @@ module vexu #(
     // vector STORES never write the VRF
     // vmvr writes its nr registers from the FSM copy loop, never via the WB port.
     assign q_vrf_we = q_valid && !q_illegal && !op_mvxs && !is_vstore && !op_vmvr &&
+                      !op_vcpop && !op_vfirst &&   // D1a: scalar-dest, no VRF write
                       (q_vstart < q_vl);
 
     // ---------------- vmv.x.s (executes even when vl==0) ----------------
     wire [7:0]  e0_8  = vs2_data[7:0];
     wire [15:0] e0_16 = vs2_data[15:0];
-    assign q_scalar = (vsew == 3'b000) ? {{24{e0_8[7]}},  e0_8} :
-                      (vsew == 3'b001) ? {{16{e0_16[15]}}, e0_16} :
-                                         vs2_data[31:0];
-    assign q_scalar_we = q_valid && !q_illegal && op_mvxs;
+    wire [31:0] mvxs_res = (vsew == 3'b000) ? {{24{e0_8[7]}},  e0_8} :
+                           (vsew == 3'b001) ? {{16{e0_16[15]}}, e0_16} :
+                                              vs2_data[31:0];
+
+    // ---------------- D1a vcpop.m / vfirst.m (scalar mask scan, m1) ----------------
+    // count / first-index over active vs2 mask bits in [0,vl); active = vm||v0[i].
+    // m1-only (vl<=16), so 16-wide scan. vfirst none -> -1 (XLEN all ones).
+    reg  [4:0] cpop_cnt;
+    reg  [4:0] vfirst_idx;
+    reg        vfirst_hit;
+    integer    mk;
+    always @* begin
+        cpop_cnt   = 5'b0;
+        vfirst_idx = 5'b0;
+        vfirst_hit = 1'b0;
+        for (mk = 0; mk < 16; mk = mk + 1) begin
+            if ((mk < q_vl) && vs2_data[mk] && (vm || v0_data[mk])) begin
+                cpop_cnt = cpop_cnt + 5'd1;
+                if (!vfirst_hit) begin
+                    vfirst_idx = mk[4:0];
+                    vfirst_hit = 1'b1;
+                end
+            end
+        end
+    end
+    wire [31:0] vfirst_res = vfirst_hit ? {27'b0, vfirst_idx} : 32'hFFFFFFFF;
+
+    assign q_scalar = op_vcpop  ? {27'b0, cpop_cnt} :
+                      op_vfirst ? vfirst_res :
+                                  mvxs_res;   // vmv.x.s
+    // vcpop/vfirst write rd even when vl==0 (count 0 / first -1), like vmv.x.s.
+    assign q_scalar_we = q_valid && !q_illegal && (op_mvxs || op_vcpop || op_vfirst);
 
 endmodule
 `default_nettype wire
