@@ -114,6 +114,13 @@ module vexu #(
     wire op_vwmaccus = (f6 == 6'b111110) && is_opmvx && vm;   // .vx only
     wire op_vwmaccsu = (f6 == 6'b111111) && (is_opmvv || is_opmvx) && vm;
     wire op_wmaccany = op_vwmaccu || op_vwmacc || op_vwmaccus || op_vwmaccsu;
+    // Phase-C C4d (ADR-0056): widening integer sum reduction — OPIVV (NOT OPMVV).
+    // f6=110000 vwredsumu (zext), 110001 vwredsum (sext). vd[0] (2*SEW) = ext(vs1[0])
+    // + sum of ext(vs2[0..vl-1]); vs1[0] is already 2*SEW. m1/fractional-LMUL, SEW<=16,
+    // vm=1. Golden-probed seed=3 vs2={5,-1,127,-128}: vwredsum 6 / vwredsumu 518.
+    wire op_wredu = is_opivv && (f6 == 6'b110000) && vm;
+    wire op_wreds = is_opivv && (f6 == 6'b110001) && vm;
+    wire op_wred  = op_wredu || op_wreds;
     // Phase-C C4a (ADR-0056): full widening add/sub — OPMVV/OPMVX f6=110xxx, vm=1.
     // f6[2]=wide-vs2 (.wv/.wx, vs2 already 2*SEW), f6[1]=subtract, f6[0]=signed.
     // dest 2*SEW = op_a +/- ext(vs1|rs1); narrows sign/zero-extend per f6[0].
@@ -333,7 +340,7 @@ module vexu #(
     wire vext_illegal = op_vext && (vd_i == vs2_i);
 
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
-                    op_wmulany || op_wmaccany || op_waddsub || op_red || op_mvsx ||
+                    op_wmulany || op_wmaccany || op_waddsub || op_red || op_wred || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
                     op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr ||
                     op_muls || op_mac;
@@ -347,7 +354,7 @@ module vexu #(
     // site is guarded by an is_vmem priority mux) — exclude them here too.
     wire is_grp    = (grp_parts != 3'd1) && beats_op && !is_vmem;
     wire grp_only_illegal = (grp_parts != 3'd1) && !op_vmvr &&
-        (op_widen || op_red || op_nc || op_nsr || op_vext ||
+        (op_widen || op_red || op_wred || op_nc || op_nsr || op_vext ||
          !beats_op && !op_mvxs && !op_mvsx && !op_mlog && !is_vmem);
     // register-group alignment (vd for writes except mask-dest; sources)
     wire [4:0] grp_amask = lmul_m4 ? 5'd3 : lmul_m2 ? 5'd1 : 5'd0;
@@ -360,6 +367,8 @@ module vexu #(
     // narrowing legality mirrors widening (source EMUL = 2*LMUL <= 1); the
     // low-part destination overlap (vd == vs2) is spec-legal for narrowing.
     wire nc_illegal = (op_nc || op_nsr) && (!widen_lmul_ok || (vsew == 3'b010));
+    // C4d: widening reduction has a 2*SEW accumulator -> SEW32 (2*SEW=64) illegal.
+    wire wred_illegal = op_wred && (vsew == 3'b010);
     // vstart!=0 on arithmetic = illegal (spec-allowed choice; MATCHES SPIKE —
     // caught by gate_42 lockstep: Spike trapped where the RTL executed).
     // Loads/stores are resumable: vstart is honored (start element), not illegal.
@@ -373,7 +382,7 @@ module vexu #(
                          // S1 (Codex, Spike-confirmed): a MASKED body op may not
                          // write v0 (dest overlaps the mask); mask-DEST compares
                          // targeting v0 remain legal.
-                         nc_illegal || grp_only_illegal || grp_align_illegal ||
+                         nc_illegal || wred_illegal || grp_only_illegal || grp_align_illegal ||
                          vmvr_illegal ||   // B4: bad simm nr / vd|vs2 not nr-aligned
                          // B3: vadc/vsbc read v0 as carry => vm=1 illegal, vd==0
                          // always illegal (dest would overlap carry operand v0).
@@ -920,6 +929,33 @@ module vexu #(
     wire [127:0] res_red = (vsew == 3'b000) ? {vd_old[127:8],  red_acc[7:0]} :
                            (vsew == 3'b001) ? {vd_old[127:16], red_acc[15:0]} :
                                               {vd_old[127:32], red_acc[31:0]};
+
+    // ---- C4d widening reduction: vd[0] (2*SEW) = ext(vs1[0]) + sum ext(vs2) ----
+    // vs1[0] is already 2*SEW; vs2 elements (SEW) sign/zero-extend to 32. Only
+    // wred_acc[2*SEW-1:0] commits. SEW8 -> 16-bit dst; SEW16 -> 32-bit dst (SEW32
+    // is wred_illegal). vl==0 -> no write (q_vrf_we=0), matching Spike.
+    wire wred_signed = op_wreds;
+    reg [31:0] wred_acc;
+    reg [31:0] wred_el;
+    integer wk;
+    always @* begin
+        case (vsew)
+            3'b000:  wred_acc = wred_signed ? {{16{vs1_data[15]}}, vs1_data[15:0]} : {16'b0, vs1_data[15:0]};
+            default: wred_acc = vs1_data[31:0];   // SEW16: 2*SEW=32, vs1[0] fills the acc
+        endcase
+        wred_el = 32'b0;
+        for (wk = 0; wk < 16; wk = wk + 1) begin
+            if ((wk < q_vl) && ((vsew == 3'b000) || (vsew == 3'b001 && wk < 8))) begin
+                case (vsew)
+                    3'b000:  wred_el = wred_signed ? {{24{vs2_data[wk*8+7]}},   vs2_data[wk*8 +: 8]}   : {24'b0, vs2_data[wk*8 +: 8]};
+                    default: wred_el = wred_signed ? {{16{vs2_data[wk*16+15]}}, vs2_data[wk*16 +: 16]} : {16'b0, vs2_data[wk*16 +: 16]};
+                endcase
+                wred_acc = wred_acc + wred_el;
+            end
+        end
+    end
+    wire [127:0] res_wred = (vsew == 3'b000) ? {vd_old[127:16], wred_acc[15:0]} :
+                                               {vd_old[127:32], wred_acc[31:0]};
     // vmv.s.x: element 0 = x[rs1] truncated to SEW; tail undisturbed
     wire [127:0] res_sx = (vsew == 3'b000) ? {vd_old[127:8],  q_rs1[7:0]} :
                           (vsew == 3'b001) ? {vd_old[127:16], q_rs1[15:0]} :
@@ -1224,6 +1260,7 @@ module vexu #(
                      op_vext ? ((vsew == 3'b001) ? res_ext16 : res_ext32) :
                      op_widen ? ((vsew == 3'b000) ? res_w8 : res_w16) :
                      op_red ? res_red :
+                     op_wred ? res_wred :
                      op_mvsx ? res_sx :
                      (vsew == 3'b000) ? res8 :
                      (vsew == 3'b001) ? res16 : res32;
