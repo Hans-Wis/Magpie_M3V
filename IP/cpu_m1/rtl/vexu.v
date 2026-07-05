@@ -385,11 +385,12 @@ module vexu #(
     wire align_ok = (eew_sel == 2'd0) ||
                     ((eew_sel == 2'd1) && !q_rs1[0]) ||
                     ((eew_sel == 2'd2) && (q_rs1[1:0] == 2'b00));
-    // Phase-E E2 stub (ADR-0058, User-approved minimal scope): segment load/store
-    // vlseg<nf>/vsseg<nf> with nf=2..8, EEW=SEW, LMUL=1, unmasked, vstart=0, unit-stride.
-    // element-major/field-minor: mem beat k = element(k/nf), field(k%nf). Loads write nf
-    // regs vd..vd+nf-1; stores read vs3..vs3+nf-1. Out of stub scope (kept illegal): EMUL
-    // groups (LMUL>1), EEW!=SEW, masked. Golden-probed vlseg2/3 deinterleave.
+    // Phase-E E2 (ADR-0058): segment load/store vlseg<nf>/vsseg<nf>. Scope: nf=2..8,
+    // EEW=SEW, LMUL m1/m2/m4 (EMUL register groups, nf*L<=8, vd L-aligned), unmasked,
+    // vstart=0, unit-stride. element-major/field-minor: mem beat k = element(k/nf),
+    // field(k%nf). Field f = L-register group; loads write nf*L regs vd..vd+nf*L-1,
+    // stores read the same group. Out of scope (kept illegal, DUT stricter than Spike):
+    // EEW!=SEW, masked, m8, unaligned vd, vstart!=0. Golden-probed vlseg2/3 + m2/m4.
     wire [2:0] seg_nf_m1 = q_instr[31:29];             // nf-1
     wire [3:0] seg_nf    = {1'b0, seg_nf_m1} + 4'd1;   // 1..8
     wire       is_seg    = is_vmem && (seg_nf_m1 != 3'b000);

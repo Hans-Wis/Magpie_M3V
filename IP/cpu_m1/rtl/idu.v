@@ -209,7 +209,10 @@ module idu #(
     // vector ops that write a scalar GPR rd: vmv.x.s + (Phase-D D1a) vcpop.m/vfirst.m.
     // All are OPMVV f6=010000 (VWXUNARY0); vs1 field selects: 0=vmv.x.s, 10000=vcpop,
     // 10001=vfirst. (vmv.x.s also needs vm=1; the mask-scan ones are maskable.)
-    wire opv_vwx0   = is_vexec && (funct3 == 3'b010) && (instr[31:26] == 6'b010000);
+    // gate on is_op_v (not is_vexec, which also covers LOAD-FP/STORE-FP mem opcodes) so
+    // an illegal segment/mem encoding with f3=010 & f6=010000 can't assert scalar rd_we
+    // (Codex whole-design review — squashed by the trap today, but a cleaner classification).
+    wire opv_vwx0   = is_op_v && (funct3 == 3'b010) && (instr[31:26] == 6'b010000);
     wire opv_mv_x_s = opv_vwx0 && (instr[19:15] == 5'd0) && instr[25];
     wire opv_vcpop  = opv_vwx0 && (instr[19:15] == 5'b10000);
     wire opv_vfirst = opv_vwx0 && (instr[19:15] == 5'b10001);
