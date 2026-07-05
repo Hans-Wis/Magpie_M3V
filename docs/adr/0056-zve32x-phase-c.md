@@ -55,4 +55,18 @@ Coral(Kelvin)ML datapath 依賴整數乘法 + MAC(卷積/FC 內積)與 reduction
   - **三方**:Grok arch confirm(sign matrix/f6/f3-disjoint 全符)+ Spike golden(authority)+
     **Gemini 全上下文判 clean fully compliant**(signed-unsigned idiom / low-bit vmul / operand
     select / masking+groups 四項皆 verified,無 issue)。
-- **C3 / C2 / C4 / C5 __**(續,照 §2 順序)。
+- **C3 完成(2026-07-05,@<pending>)= 非-sum reductions vred{and,or,xor,minu,min,maxu,max}.vs**:
+  - decode:既有 op_redsum 泛化為 **op_red = is_opmvv && f6[5:3]==000 && vm**(f6[2:0] 選 combine;
+    min/max 101/111 signed、minu/maxu 100/110 unsigned)。f6=000000 = 原 vredsum。
+  - datapath:32-bit accumulator red_acc,seed=vs1[0];**min/max 對 seed+element 符延伸到 32b 做 signed
+    compare、其餘零延伸**(只 commit red_acc[SEW-1:0]);逐 element case combine。vl==0 = no-op(q_vrf_we=0
+    因 vstart<vl 為 false,match Spike)。**scope 沿用原 vredsum:vm=1 only + m1-only**(masked/group
+    reduction 仍 deferred-illegal——DUT 較 Spike **嚴**,故不測,誠實 gap 非 lockstep 分歧)。
+  - **Spike lockstep 98 commits**:八 reduction × SEW8/16/32 sign 邊界(minu≠min、maxu≠max)+ vmv.s.x 設 seed
+    + vredsum@vstart≠0 illegal terminator(Spike 實跑確認 both trap)。回歸 12 targets 綠(含 grid/pool/vrand
+    1324,vredsum 泛化無回歸)。gate_67。
+  - **三方**:Grok arch(reduction=vredsum FSM 擴充;其 vl=0 identity 註記**未採**——vl=0 是 no-op 非 vs2[0])
+    + Spike golden(authority)+ **Gemini**:Rank-1「fatal syntax bug(always @flow/... 壞 sensitivity list)」
+    = **false positive**(誤讀 diff;實際 vexu.v:767 = `always @*`,lint+lockstep 皆過即證),Rank-2 判 logic
+    100% correct(min/max 符號/accumulator-modulo/boundary guard/no-latch 全 verified)。**無 RTL 改動**。
+- **C2 / C4 / C5 __**(續:C2 MAC → C4 widening 全套 → C5 vsmul)。

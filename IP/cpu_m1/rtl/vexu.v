@@ -97,7 +97,12 @@ module vexu #(
     // ---- 3D (the Phase 0 kernel set) ----
     wire op_wmul  = is_opmvv && (f6 == 6'b111011) && vm;   // vwmul.vv  (s*s -> 2*SEW)
     wire op_waddw = is_opmvv && (f6 == 6'b110101) && vm;   // vwadd.wv  (wide vs2 + narrow vs1)
-    wire op_redsum= is_opmvv && (f6 == 6'b000000) && vm;   // vredsum.vs (vd[0]=vs1[0]+sum vs2)
+    // Phase-C C3 (ADR-0056): vred{sum,and,or,xor,minu,min,maxu,max}.vs — OPMVV
+    // f6=000xxx, f6[2:0] picks the combine (min/max 101/111 signed, minu/maxu
+    // 100/110 unsigned). vd[0]=vs1[0] OP reduce(vs2[0..vl-1]); tail undisturbed;
+    // vm=1 only (masked reductions deferred, same scope as the original vredsum);
+    // m1-only (group reductions stay grp_only_illegal). f6=000000 = the old vredsum.
+    wire op_red = is_opmvv && (f6[5:3] == 3'b000) && vm;
     wire op_mvsx  = is_opmvx && (f6 == 6'b010000) && (vs2_i == 5'd0) && vm; // vmv.s.x
     wire op_widen = op_wmul || op_waddw;
 
@@ -283,7 +288,7 @@ module vexu #(
     wire vext_illegal = op_vext && (vd_i == vs2_i);
 
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
-                    op_wmul || op_waddw || op_redsum || op_mvsx ||
+                    op_wmul || op_waddw || op_red || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
                     op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr || op_muls;
     // ops that iterate register-group parts (compares read groups, write ONE
@@ -295,7 +300,7 @@ module vexu #(
     // site is guarded by an is_vmem priority mux) — exclude them here too.
     wire is_grp    = (grp_parts != 3'd1) && beats_op && !is_vmem;
     wire grp_only_illegal = (grp_parts != 3'd1) && !op_vmvr &&
-        (op_widen || op_redsum || op_nc || op_nsr || op_vext ||
+        (op_widen || op_red || op_nc || op_nsr || op_vext ||
          !beats_op && !op_mvxs && !op_mvsx && !op_mlog && !is_vmem);
     // register-group alignment (vd for writes except mask-dest; sources)
     wire [4:0] grp_amask = lmul_m4 ? 5'd3 : lmul_m2 ? 5'd1 : 5'd0;
@@ -749,25 +754,47 @@ module vexu #(
         end
     endgenerate
 
-    // ---------------- 3D vredsum.vs (vd[0] = vs1[0] + sum of active vs2) ----------------
-    reg [31:0] red_sum;
+    // ---------------- C3 reductions: vd[0] = vs1[0] OP reduce(active vs2) ----------
+    // One 128-bit source register (m1). f6[2:0] picks the combine. min/max sign-
+    // extend seed+elements to 32b for a correct signed compare; all others zero-
+    // extend (only red_acc[SEW-1:0] is committed, so upper bits are don't-care for
+    // sum/and/or/xor and hold the sign-extended winner for min/max). vl==0 => the
+    // loop is empty AND q_vrf_we is 0 (vstart<vl false) => no write, matching Spike.
+    wire red_signed = op_red && f6[2] && f6[0];    // vredmin(101) / vredmax(111)
+    reg [31:0] red_acc;
+    reg [31:0] red_el;
     integer rk;
     always @* begin
-        red_sum = (vsew == 3'b000) ? {24'b0, vs1_data[7:0]} :
-                  (vsew == 3'b001) ? {16'b0, vs1_data[15:0]} : vs1_data[31:0];
+        case (vsew)
+            3'b000:  red_acc = red_signed ? {{24{vs1_data[7]}},  vs1_data[7:0]}  : {24'b0, vs1_data[7:0]};
+            3'b001:  red_acc = red_signed ? {{16{vs1_data[15]}}, vs1_data[15:0]} : {16'b0, vs1_data[15:0]};
+            default: red_acc = vs1_data[31:0];
+        endcase
+        red_el = 32'b0;
         for (rk = 0; rk < 16; rk = rk + 1) begin
-            if (rk < q_vl) begin
+            if ((rk < q_vl) &&
+                ((vsew == 3'b000) || (vsew == 3'b001 && rk < 8) || (vsew == 3'b010 && rk < 4))) begin
                 case (vsew)
-                    3'b000:  red_sum = red_sum + {24'b0, vs2_data[(rk%16)*8 +: 8]};
-                    3'b001:  if (rk < 8) red_sum = red_sum + {16'b0, vs2_data[(rk%8)*16 +: 16]};
-                    default: if (rk < 4) red_sum = red_sum + vs2_data[(rk%4)*32 +: 32];
+                    3'b000:  red_el = red_signed ? {{24{vs2_data[(rk%16)*8+7]}},  vs2_data[(rk%16)*8 +: 8]}  : {24'b0, vs2_data[(rk%16)*8 +: 8]};
+                    3'b001:  red_el = red_signed ? {{16{vs2_data[(rk%8)*16+15]}}, vs2_data[(rk%8)*16 +: 16]} : {16'b0, vs2_data[(rk%8)*16 +: 16]};
+                    default: red_el = vs2_data[(rk%4)*32 +: 32];
+                endcase
+                case (f6[2:0])
+                    3'b000:  red_acc = red_acc + red_el;                                       // vredsum
+                    3'b001:  red_acc = red_acc & red_el;                                       // vredand
+                    3'b010:  red_acc = red_acc | red_el;                                       // vredor
+                    3'b011:  red_acc = red_acc ^ red_el;                                       // vredxor
+                    3'b100:  red_acc = (red_acc < red_el) ? red_acc : red_el;                  // vredminu
+                    3'b101:  red_acc = ($signed(red_acc) < $signed(red_el)) ? red_acc : red_el;// vredmin
+                    3'b110:  red_acc = (red_acc > red_el) ? red_acc : red_el;                  // vredmaxu
+                    default: red_acc = ($signed(red_acc) > $signed(red_el)) ? red_acc : red_el;// vredmax
                 endcase
             end
         end
     end
-    wire [127:0] res_red = (vsew == 3'b000) ? {vd_old[127:8],  red_sum[7:0]} :
-                           (vsew == 3'b001) ? {vd_old[127:16], red_sum[15:0]} :
-                                              {vd_old[127:32], red_sum[31:0]};
+    wire [127:0] res_red = (vsew == 3'b000) ? {vd_old[127:8],  red_acc[7:0]} :
+                           (vsew == 3'b001) ? {vd_old[127:16], red_acc[15:0]} :
+                                              {vd_old[127:32], red_acc[31:0]};
     // vmv.s.x: element 0 = x[rs1] truncated to SEW; tail undisturbed
     wire [127:0] res_sx = (vsew == 3'b000) ? {vd_old[127:8],  q_rs1[7:0]} :
                           (vsew == 3'b001) ? {vd_old[127:16], q_rs1[15:0]} :
@@ -1069,7 +1096,7 @@ module vexu #(
                      (op_nc || op_nsr) ? res_nc :
                      op_vext ? ((vsew == 3'b001) ? res_ext16 : res_ext32) :
                      op_widen ? ((vsew == 3'b000) ? res_w8 : res_w16) :
-                     op_redsum ? res_red :
+                     op_red ? res_red :
                      op_mvsx ? res_sx :
                      (vsew == 3'b000) ? res8 :
                      (vsew == 3'b001) ? res16 : res32;
