@@ -136,7 +136,25 @@ directed+random → commit。**逐子片把關,B1 證完才進 B2**(同 Phase-A 
     completely clean**(legality matrix / SEW+1 carry-borrow / f3 disjoint / mask multi-beat 四維皆
     conformant,無 gap)。有別 B1/B2 各被抓一 legality gap,B3 從 spec 一次到位(主動套用 masked-vd0
     教訓 + Grok spec 已含完整 §4 matrix)。
-- **B4 __**（whole-register move,續)。
+- **B4 完成(2026-07-05,ADR-0055)= whole-register move vmv1r/2r/4r/8r.v**:OPIVI f6=100111 vm=1,
+  simm5(vs1 欄)=nr-1,合法 {0,1,3,7}→nr{1,2,4,8};複製 nr 個**整暫存器** vd+p←vs2+p,**與 vtype
+  (LMUL/SEW/vl)無關**。
+  - **實作(自有 copy loop,非 beats_op)**:nr=8 複製 8 暫存器超出既有 4-part group staging,故 vmvr
+    走**自有 FSM state VM_VMVR**——一暫存器/拍,直接寫進**唯一** VRF 寫 always-block;`q_is_grp=1` 令
+    core hold、`q_vrf_we=0`/`q_grp_w=0` 令 WB port 不寫。nr-對齊群組 equal-or-disjoint→src≠dst 無 hazard;
+    drained-start→copy 期間 w_en 不指向任何 VRF entry(單一寫者不破)。vm_state [1:0]→[2:0](加 VM_VMVR=4)。
+  - **legality(**5 條全 Spike 實跑確認**,推翻 Grok 一條)**:①`vstart≠0`→**illegal**(Spike 實跑=trap
+    **非** Grok §149-152 預言的 partial-copy;既有全域 known_op vstart 規則已匹配,**免 carve-out**——
+    §4「先量再信」擋掉一次 wrong-path)②`vill`→illegal(cfg_illegal)③**m8 vtype→合法執行**(vmvr 忽略
+    LMUL;故 cfg_illegal 的 lmul_m8 對 vmvr 豁免、grp_only_illegal 也豁免 op_vmvr)④bad simm(∉{0,1,3,7})
+    →illegal ⑤vd/vs2 非 nr-對齊→illegal(amask=nr-1)。
+  - **Spike lockstep --isa=rv32imf_zve32x_zvl128b 77 commits**:四 nr 全驗(vse32+lw 逐暫存器)+ **over-copy
+    guard**(v24 sentinel 須存活過 vmv8r)+ **vtype 獨立性**(vmv1r 於 m8 vtype 執行)+ 非對齊 vmv2r illegal
+    terminator。回歸 13 vector targets 全綠(含 vmem/s3/vrand 1324)。gate_65。
+  - **三方**:Grok flags(arch)+ 我 Spike 實跑(authority,推翻 vstart flag)+ **Gemini 全上下文 3 findings**:
+    F1(VM_VMVR 寫未 !m_stall gate→**採納**,idempotent 非正確性 bug 但省功耗+與 FSM 一致)、F2(BRAM/多驅動
+    →**駁回**,VRF 本就是 group-commit 4-address/拍 的多寫 flop array,無法單埠化,前提不成立)、F3(nr==0 FSM
+    hang→**採納防禦**,實際不可達因 illegal 擋入口,改 `>=` 退出零成本)。
 
 ## 附:Grok 架構複核(2026-07-05,全文歸檔 docs/reviews/2026-07-05_phase_b_encoding_grok.md)
 

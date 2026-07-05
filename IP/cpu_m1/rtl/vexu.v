@@ -185,6 +185,26 @@ module vexu #(
     // unified mask-dest predicate: single-register dest, group-source, WB writes one reg
     wire mask_dest = op_cmp || op_madcb;
 
+    // ---------------- Phase-B B4 (ADR-0055): whole-register move vmv<nr>r.v ----
+    // OPIVI f6=100111, vm=1; simm5 (vs1 field) = nr-1, legal {0,1,3,7} -> nr{1,2,4,8}.
+    // Copies nr WHOLE registers vd+p <- vs2+p, INDEPENDENT of vtype LMUL/SEW/vl
+    // (Spike-probed: executes even under m8 vtype; illegal only on vill). vstart!=0
+    // -> illegal for THIS Spike build, so the global known_op vstart rule already
+    // matches (no carve-out — Grok's partial-copy flag was empirically wrong here).
+    // nr-aligned groups are equal-or-disjoint => the copy has no overlap hazard, so
+    // it streams one register/cycle through the vexu-local FSM (no group staging,
+    // no core WB write). nr=8 exceeds the 4-part group path — that is WHY it uses
+    // its own copy loop rather than beats_op.
+    wire op_vmvr = (f6 == 6'b100111) && is_opivi && vm;
+    wire [3:0] vmvr_nr = (vs1_i == 5'd0) ? 4'd1 :
+                         (vs1_i == 5'd1) ? 4'd2 :
+                         (vs1_i == 5'd3) ? 4'd4 :
+                         (vs1_i == 5'd7) ? 4'd8 : 4'd0;   // 0 = reserved simm -> illegal
+    wire [4:0] vmvr_amask = {1'b0, vmvr_nr} - 5'd1;       // nr-aligned mask 0/1/3/7
+    wire vmvr_illegal = op_vmvr && ((vmvr_nr == 4'd0) ||
+                        ((vd_i  & vmvr_amask) != 5'd0) ||
+                        ((vs2_i & vmvr_amask) != 5'd0));
+
     // ---------------- config legality ----------------
     wire        vill  = q_vtype[31];
     wire [2:0]  vlmul = q_vtype[2:0];
@@ -195,14 +215,16 @@ module vexu #(
     wire lmul_m4   = (vlmul == 3'b010);
     wire lmul_m8   = (vlmul == 3'b011);
     wire [2:0] grp_parts = lmul_m4 ? 3'd4 : lmul_m2 ? 3'd2 : 3'd1;
-    wire cfg_illegal = vill || lmul_m8;
+    // vmv<nr>r.v ignores LMUL (nr comes from simm), so m8 vtype must NOT make it
+    // illegal (Spike executes it); vill still traps it.
+    wire cfg_illegal = vill || (lmul_m8 && !op_vmvr);
 
     // ---------------- 3C unit-stride vector load/store decode ----------------
     wire is_vload  = (q_instr[6:0] == 7'b0000111);   // LOAD-FP opcode space
     wire is_vstore = (q_instr[6:0] == 7'b0100111);   // STORE-FP opcode space
     wire is_vmem   = (EN_RVV != 0) && (is_vload || is_vstore);
     assign q_is_mem = q_valid && is_vmem;
-    assign q_is_grp = q_valid && is_grp && !q_illegal;    // hold/beats (incl. cmp)
+    assign q_is_grp = q_valid && (is_grp || op_vmvr) && !q_illegal; // hold/beats (incl. cmp, vmvr copy loop)
     // WB group WRITE excludes mask-dest ops (compares + vmadc/vmsbc: single-reg dest)
     assign q_grp_w  = q_valid && is_grp && !mask_dest && !q_illegal;
     assign q_grp_parts = grp_parts;
@@ -250,7 +272,7 @@ module vexu #(
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
                     op_wmul || op_waddw || op_redsum || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
-                    op_nsr || op_vext || op_adcsbc || op_madcb;
+                    op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
@@ -259,7 +281,7 @@ module vexu #(
     // NOTE: memory opcodes alias the f6-based arith decodes (every other use
     // site is guarded by an is_vmem priority mux) — exclude them here too.
     wire is_grp    = (grp_parts != 3'd1) && beats_op && !is_vmem;
-    wire grp_only_illegal = (grp_parts != 3'd1) &&
+    wire grp_only_illegal = (grp_parts != 3'd1) && !op_vmvr &&
         (op_widen || op_redsum || op_nc || op_nsr || op_vext ||
          !beats_op && !op_mvxs && !op_mvsx && !op_mlog && !is_vmem);
     // register-group alignment (vd for writes except mask-dest; sources)
@@ -287,6 +309,7 @@ module vexu #(
                          // write v0 (dest overlaps the mask); mask-DEST compares
                          // targeting v0 remain legal.
                          nc_illegal || grp_only_illegal || grp_align_illegal ||
+                         vmvr_illegal ||   // B4: bad simm nr / vd|vs2 not nr-aligned
                          // B3: vadc/vsbc read v0 as carry => vm=1 illegal, vd==0
                          // always illegal (dest would overlap carry operand v0).
                          (op_adcsbc && (vm || (vd_i == 5'd0))) ||
@@ -337,6 +360,14 @@ module vexu #(
                 end
             end
         end
+        // B4: vmv<nr>r.v register-at-a-time copy. Drained-start guarantees w_en
+        // targets no vrf entry this cycle (nothing else vector is in flight), so
+        // this stays the SOLE vrf writer. Aligned groups are equal-or-disjoint so
+        // src!=dst (or a harmless self-copy) — no read/write hazard. !m_stall keeps
+        // the write in lockstep with the FSM's own (stall-gated) vmvr_p advance —
+        // otherwise a stall would idempotently re-write the same reg (power waste).
+        if ((vm_state == VM_VMVR) && !m_stall)
+            vrf[vd_i + {2'b0, vmvr_p}] <= vrf[vs2_i + {2'b0, vmvr_p}];
     end
 
     // ---------------- operand B (vector / scalar / imm broadcast) ----------------
@@ -510,9 +541,11 @@ module vexu #(
     endgenerate
 
     // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
-    localparam [1:0] VM_IDLE = 2'd0, VM_ISSUE = 2'd1, VM_CAP = 2'd2, VM_GRP = 2'd3;
-    reg [1:0]   vm_state;
+    localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
+                     VM_VMVR = 3'd4;                     // B4: whole-register copy loop
+    reg [2:0]   vm_state;
     reg [4:0]   vm_idx;
+    reg [2:0]   vmvr_p;          // B4: register index within the nr-register group
     reg [127:0] vm_buf;          // assemble buffer (loads); seeded with vd_old
     reg         vm_done_r;
 
@@ -543,12 +576,18 @@ module vexu #(
             vm_state  <= VM_IDLE;
             vm_done_r <= 1'b0;
             grp_p     <= 2'd0;
+            vmvr_p    <= 3'd0;
         end else if (m_advance && vm_done_r) begin
             vm_done_r <= 1'b0;                       // instruction left EX
         end else if (!m_stall) begin
             case (vm_state)
                 VM_IDLE: if (m_start && !vm_done_r) begin
-                    if (is_grp) begin
+                    if (op_vmvr) begin
+                        // B4: copy nr whole registers, one per cycle (vstart!=0 is
+                        // illegal upstream, so this always starts at register 0).
+                        vmvr_p   <= 3'd0;
+                        vm_state <= VM_VMVR;
+                    end else if (is_grp) begin
                         // S3: register-group beats — one part per cycle into
                         // staging; drained-start means nothing else vector is
                         // in flight until the WB group commit.
@@ -580,6 +619,17 @@ module vexu #(
                         vm_done_r <= 1'b1;
                     end else
                         grp_p <= grp_p + 2'd1;
+                end
+                VM_VMVR: begin
+                    // the vrf copy for register vmvr_p lands in the write block this
+                    // cycle; advance until all nr registers are done.
+                    // >= (not ==) so a malformed nr can never hang the FSM (the
+                    // illegal path already blocks entry; this is belt-and-braces).
+                    if (({1'b0, vmvr_p} + 4'd1) >= vmvr_nr) begin
+                        vm_state  <= VM_IDLE;
+                        vm_done_r <= 1'b1;
+                    end else
+                        vmvr_p <= vmvr_p + 3'd1;
                 end
                 VM_ISSUE: vm_state <= VM_CAP;        // beat fired this cycle
                 VM_CAP: begin
@@ -957,7 +1007,9 @@ module vexu #(
     assign q_vd    = vd_i;
     // whole-instruction no-op when vstart>=vl (includes vl==0); vmv.x.s and
     // vector STORES never write the VRF
-    assign q_vrf_we = q_valid && !q_illegal && !op_mvxs && !is_vstore && (q_vstart < q_vl);
+    // vmvr writes its nr registers from the FSM copy loop, never via the WB port.
+    assign q_vrf_we = q_valid && !q_illegal && !op_mvxs && !is_vstore && !op_vmvr &&
+                      (q_vstart < q_vl);
 
     // ---------------- vmv.x.s (executes even when vl==0) ----------------
     wire [7:0]  e0_8  = vs2_data[7:0];
