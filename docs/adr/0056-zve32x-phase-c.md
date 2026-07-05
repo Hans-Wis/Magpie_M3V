@@ -82,4 +82,20 @@ Coral(Kelvin)ML datapath 依賴整數乘法 + MAC(卷積/FC 內積)與 reduction
   - **三方**:Grok arch(operand roles 全符)+ Spike golden(authority)+ **Gemini clean fully
     compliant**(operand roles / low-SEW truncation / group-path vd_old / operand select 四項
     verified,無 review 修)。
-- **C4 / C5 __**(續:C4 widening 全套 vwaddu/vwsub/vwadd/vwmulu/vwmulsu/vwmacc*/vwredsum* → C5 vsmul)。
+- **C4a 完成(2026-07-05,@<pending>)= full widening add/sub vwaddu/vwadd/vwsubu/vwsub(.vv/.vx/.wv/.wx)**:
+  - decode:既有 op_waddw(僅 vwadd.wv)泛化為 **op_waddsub = f6[5:3]==110 && (opmvv||opmvx) && vm**;
+    f6[2]=wide-vs2(.wv/.wx)、f6[1]=sub、f6[0]=signed。
+  - datapath(擴既有 g_w8/g_w16 widening loops):na=vs2、nb=(opmvv?vs1:rs1)、wa=wide vs2;narrow 依
+    f6[0] 符/零延伸;wopa=ws_wide?wa:na_x;ws_res=ws_sub?(wopa−nb_x):(wopa+nb_x)。vwmul.vv 保留為獨立
+    prod 分支。overlap(require_noover):vd==vs1 僅 OPMVV illegal(is_opmvv gate,OPMVX 的 vs1 欄=rs1)、
+    vd==vs2 僅 vs2 narrow 時 illegal(widen_narrow_vs2=vwmul||.vv/.vx);**vwadd.wv vd==vs2 wide 合法**
+    (保 kernel accumulate)。SEW≤16、fractional LMUL、vm=1 only(同既有 widening scope)。
+  - **Spike golden(vs2=0xFF,vs1=1):vwaddu 256 / vwadd 0 / vwsubu 254 / vwsub −2 / vwaddu.wv 257 /
+    vwsub.wv 255 逐項符**;lockstep 159 commits(8 add/sub × .vv/.vx/.wv/.wx × SEW8/16 + vd==vs2-wide
+    合法 + narrow-overlap illegal terminator)。回歸 kernel/pool/vwide/grid/vrand 綠(op_waddw→op_waddsub
+    泛化不擾 Phase-0 kernel 路徑)。gate_69。
+  - **三方**:Grok arch(EMUL/require_noover)+ Spike golden(authority)+ **Gemini completely clean fully
+    compliant**(sign/zero ext、wide-vs2、subtract direction、overlap gates、legacy kernel 保留 五項
+    verified,無 review 修)。
+- **C4b/c/d / C5 __**(續:C4b widening mul vwmulu/vwmulsu → C4c widening MAC vwmacc[u/su/us] → C4d widening
+  reduction vwredsum[u] → C5 vsmul)。

@@ -96,7 +96,16 @@ module vexu #(
     wire op_mvxs  = is_opmvv && (f6 == 6'b010000) && (vs1_i == 5'd0) && vm;
     // ---- 3D (the Phase 0 kernel set) ----
     wire op_wmul  = is_opmvv && (f6 == 6'b111011) && vm;   // vwmul.vv  (s*s -> 2*SEW)
-    wire op_waddw = is_opmvv && (f6 == 6'b110101) && vm;   // vwadd.wv  (wide vs2 + narrow vs1)
+    // Phase-C C4a (ADR-0056): full widening add/sub — OPMVV/OPMVX f6=110xxx, vm=1.
+    // f6[2]=wide-vs2 (.wv/.wx, vs2 already 2*SEW), f6[1]=subtract, f6[0]=signed.
+    // dest 2*SEW = op_a +/- ext(vs1|rs1); narrows sign/zero-extend per f6[0].
+    // vwadd.wv (f6=110101, the kernel accumulate with vd==vs2) is the .wv/signed/add
+    // member. Golden-probed vs2=0xFF vs1=1: vwaddu 256 / vwadd 0 / vwsubu 254 /
+    // vwsub -2 / vwaddu.wv 257 / vwsub.wv 255.
+    wire op_waddsub = (f6[5:3] == 3'b110) && (is_opmvv || is_opmvx) && vm;
+    wire ws_wide    = f6[2];
+    wire ws_sub     = f6[1];
+    wire ws_signed  = f6[0];
     // Phase-C C3 (ADR-0056): vred{sum,and,or,xor,minu,min,maxu,max}.vs — OPMVV
     // f6=000xxx, f6[2:0] picks the combine (min/max 101/111 signed, minu/maxu
     // 100/110 unsigned). vd[0]=vs1[0] OP reduce(vs2[0..vl-1]); tail undisturbed;
@@ -104,7 +113,7 @@ module vexu #(
     // m1-only (group reductions stay grp_only_illegal). f6=000000 = the old vredsum.
     wire op_red = is_opmvv && (f6[5:3] == 3'b000) && vm;
     wire op_mvsx  = is_opmvx && (f6 == 6'b010000) && (vs2_i == 5'd0) && vm; // vmv.s.x
-    wire op_widen = op_wmul || op_waddw;
+    wire op_widen = op_wmul || op_waddsub;
 
     // ---------------- S1 (ADR-0049): min/max, compares, mask logicals ----------------
     wire op_minu  = (f6 == 6'b000100) && (is_opivv || is_opivx);
@@ -290,10 +299,14 @@ module vexu #(
     // Spike require_noover): a widening dest may not overlap a NARROWER source;
     // vwadd.wv vd==vs2 is legal (same EEW — the kernel's accumulate uses it).
     wire widen_lmul_ok = (vlmul == 3'b111) || (vlmul == 3'b110) || (vlmul == 3'b101);
+    // vs2 is narrow (dest must not overlap it) for vwmul and the .vv/.vx add/sub;
+    // for .wv/.wx vs2 is already 2*SEW so vd==vs2 is legal. vs1 is a narrow VECTOR
+    // only in the OPMVV forms (in OPMVX the vs1 field is rs1, no register overlap).
+    wire widen_narrow_vs2 = op_wmul || (op_waddsub && !ws_wide);
     wire widen_illegal = op_widen &&
                          (!widen_lmul_ok || (vsew == 3'b010) ||
-                          (vd_i == vs1_i) ||
-                          (op_wmul && (vd_i == vs2_i)));
+                          (is_opmvv && (vd_i == vs1_i)) ||
+                          (widen_narrow_vs2 && (vd_i == vs2_i)));
 
     // B2b (Grok review): vext is widening-class for register layout — the wider
     // dest may not overlap the NARROWER source (Spike require_noover; narrowing's
@@ -302,7 +315,7 @@ module vexu #(
     wire vext_illegal = op_vext && (vd_i == vs2_i);
 
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
-                    op_wmul || op_waddw || op_red || op_mvsx ||
+                    op_wmul || op_waddsub || op_red || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
                     op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr ||
                     op_muls || op_mac;
@@ -798,24 +811,33 @@ module vexu #(
     wire [127:0] res_w8, res_w16;
     generate
         for (gi = 0; gi < 8; gi = gi + 1) begin : g_w8
-            wire signed [7:0]  a = vs2_data[gi*8 +: 8];    // narrow src (wmul)
-            wire signed [7:0]  n = vs1_data[gi*8 +: 8];    // narrow src (both)
-            wire signed [15:0] w = vs2_data[gi*16 +: 16];  // wide src (wadd.wv)
-            // keep each result in an ALL-SIGNED expression (a conditional with an
-            // unsigned concat branch silently zero-extends: caught by lockstep)
-            wire signed [15:0] prod = a * n;
-            wire signed [15:0] wsum = w + {{8{n[7]}}, n};   // equal-width add: bit-exact, no implicit expand
-            wire        [15:0] r    = op_wmul ? prod : wsum;
+            wire signed [7:0]  a = vs2_data[gi*8 +: 8];    // narrow vs2 (wmul)
+            wire signed [7:0]  n = vs1_data[gi*8 +: 8];    // narrow vs1 (wmul .vv)
+            wire signed [15:0] prod = a * n;               // vwmul.vv: s*s -> 2*SEW
+            // C4a add/sub: op_a (wide vs2 or ext narrow vs2) +/- ext(vs1|rs1).
+            wire [7:0]  na = vs2_data[gi*8 +: 8];
+            wire [7:0]  nb = is_opmvv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
+            wire [15:0] wa = vs2_data[gi*16 +: 16];        // wide vs2 (.wv/.wx)
+            wire [15:0] na_x = ws_signed ? {{8{na[7]}}, na} : {8'b0, na};
+            wire [15:0] nb_x = ws_signed ? {{8{nb[7]}}, nb} : {8'b0, nb};
+            wire [15:0] wopa = ws_wide ? wa : na_x;
+            wire [15:0] ws_res = ws_sub ? (wopa - nb_x) : (wopa + nb_x);
+            wire [15:0] r = op_wmul ? prod : ws_res;
             wire active = (gi < q_vl);
             assign res_w8[gi*16 +: 16] = active ? r : vd_old[gi*16 +: 16];
         end
         for (gi = 0; gi < 4; gi = gi + 1) begin : g_w16
             wire signed [15:0] a = vs2_data[gi*16 +: 16];
             wire signed [15:0] n = vs1_data[gi*16 +: 16];
-            wire signed [31:0] w = vs2_data[gi*32 +: 32];
             wire signed [31:0] prod = a * n;
-            wire signed [31:0] wsum = w + {{16{n[15]}}, n};
-            wire        [31:0] r    = op_wmul ? prod : wsum;
+            wire [15:0] na = vs2_data[gi*16 +: 16];
+            wire [15:0] nb = is_opmvv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
+            wire [31:0] wa = vs2_data[gi*32 +: 32];
+            wire [31:0] na_x = ws_signed ? {{16{na[15]}}, na} : {16'b0, na};
+            wire [31:0] nb_x = ws_signed ? {{16{nb[15]}}, nb} : {16'b0, nb};
+            wire [31:0] wopa = ws_wide ? wa : na_x;
+            wire [31:0] ws_res = ws_sub ? (wopa - nb_x) : (wopa + nb_x);
+            wire [31:0] r = op_wmul ? prod : ws_res;
             wire active = (gi < q_vl);
             assign res_w16[gi*32 +: 32] = active ? r : vd_old[gi*32 +: 32];
         end
