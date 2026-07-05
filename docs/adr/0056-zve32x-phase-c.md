@@ -69,4 +69,17 @@ Coral(Kelvin)ML datapath 依賴整數乘法 + MAC(卷積/FC 內積)與 reduction
     + Spike golden(authority)+ **Gemini**:Rank-1「fatal syntax bug(always @flow/... 壞 sensitivity list)」
     = **false positive**(誤讀 diff;實際 vexu.v:767 = `always @*`,lint+lockstep 皆過即證),Rank-2 判 logic
     100% correct(min/max 符號/accumulator-modulo/boundary guard/no-latch 全 verified)。**無 RTL 改動**。
-- **C2 / C4 / C5 __**(續:C2 MAC → C4 widening 全套 → C5 vsmul)。
+- **C2 完成(2026-07-05,@<pending>)= 整數 MAC vmacc/vnmsac/vmadd/vnmsub**:
+  - decode:OPMVV/OPMVX f6 vmacc=101101 / vnmsac=101111 / vmadd=101001 / vnmsub=101011;f3 與
+    vsra/vnsra/vssra/vnclip(OPIV*,同 f6)disjoint。**vd = accumulator**(讀 vd_old;vd-overlap
+    with vs1/vs2 **合法**,不套任何 generic overlap illegality)。scalar 取代 vs1(.vx)。
+  - datapath:專屬 per-SEW loops,a=vs2、b=(opmvv?vs1:rs1)、d=vd_old;prod_ab=a*b、prod_db=d*b(截
+    SEW);r = vmacc?d+prod_ab : vnmsac?d−prod_ab : vmadd?prod_db+a : a−prod_db。**low SEW bits
+    sign-agnostic**(二補數)。op_mac 加 known_op/beats_op/masked-vd0/part_res/q_wdata。
+  - **Spike golden probe(vd=10,vs1=3,vs2=5)→ macc 25 / nmsac −5 / madd 35 / nmsub −25 逐項符**;
+    lockstep 154 commits(四 MAC×vv/vx×SEW8/16/32 + **vd==vs1/vd==vs2 overlap 合法(不 trap)** +
+    e32/m2 群組 + masked-vmacc-v0 terminator)。回歸 12 targets 綠;gate_68。
+  - **三方**:Grok arch(operand roles 全符)+ Spike golden(authority)+ **Gemini clean fully
+    compliant**(operand roles / low-SEW truncation / group-path vd_old / operand select 四項
+    verified,無 review 修)。
+- **C4 / C5 __**(續:C4 widening 全套 vwaddu/vwsub/vwadd/vwmulu/vwmulsu/vwmacc*/vwredsum* → C5 vsmul)。

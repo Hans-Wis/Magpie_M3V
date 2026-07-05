@@ -223,6 +223,20 @@ module vexu #(
     wire op_mulhsu = (f6 == 6'b100110) && (is_opmvv || is_opmvx);
     wire op_muls   = op_mul || op_mulh || op_mulhu || op_mulhsu;
 
+    // ---------------- Phase-C C2 (ADR-0056): integer multiply-accumulate ----------
+    // OPMVV/OPMVX, SEW low bits (sign-agnostic). vd is the ACCUMULATOR (old vd read;
+    // vd-overlap with vs1/vs2 is spec-legal — no generic overlap illegality here).
+    //   vmacc  101101 : vd += vs1*vs2      vnmsac 101111 : vd -= vs1*vs2
+    //   vmadd  101001 : vd  = vs1*vd + vs2  vnmsub 101011 : vd  = vs2 - vs1*vd
+    // f3 keeps these disjoint from vsra/vnsra/vssra/vnclip (OPIV*, same f6). scalar
+    // (rs1) replaces vs1 in the .vx forms. Golden-probed vd=10,vs1=3,vs2=5 ->
+    // macc 25 / nmsac -5 / madd 35 / nmsub -25. Joins beats_op for m2/m4 groups.
+    wire op_vmacc  = (f6 == 6'b101101) && (is_opmvv || is_opmvx);
+    wire op_vnmsac = (f6 == 6'b101111) && (is_opmvv || is_opmvx);
+    wire op_vmadd  = (f6 == 6'b101001) && (is_opmvv || is_opmvx);
+    wire op_vnmsub = (f6 == 6'b101011) && (is_opmvv || is_opmvx);
+    wire op_mac    = op_vmacc || op_vnmsac || op_vmadd || op_vnmsub;
+
     // ---------------- config legality ----------------
     wire        vill  = q_vtype[31];
     wire [2:0]  vlmul = q_vtype[2:0];
@@ -290,12 +304,14 @@ module vexu #(
     wire known_op = op_add || op_sub || op_mv || op_merge || op_mvxs ||
                     op_wmul || op_waddw || op_red || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
-                    op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr || op_muls;
+                    op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr ||
+                    op_muls || op_mac;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
     wire beats_op  = op_add || op_sub || op_mv || op_merge || op_mm ||
-                     op_s2same || op_cmp || op_b1 || op_adcsbc || op_madcb || op_muls;
+                     op_s2same || op_cmp || op_b1 || op_adcsbc || op_madcb ||
+                     op_muls || op_mac;
     // NOTE: memory opcodes alias the f6-based arith decodes (every other use
     // site is guarded by an is_vmem priority mux) — exclude them here too.
     wire is_grp    = (grp_parts != 3'd1) && beats_op && !is_vmem;
@@ -335,7 +351,7 @@ module vexu #(
                          // as carry-in, so vd==0 illegal only in that carry-in form.
                          (op_madcb && !vm && (vd_i == 5'd0)) ||
                          ((op_add || op_sub || op_mm || op_s2same || op_nc ||
-                           op_b1 || op_nsr || op_vext || op_muls) &&
+                           op_b1 || op_nsr || op_vext || op_muls || op_mac) &&
                           !vm && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------
@@ -611,6 +627,57 @@ module vexu #(
     endgenerate
     wire [127:0] res_mul = (vsew == 3'b000) ? res_mul8 :
                            (vsew == 3'b001) ? res_mul16 : res_mul32;
+
+    // ---- C2: integer MAC (low SEW bits, sign-agnostic). vd_old = accumulator ----
+    // prod_ab = vs1*vs2 (macc/nmsac); prod_db = vs1*vd (madd/nmsub). All truncated
+    // to SEW; add/sub mod 2^SEW. Masked-off / <vstart / >=vl -> vd undisturbed.
+    wire [127:0] res_mac8, res_mac16, res_mac32;
+    generate
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_mac8
+            wire [7:0] a = vs2_data[gi*8 +: 8];
+            wire [7:0] b = is_opmvv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
+            wire [7:0] d = vd_old[gi*8 +: 8];
+            wire [7:0] prod_ab = a * b;          // vs1*vs2
+            wire [7:0] prod_db = d * b;          // vs1*vd
+            wire [7:0] r = op_vmacc  ? (d + prod_ab) :
+                           op_vnmsac ? (d - prod_ab) :
+                           op_vmadd  ? (prod_db + a) :
+                                       (a - prod_db);   // vnmsub
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_mac8[gi*8 +: 8] = active ? r : d;
+        end
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_mac16
+            wire [15:0] a = vs2_data[gi*16 +: 16];
+            wire [15:0] b = is_opmvv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
+            wire [15:0] d = vd_old[gi*16 +: 16];
+            wire [15:0] prod_ab = a * b;
+            wire [15:0] prod_db = d * b;
+            wire [15:0] r = op_vmacc  ? (d + prod_ab) :
+                            op_vnmsac ? (d - prod_ab) :
+                            op_vmadd  ? (prod_db + a) :
+                                        (a - prod_db);
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_mac16[gi*16 +: 16] = active ? r : d;
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_mac32
+            wire [31:0] a = vs2_data[gi*32 +: 32];
+            wire [31:0] b = is_opmvv ? vs1_data[gi*32 +: 32] : scalar_b;
+            wire [31:0] d = vd_old[gi*32 +: 32];
+            wire [31:0] prod_ab = a * b;
+            wire [31:0] prod_db = d * b;
+            wire [31:0] r = op_vmacc  ? (d + prod_ab) :
+                            op_vnmsac ? (d - prod_ab) :
+                            op_vmadd  ? (prod_db + a) :
+                                        (a - prod_db);
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_mac32[gi*32 +: 32] = active ? r : d;
+        end
+    endgenerate
+    wire [127:0] res_mac = (vsew == 3'b000) ? res_mac8 :
+                           (vsew == 3'b001) ? res_mac16 : res_mac32;
 
     // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
     localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
@@ -1043,6 +1110,7 @@ module vexu #(
 
     // per-part combinational result for the group beats (arith class)
     wire [127:0] part_res = op_muls ? res_mul :
+                            op_mac ? res_mac :
                             op_s2same ? res_s2 :
                             (vsew == 3'b000) ? res8 :
                             (vsew == 3'b001) ? res16 : res32;
@@ -1091,6 +1159,7 @@ module vexu #(
                      (is_grp) ? grp_stage[0] :
                      mask_dest ? res_cmp :
                      op_muls ? res_mul :
+                     op_mac ? res_mac :
                      op_mlog ? res_mlog :
                      op_s2same ? res_s2 :
                      (op_nc || op_nsr) ? res_nc :
