@@ -271,6 +271,14 @@ module vexu #(
     wire op_vnmsub = (f6 == 6'b101011) && (is_opmvv || is_opmvx);
     wire op_mac    = op_vmacc || op_vnmsac || op_vmadd || op_vnmsub;
 
+    // ---------------- Phase-C C5 (ADR-0056): vsmul (signed fractional mul) ----------
+    // OPIVV/OPIVX f6=100111 (f3 disjoint from vmulh OPMV* and vmv<nr>r OPIVI, same f6).
+    // vd = sat(round((vs2*vs1) >> (SEW-1))) with vxrm rounding; the only overflow is
+    // (-2^(SEW-1))^2 -> +2^(SEW-1) -> saturates to max, setting vxsat. SEW8 legal
+    // (Spike-probed). Golden (rnu): 64*64>>7=32, -128*-128->127(vxsat), 64*3>>7 rounds
+    // 1->2. Maskable body op; joins beats_op.
+    wire op_vsmul = (f6 == 6'b100111) && (is_opivv || is_opivx);
+
     // ---------------- config legality ----------------
     wire        vill  = q_vtype[31];
     wire [2:0]  vlmul = q_vtype[2:0];
@@ -343,13 +351,13 @@ module vexu #(
                     op_wmulany || op_wmaccany || op_waddsub || op_red || op_wred || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
                     op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr ||
-                    op_muls || op_mac;
+                    op_muls || op_mac || op_vsmul;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
     wire beats_op  = op_add || op_sub || op_mv || op_merge || op_mm ||
                      op_s2same || op_cmp || op_b1 || op_adcsbc || op_madcb ||
-                     op_muls || op_mac;
+                     op_muls || op_mac || op_vsmul;
     // NOTE: memory opcodes alias the f6-based arith decodes (every other use
     // site is guarded by an is_vmem priority mux) — exclude them here too.
     wire is_grp    = (grp_parts != 3'd1) && beats_op && !is_vmem;
@@ -391,7 +399,7 @@ module vexu #(
                          // as carry-in, so vd==0 illegal only in that carry-in form.
                          (op_madcb && !vm && (vd_i == 5'd0)) ||
                          ((op_add || op_sub || op_mm || op_s2same || op_nc ||
-                           op_b1 || op_nsr || op_vext || op_muls || op_mac) &&
+                           op_b1 || op_nsr || op_vext || op_muls || op_mac || op_vsmul) &&
                           !vm && (vd_i == 5'd0)))));
 
     // ---------------- VRF ----------------
@@ -718,6 +726,72 @@ module vexu #(
     endgenerate
     wire [127:0] res_mac = (vsew == 3'b000) ? res_mac8 :
                            (vsew == 3'b001) ? res_mac16 : res_mac32;
+
+    // ---- C5: vsmul = sat(round((vs2*vs1) >> (SEW-1))) with vxrm. Only overflow is
+    // (-2^(SEW-1))^2 -> saturates to +max, setting vxsat. Rounding increment matches
+    // the S2 scaling-shift pattern (b_dm1=P[d-1], b_d=P[d], lo/any = shifted-out bits).
+    wire [127:0] res_smul8, res_smul16, res_smul32;
+    wire [15:0]  smul_sat8;
+    wire [7:0]   smul_sat16;
+    wire [3:0]   smul_sat32;
+    generate
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_smul8
+            wire signed [7:0]  as = vs2_data[gi*8 +: 8];
+            wire signed [7:0]  bs = is_opivv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
+            wire signed [15:0] p  = as * bs;
+            wire inc = (q_vxrm == 2'd0) ?  p[6] :
+                       (q_vxrm == 2'd1) ? (p[6] & ((|p[5:0]) | p[7])) :
+                       (q_vxrm == 2'd2) ?  1'b0 :
+                                          (~p[7] & (|p[6:0]));
+            wire signed [15:0] sh  = p >>> 7;   // self-determined signed => arithmetic
+            wire signed [15:0] rnd = sh + {15'b0, inc};
+            wire ov_hi = rnd > 16'sd127;
+            wire ov_lo = rnd < -16'sd128;
+            wire [7:0] r = ov_hi ? 8'h7F : ov_lo ? 8'h80 : rnd[7:0];
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_smul8[gi*8 +: 8] = active ? r : vd_old[gi*8 +: 8];
+            assign smul_sat8[gi] = active && (ov_hi | ov_lo);
+        end
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_smul16
+            wire signed [15:0] as = vs2_data[gi*16 +: 16];
+            wire signed [15:0] bs = is_opivv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
+            wire signed [31:0] p  = as * bs;
+            wire inc = (q_vxrm == 2'd0) ?  p[14] :
+                       (q_vxrm == 2'd1) ? (p[14] & ((|p[13:0]) | p[15])) :
+                       (q_vxrm == 2'd2) ?  1'b0 :
+                                          (~p[15] & (|p[14:0]));
+            wire signed [31:0] sh  = p >>> 15;
+            wire signed [31:0] rnd = sh + {31'b0, inc};
+            wire ov_hi = rnd > 32'sd32767;
+            wire ov_lo = rnd < -32'sd32768;
+            wire [15:0] r = ov_hi ? 16'h7FFF : ov_lo ? 16'h8000 : rnd[15:0];
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_smul16[gi*16 +: 16] = active ? r : vd_old[gi*16 +: 16];
+            assign smul_sat16[gi] = active && (ov_hi | ov_lo);
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_smul32
+            wire signed [31:0] as = vs2_data[gi*32 +: 32];
+            wire signed [31:0] bs = is_opivv ? vs1_data[gi*32 +: 32] : scalar_b;
+            wire signed [63:0] p  = as * bs;
+            wire inc = (q_vxrm == 2'd0) ?  p[30] :
+                       (q_vxrm == 2'd1) ? (p[30] & ((|p[29:0]) | p[31])) :
+                       (q_vxrm == 2'd2) ?  1'b0 :
+                                          (~p[31] & (|p[30:0]));
+            wire signed [63:0] sh  = p >>> 31;
+            wire signed [63:0] rnd = sh + {63'b0, inc};
+            wire ov_hi = rnd > 64'sd2147483647;
+            wire ov_lo = rnd < -64'sd2147483648;
+            wire [31:0] r = ov_hi ? 32'h7FFFFFFF : ov_lo ? 32'h80000000 : rnd[31:0];
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_smul32[gi*32 +: 32] = active ? r : vd_old[gi*32 +: 32];
+            assign smul_sat32[gi] = active && (ov_hi | ov_lo);
+        end
+    endgenerate
+    wire [127:0] res_smul = (vsew == 3'b000) ? res_smul8 :
+                            (vsew == 3'b001) ? res_smul16 : res_smul32;
 
     // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
     localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
@@ -1198,13 +1272,16 @@ module vexu #(
     wire part_sat_or = (op_s2same && ((vsew == 3'b000) ? (|s2_sat8) :
                                       (vsew == 3'b001) ? (|s2_sat16_x[7:0]) :
                                                          (|s2_sat32))) ||
-                       (op_nc && ((vsew == 3'b000) ? (|nc_sat8) : (|nc_sat16)));
+                       (op_nc && ((vsew == 3'b000) ? (|nc_sat8) : (|nc_sat16))) ||
+                       (op_vsmul && ((vsew == 3'b000) ? (|smul_sat8) :
+                                     (vsew == 3'b001) ? (|smul_sat16) : (|smul_sat32)));
     assign q_vxsat = q_valid && !q_illegal && (q_vstart < q_vl) &&
                      (is_grp ? grp_sat_q : part_sat_or);
 
     // per-part combinational result for the group beats (arith class)
     wire [127:0] part_res = op_muls ? res_mul :
                             op_mac ? res_mac :
+                            op_vsmul ? res_smul :
                             op_s2same ? res_s2 :
                             (vsew == 3'b000) ? res8 :
                             (vsew == 3'b001) ? res16 : res32;
@@ -1254,6 +1331,7 @@ module vexu #(
                      mask_dest ? res_cmp :
                      op_muls ? res_mul :
                      op_mac ? res_mac :
+                     op_vsmul ? res_smul :
                      op_mlog ? res_mlog :
                      op_s2same ? res_s2 :
                      (op_nc || op_nsr) ? res_nc :
