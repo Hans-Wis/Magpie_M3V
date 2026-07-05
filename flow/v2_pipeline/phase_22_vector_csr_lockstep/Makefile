@@ -103,6 +103,9 @@ c3:
 c2:
 	$(MAKE) FW_ASM=firmware_c2.S MIN_COMMITS=110 lockstep.log
 
+e1:
+	$(MAKE) FW_ASM=firmware_e1.S MIN_COMMITS=80 lockstep.log
+
 d2:
 	$(MAKE) FW_ASM=firmware_d2.S MIN_COMMITS=70 lockstep.log
 

@@ -296,6 +296,19 @@ module vexu #(
     wire op_mulhsu = (f6 == 6'b100110) && (is_opmvv || is_opmvx);
     wire op_muls   = op_mul || op_mulh || op_mulhu || op_mulhsu;
 
+    // ---------------- Phase-E E1 (ADR-0058): integer divide / remainder ----------
+    // OPMVV/OPMVX f6 100000/100001/100010/100011 = vdivu/vdiv/vremu/vrem (f3 disjoint
+    // from vsaddu/vsadd/vssubu/vssub OPIV*, same f6). RISC-V special cases (Spike-
+    // probed): unsigned /0 -> all-1s, %0 -> dividend; signed /0 -> -1, %0 -> dividend;
+    // signed overflow MIN/-1 -> quotient MIN, rem 0; signed div truncates toward zero.
+    // Combinational per-element divide (functional lockstep; real HW would sequence it
+    // -- documented timing deviation, same class as fexu F4). Joins beats_op.
+    wire op_vdivu = (f6 == 6'b100000) && (is_opmvv || is_opmvx);
+    wire op_vdiv  = (f6 == 6'b100001) && (is_opmvv || is_opmvx);
+    wire op_vremu = (f6 == 6'b100010) && (is_opmvv || is_opmvx);
+    wire op_vrem  = (f6 == 6'b100011) && (is_opmvv || is_opmvx);
+    wire op_vdivr = op_vdivu || op_vdiv || op_vremu || op_vrem;
+
     // ---------------- Phase-C C2 (ADR-0056): integer multiply-accumulate ----------
     // OPMVV/OPMVX, SEW low bits (sign-agnostic). vd is the ACCUMULATOR (old vd read;
     // vd-overlap with vs1/vs2 is spec-legal — no generic overlap illegality here).
@@ -393,14 +406,14 @@ module vexu #(
                     op_wmulany || op_wmaccany || op_waddsub || op_red || op_wred || op_mvsx ||
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
                     op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr ||
-                    op_muls || op_mac || op_vsmul ||
+                    op_muls || op_mac || op_vsmul || op_vdivr ||
                     op_vcpop || op_vfirst || op_vid || op_vms || op_viota || op_slide;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
     wire beats_op  = op_add || op_sub || op_mv || op_merge || op_mm ||
                      op_s2same || op_cmp || op_b1 || op_adcsbc || op_madcb ||
-                     op_muls || op_mac || op_vsmul;
+                     op_muls || op_mac || op_vsmul || op_vdivr;
     // NOTE: memory opcodes alias the f6-based arith decodes (every other use
     // site is guarded by an is_vmem priority mux) — exclude them here too.
     wire is_grp    = (grp_parts != 3'd1) && beats_op && !is_vmem;
@@ -442,7 +455,7 @@ module vexu #(
                          // as carry-in, so vd==0 illegal only in that carry-in form.
                          (op_madcb && !vm && (vd_i == 5'd0)) ||
                          ((op_add || op_sub || op_mm || op_s2same || op_nc ||
-                           op_b1 || op_nsr || op_vext || op_muls || op_mac || op_vsmul ||
+                           op_b1 || op_nsr || op_vext || op_muls || op_mac || op_vsmul || op_vdivr ||
                            op_vid || op_viota || op_slide) &&
                           !vm && (vd_i == 5'd0)))));
 
@@ -719,6 +732,59 @@ module vexu #(
     endgenerate
     wire [127:0] res_mul = (vsew == 3'b000) ? res_mul8 :
                            (vsew == 3'b001) ? res_mul16 : res_mul32;
+
+    // ---- E1: integer divide/remainder (combinational per element). Special cases
+    // per RISC-V: /0 -> all-1s (u) / -1 (s), %0 -> dividend; signed MIN/-1 -> MIN, 0. ----
+    wire [127:0] res_vdiv8, res_vdiv16, res_vdiv32;
+    generate
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_div8
+            wire [7:0] a = vs2_data[gi*8 +: 8];
+            wire [7:0] b = is_opmvv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
+            wire signed [7:0] as = a, bs = b;
+            wire bz  = (b == 8'h00);
+            wire sov = (a == 8'h80) && (b == 8'hFF);         // MIN / -1
+            wire [7:0] udiv = bz ? 8'hFF : a / b;
+            wire [7:0] urem = bz ? a     : a % b;
+            wire [7:0] sdiv = bz ? 8'hFF : sov ? 8'h80 : $unsigned(as / bs);
+            wire [7:0] srem = bz ? a     : sov ? 8'h00 : $unsigned(as % bs);
+            wire [7:0] r = op_vdivu ? udiv : op_vdiv ? sdiv : op_vremu ? urem : srem;
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_vdiv8[gi*8 +: 8] = active ? r : vd_old[gi*8 +: 8];
+        end
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_div16
+            wire [15:0] a = vs2_data[gi*16 +: 16];
+            wire [15:0] b = is_opmvv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
+            wire signed [15:0] as = a, bs = b;
+            wire bz  = (b == 16'h0);
+            wire sov = (a == 16'h8000) && (b == 16'hFFFF);
+            wire [15:0] udiv = bz ? 16'hFFFF : a / b;
+            wire [15:0] urem = bz ? a        : a % b;
+            wire [15:0] sdiv = bz ? 16'hFFFF : sov ? 16'h8000 : $unsigned(as / bs);
+            wire [15:0] srem = bz ? a        : sov ? 16'h0000 : $unsigned(as % bs);
+            wire [15:0] r = op_vdivu ? udiv : op_vdiv ? sdiv : op_vremu ? urem : srem;
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_vdiv16[gi*16 +: 16] = active ? r : vd_old[gi*16 +: 16];
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_div32
+            wire [31:0] a = vs2_data[gi*32 +: 32];
+            wire [31:0] b = is_opmvv ? vs1_data[gi*32 +: 32] : scalar_b;
+            wire signed [31:0] as = a, bs = b;
+            wire bz  = (b == 32'h0);
+            wire sov = (a == 32'h80000000) && (b == 32'hFFFFFFFF);
+            wire [31:0] udiv = bz ? 32'hFFFFFFFF : a / b;
+            wire [31:0] urem = bz ? a            : a % b;
+            wire [31:0] sdiv = bz ? 32'hFFFFFFFF : sov ? 32'h80000000 : $unsigned(as / bs);
+            wire [31:0] srem = bz ? a            : sov ? 32'h00000000 : $unsigned(as % bs);
+            wire [31:0] r = op_vdivu ? udiv : op_vdiv ? sdiv : op_vremu ? urem : srem;
+            wire m = v0_view[gi];
+            wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
+            assign res_vdiv32[gi*32 +: 32] = active ? r : vd_old[gi*32 +: 32];
+        end
+    endgenerate
+    wire [127:0] res_vdiv = (vsew == 3'b000) ? res_vdiv8 :
+                            (vsew == 3'b001) ? res_vdiv16 : res_vdiv32;
 
     // ---- C2: integer MAC (low SEW bits, sign-agnostic). vd_old = accumulator ----
     // prod_ab = vs1*vs2 (macc/nmsac); prod_db = vs1*vd (madd/nmsub). All truncated
@@ -1440,6 +1506,7 @@ module vexu #(
 
     // per-part combinational result for the group beats (arith class)
     wire [127:0] part_res = op_muls ? res_mul :
+                            op_vdivr ? res_vdiv :
                             op_mac ? res_mac :
                             op_vsmul ? res_smul :
                             op_s2same ? res_s2 :
@@ -1490,6 +1557,7 @@ module vexu #(
                      (is_grp) ? grp_stage[0] :
                      mask_dest ? res_cmp :
                      op_muls ? res_mul :
+                     op_vdivr ? res_vdiv :
                      op_mac ? res_mac :
                      op_vsmul ? res_smul :
                      op_mlog ? res_mlog :
