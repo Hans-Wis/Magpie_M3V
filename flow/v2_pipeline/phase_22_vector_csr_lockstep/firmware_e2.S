@@ -71,6 +71,53 @@ _start:
     vse16.v v4,(x22); lw t3,0(x22); lw t4,4(x22); lw t5,8(x22); lw t6,12(x22)
     vse16.v v5,(x22); lw t3,0(x22); lw t4,12(x22)
 
+    /* ===== nf=2, e8, m2 (VLMAX=32, EMUL=4) — the compiler's actual vlseg2e8@m2 ===== */
+    lla  x20, sm2
+    li   a0, 32
+    vsetvli t1, a0, e8, m2, ta, ma
+    vlseg2e8.v v8, (x20)                  /* field0={v8,v9}, field1={v10,v11} */
+    li   a0, 16
+    vsetvli t1, a0, e8, m1, ta, ma        /* observe each register under m1 */
+    vse8.v v8, (x22); lw t3,0(x22); lw t4,12(x22)
+    vse8.v v9, (x22); lw t5,0(x22); lw t6,12(x22)
+    vse8.v v10,(x22); lw t3,0(x22); lw t4,12(x22)
+    vse8.v v11,(x22); lw t5,0(x22); lw t6,12(x22)
+    /* store back @ m2 and read the interleaved memory */
+    lla  x21, dm2
+    li   a0, 32
+    vsetvli t1, a0, e8, m2, ta, ma
+    vsseg2e8.v v8, (x21)
+    lw t3,0(x21); lw t4,32(x21); lw t5,60(x21)
+
+    /* ===== partial-vl @ m2: vl=20 (element 20 in v9, tests per-register tail blend) ===== */
+    li   a0, 32
+    vsetvli t1, a0, e8, m2, ta, ma
+    li   a1, 0x7E
+    vmv.v.x v8, a1                        /* pre-color the whole m2 group... */
+    vmv.v.x v10, a1
+    li   a0, 20
+    vsetvli t1, a0, e8, m2, ta, ma        /* vl=20 */
+    vlseg2e8.v v8, (x20)                  /* elems 0..19 loaded; 20..31 stay 0x7E */
+    li   a0, 16
+    vsetvli t1, a0, e8, m1, ta, ma
+    vse8.v v9, (x22); lw t3,0(x22); lw t4,12(x22)   /* v9 = elems 16..31: 16..19 real, 20..31=0x7E */
+
+    /* ===== nf=2, e8, m4 (VLMAX=64, EMUL=8) ===== */
+    lla  x20, sm4
+    li   a0, 64
+    vsetvli t1, a0, e8, m4, ta, ma
+    vlseg2e8.v v8, (x20)                  /* field0={v8..v11}, field1={v12..v15} */
+    li   a0, 16
+    vsetvli t1, a0, e8, m1, ta, ma
+    vse8.v v8, (x22); lw t3,0(x22)
+    vse8.v v11,(x22); lw t4,0(x22)        /* field0 last register (elems 48..63) */
+    vse8.v v12,(x22); lw t5,0(x22)        /* field1 first register */
+
+    /* ===== terminator: vlseg2e8@m2 with vd=v1 (unaligned to L=2) = illegal (Codex) ===== */
+    lla  x20, sm2
+    li   a0, 32
+    vsetvli t1, a0, e8, m2, ta, ma
+    vlseg2e8.v v1, (x20)
     ebreak
 
 .section .data
@@ -89,3 +136,21 @@ s2_32: .word 0x11110000,0x22220000, 0x11110001,0x22220001, 0x11110002,0x22220002
 dst:   .space 32
 .align 6
 dst2:  .space 32
+.align 6
+/* m2: 32 elements x 2 fields interleaved: mem[2i]=i, mem[2i+1]=0x80|i */
+sm2:
+.set i, 0
+.rept 32
+    .byte i, (0x80 + i)
+    .set i, i + 1
+.endr
+.align 6
+dm2:   .space 64
+.align 6
+/* m4: 64 elements x 2 fields interleaved */
+sm4:
+.set j, 0
+.rept 64
+    .byte (j & 0x3F), (0xC0 | (j & 0x3F))
+    .set j, j + 1
+.endr

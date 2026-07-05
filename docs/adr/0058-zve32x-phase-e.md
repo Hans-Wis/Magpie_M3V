@@ -47,6 +47,15 @@ Roadmap = ADR-0054 §3 Phase-E。承 Phase-A/B/C/D 全綠。Phase-E = 昂貴/低
   **三方 Codex+Grok+Gemini:Codex 抓真 bug=segment load tail lanes(vl<VLMAX)排空整 seg_buf(stale tail)
   而非 undisturbed;directed test 只觀 active lane 遮蔽(green-wash!)。修=drain byte-wise blend 舊 field
   register(seg_drain)+ partial-vl test 驗。Grok in-scope 結構正確(未抓 tail)。Gemini quota-blocked。**
+  - **E2 擴 LMUL>1(@e7ede7b,User 裁示——實測編譯器 vlseg2e8 在 m2 emit)**:stub LMUL=1 → **m1/m2/m4**(EMUL
+    暫存器群組)。field f = L 暫存器群組 {vd+f*L..};element i → 實體 reg offset p=f*L+i/epr、lane=i%epr;
+    seg_bufi=(seg_fld<<log2L)+i/epr;drain nf*L 暫存器 + **per-register tail blend**(reg-in-group r=p&(L-1),
+    active bytes=clamp(vl−r*epr,0,epr)*EEW)。vm_idx 加寬 [5:0](VLMAX≤64)。seg_ok:m1/m2/m4、nf*L≤8、
+    vd+nf*L≤32、**vd L-對齊**、EEW=SEW、vstart=0。lockstep 147c(LMUL=1 + vlseg2e8@m2 編譯器 emission +
+    m4 + partial-vl 跨群組 + 非對齊 vd terminator);vmem 110/vrand 1324 綠。**三方:Codex 抓真 bug=seg_ok
+    缺暫存器群組對齊檢查(vlseg2e8@m2 vd=v1 DUT 執行但 Spike trap=green-wash,對齊 vd test 遮蔽)→ 修加
+    (vd&(L-1))==0 + 非對齊 terminator 驗。Grok 確認其餘正確。Gemini quota-blocked。Codex 本 phase 第 3 次抓
+    green-wash(D2 fractional / E2-stub tail / E2-m2 align)。**
 - **E3 完成(2026-07-05)= vrgather.vv/.vx/.vi**:vd[i]=(index>=vlmax)?0:vs2[index],index=vs1[i](SEW)/
   rs1/uimm。OPIVV/OPIVX/OPIVI f6=001100。m1 組合 crossbar(idx[3:0]/[2:0]/[1:0] 選 lane,OOR 用
   **vlmax_el** fractional-aware→0)。require_noover:vd==vs2 illegal、.vv vd==vs1 illegal;vstart≠0

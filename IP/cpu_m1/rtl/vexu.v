@@ -393,13 +393,19 @@ module vexu #(
     wire [2:0] seg_nf_m1 = q_instr[31:29];             // nf-1
     wire [3:0] seg_nf    = {1'b0, seg_nf_m1} + 4'd1;   // 1..8
     wire       is_seg    = is_vmem && (seg_nf_m1 != 3'b000);
+    // LMUL registers per field (L) and total register group nf*L (<=8). m1/m2/m4 only.
+    wire [3:0] seg_L     = (vlmul == 3'b010) ? 4'd4 : (vlmul == 3'b001) ? 4'd2 : 4'd1;
+    wire [1:0] seg_lg2L  = vlmul[1:0];                 // log2(L): m1=0 m2=1 m4=2
+    wire [6:0] seg_tot   = seg_nf * {3'b0, seg_L};     // nf*L registers
     wire seg_ok = (eew_sel != 2'd3) && vm &&
                   (q_instr[28:26] == 3'b000) &&                 // mew=0, unit-stride
                   (q_instr[24:20] == 5'b00000) &&               // lumop/sumop=0
-                  (vlmul == 3'b000) &&                          // LMUL=1 (stub)
-                  ({1'b0, eew_sel} == vsew) &&                  // EEW == SEW (stub)
-                  (q_vstart == 32'h0) &&                        // vstart=0 (stub)
-                  (({1'b0, vd_i} + {2'b0, seg_nf}) <= 6'd32) && // vd..vd+nf-1 in range
+                  !vlmul[2] && (vlmul != 3'b011) &&             // LMUL m1/m2/m4 (no m8/frac)
+                  ({1'b0, eew_sel} == vsew) &&                  // EEW == SEW
+                  (q_vstart == 32'h0) &&                        // vstart=0
+                  (seg_tot <= 7'd8) &&                          // nf*L <= 8 register budget
+                  (({1'b0, vd_i} + seg_tot[5:0]) <= 6'd32) &&   // group in range
+                  ((vd_i & ({1'b0, seg_L[3:0]} - 5'd1)) == 5'd0) && // vd L-aligned (Codex)
                   align_ok;
     wire mem_illegal = is_seg ? !seg_ok :
                        (!mem_enc_ok || !emul_ok || !align_ok);
@@ -1084,7 +1090,7 @@ module vexu #(
     localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
                      VM_VMVR = 3'd4, VM_SEGWR = 3'd5;    // B4 copy loop / E2 segment drain
     reg [2:0]   vm_state;
-    reg [4:0]   vm_idx;
+    reg [5:0]   vm_idx;          // element (up to 63 for segment e8 m4)
     reg [2:0]   vmvr_p;          // B4: register index within the nr-register group
     reg [127:0] vm_buf;          // assemble buffer (loads); seeded with vd_old
     reg         vm_done_r;
@@ -1093,11 +1099,21 @@ module vexu #(
     reg [2:0]   seg_fld;
     reg [8:0]   seg_off;         // running byte offset from rs1
     wire        seg_last = (seg_fld + 3'd1 == seg_nf[2:0]);
-    wire [127:0] seg_src = vrf[vd_i + {2'b0, seg_fld}];   // store source: (vs3+f)
-    // E2 (Codex finding): the drain must keep tail lanes (element >= vl) undisturbed —
-    // seg_buf beyond vl is stale, so blend it with the old field register byte-wise.
-    wire [5:0]   seg_act_bytes = {1'b0, q_vl[4:0]} << eew_sel;   // vl * EEW bytes (<=16)
-    wire [127:0] seg_old_p = vrf[vd_i + {2'b0, vmvr_p}];         // old (vd+p) for the tail
+    // physical register offset from vd for element vm_idx, field seg_fld: f*L + (i/epr).
+    wire [5:0]  seg_regsh = vm_idx >> (3'd4 - {1'b0, vsew[1:0]});   // i / epr (reg-in-group)
+    wire [3:0]  seg_bufi4 = ({1'b0, seg_fld} << seg_lg2L) + seg_regsh[3:0];
+    wire [2:0]  seg_bufi  = seg_bufi4[2:0];                         // <=7 (nf*L<=8)
+    wire [127:0] seg_src  = vrf[vd_i + {2'b0, seg_bufi}];           // store source (vs3 group)
+    // E2 (Codex finding): drain keeps tail lanes (element >= vl) undisturbed. For LMUL>1
+    // each register p holds field-local elements [r*epr, (r+1)*epr); active bytes in it =
+    // clamp(vl - r*epr, 0, epr) * EEW, blended byte-wise with the old register.
+    wire [2:0]  seg_r     = vmvr_p & (seg_L[2:0] - 3'd1);   // reg-in-group of drain reg
+    wire [4:0]  seg_epr   = 5'd16 >> vsew;                          // elements per register
+    wire [6:0]  seg_rbase = {2'b0, seg_r} * {2'b0, seg_epr};        // r * epr
+    wire [6:0]  seg_actel = (q_vl[6:0] > seg_rbase) ? (q_vl[6:0] - seg_rbase) : 7'd0;
+    wire [4:0]  seg_actc  = (seg_actel > {2'b0, seg_epr}) ? seg_epr : seg_actel[4:0];
+    wire [5:0]  seg_act_bytes = {1'b0, seg_actc} << eew_sel;
+    wire [127:0] seg_old_p = vrf[vd_i + {2'b0, vmvr_p}];            // old (vd+p) for the tail
     wire [127:0] seg_drain;
     genvar sgb;
     generate
@@ -1107,6 +1123,7 @@ module vexu #(
                                            : seg_old_p[sgb*8 +: 8];
         end
     endgenerate
+    wire [5:0]  seg_last_el = q_vl[5:0] - 6'd1;   // last element index (vl up to 64)
 
     wire [4:0] vm_vl     = q_vl[4:0];       // <=16 elements under EMUL<=1
     wire [4:0] vm_vstart = q_vstart[4:0];
@@ -1119,7 +1136,7 @@ module vexu #(
     assign vm_we           = is_vstore;
     // segment beats walk a contiguous byte offset; scalar path is element*eew.
     assign vm_addr         = is_seg ? (q_rs1 + {23'b0, seg_off})
-                                    : (q_rs1 + ({27'b0, vm_idx} << eew_sel));
+                                    : (q_rs1 + ({26'b0, vm_idx} << eew_sel));
     // store element from vs3 (= vd field) placed on its byte lane via wstrb. For
     // segment the source is the current field register (vs3+seg_fld) at element vm_idx.
     wire [127:0] st_src = is_seg ? seg_src : vd_old;
@@ -1157,7 +1174,7 @@ module vexu #(
                         end else begin
                             seg_fld  <= 3'd0;
                             seg_off  <= 9'd0;
-                            vm_idx   <= 5'd0;           // vstart=0 (stub)
+                            vm_idx   <= 6'd0;           // vstart=0
                             vm_state <= VM_ISSUE;
                         end
                     end else if (is_grp) begin
@@ -1175,7 +1192,7 @@ module vexu #(
                         vm_done_r <= 1'b1;           // vl==0 / vstart>=vl: no beats
                     end else begin
                         vm_buf   <= vd_old;          // undisturbed below-vstart + tail
-                        vm_idx   <= vm_vstart;
+                        vm_idx   <= {1'b0, vm_vstart};
                         vm_state <= VM_ISSUE;
                     end
                 end
@@ -1212,19 +1229,19 @@ module vexu #(
                     // done (memory already written beat-by-beat).
                     if (is_vload) begin
                         case (eew_sel)
-                            2'd0: seg_buf[seg_fld][{vm_idx[3:0], 3'b000} +: 8]   <= ld8;
-                            2'd1: seg_buf[seg_fld][{vm_idx[2:0], 4'b0000} +: 16] <= ld16;
-                            default: seg_buf[seg_fld][{vm_idx[1:0], 5'b00000} +: 32] <= m_rdata;
+                            2'd0: seg_buf[seg_bufi][{vm_idx[3:0], 3'b000} +: 8]   <= ld8;
+                            2'd1: seg_buf[seg_bufi][{vm_idx[2:0], 4'b0000} +: 16] <= ld16;
+                            default: seg_buf[seg_bufi][{vm_idx[1:0], 5'b00000} +: 32] <= m_rdata;
                         endcase
                     end
                     seg_off <= seg_off + (9'd1 << eew_sel);
                     if (seg_last) begin
                         seg_fld <= 3'd0;
-                        if (vm_idx == vm_last) begin
+                        if (vm_idx == seg_last_el) begin
                             if (is_vload) begin vmvr_p <= 3'd0; vm_state <= VM_SEGWR; end
                             else          begin vm_done_r <= 1'b1; vm_state <= VM_IDLE; end
                         end else begin
-                            vm_idx   <= vm_idx + 5'd1;
+                            vm_idx   <= vm_idx + 6'd1;
                             vm_state <= VM_ISSUE;
                         end
                     end else begin
@@ -1239,18 +1256,18 @@ module vexu #(
                             default: vm_buf[{vm_idx[1:0], 5'b00000} +: 32] <= m_rdata;
                         endcase
                     end
-                    if (vm_idx == vm_last) begin
+                    if (vm_idx == {1'b0, vm_last}) begin
                         vm_state  <= VM_IDLE;
                         vm_done_r <= 1'b1;
                     end else begin
-                        vm_idx   <= vm_idx + 5'd1;
+                        vm_idx   <= vm_idx + 6'd1;
                         vm_state <= VM_ISSUE;
                     end
                 end
                 VM_SEGWR: begin
-                    // vrf[vd+vmvr_p] <= seg_buf[vmvr_p] lands in the write block; drain
-                    // all nf field buffers, then retire.
-                    if (({1'b0, vmvr_p} + 4'd1) >= seg_nf) begin
+                    // vrf[vd+vmvr_p] <= seg_drain lands in the write block; drain all
+                    // nf*L field-group registers, then retire.
+                    if (({1'b0, vmvr_p} + 4'd1) >= seg_tot[3:0]) begin
                         vm_state  <= VM_IDLE;
                         vm_done_r <= 1'b1;
                     end else
