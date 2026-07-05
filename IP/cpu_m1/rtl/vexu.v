@@ -37,9 +37,9 @@ module vexu #(
     input  wire [31:0]  q_rs1,       // forwarded scalar rs1 (OPIVX)
     output wire         q_is_grp,     // S3: multi-beat register-group op (hold like vmem)
     output wire         q_grp_w,      // S3: WB commit writes a register GROUP
-    output wire [2:0]   q_grp_parts,  // S3: EMUL parts (2/4) piped for the WB commit
+    output wire [3:0]   q_grp_parts,  // S3/F: EMUL parts (2/4/8) piped for the WB commit
     input  wire         w_grp,        // S3: WB commit is a group write
-    input  wire [2:0]   w_parts,
+    input  wire [3:0]   w_parts,
     input  wire [1:0]   q_vxrm,       // S2 (ADR-0049): effective vxrm at EX
     output wire         q_vxsat,      // S2: saturation occurred (active lanes)
     output wire         q_illegal,
@@ -348,10 +348,16 @@ module vexu #(
     wire lmul_m2   = (vlmul == 3'b001);
     wire lmul_m4   = (vlmul == 3'b010);
     wire lmul_m8   = (vlmul == 3'b011);
-    wire [2:0] grp_parts = lmul_m4 ? 3'd4 : lmul_m2 ? 3'd2 : 3'd1;
-    // vmv<nr>r.v ignores LMUL (nr comes from simm), so m8 vtype must NOT make it
-    // illegal (Spike executes it); vill still traps it.
-    wire cfg_illegal = vill || (lmul_m8 && !op_vmvr);
+    // Phase-F: m8 = 8-register group (Spike-probed vlmax e8=128/e16=64/e32=32). Enabled
+    // for the same-width beats_op ops via the VM_GRP 8-beat path; widening/reductions/
+    // mask-scan stay m8-illegal (below). vmv<nr>r ignores LMUL (nr from simm).
+    wire [3:0] grp_parts = lmul_m8 ? 4'd8 : lmul_m4 ? 4'd4 : lmul_m2 ? 4'd2 : 4'd1;
+    // m8 legal ONLY for non-memory beats_op (the VM_GRP 8-beat arith path) + vmvr.
+    // Memory opcodes alias beats_op via f6/f3 (vle8 f3=000 => op_add), and m8 group-
+    // EMUL memory is out-of-scope (int_sh omits m8 => mem_illegal would see an m1 span
+    // and silently execute a truncated load). Gate with (beats_op && !is_vmem) so m8
+    // memory stays illegal (DUT stricter, honest scope-cut) — Codex Phase-F review.
+    wire cfg_illegal = vill || (lmul_m8 && !op_vmvr && !(beats_op && !is_vmem));
 
     // ---------------- 3C unit-stride vector load/store decode ----------------
     wire is_vload  = (q_instr[6:0] == 7'b0000111);   // LOAD-FP opcode space
@@ -448,12 +454,12 @@ module vexu #(
                      op_muls || op_mac || op_vsmul || op_vdivr;
     // NOTE: memory opcodes alias the f6-based arith decodes (every other use
     // site is guarded by an is_vmem priority mux) — exclude them here too.
-    wire is_grp    = (grp_parts != 3'd1) && beats_op && !is_vmem;
-    wire grp_only_illegal = (grp_parts != 3'd1) && !op_vmvr &&
+    wire is_grp    = (grp_parts != 4'd1) && beats_op && !is_vmem;
+    wire grp_only_illegal = (grp_parts != 4'd1) && !op_vmvr &&
         (op_widen || op_red || op_wred || op_nc || op_nsr || op_vext ||
          !beats_op && !op_mvxs && !op_mvsx && !op_mlog && !is_vmem);
     // register-group alignment (vd for writes except mask-dest; sources)
-    wire [4:0] grp_amask = lmul_m4 ? 5'd3 : lmul_m2 ? 5'd1 : 5'd0;
+    wire [4:0] grp_amask = lmul_m8 ? 5'd7 : lmul_m4 ? 5'd3 : lmul_m2 ? 5'd1 : 5'd0;
     wire grp_align_illegal = is_grp &&
         ((!mask_dest && ((vd_i & grp_amask[4:0]) != 5'd0)) ||
          ((vs2_i & grp_amask) != 5'd0) ||
@@ -495,15 +501,15 @@ module vexu #(
     reg [127:0] vrf [0:31];
     // S3: during group beats the datapath sees part p of each operand; the
     // element window and v0 mask bits shift by the part base. m1 ops see p=0.
-    reg  [1:0]   grp_p;
-    wire [4:0]   part_off = {3'b0, grp_p};
+    reg  [2:0]   grp_p;                 // Phase-F: 0..7 for m8
+    wire [4:0]   part_off = {2'b0, grp_p};
     wire [127:0] vs1_data = vrf[vs1_i + part_off];
     wire [127:0] vs2_data = vrf[vs2_i + part_off];
     wire [127:0] v0_data  = vrf[0];
     wire [127:0] vd_old   = vrf[vd_i + part_off];
     // elements per register at the current SEW; part base in ELEMENTS
     wire [5:0]  nl_el     = (vsew == 3'b000) ? 6'd16 : (vsew == 3'b001) ? 6'd8 : 6'd4;
-    wire [7:0]  elem_base = {2'b0, nl_el} * {6'b0, grp_p};
+    wire [7:0]  elem_base = {2'b0, nl_el} * {5'b0, grp_p};
     // per-lane views: lane gi maps to architectural element (elem_base + gi)
     wire [127:0] v0_view   = v0_data >> elem_base;
     wire [31:0]  vl_view   = (q_vl > {24'b0, elem_base}) ? (q_vl - {24'b0, elem_base}) : 32'h0;
@@ -513,7 +519,7 @@ module vexu #(
     wire [127:0] cmpd_view = cmpd_old >> elem_base;
 
     // S3 staging: computed parts await the atomic group commit at WB
-    reg [127:0] grp_stage [0:3];
+    reg [127:0] grp_stage [0:7];    // Phase-F: up to 8 parts (m8)
     reg [127:0] grp_mask_acc;      // compare-to-mask accumulation across parts
     reg         grp_sat_q;
 
@@ -525,9 +531,15 @@ module vexu #(
             // staging still belongs to this instruction)
             if (w_grp) begin
                 vrf[w_vd + 5'd1] <= grp_stage[1];
-                if (w_parts == 3'd4) begin
+                if (w_parts >= 4'd4) begin
                     vrf[w_vd + 5'd2] <= grp_stage[2];
                     vrf[w_vd + 5'd3] <= grp_stage[3];
+                end
+                if (w_parts == 4'd8) begin
+                    vrf[w_vd + 5'd4] <= grp_stage[4];
+                    vrf[w_vd + 5'd5] <= grp_stage[5];
+                    vrf[w_vd + 5'd6] <= grp_stage[6];
+                    vrf[w_vd + 5'd7] <= grp_stage[7];
                 end
             end
         end
@@ -1156,7 +1168,7 @@ module vexu #(
         if (!resetn || m_flush) begin
             vm_state  <= VM_IDLE;
             vm_done_r <= 1'b0;
-            grp_p     <= 2'd0;
+            grp_p     <= 3'd0;
             vmvr_p    <= 3'd0;
         end else if (m_advance && vm_done_r) begin
             vm_done_r <= 1'b0;                       // instruction left EX
@@ -1185,7 +1197,7 @@ module vexu #(
                         if (vm_none) begin
                             vm_done_r <= 1'b1;
                         end else begin
-                            grp_p     <= 2'd0;
+                            grp_p     <= 3'd0;
                             grp_sat_q <= 1'b0;
                             vm_state  <= VM_GRP;
                         end
@@ -1204,12 +1216,12 @@ module vexu #(
                     if (mask_dest)
                         grp_mask_acc <= (grp_mask_acc & ~(mask_nl << elem_base)) |
                                         ({112'b0, cmp_seg} << elem_base);
-                    if ({1'b0, grp_p} + 3'd1 == grp_parts) begin
-                        grp_p     <= 2'd0;
+                    if ({1'b0, grp_p} + 4'd1 == grp_parts) begin
+                        grp_p     <= 3'd0;
                         vm_state  <= VM_IDLE;
                         vm_done_r <= 1'b1;
                     end else
-                        grp_p <= grp_p + 2'd1;
+                        grp_p <= grp_p + 3'd1;
                 end
                 VM_VMVR: begin
                     // the vrf copy for register vmvr_p lands in the write block this
@@ -1665,7 +1677,9 @@ module vexu #(
     wire [127:0] mask_nl = (vsew == 3'b000) ? 128'hFFFF :
                            (vsew == 3'b001) ? 128'hFF : 128'hF;
     // group compare: bits < vl from the accumulator, tail from the dest reg
-    wire [127:0] vl_ones  = (128'h1 << q_vl[6:0]) - 128'h1;
+    // Phase-F: q_vl reaches 128 (m8 e8); use [7:0] so vl==128 shifts by 128
+    // (>= width => 0) and the -1 fills all 128 mask bits. [6:0] would alias 128->0.
+    wire [127:0] vl_ones  = (128'h1 << q_vl[7:0]) - 128'h1;
     wire [127:0] grp_cmp_res = (cmpd_old & ~vl_ones) | (grp_mask_acc & vl_ones);
 
     // ---- S1 result assembly: compares + mask logicals ----

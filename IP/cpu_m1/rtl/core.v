@@ -613,7 +613,7 @@ endgenerate
     reg         ex_mem_vex_we_r;
     reg        ex_mem_vex_sat_r, ex_wb_vex_sat_r;
     reg        ex_mem_vex_grp_w_r, ex_wb_vex_grp_w_r;      // S3 atomic group write
-    reg [2:0]  ex_mem_vex_grp_parts_r, ex_wb_vex_grp_parts_r;     // 3B: VRF write pending (vd/wdata below)
+    reg [3:0]  ex_mem_vex_grp_parts_r, ex_wb_vex_grp_parts_r;     // 3B/F: VRF write pending (parts up to 8 for m8)
     reg         ex_mem_vex_flag_r;   // 3B: vector-exec commit (vstart clear / VS dirty)
     reg         ex_mem_vex_mem_r;    // 3C: the committing vector op is a load/store
     reg [4:0]   ex_mem_vex_vd_r;
@@ -893,7 +893,7 @@ endgenerate
     wire         wb_vex_we;
     wire         vexu_q_is_mem, vexu_vm_active, vexu_vm_result_valid;
     wire         vexu_q_is_grp, vexu_q_grp_w;
-    wire [2:0]   vexu_q_grp_parts;
+    wire [3:0]   vexu_q_grp_parts;
     wire         vexu_vm_dvalid, vexu_vm_we;
     wire [31:0]  vexu_vm_addr, vexu_vm_wdata;
     wire [3:0]   vexu_vm_wstrb;
