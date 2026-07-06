@@ -56,26 +56,27 @@ benchmarks:
     verify: bit_exact
     gate: gate_95_mlperf_kws_e2e.py
     note: DS-CNN (conv 3x3 -> depthwise-separable block -> FC head) chained bit-exact vs
-          BUILTIN_REF (ADR-0064 F1.3). stride-1 VALID representative dims; production
-          stride-2 first conv + global-avg-pool are F1.4 backlog (mechanism-independent).
+          BUILTIN_REF (ADR-0064 F1.3). stride-1 VALID representative dims; stride-2 first
+          conv now supported (ADR-0065); remaining = global-avg-pool (mechanism-independent).
 
   - id: mlperf_vww
     family: mlperf_tiny
     class: mobilenet_v1
     rtl_e2e: false
     verify: analysis
-    blocker: STRIDE-2 depthwise + padding (im2col is VALID/stride-1 only)
-    effort: L
-    note: Visual Wake Words MobileNetV1 — stride-2 gap (F1.4 SW-expand functional first)
+    blocker: full-model host codegen (stride-2+SAME conv DONE ADR-0065; depthwise DONE ADR-0061)
+    effort: M
+    note: Visual Wake Words MobileNetV1 — stride-2 gap cleared (gate_96); remaining is
+          host-side full-model lowering, no circuit gap.
 
   - id: mlperf_ic
     family: mlperf_tiny
     class: resnet8
     rtl_e2e: false
     verify: analysis
-    blocker: STRIDE-2 conv + fused RESIDUAL ADD (no fused add op)
-    effort: XL
-    note: ResNet-8 image classification — stride-2 + residual (F1.4)
+    blocker: fused RESIDUAL ADD (no add op) — stride-2 conv DONE (ADR-0065)
+    effort: L
+    note: ResNet-8 — stride-2 gap cleared (gate_96); remaining is the residual add path.
 
   # ---------------- LLM family (ADR-0062 S0..S5 slices) ----------------
   - id: gemma3_270m

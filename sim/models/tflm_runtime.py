@@ -164,18 +164,43 @@ def _chunks(k):
     return out
 
 
+def conv_out_geometry(layer):
+    """TFLM Conv2D output geometry + SAME pad offsets (ADR-0065, dilation 1).
+    SAME: oh = ceil(H/S); pad_total = max((oh-1)*S + K - H, 0); pad_before = total//2
+    (the remainder lands at bottom/right — TFLM's asymmetric split). Returns
+    (oh, ow, pad_top, pad_left)."""
+    kh, kw, s = layer["kh"], layer["kw"], layer["stride"]
+    h, w = layer["in_h"], layer["in_w"]
+    pad = layer.get("padding", "valid")
+    if pad == "same":
+        oh, ow = -(-h // s), -(-w // s)                      # ceil
+        pth = max((oh - 1) * s + kh - h, 0)
+        ptw = max((ow - 1) * s + kw - w, 0)
+        return oh, ow, pth // 2, ptw // 2
+    assert pad == "valid", f"unsupported padding {pad!r} (scope valid|same, ADR-0065)"
+    return (h - kh) // s + 1, (w - kw) // s + 1, 0, 0
+
+
 def im2col(layer, x):
-    """x: [H][W][Cin] int8 -> rows[n_pixels][K] (VALID, stride 1, dilation 1)."""
-    assert layer["stride"] == 1, "scope (ADR-0042)"
+    """x: [H][W][Cin] int8 -> rows[oh*ow][K]. Supports stride>=1 and VALID/SAME
+    padding (dilation 1, ADR-0065). SAME pads with the INPUT ZERO-POINT so padded
+    taps contribute 0 through the input_offset fold (TFLM asymmetric-int8 semantic).
+    K order is (ky,kx,ci) to match the [cout,kh,kw,cin]->[cout,K] weight flatten."""
     kh, kw, cin = layer["kh"], layer["kw"], layer["cin"]
-    oh = layer["in_h"] - kh + 1
-    ow = layer["in_w"] - kw + 1
+    h, w, s = layer["in_h"], layer["in_w"], layer["stride"]
+    izp = layer["input_zp"]
+    oh, ow, pt, pl = conv_out_geometry(layer)
     rows = []
     for oy in range(oh):
         for ox in range(ow):
-            rows.append([x[oy + ky][ox + kx][ci]
-                         for ky in range(kh) for kx in range(kw)
-                         for ci in range(cin)])
+            row = []
+            for ky in range(kh):
+                for kx in range(kw):
+                    iy, ix = oy * s + ky - pt, ox * s + kx - pl
+                    inside = 0 <= iy < h and 0 <= ix < w
+                    for ci in range(cin):
+                        row.append(x[iy][ix][ci] if inside else izp)
+            rows.append(row)
     return rows
 
 
@@ -296,4 +321,11 @@ def unpack_result_v2(dump_path: Path, n_groups: int, n_tiles: int, n_rows: int, 
 def load_artifacts2():
     model = json.loads((ART / "model2.json").read_text())
     golden = json.loads((ART / "golden2.json").read_text())
+    return model, golden
+
+
+def load_artifacts_s2():
+    """ADR-0065 stride-2 SAME conv model + TFLM golden."""
+    model = json.loads((ART / "model_s2.json").read_text())
+    golden = json.loads((ART / "golden_s2.json").read_text())
     return model, golden
