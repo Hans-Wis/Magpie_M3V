@@ -1,0 +1,166 @@
+{
+ "per_ext": {
+  "i": {
+   "in_scope": 40,
+   "covered": 40,
+   "missing": []
+  },
+  "c": {
+   "in_scope": 27,
+   "covered": 25,
+   "missing": [
+    "c.jalr",
+    "c.jr"
+   ]
+  },
+  "m": {
+   "in_scope": 8,
+   "covered": 8,
+   "missing": []
+  },
+  "f": {
+   "in_scope": 26,
+   "covered": 26,
+   "missing": []
+  },
+  "zicsr": {
+   "in_scope": 6,
+   "covered": 4,
+   "missing": [
+    "csrrci",
+    "csrrsi"
+   ]
+  },
+  "zifencei": {
+   "in_scope": 1,
+   "covered": 1,
+   "missing": []
+  },
+  "zba": {
+   "in_scope": 3,
+   "covered": 3,
+   "missing": []
+  },
+  "zbb": {
+   "in_scope": 18,
+   "covered": 18,
+   "missing": []
+  },
+  "zbs": {
+   "in_scope": 8,
+   "covered": 8,
+   "missing": []
+  },
+  "zicond": {
+   "in_scope": 2,
+   "covered": 2,
+   "missing": []
+  },
+  "priv": {
+   "in_scope": 2,
+   "covered": 1,
+   "missing": [
+    "wfi"
+   ]
+  },
+  "zve32x": {
+   "in_scope": 261,
+   "covered": 181,
+   "missing": [
+    "vaadd.vx",
+    "vaaddu.vx",
+    "vand.vi",
+    "vasub.vx",
+    "vasubu.vv",
+    "vasubu.vx",
+    "vlseg3e16.v",
+    "vlseg3e32.v",
+    "vlseg4e16.v",
+    "vlseg4e32.v",
+    "vlseg5e16.v",
+    "vlseg5e32.v",
+    "vlseg5e8.v",
+    "vlseg6e16.v",
+    "vlseg6e32.v",
+    "vlseg6e8.v",
+    "vlseg7e16.v",
+    "vlseg7e32.v",
+    "vlseg7e8.v",
+    "vlseg8e16.v",
+    "vlseg8e32.v",
+    "vlseg8e8.v",
+    "vmax.vx",
+    "vmaxu.vx",
+    "vmerge.vim",
+    "vmerge.vxm",
+    "vmin.vx",
+    "vminu.vx",
+    "vmnor.mm",
+    "vmseq.vx",
+    "vmsgt.vi",
+    "vmsgtu.vi",
+    "vmsgtu.vx",
+    "vmsle.vi",
+    "vmsle.vx",
+    "vmsleu.vi",
+    "vmsleu.vv",
+    "vmsleu.vx",
+    "vmsne.vx",
+    "vnclip.wv",
+    "vnclip.wx",
+    "vnclipu.wv",
+    "vnclipu.wx",
+    "vor.vx",
+    "vremu.vx",
+    "vsadd.vi",
+    "vsadd.vx",
+    "vsaddu.vi",
+    "vsaddu.vx",
+    "vsll.vi",
+    "vsrl.vi",
+    "vsseg2e32.v",
+    "vsseg3e16.v",
+    "vsseg3e32.v",
+    "vsseg3e8.v",
+    "vsseg4e16.v",
+    "vsseg4e32.v",
+    "vsseg4e8.v",
+    "vsseg5e16.v",
+    "vsseg5e32.v",
+    "vsseg5e8.v",
+    "vsseg6e16.v",
+    "vsseg6e32.v",
+    "vsseg6e8.v",
+    "vsseg7e16.v",
+    "vsseg7e32.v",
+    "vsseg7e8.v",
+    "vsseg8e16.v",
+    "vsseg8e32.v",
+    "vsseg8e8.v",
+    "vssra.vv",
+    "vssra.vx",
+    "vssrl.vv",
+    "vssrl.vx",
+    "vssub.vx",
+    "vssubu.vx",
+    "vwadd.vx",
+    "vwaddu.wx",
+    "vwsub.wx",
+    "vwsubu.vx"
+   ]
+  }
+ },
+ "total": {
+  "in_scope": 402,
+  "covered": 317
+ },
+ "excluded": 32,
+ "excluded_hit": [],
+ "surprises": [
+  "c.fsd",
+  "c.subw",
+  "c.unimp",
+  "unknown",
+  "xperm4"
+ ]
+}
