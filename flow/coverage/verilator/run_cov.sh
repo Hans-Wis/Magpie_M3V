@@ -33,7 +33,7 @@ python3 "$HERE/run_tflm_cov.py"
 # ---- 3. host DUT ----
 HSRC="$(srcs 'rfu alu idu ifu lsu csr mul div forward hazard bp ras cdec core' $CPU)"
 [ -x "$HERE/obj_host/Vcov_host" ] || $VL --binary --timing -j 4 --top-module tb_spike_lockstep --timescale 1ns/1ns $COVFLAGS -I$CPU -Wall $WAIVERS -Mdir "$HERE/obj_host" -o Vcov_host $HSRC "$ROOT/flow/v2_pipeline/phase_03_00_spike_lockstep/tb_spike_lockstep.v"
-for ph in phase_03_20_isacov_host:rvc_csr phase_03_05_random_lockstep:random phase_03_00_spike_lockstep:directed phase_03_01_trap_irq_lockstep:trap; do
+for ph in phase_03_20_isacov_host:rvc_csr phase_03_21_isacov_bmu:bmu phase_03_22_isacov_csr:csr phase_03_05_random_lockstep:random phase_03_00_spike_lockstep:directed phase_03_01_trap_irq_lockstep:trap; do
   d="${ph%%:*}"; tag="${ph##*:}"
   make -C "$ROOT/flow/v2_pipeline/$d" lockstep.log >/dev/null 2>&1 || make -C "$ROOT/flow/v2_pipeline/$d" >/dev/null 2>&1 || true
   [ -f "$ROOT/flow/v2_pipeline/$d/firmware.hex" ] || continue

@@ -11,7 +11,11 @@ Authority note (G1): code coverage is COMPLETENESS, not correctness — every fi
 here is Spike-lockstep verified in phase_22.
 """
 import json
+import shutil
+import subprocess
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORT = ROOT / "flow/coverage/verilator/codecov_report.json"
@@ -21,16 +25,15 @@ REPORT = ROOT / "flow/coverage/verilator/codecov_report.json"
 OWNED = [("vexu.v", 95, 95), ("fexu.v", 90, 90),
          ("mat_engine.v", 70, 85), ("npu_dma.v", 70, 50),
          ("npu_axil_regs.v", 55, 0), ("core.v", 65, 0), ("div.v", 70, 0),
-         ("alu.v", 95, 95), ("lsu.v", 95, 95)]
-# still under-covered — the documented V5 backlog needing FEATURE-specific directed tests.
+         ("alu.v", 95, 95), ("lsu.v", 95, 95),
+         ("bmu.v", 90, 90), ("idu.v", 80, 80)]     # V5 backlog #2 closed (Zb* + CSR/decode)
+# remaining hard residuals — documented, not gated (feature-limited or non-deterministic).
 BACKLOG_STIMULUS = {
-    "bmu.v": "host Zba/Zbb/Zbs directed test (bmu line 6% — no Zb* firmware yet)",
-    "csr.v": "host CSR/trap corner tests",
-    "idu.v": "full-decode corner tests",
+    "csr.v": "PMP/trigger-CSR + perf-counter lines (documented-limited/non-deterministic)",
     "cdec.v": "compressed-decode corner tests",
-    "pmp.v": "PMP directed test",
-    "trigger.v": "debug-trigger directed test",
-    "idu.v": "host + full-decode tests",
+    "pmp.v": "PMP (bypass, documented-limited — waiver candidate)",
+    "trigger.v": "debug-trigger (bypass, documented-limited — waiver candidate)",
+    "npu_axil_regs.v": "error-ladder paths (gate_29/38/47/54 — V5 backlog #3)",
 }
 
 
@@ -50,6 +53,16 @@ def test_owned_datapath_coverage():
         lp, tp = _pct(d[mod]["line"]), _pct(d[mod]["toggle"])
         assert lp >= lmin, f"{mod} line coverage {lp:.0f}% < {lmin}% (regressed)"
         assert tp >= tmin, f"{mod} toggle coverage {tp:.0f}% < {tmin}% (regressed)"
+
+
+@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
+@pytest.mark.parametrize("phase", ["phase_03_21_isacov_bmu", "phase_03_22_isacov_csr"])
+def test_backlog2_closure_host_lockstep(phase):
+    # G2: the bmu (Zba/Zbb/Zbs) and csr (CSR+trap) closure firmwares that lifted
+    # bmu 6%->94% / idu 49%->86% are DUT-verified vs Spike, not coverage-only.
+    d = ROOT / "flow/v2_pipeline" / phase
+    subprocess.run(["make", "-C", str(d), "lockstep.log"], capture_output=True, text=True)
+    assert "PASS" in (d / "lockstep.log").read_text(), f"{phase} lockstep not PASS"
 
 
 def test_backlog_modules_are_acknowledged():

@@ -35,14 +35,14 @@
   },
   "bmu.v": {
    "line": [
-    2,
+    31,
     33
    ],
    "toggle": [
-    520,
+    528,
     536
    ],
-   "toggle_owner": "vec"
+   "toggle_owner": "host"
   },
   "bp.v": {
    "line": [
@@ -61,7 +61,7 @@
     32
    ],
    "toggle": [
-    358,
+    368,
     434
    ],
    "toggle_owner": "host"
@@ -90,7 +90,7 @@
   },
   "csr.v": {
    "line": [
-    56,
+    57,
     138
    ],
    "toggle": [
@@ -145,7 +145,7 @@
   },
   "idu.v": {
    "line": [
-    45,
+    79,
     92
    ],
    "toggle": [
@@ -332,7 +332,7 @@
   }
  },
  "total_line": [
-  537,
+  601,
   838
  ],
  "method": "line=union effective; toggle=max per owning DUT (vec/tflm/host)"

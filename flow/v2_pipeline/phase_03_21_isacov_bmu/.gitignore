@@ -1,0 +1,8 @@
+obj_dir/
+*.elf
+*.hex
+*.disasm
+*.trace
+*.log
+*.vcd
+lockstep_report.md

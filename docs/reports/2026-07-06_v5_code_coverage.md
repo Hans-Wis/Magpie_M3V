@@ -69,13 +69,31 @@ net 簽名 → 灌大分母)。故:**line = 跨 DUT 併集(任一 DUT 執行到�
 **tflm 刺激(dwsep DW+PW + cnn conv+FC)把 mat_engine/dma/axil/tcm 從 ~15% 拉到 59-80%**;
 host 刺激(RVC/CSR/random/trap)把 div/idu/bp 拉高。
 
-## 仍低 = V5 backlog #2(需 feature-specific directed)
-| 模組 | line | 缺的刺激 |
+## V5 backlog #2 閉合(完成)= bmu/idu 長尾補完
+新增兩個 host 直接測試(clone rv32imc lockstep harness,DUT 驗證 vs Spike):
+- **`phase_03_21_isacov_bmu`**(march=rv32imc_**zba_zbb_zbs**_zicsr):全套 Zba(sh1/2/3add)+
+  Zbb(andn/orn/xnor/clz/ctz/cpop/min[u]/max[u]/sext.b/sext.h/zext.h/rol/ror/rori/orc.b/rev8)+
+  Zbs(bclr[i]/bext[i]/binv[i]/bset[i])。lockstep 36c PASS。→ **bmu.v 6%→94%(31/33)/toggle 99%**。
+- **`phase_03_22_isacov_csr`**:CSR R/W(misa/mtvec/mscratch/mstatus/mie + csrrs/csrrc)+
+  trap round-trip(ecall→handler 讀 mcause/mepc/mtval→mret)。lockstep 26c PASS。**避非確定性
+  CSR**(mcycle/minstret/time)+ 讀 mvendorid/marchid/mimpid 到 x0(exercised 不比對,impl-specific
+  差異)。**misa 需 spike isa 對齊 host(含 Zb*)否則 bit-B 差**。
+
+**側收穫:idu.v 49%→86%**(Zb*+CSR firmware 打進更多 decode 路)。cdec.v toggle→85%。
+
+| 模組 | 前 | 後 |
 |---|---|---|
-| **bmu.v** | 6% | **Zba/Zbb/Zbs 直接測試**(host 測試是 rv32imc 無 Zb*,bmu 功能行未執行;toggle 97% 只是 net 連線)|
-| csr.v / idu.v / cdec.v | 41-49% | CSR-corner / decode-corner / compressed-decode 直接測試 |
-| pmp.v / trigger.v | 20% / 37% | PMP / debug-trigger 直接測試 |
-| ras.v | 50% | RAS-heavy 遞迴呼叫 |
+| **bmu.v** | 6% | **94%** |
+| **idu.v** | 49% | **86%** |
+| **TOTAL line** | 64% | **72%**(601/838)|
+
+## 剩餘硬殘(waiver 候選 / backlog #3)
+| 模組 | line | 性質 |
+|---|---|---|
+| csr.v | 41% | 剩 = **PMP-CSR/trigger-CSR/perf-counter 行**(documented-limited / 非確定性)→ waiver 候選 |
+| pmp.v / trigger.v | 20% / 37% | **bypass,documented-limited**(ADR-0043 3C review)→ waiver 候選 |
+| npu_axil_regs.v | 59% | **error-ladder 路**(gate_29/38/47/54 abort/ERR/hard-reset)→ **backlog #3**(併入 error 閘)|
+| cdec.v / ras.v | 44% / 50% | compressed-decode corner / RAS 遞迴——低值 |
 
 ## 對 V1 的呼應
 V1(指令覆蓋)與 V5(code 覆蓋)互證:**op-level 指令 100% → vexu code 98%/99%**。指令覆蓋
