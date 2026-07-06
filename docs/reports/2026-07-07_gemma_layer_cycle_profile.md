@@ -98,6 +98,45 @@ steps, waiting on weight DMA (35k) and synchronous core orchestration (~76k core
 Doing #1 + #2 → rough estimate 259k→~70k, 116k→~50k → **layer ~3×**, all on already-verified
 datapaths guarded by the S0–S5 bit-exact goldens.
 
+## Optimization loop (measure → change → verify bit-exact → repeat)
+
+Harness: `profile_gemma_layer.py` (score) + the S0–S5 bit-exact gates (safety net). Baseline
+375,672.
+
+### Cycle 1 — RVV residual add ✅ (committed b4258c7)
+Enabled the EN_RVV=1 vexu on the sequencer (march += `zve32x_zvl128b`, `_start` sets
+`mstatus.VS`). Vectorized MAT_EWISE_ADD_REQUANT — a plain `(acc+bias)>>SHIFT` that is int32-safe.
+- **residual 19,251 → 6,306 cyc (3.05×); layer 375,672 → 349,824 (−6.9%).** Bit-exact + no
+  regression (S0–S3, TFLM FC/CNN).
+- Toolchain lessons: `vsext.vf2/.vf4` mixed with a byte load hits a `-Os` vtype-inference bug →
+  illegal-instruction trap; the `vwcvt` (=`vwadd.vx`) widening idiom lowers with correct vtype.
+  Widening/narrowing are m1-only in this vexu.
+
+### The wall: the requant-heavy 69% is not trivially vectorizable
+RMSNorm / RoPE / ewise-mul (the bulk of the 259k nonlinear) all end in a **gemmlowp srdhm**
+requant that needs a **64-bit intermediate** (`acc * mult`, up to 2^56) — but **Zve32x is
+ELEN=32** (no 64-bit vector elements). srdhm's round-half-away rounding + truncate-toward-zero
+also does not match any RVV `vsmul`/`vssra` rounding mode, so a one-instruction swap is not
+bit-exact. Two ways forward (each a real cycle, not a swap):
+1. **vmulh-based srdhm reconstruction** — build the 64-bit product from `vmulh`(hi)+`vmul`(lo)
+   and reproduce the nudge/truncation in int32 (~8–10 vector ops/elem). Required for ewise-mul
+   because its requant **must stay bit-identical to the mat_engine hardware srdhm** (shared
+   authority — cannot change its rounding).
+2. **Golden reformulation to RVV-native rounding** — legitimate ONLY for the Gemma-private ops
+   (RMSNorm rsqrt/requant, RoPE) whose golden this line owns; redefine the fixed-point to use
+   `vsmul`+`vssra` rounding in BOTH golden and firmware, re-verify bit-exact + fp32 bound. Unlocks
+   RMSNorm (134k, the single biggest family). Needs an ADR (changes the S1/layer golden).
+
+### GEMM double-buffer / de-spin — deprioritized by measurement
+The engine is busy only 5,658 cyc; at most ~5.6k of the 35k DMA can hide behind compute. High
+blast radius (shared GEMM firmware path) for a small ceiling. The larger GEMM cost is the ~76k
+core orchestration, better attacked by **fusing Q/K/V and gate/up** (runtime-only, bit-exact) than
+by double-buffering.
+
+**Loop conclusion:** residual (clean, plain-shift) was the only trivially-vectorizable op and is
+banked at 3×. The dominant remaining wins (RMSNorm/RoPE/ewise) are gated by ELEN=32 + gemmlowp
+rounding and need path 1 or 2 above — the next cycles, each with its own bit-exact re-verify.
+
 ## Reproduce
 
 `python sim/tools/profile_gemma_layer.py` (needs Verilator; builds npu_top+cpu_m1 once, runs the
