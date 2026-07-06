@@ -1,4 +1,5 @@
 #include "../include/command_descriptor.h"
+#include <riscv_vector.h>   /* ADR-0062 perf: Zve32x on the EN_RVV=1 sequencer core */
 
 #define CSR_BASE        CQ_CORE_WINDOW_BASE
 #define MAILBOX_BASE    CQ_MAILBOX_BASE
@@ -115,6 +116,8 @@ __attribute__((naked, section(".init"))) void _start(void)
     __asm__ volatile (
         "la   t0, trap_handler\n"  /* mtvec FIRST: traps are host-visible from here on */
         "csrw mtvec, t0\n"
+        "li   t0, 0x200\n"         /* mstatus.VS = Initial: enable the Zve32x vexu (perf) */
+        "csrs mstatus, t0\n"
         "li   sp, 0x8000\n"        /* stack at top of DTCM (32KB), grows down away from the
                                     * weight/blob region (was 0x0F00 = inside it) */
         "call main\n"
@@ -500,22 +503,39 @@ void main(void)
             volatile int8_t *b = (volatile int8_t *)src_b;
             volatile int8_t *d = (volatile int8_t *)w2;
             volatile int32_t *ph = (volatile int32_t *)w3;
-            int32_t r_num, x_num;
+            const signed char *pa = (const signed char *)src_a;
+            const signed char *pb = (const signed char *)src_b;
+            signed char *pd = (signed char *)w2;
+            int32_t r_num, x_num, vbias;
             uint32_t shift, i;
-            int64_t bias;
+            size_t vl;
             if (len == 0u)
                 break;
             if (src_a > (TCM_SCRATCH_B - len) || src_b > (TCM_SCRATCH_B - len) ||
                 w2 > (TCM_SCRATCH_B - len) || (w3 & 3u) != 0u || w3 > (TCM_SCRATCH_B - 12u))
                 cq_halt(CQ_ERR_MAT_PARAM);
             r_num = ph[0]; x_num = ph[1]; shift = (uint32_t)ph[2];
-            bias = (shift > 0u) ? ((int64_t)1 << (shift - 1u)) : 0;
-            for (i = 0u; i < len; i++) {
-                int64_t acc = (int64_t)a[i] * r_num + (int64_t)b[i] * x_num;
-                int64_t vv = (acc + bias) >> shift;
-                if (vv < -128) vv = -128;
-                if (vv > 127)  vv = 127;
-                d[i] = (int8_t)vv;
+            /* ADR-0062 perf (RVV Cycle 1): a,b,acc all fit int32 (|a|,|b|<=127,
+             * R/X_NUM ~ 2^16 -> acc ~ 2^24). vsra by the constant SHIFT is arithmetic
+             * (floor) — bit-identical to the scalar (acc+bias)>>SHIFT; saturate then
+             * narrow int32->int16->int8. Vectorized over the sequencer's Zve32x vexu. */
+            /* vexu limits widening/narrowing/extension to dst LMUL<=m1 (B2 note), so the
+             * vsext.vf4 / vncvt path runs at m1 (4 int32 lanes). */
+            vbias = (shift > 0u) ? (1 << (shift - 1u)) : 0;
+            for (i = 0u; i < len; i += vl) {
+                vl = __riscv_vsetvl_e8mf4(len - i);
+                vint16mf2_t a16 = __riscv_vwcvt_x_x_v_i16mf2(__riscv_vle8_v_i8mf4(pa + i, vl), vl);
+                vint16mf2_t b16 = __riscv_vwcvt_x_x_v_i16mf2(__riscv_vle8_v_i8mf4(pb + i, vl), vl);
+                vint32m1_t va = __riscv_vwcvt_x_x_v_i32m1(a16, vl);
+                vint32m1_t vb = __riscv_vwcvt_x_x_v_i32m1(b16, vl);
+                vint32m1_t acc = __riscv_vmul_vx_i32m1(va, r_num, vl);
+                acc = __riscv_vmacc_vx_i32m1(acc, x_num, vb, vl);
+                acc = __riscv_vadd_vx_i32m1(acc, vbias, vl);
+                acc = __riscv_vsra_vx_i32m1(acc, shift, vl);
+                acc = __riscv_vmax_vx_i32m1(acc, -128, vl);
+                acc = __riscv_vmin_vx_i32m1(acc, 127, vl);
+                __riscv_vse8_v_i8mf4(pd + i,
+                    __riscv_vncvt_x_x_w_i8mf4(__riscv_vncvt_x_x_w_i16mf2(acc, vl), vl), vl);
             }
             break;
         }
