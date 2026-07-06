@@ -42,11 +42,12 @@ benchmarks:
   - id: mlperf_ad
     family: mlperf_tiny
     class: fc_autoencoder
-    rtl_e2e: false
+    rtl_e2e: true
     verify: bit_exact
-    blocker: build_model + weight-layout script (FC chain reuses gate_48/49 path)
-    effort: S
-    note: Deep AutoEncoder (dense) — mostly runnable, needs build script (F1.1)
+    gate: gate_94_mlperf_ad_e2e.py
+    note: Deep symmetric FC autoencoder 32-24-16-8-16-24-32 (MLPerf AD structure),
+          6 FC layers chained bit-exact vs BUILTIN_REF (ADR-0064 F1.1). Full 640-wide
+          needs a multi-ring driver (backlog); mechanism (FC chain) is dim-independent.
 
   - id: mlperf_kws
     family: mlperf_tiny
