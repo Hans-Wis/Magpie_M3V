@@ -209,6 +209,22 @@
         "len"
       ],
       "notes": "ADR-0062 F1.6 S2: neox RoPE on one head-vector (head_dim=W0.RPT). half=hd/2; rot_i = -src[i+half] (i<half) else src[i-half]; acc = src_i*cos_q15_i + rot_i*sin_q15_i (int32 Q15); dst[i] = clamp(rdbpot(srdhm(acc, mult), shift-31), -128, 127). Requant multiplier per-tensor; only the cos/sin table pointer varies with sequence position. Nonlinear-in-RTL, pure int."
+    },
+    {
+      "name": "MAT_SOFTMAX",
+      "value": 13,
+      "w1": "(src_tcm_byte<<16)|dst_tcm_byte",
+      "w2": "exp_lut_tcm_byte (256-entry uint16 EXP_LUT)",
+      "w3": "(valid<<16)|prob_scale",
+      "fields": [
+        "src",
+        "dst",
+        "lut",
+        "valid",
+        "prob_scale",
+        "len"
+      ],
+      "notes": "ADR-0062 F1.6 S3: one attention row softmax on the sequencer core. W0.RPT=n key positions; valid = causal attend count (<=n). mx = max_{j<valid} src[j]; e[j] = EXP_LUT[mx-src[j]]; sm = sum e[j]; dst[j<valid] = (e[j]*prob_scale + sm/2)/sm; dst[j>=valid] = 0. EXP_LUT[d]=round(exp(-d*s_score)*65535). Nonlinear-in-RTL, pure int (uint32 divide)."
     }
   ],
   "err_causes": [

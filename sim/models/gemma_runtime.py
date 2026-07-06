@@ -233,6 +233,28 @@ def emit_add_requant(case: Path, r_q, an_q, g, seq, H, shift=16):
     return rwords, seq * H
 
 
+def emit_softmax(case: Path, scores_rows, lut, n_keys, nrows, valids, prob_scale=127):
+    """ADR-0062 S3: per-row causal softmax on the NPU sequencer (MAT_SOFTMAX). scores_rows is
+    [nrows][n_keys] int8; valids[r] is the causal attend count for row r; lut is the 256-entry
+    uint16 EXP_LUT. Returns (result_words, nrows*n_keys)."""
+    sc_b = _pack_rows(scores_rows)
+    sc_pad = sc_b + b"\0" * ((-len(sc_b)) % 32)
+    lut_b = b"".join(struct.pack("<H", int(v) & 0xFFFF) for v in lut)   # 256 uint16 = 512B
+    combined = sc_pad + lut_b
+    ring, loaded = _load_w(combined)
+    sc_base = TCM_IN
+    lut_base = sc_base + len(sc_pad)
+    out_base = _align32(lut_base + len(lut_b))
+    for r in range(nrows):
+        ring += cq_codec.encode("MAT_SOFTMAX", src=sc_base + r * n_keys,
+                                dst=out_base + r * n_keys, lut=lut_base,
+                                valid=valids[r], prob_scale=prob_scale, rpt=n_keys)
+    store, rwords = _store(out_base, nrows * n_keys)
+    ring += store
+    _write_case(case, ring, [(SHARED_IN, loaded)], rwords)
+    return rwords, nrows * n_keys
+
+
 def unpack_contiguous(dump_path: Path, seq, n):
     """result.dump words -> [seq][n] int8 (contiguous row-major)."""
     words = [int(x, 16) for x in dump_path.read_text().split()]

@@ -551,6 +551,43 @@ void main(void)
             }
             break;
         }
+        case CQ_OP_MAT_SOFTMAX: {
+            /* ADR-0062 S3: one attention-row softmax on the sequencer core. W1=(src<<16)|dst;
+             * W2=256-entry uint16 EXP_LUT; W3=(valid<<16)|prob_scale; W0.RPT=n key positions.
+             * dst[j<valid] = (EXP_LUT[mx-src[j]]*prob_scale + sm/2)/sm ; dst[j>=valid]=0. */
+            uint32_t n = cq_w0_rpt(w0);
+            uint32_t src = (w1 >> 16) & 0xFFFFu;
+            uint32_t dst = w1 & 0xFFFFu;
+            volatile int8_t *s = (volatile int8_t *)src;
+            volatile int8_t *d = (volatile int8_t *)dst;
+            volatile uint16_t *lut = (volatile uint16_t *)w2;
+            uint32_t valid = (w3 >> 16) & 0xFFFFu;
+            uint32_t prob_scale = w3 & 0xFFFFu;
+            int32_t mx;
+            uint32_t sm, i;
+            if (n == 0u)
+                break;
+            if (src > (TCM_SCRATCH_B - n) || dst > (TCM_SCRATCH_B - n) ||
+                (w2 & 1u) != 0u || w2 > (TCM_SCRATCH_B - 512u))
+                cq_halt(CQ_ERR_MAT_PARAM);
+            mx = -128;
+            for (i = 0u; i < valid; i++) {
+                int32_t v = s[i];
+                if (v > mx) mx = v;
+            }
+            sm = 0u;
+            for (i = 0u; i < valid; i++)
+                sm += lut[mx - (int32_t)s[i]];
+            for (i = 0u; i < n; i++) {
+                if (i < valid) {
+                    uint32_t e = lut[mx - (int32_t)s[i]];
+                    d[i] = (int8_t)((e * prob_scale + (sm >> 1)) / sm);
+                } else {
+                    d[i] = 0;
+                }
+            }
+            break;
+        }
         default:
             cq_halt(CQ_ERR_BAD_OPCODE);
             break;
