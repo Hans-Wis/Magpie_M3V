@@ -29,7 +29,8 @@ OWNED = [("vexu.v", 95, 95), ("fexu.v", 90, 90),
          ("bmu.v", 90, 90), ("idu.v", 80, 80)]     # V5 backlog #2 closed (Zb* + CSR/decode)
 # remaining hard residuals — documented, not gated (feature-limited or non-deterministic).
 BACKLOG_STIMULUS = {
-    "csr.v": "PMP/trigger-CSR + perf-counter lines (documented-limited/non-deterministic)",
+    "csr.v": "Debug-Module CSR interface (needs debug-mode DV, backlog #4) + PMP-write "
+             "body unreachable at PMP_ENTRIES=0 + U-shadow/WARL DUT<->Spike divergence",
     "cdec.v": "compressed-decode corner tests",
     "pmp.v": "PMP (bypass, documented-limited — waiver candidate)",
     "trigger.v": "debug-trigger (bypass, documented-limited — waiver candidate)",

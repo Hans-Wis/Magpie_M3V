@@ -38,6 +38,23 @@ _start:
     csrrs s11, mie, t4          /* enable MEIP/MTIP bits */
     csrr t5, mie
 
+    /* reachable writable M-mode CSR arms not yet hit: mcause / mtval (state, deterministic) */
+    li   t1, 0x40000005
+    csrw mcause, t1
+    csrr t2, mcause
+    li   t1, 0xCAFEBABE
+    csrw mtval, t1              /* write arm covered; readback masked bit31 in Spike (WARL) */
+    csrr x0, mtval             /* exercised, not value-compared */
+
+    /* reachable read-only CSR arms — read to x0 (exercised, value not compared).
+       PMP CSRs read back 0 at PMP_ENTRIES=0 (deterministic, both DUT & M-only Spike).
+       NOTE: the U-mode counter shadows (cycle/instret 0xC00) are NOT tested here — the
+       DUT implements them but the M-only Spike traps them illegal (lenient-vs-strict
+       divergence, recorded); use mcycle/minstret if M-mode counter coverage is wanted. */
+    csrr x0, pmpcfg0
+    csrr x0, pmpaddr0
+    csrr x0, pmpaddr7
+
     /* trigger a trap: ecall from M-mode -> mcause=11 */
     li   a0, 0
     ecall

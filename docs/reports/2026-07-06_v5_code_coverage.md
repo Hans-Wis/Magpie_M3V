@@ -87,12 +87,27 @@ host 刺激(RVC/CSR/random/trap)把 div/idu/bp 拉高。
 | **idu.v** | 49% | **86%** |
 | **TOTAL line** | 64% | **72%**(601/838)|
 
-## 剩餘硬殘(waiver 候選 / backlog #3)
+## csr-corner 測試(補,不 waive)= csr 41%→45%
+`phase_03_22_isacov_csr` firmware 加測**可達的 CSR arm**(不 waive,誠實測):mcause/mtval
+寫、pmpcfg0/pmpaddr0/7 讀。lockstep 37c PASS。**兩個 DUT↔Spike 分歧(記錄,非 bug)**:
+- **U-shadow counter `cycle`(0xC00)在 M-only**:DUT 允許讀(實 U 影子),**M-only Spike trap
+  illegal**——spec 上 M-mode 恆可讀 0xC00,Spike 無 U-mode 較嚴。→ 不 lockstep-測(記錄)。
+- **`mtval` bit31**:DUT 存全 32-bit,Spike 遮 bit31(皆合法 WARL 選擇,差異)。→ 寫 arm 覆蓋,
+  readback 讀到 x0 不比對。
+
+**csr 誠實剩餘拆解(不 waive,分類報告)**:
+| csr 剩餘 ~76 行 | 性質 | 處置 |
+|---|---|---|
+| ~50 = **Debug-Module CSR 介面**(csr_debug_read + debug_csr_we block,由 `dm_acc_*` 驅動)| **只可達於 debug-mode DM abstract command;現無 debug lockstep harness** | **backlog #4:需 debug-mode DV**(非 waiver——DM 是真的,可達,只是無刺激)|
+| ~10 = **PMP-write body `if(PMP_ENTRIES!=0)`** | **PMP_ENTRIES=0 靜態不可達(dead)** | **合法 unreachable(config-scoped waiver 候選,同 pmp.v)** |
+| ~5 = U-shadow counters / WARL 分歧 | DUT↔Spike 分歧 | 記錄 |
+
+## 剩餘(backlog #3/#4 + 合法 unreachable)
 | 模組 | line | 性質 |
 |---|---|---|
-| csr.v | 41% | 剩 = **PMP-CSR/trigger-CSR/perf-counter 行**(documented-limited / 非確定性)→ waiver 候選 |
-| pmp.v / trigger.v | 20% / 37% | **bypass,documented-limited**(ADR-0043 3C review)→ waiver 候選 |
-| npu_axil_regs.v | 59% | **error-ladder 路**(gate_29/38/47/54 abort/ERR/hard-reset)→ **backlog #3**(併入 error 閘)|
+| csr.v | 45% | Debug-DM 介面(backlog #4 需 debug DV)+ PMP-body(unreachable)+ 分歧 |
+| pmp.v / trigger.v | 20% / 37% | **PMP_ENTRIES=0 靜態不可達 + no-DM**(ADR-0024/0022 + core.v:973 RTL 註解 + review)→ **合法 unreachable waiver 候選(需獨立 review + config-scoped)** |
+| npu_axil_regs.v | 59% | **error-ladder 路**(gate_29/38/47/54)→ **backlog #3**(併入 error 閘)|
 | cdec.v / ras.v | 44% / 50% | compressed-decode corner / RAS 遞迴——低值 |
 
 ## 對 V1 的呼應
