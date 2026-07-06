@@ -1,0 +1,96 @@
+# ADR-0064 — /sim benchmark SSOT. Honest functional-correctness matrix for M3V.
+# rtl_e2e:  true  = runs end-to-end on the RTL (Verilator + Spike/BUILTIN_REF golden)
+#           false = not runnable on RTL yet (blocker named); status stays not-run
+# verify:   bit_exact (int8) | tolerance (LLM fp) | analysis (op-graph only)
+# authority: Spike lockstep + bit-accurate golden; not-run is honest, never green-washed.
+
+benchmarks:
+  # ---------------- CNN family (TFLM mat_engine path) ----------------
+  - id: tflm_fc
+    family: cnn
+    class: fc
+    rtl_e2e: true
+    verify: bit_exact
+    gate: gate_48_tflm_fc_e2e.py
+    note: TFLM int8 FC, 6 corners bit-exact vs BUILTIN_REF (ADR-0039)
+
+  - id: tflm_mlp
+    family: cnn
+    class: fc
+    rtl_e2e: true
+    verify: bit_exact
+    gate: gate_49_tflm_model_e2e.py
+    note: real .tflite 2-layer MLP multi-op chain bit-exact (ADR-0041)
+
+  - id: cnn_conv_fc
+    family: cnn
+    class: conv
+    rtl_e2e: true
+    verify: bit_exact
+    gate: gate_50_tflm_cnn_e2e.py
+    note: per-channel Conv2D 3x3 VALID + FC, intermediate + final bit-exact (ADR-0042)
+
+  - id: mobilenet_block
+    family: mobilenet
+    class: depthwise_separable
+    rtl_e2e: true
+    verify: bit_exact
+    gate: gate_82_tflm_depthwise_e2e.py
+    note: DepthwiseConv2D 3x3 (block-diagonal conv) + Pointwise 1x1, bit-exact (ADR-0061)
+
+  # ---------------- MLPerf Tiny (v1.1 reference models) ----------------
+  - id: mlperf_ad
+    family: mlperf_tiny
+    class: fc_autoencoder
+    rtl_e2e: false
+    verify: bit_exact
+    blocker: build_model + weight-layout script (FC chain reuses gate_48/49 path)
+    effort: S
+    note: Deep AutoEncoder (dense) — mostly runnable, needs build script (F1.1)
+
+  - id: mlperf_kws
+    family: mlperf_tiny
+    class: ds_cnn
+    rtl_e2e: false
+    verify: bit_exact
+    blocker: multi-layer DS-CNN build script; depthwise via block-diagonal (stride-1)
+    effort: M
+    note: DS-CNN keyword spotting — layer-wise golden then e2e (F1.3)
+
+  - id: mlperf_vww
+    family: mlperf_tiny
+    class: mobilenet_v1
+    rtl_e2e: false
+    verify: analysis
+    blocker: STRIDE-2 depthwise + padding (im2col is VALID/stride-1 only)
+    effort: L
+    note: Visual Wake Words MobileNetV1 — stride-2 gap (F1.4 SW-expand functional first)
+
+  - id: mlperf_ic
+    family: mlperf_tiny
+    class: resnet8
+    rtl_e2e: false
+    verify: analysis
+    blocker: STRIDE-2 conv + fused RESIDUAL ADD (no fused add op)
+    effort: XL
+    note: ResNet-8 image classification — stride-2 + residual (F1.4)
+
+  # ---------------- LLM family (ADR-0062 S0..S5 slices) ----------------
+  - id: gemma3_270m
+    family: llm
+    class: decoder_transformer
+    rtl_e2e: false
+    verify: tolerance
+    golden: IP/npu/sw/gemma (fp32 ref + int8 Tier-C GeGLU, ADR-0062)
+    blocker: S0..S5 RTL slices not built (GeGLU Tier-C golden verified in NumPy, gate_83)
+    effort: XL
+    note: Gemma-3 270M decoder layer — sliced S0(GeGLU) first (F1.5)
+
+  - id: smollm2_135m
+    family: llm
+    class: decoder_transformer
+    rtl_e2e: false
+    verify: tolerance
+    blocker: same LLM stack; SmolLM2 (Llama-arch, SiLU/SwiGLU) reuses Gemma S-slices
+    effort: L
+    note: SmolLM2 135M — reuses Gemma slice infra, activation = SiLU (F1.6)

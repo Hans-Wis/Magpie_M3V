@@ -1,0 +1,92 @@
+[
+ {
+  "id": "tflm_fc",
+  "family": "cnn",
+  "verify": "bit_exact",
+  "rtl_e2e": true,
+  "status": "BIT-EXACT \u2713",
+  "detail": "gate_48_tflm_fc_e2e.py (22s)",
+  "effort": null
+ },
+ {
+  "id": "tflm_mlp",
+  "family": "cnn",
+  "verify": "bit_exact",
+  "rtl_e2e": true,
+  "status": "BIT-EXACT \u2713",
+  "detail": "gate_49_tflm_model_e2e.py (34s)",
+  "effort": null
+ },
+ {
+  "id": "cnn_conv_fc",
+  "family": "cnn",
+  "verify": "bit_exact",
+  "rtl_e2e": true,
+  "status": "BIT-EXACT \u2713",
+  "detail": "gate_50_tflm_cnn_e2e.py (28s)",
+  "effort": null
+ },
+ {
+  "id": "mobilenet_block",
+  "family": "mobilenet",
+  "verify": "bit_exact",
+  "rtl_e2e": true,
+  "status": "BIT-EXACT \u2713",
+  "detail": "gate_82_tflm_depthwise_e2e.py (28s)",
+  "effort": null
+ },
+ {
+  "id": "mlperf_ad",
+  "family": "mlperf_tiny",
+  "verify": "bit_exact",
+  "rtl_e2e": false,
+  "status": "not-run",
+  "detail": "blocked: build_model + weight-layout script (FC chain reuses gate_48/49 path)",
+  "effort": "S"
+ },
+ {
+  "id": "mlperf_kws",
+  "family": "mlperf_tiny",
+  "verify": "bit_exact",
+  "rtl_e2e": false,
+  "status": "not-run",
+  "detail": "blocked: multi-layer DS-CNN build script; depthwise via block-diagonal (stride-1)",
+  "effort": "M"
+ },
+ {
+  "id": "mlperf_vww",
+  "family": "mlperf_tiny",
+  "verify": "analysis",
+  "rtl_e2e": false,
+  "status": "not-run",
+  "detail": "blocked: STRIDE-2 depthwise + padding (im2col is VALID/stride-1 only)",
+  "effort": "L"
+ },
+ {
+  "id": "mlperf_ic",
+  "family": "mlperf_tiny",
+  "verify": "analysis",
+  "rtl_e2e": false,
+  "status": "not-run",
+  "detail": "blocked: STRIDE-2 conv + fused RESIDUAL ADD (no fused add op)",
+  "effort": "XL"
+ },
+ {
+  "id": "gemma3_270m",
+  "family": "llm",
+  "verify": "tolerance",
+  "rtl_e2e": false,
+  "status": "not-run",
+  "detail": "blocked: S0..S5 RTL slices not built (GeGLU Tier-C golden verified in NumPy, gate_83)",
+  "effort": "XL"
+ },
+ {
+  "id": "smollm2_135m",
+  "family": "llm",
+  "verify": "tolerance",
+  "rtl_e2e": false,
+  "status": "not-run",
+  "detail": "blocked: same LLM stack; SmolLM2 (Llama-arch, SiLU/SwiGLU) reuses Gemma S-slices",
+  "effort": "L"
+ }
+]
