@@ -126,7 +126,10 @@ module tb_npu_tflm_model;
         integer guard;
         begin
             rd = 32'h0; guard = 0;
-            while (rd[bitpos] !== 1'b1 && guard < 6000) begin
+            // guard bounds the DONE poll; large multi-tile GEMMs (e.g. Gemma S0 inter=128 =
+            // 16 tiles = 96 CQ descriptors, ADR-0062) need many more polls than the small
+            // TFLM layers. The 8ms watchdog still caps a genuine hang.
+            while (rd[bitpos] !== 1'b1 && guard < 200000) begin
                 axil_read(addr, rd); guard = guard + 1;
             end
             chk({31'b0, rd[bitpos]}, 32'h1, nm);
