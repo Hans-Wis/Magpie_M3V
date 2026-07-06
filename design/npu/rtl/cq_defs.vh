@@ -9,6 +9,8 @@ localparam CQ_OP_MAT_RESCALE = 6'h04;
 localparam CQ_OP_MAT_STORE = 6'h05;
 localparam CQ_OP_MAT_ACC_CLR = 6'h06;
 localparam CQ_OP_MAT_FENCE = 6'h07;
+localparam CQ_OP_MAT_ACT_LUT = 6'h08;
+localparam CQ_OP_MAT_EWISE_MUL = 6'h09;
 
 localparam [31:0] CQ_W0_OPCODE_MASK = 32'h0000003F;
 localparam integer CQ_W0_OPCODE_LSB = 0;

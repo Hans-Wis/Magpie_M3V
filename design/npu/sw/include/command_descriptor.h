@@ -14,6 +14,8 @@ typedef enum {
     CQ_OP_MAT_STORE = 0x05,
     CQ_OP_MAT_ACC_CLR = 0x06,
     CQ_OP_MAT_FENCE = 0x07,
+    CQ_OP_MAT_ACT_LUT = 0x08,
+    CQ_OP_MAT_EWISE_MUL = 0x09,
 } cq_opcode_t;
 
 typedef enum {

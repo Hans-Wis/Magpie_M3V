@@ -135,6 +135,36 @@
       "w2": "0",
       "w3": "0",
       "fields": []
+    },
+    {
+      "name": "MAT_ACT_LUT",
+      "value": 8,
+      "w1": "src_tcm_byte",
+      "w2": "dst_tcm_byte",
+      "w3": "lut_tcm_byte (256-entry int8->int8 table; dst[i] = lut[(int8)src[i] + 128])",
+      "fields": [
+        "src",
+        "dst",
+        "lut",
+        "len"
+      ],
+      "notes": "ADR-0065 F1.5 S0: activation LUT run on the sequencer core (scalar lbu), NOT the host. W0.RPT = element count (<=255). Nonlinear-in-RTL green-wash guard: gelu = MAT_ACT_LUT[gate]."
+    },
+    {
+      "name": "MAT_EWISE_MUL",
+      "value": 9,
+      "w1": "multiplier_q31",
+      "w2": "(src_a_tcm_byte<<16)|src_b_tcm_byte",
+      "w3": "(dst_tcm_byte<<16)|(shift&0xFF)",
+      "fields": [
+        "src_a",
+        "src_b",
+        "dst",
+        "multiplier_q31",
+        "shift",
+        "len"
+      ],
+      "notes": "ADR-0065 F1.5 S0: elementwise int8*int8 -> per-tensor gemmlowp requant -> int8, on the sequencer core. dst[i] = clamp(rdbpot(srdhm(a[i]*b[i], mult_q31), shift-31), -128, 127); out_zp=0. srdhm/rdbpot MUST match mat_golden/mat_engine (trunc-toward-zero). W0.RPT = element count."
     }
   ],
   "err_causes": [
