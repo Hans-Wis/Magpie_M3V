@@ -19,11 +19,16 @@ _F = re.compile("\x01f\x02([^\x01]+)")
 _L = re.compile("\x01l\x02(\\d+)")
 _P = re.compile("\x01page\x02(v_line|v_toggle)")
 _C = re.compile("' (\\d+)\\s*$")
+_H = re.compile("\x01h\x02.*$")            # hierarchy suffix — stripped for effective merge
 
 
 def parse(dat):
-    seen, hit = defaultdict(set), defaultdict(set)
-    tt, th = defaultdict(int), defaultdict(int)
+    # EFFECTIVE coverage: collapse instance hierarchy so a source line / net counted as
+    # covered if it was exercised in ANY DUT instance. Without this, the same file
+    # instantiated in an unexercised DUT (e.g. vexu inside the host top) would dilute the
+    # denominator. Line keyed by (file,line); toggle by (file, net-signature w/o hier).
+    lseen, lhit = defaultdict(set), defaultdict(set)
+    tseen, thit = defaultdict(set), defaultdict(set)
     with open(dat, errors="ignore") as fh:
         next(fh, None)
         for ln in fh:
@@ -35,17 +40,19 @@ def parse(dat):
             if pm.group(1) == "v_line":
                 lm = _L.search(ln)
                 if lm:
-                    seen[f].add(lm.group(1))
+                    lseen[f].add(lm.group(1))
                     if cnt:
-                        hit[f].add(lm.group(1))
+                        lhit[f].add(lm.group(1))
             else:
-                tt[f] += 1
-                th[f] += 1 if cnt else 0
-    files = sorted(set(seen) | set(tt))
-    rows = {f: {"line": [len(hit[f]), len(seen[f])], "toggle": [th[f], tt[f]]}
-            for f in files}
-    tl = [sum(len(hit[f]) for f in files), sum(len(seen[f]) for f in files)]
-    tg = [sum(th[f] for f in files), sum(tt[f] for f in files)]
+                sig = _H.sub("", ln.split("' ")[0])   # point identity minus hierarchy
+                tseen[f].add(sig)
+                if cnt:
+                    thit[f].add(sig)
+    files = sorted(set(lseen) | set(tseen))
+    rows = {f: {"line": [len(lhit[f]), len(lseen[f])],
+                "toggle": [len(thit[f]), len(tseen[f])]} for f in files}
+    tl = [sum(len(lhit[f]) for f in files), sum(len(lseen[f]) for f in files)]
+    tg = [sum(len(thit[f]) for f in files), sum(len(tseen[f]) for f in files)]
     return rows, {"line": tl, "toggle": tg}
 
 

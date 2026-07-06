@@ -16,15 +16,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 REPORT = ROOT / "flow/coverage/verilator/codecov_report.json"
 
-# (module, min line %, min toggle %) for the vector/FP datapath this run owns.
-OWNED = [("vexu.v", 95, 95), ("fexu.v", 90, 90)]
-# under-covered here by design — tracked so the report can't silently claim them.
+# Combined 3-DUT report (vector+tflm+host): line=union effective, toggle=per-owning DUT.
+# (module, min line %, min toggle %) — the modules covered by their owning harness.
+OWNED = [("vexu.v", 95, 95), ("fexu.v", 90, 90),
+         ("mat_engine.v", 70, 85), ("npu_dma.v", 70, 50),
+         ("npu_axil_regs.v", 55, 0), ("core.v", 65, 0), ("div.v", 70, 0),
+         ("alu.v", 95, 95), ("lsu.v", 95, 95)]
+# still under-covered — the documented V5 backlog needing FEATURE-specific directed tests.
 BACKLOG_STIMULUS = {
-    "mat_engine.v": "tflm/CQ harness (gate_50/82/phase_23)",
-    "npu_dma.v": "tflm/offload harness (gate_29/51)",
-    "npu_axil_regs.v": "CQ/CSR harness (phase_21)",
-    "bmu.v": "host rv32imc Zba/Zbb/Zbs tests (phase_03/04)",
-    "csr.v": "host CSR/trap tests (phase_03/04)",
+    "bmu.v": "host Zba/Zbb/Zbs directed test (bmu line 6% — no Zb* firmware yet)",
+    "csr.v": "host CSR/trap corner tests",
+    "idu.v": "full-decode corner tests",
+    "cdec.v": "compressed-decode corner tests",
+    "pmp.v": "PMP directed test",
+    "trigger.v": "debug-trigger directed test",
     "idu.v": "host + full-decode tests",
 }
 

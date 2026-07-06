@@ -47,6 +47,38 @@ Verilator `--coverage-line --coverage-toggle` 建 DUT → 逐 phase_22 firmware 
 - gate_91 已凍結 **vexu≥95%/95%、fexu≥90%/90%**(此 DUT 職責),並斷言 backlog 模組在報告內
   (防未來全併報告悄悄漏)。**只准 ratchet up。**
 
+## V5 續:併入 tflm/CQ + host 刺激(3-DUT 組合)
+新增兩個 coverage DUT,把 offload / host-scalar 路拉起來。**多 DUT 組合方法(誠實界)**:
+同源檔案在多 DUT 實例化,naive 併合會稀釋 toggle(非-owner DUT 的未刺激實例、參數不同→不同
+net 簽名 → 灌大分母)。故:**line = 跨 DUT 併集(任一 DUT 執行到即算)= effective;toggle =
+取各模組 owning DUT group 的最大 toggle%**。工具 `combine_cov.py`(vec/tflm/host 三組)。
+
+| 模組 | line(union)| toggle(owner)| owner | 前(僅向量)|
+|---|---|---|---|---|
+| **vexu.v** | 98% | **99%** | vec | 98%/99% |
+| **fexu.v** | 93% | 95% | vec | 93%/95% |
+| **mat_engine.v** | **75%** | **94%** | tflm | ⬆ 17%/19% |
+| **npu_dma.v** | **77%** | 58% | tflm | ⬆ 15%/4% |
+| **npu_axil_regs.v** | **59%** | — | tflm | ⬆ 11%/6% |
+| npu_tcm/npu_top | 80% / 78% | | tflm | ⬆ |
+| alu / bp / lsu / mul | 100% | | vec/host | ⬆ |
+| div.v | 80% | | host | ⬆ 40% |
+| core.v | 72% | | vec | ⬆ 66% |
+| **TOTAL line(union)** | **64%**(537/838)| | | ⬆ 48% |
+
+**tflm 刺激(dwsep DW+PW + cnn conv+FC)把 mat_engine/dma/axil/tcm 從 ~15% 拉到 59-80%**;
+host 刺激(RVC/CSR/random/trap)把 div/idu/bp 拉高。
+
+## 仍低 = V5 backlog #2(需 feature-specific directed)
+| 模組 | line | 缺的刺激 |
+|---|---|---|
+| **bmu.v** | 6% | **Zba/Zbb/Zbs 直接測試**(host 測試是 rv32imc 無 Zb*,bmu 功能行未執行;toggle 97% 只是 net 連線)|
+| csr.v / idu.v / cdec.v | 41-49% | CSR-corner / decode-corner / compressed-decode 直接測試 |
+| pmp.v / trigger.v | 20% / 37% | PMP / debug-trigger 直接測試 |
+| ras.v | 50% | RAS-heavy 遞迴呼叫 |
+
 ## 對 V1 的呼應
 V1(指令覆蓋)與 V5(code 覆蓋)互證:**op-level 指令 100% → vexu code 98%/99%**。指令覆蓋
-拉高直接反映在 RTL 結構覆蓋,兩者一致,無假綠。
+拉高直接反映在 RTL 結構覆蓋,兩者一致,無假綠。gate_91 凍結 vexu/fexu/mat_engine/npu_dma/
+alu/lsu/div/core 的 owning 覆蓋門檻 + 斷言 backlog 模組在報告內,只准 ratchet up。可重跑
+`flow/coverage/verilator/run_cov.sh`(建 3 DUT + 跑 + combine)。

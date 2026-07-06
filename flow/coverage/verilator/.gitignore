@@ -1,3 +1,6 @@
 obj_dir/
+obj_tflm/
+obj_host/
 dats/
 merged.dat
+merged_all.dat

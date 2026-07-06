@@ -2,13 +2,25 @@
  "per_file": {
   "alu.v": {
    "line": [
-    5,
+    13,
     13
    ],
    "toggle": [
     540,
     542
-   ]
+   ],
+   "toggle_owner": "vec"
+  },
+  "axi_full_rwmem.v": {
+   "line": [
+    8,
+    9
+   ],
+   "toggle": [
+    259,
+    504
+   ],
+   "toggle_owner": "tflm"
   },
   "axil_decerr.v": {
    "line": [
@@ -16,9 +28,10 @@
     3
    ],
    "toggle": [
-    16,
+    40,
     312
-   ]
+   ],
+   "toggle_owner": "tflm"
   },
   "bmu.v": {
    "line": [
@@ -28,67 +41,74 @@
    "toggle": [
     520,
     536
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "bp.v": {
    "line": [
-    0,
-    0
+    3,
+    3
    ],
    "toggle": [
-    104,
+    105,
     266
-   ]
+   ],
+   "toggle_owner": "tflm"
   },
   "cdec.v": {
    "line": [
-    1,
-    1
+    14,
+    32
    ],
    "toggle": [
-    304,
+    358,
     434
-   ]
+   ],
+   "toggle_owner": "host"
   },
   "core.v": {
    "line": [
-    62,
-    94
+    71,
+    99
    ],
    "toggle": [
     6571,
     11716
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "cpu_m1_top.v": {
    "line": [
-    2,
+    3,
     4
    ],
    "toggle": [
     1434,
     2222
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "csr.v": {
    "line": [
-    52,
+    56,
     138
    ],
    "toggle": [
     788,
     4758
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "div.v": {
    "line": [
-    4,
+    8,
     10
    ],
    "toggle": [
-    140,
+    346,
     688
-   ]
+   ],
+   "toggle_owner": "host"
   },
   "fexu.v": {
    "line": [
@@ -98,7 +118,8 @@
    "toggle": [
     2015,
     2128
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "forward.v": {
    "line": [
@@ -108,7 +129,8 @@
    "toggle": [
     448,
     448
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "hazard.v": {
    "line": [
@@ -116,19 +138,21 @@
     0
    ],
    "toggle": [
-    64,
+    68,
     70
-   ]
+   ],
+   "toggle_owner": "host"
   },
   "idu.v": {
    "line": [
-    24,
+    45,
     92
    ],
    "toggle": [
     652,
     768
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "ifu.v": {
    "line": [
@@ -136,9 +160,10 @@
     1
    ],
    "toggle": [
-    72,
+    80,
     462
-   ]
+   ],
+   "toggle_owner": "tflm"
   },
   "lsu.v": {
    "line": [
@@ -148,17 +173,19 @@
    "toggle": [
     396,
     396
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "mat_engine.v": {
    "line": [
-    4,
+    18,
     24
    ],
    "toggle": [
-    3945,
+    19655,
     20838
-   ]
+   ],
+   "toggle_owner": "tflm"
   },
   "mul.v": {
    "line": [
@@ -166,49 +193,54 @@
     2
    ],
    "toggle": [
-    273,
+    493,
     606
-   ]
+   ],
+   "toggle_owner": "host"
   },
   "npu_axil_regs.v": {
    "line": [
-    10,
+    54,
     92
    ],
    "toggle": [
-    161,
+    443,
     2482
-   ]
+   ],
+   "toggle_owner": "tflm"
   },
   "npu_dma.v": {
    "line": [
-    2,
+    10,
     13
    ],
    "toggle": [
-    39,
+    535,
     924
-   ]
+   ],
+   "toggle_owner": "tflm"
   },
   "npu_tcm.v": {
    "line": [
-    10,
+    12,
     15
    ],
    "toggle": [
-    719,
+    1896,
     2976
-   ]
+   ],
+   "toggle_owner": "tflm"
   },
   "npu_top.v": {
    "line": [
-    13,
+    14,
     18
    ],
    "toggle": [
-    1859,
+    2911,
     5542
-   ]
+   ],
+   "toggle_owner": "tflm"
   },
   "pmp.v": {
    "line": [
@@ -218,17 +250,19 @@
    "toggle": [
     69,
     990
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "ras.v": {
    "line": [
-    0,
-    0
+    2,
+    4
    ],
    "toggle": [
     21,
     136
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "rfu.v": {
    "line": [
@@ -238,7 +272,8 @@
    "toggle": [
     227,
     370
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "tb_npu_lockstep.v": {
    "line": [
@@ -248,7 +283,30 @@
    "toggle": [
     105,
     692
-   ]
+   ],
+   "toggle_owner": "vec"
+  },
+  "tb_npu_tflm_model.v": {
+   "line": [
+    20,
+    23
+   ],
+   "toggle": [
+    288,
+    968
+   ],
+   "toggle_owner": "tflm"
+  },
+  "tb_spike_lockstep.v": {
+   "line": [
+    14,
+    14
+   ],
+   "toggle": [
+    474,
+    654
+   ],
+   "toggle_owner": "host"
   },
   "trigger.v": {
    "line": [
@@ -258,7 +316,8 @@
    "toggle": [
     218,
     1196
-   ]
+   ],
+   "toggle_owner": "vec"
   },
   "vexu.v": {
    "line": [
@@ -268,17 +327,13 @@
    "toggle": [
     92912,
     94050
-   ]
+   ],
+   "toggle_owner": "vec"
   }
  },
- "total": {
-  "line": [
-   361,
-   749
-  ],
-  "toggle": [
-   114612,
-   156548
-  ]
- }
+ "total_line": [
+  537,
+  838
+ ],
+ "method": "line=union effective; toggle=max per owning DUT (vec/tflm/host)"
 }
