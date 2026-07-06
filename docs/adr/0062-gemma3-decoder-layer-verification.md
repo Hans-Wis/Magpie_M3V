@@ -69,7 +69,23 @@ fp32 不得當 bit-exact pass/fail;nonlinear 不得在 TB/host 算(必 RTL);gelu
 270M production 宣稱。
 
 ## §6 狀態 / 下一步
-- **本 ADR = foundation + 計畫凍結**(fp32 ref + Tier C S0 golden 已驗)。
+- **✅ 全層 S0..S5 完成 = Gemma-3 decoder layer 整層 e2e bit-exact on RTL(2026-07-06)**:
+  - **S1**(@6573052)= RMSNorm+residual:新 CQ op `MAT_RMSNORM`(degree-3 mantissa rsqrt poly,
+    coeffs 走 golden param blob = 零 firmware 常數,非循環 SSOT)+ `MAT_EWISE_ADD_REQUANT`;
+    freestanding `__ashldi3/__lshrdi3/__ashrdi3`(64-bit var shift,-nostdlib),row-mean 除法
+    留 32-bit 避 `__divdi3`。gate `gate_gemma3_s1_rtl`。
+  - **S2**(@9e933da)= Q/K/V proj + QK-norm + RoPE:proj 複用 mat_engine;QK-norm 複用
+    `MAT_RMSNORM`(H=head_dim,新 `emit_rmsnorm_rows`);新 `MAT_ROPE`(neox rotate-half + Q15
+    cos/sin 表 + gemmlowp requant)。gate `gate_gemma3_s2_rtl`(7 checkpoint)。
+  - **S3**(@745cf24)= QK^T + causal mask + softmax + AV,**head-batched(GQA nkv=1)**:
+    QK^T/AV 複用 per-channel GEMM(key-dim padding 到 8);新 `MAT_SOFTMAX`(per-row causal,
+    `EXP_LUT[mx-s]`,`prob=(e*127+sm/2)/sm` uint32 除法)。gate `gate_gemma3_s3_rtl`。
+  - **S4+S5**(@54cec19)= 全層整合(**零新 op**):`gemma_quant_layer.layer_int8` scale-chained
+    整層 golden;`gate_gemma3_layer_rtl` 把整條 ~20 步鏈跑在 RTL、逐步餵前一步真輸出、**每個
+    checkpoint(RMSNorm_in/proj/QK-norm/RoPE/QK^T/softmax/AV/o_proj/x_mid[S4]/preffn/gelu/mul/
+    down/x_out[S5])byte-identical**。fp32 bound:x_mid 2.9%、x_out 7.4%。
+  - firmware text 2108→3980B(ITCM 8K,充裕)。18 gemma test 全綠。
+- **本 ADR(原文)= foundation + 計畫凍結**(fp32 ref + Tier C S0 golden 已驗)。
 - **✅ S0 GeGLU RTL e2e 完成(@69212c1)**:3 GEMM 走 mat_engine;nonlinear(gelu 256-LUT、
   mul-requant)走 sequencer 韌體,經新 CQ op `MAT_ACT_LUT`/`MAT_EWISE_MUL`(nonlinear-in-RTL,
   非 host);host-chained 5-step,每 checkpoint(gate/gelu/up/prod/out)對 Tier-C **hex-exact**。
@@ -77,6 +93,8 @@ fp32 不得當 bit-exact pass/fail;nonlinear 不得在 TB/host 算(必 RTL);gelu
   完整性 review(Grok+Codex)+ golden requant 修(對 mat_golden bit-exact,§ADR-0062 non-circular)
   見 `docs/reports/2026-07-06_gemma_s0s5_completeness.md`;TCM-relocation blocker 修法見
   `docs/reports/2026-07-06_gemma_s0_e2e_blocker.md`。
-- **下一片 = S1(post-attn RMSNorm + residual,rsqrt Q31 integer poly)** → S2 RoPE → S3
-  softmax(+int32-logit 決策)→ S4 GQA → S5 整合。
-- gate(foundation)= `sim/gates/gate_83_gemma3_foundation.py`(golden 自洽 + fp32 bound)。
+- **下一步(全層已達標後)**:多層堆疊 / 真 270M 權重(需 torch/HF 環境,目前無)/ 非-unit-stride
+  KV-cache(deferred);或轉架構優化(attention GEMM padding-to-8 的 throughput、softmax/rsqrt
+  多拍化)。皆非本 ADR 範圍。
+- gate(foundation)= `sim/gates/gate_83_gemma3_foundation.py`(golden 自洽 + fp32 bound);
+  RTL e2e = `gate_gemma3_s0_geglu` / `_s1_rtl` / `_s2_rtl` / `_s3_rtl` / `_layer_rtl`。
