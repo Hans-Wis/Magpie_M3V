@@ -1121,19 +1121,19 @@ module vexu #(
         cpwj = 5'd0;
         if (vsew == 3'b000) begin
             for (cpi = 0; cpi < 16; cpi = cpi + 1)
-                if (({27'b0, cpwj} < 32'd16) && (cpi < q_vl) && vs1_data[cpi[3:0]]) begin
+                if (({27'b0, cpwj} < 32'd16) && (cpi < q_vl) && vs1_data[cpi[6:0]]) begin
                     res_compress[cpwj*8 +: 8] = vs2_data[cpi*8 +: 8];
                     cpwj = cpwj + 5'd1;
                 end
         end else if (vsew == 3'b001) begin
             for (cpi = 0; cpi < 8; cpi = cpi + 1)
-                if ((cpi < q_vl) && vs1_data[cpi[3:0]]) begin
+                if ((cpi < q_vl) && vs1_data[cpi[6:0]]) begin
                     res_compress[cpwj*16 +: 16] = vs2_data[cpi*16 +: 16];
                     cpwj = cpwj + 5'd1;
                 end
         end else begin
             for (cpi = 0; cpi < 4; cpi = cpi + 1)
-                if ((cpi < q_vl) && vs1_data[cpi[3:0]]) begin
+                if ((cpi < q_vl) && vs1_data[cpi[6:0]]) begin
                     res_compress[cpwj*32 +: 32] = vs2_data[cpi*32 +: 32];
                     cpwj = cpwj + 5'd1;
                 end

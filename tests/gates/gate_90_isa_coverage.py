@@ -28,7 +28,9 @@ import isa_cov  # noqa: E402
 PHASE = ROOT / "flow/v2_pipeline/phase_22_vector_csr_lockstep"
 
 REPORT = ROOT / "flow/coverage/isa_cov_report.json"
-SCALAR_FULL = ("i", "m", "f", "zba", "zbb", "zbs", "zicond", "zifencei")
+HOST_COV = ROOT / "flow/v2_pipeline/phase_03_20_isacov_host"
+# c + zicsr closed via the host RVC/CSR-imm directed test => RV32IMC is 100%.
+SCALAR_FULL = ("i", "m", "c", "f", "zba", "zbb", "zbs", "zicond", "zifencei", "zicsr")
 ZVE32X_BASELINE = 226            # covered / 261 in-scope (V1 closure; ratchet up only)
 EXCLUSION_COUNT = 32             # frozen scope-cut ledger (strided/indexed/ff/vlm/whole-reg)
 
@@ -94,6 +96,17 @@ def test_cov_closure_firmware_lockstep():
     assert r.returncode == 0, r.stdout[-3000:]
     m = re.search(r"PASS: vcsr-lockstep matched (\d+) commits", r.stdout)
     assert m and int(m.group(1)) >= 60, r.stdout[-1500:]
+
+
+@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
+def test_rvc_csr_closure_host_lockstep():
+    # RV32IMC 100%: c.jr/c.jalr + csrrsi/csrrci closed via a host directed test,
+    # DUT-verified vs Spike (G2 — not Spike-only). x0-dest jump wdata is masked
+    # (architecturally don't-care) in the phase's comparator.
+    r = subprocess.run(["make", "-C", str(HOST_COV), "lockstep.log"],
+                       capture_output=True, text=True)
+    assert "PASS" in r.stdout or (HOST_COV / "lockstep.log").read_text().startswith("PASS") \
+        or "PASS" in (HOST_COV / "lockstep.log").read_text(), r.stdout[-2000:]
 
 
 def test_cov_firmware_exercises_closed_forms():

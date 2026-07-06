@@ -10,6 +10,8 @@ VEC="grid vill valu s1 s2 b1 b2 b3 b4 c1 c2 c3 c4a c4b c4c c4d c5 d1a d1b d2 e1 
 for t in $VEC; do make -C "$P22" $t >/dev/null 2>&1 && cp "$P22/spike.log" "$LOGS/vec_$t.log" || true; done
 for t in directed "random SEED=1" "random SEED=2"; do
   make -C "$P20" $t >/dev/null 2>&1 && cp "$P20/spike.log" "$LOGS/npu_$(echo $t|tr ' =' '__').log" || true; done
+P0320="$ROOT/flow/v2_pipeline/phase_03_20_isacov_host"
+make -C "$P0320" lockstep.log >/dev/null 2>&1 && cp "$P0320/spike.log" "$LOGS/host_isacov_rvc.log" || true
 # host scalar (RVC/Zbb/Zba/Zbs/Zicond/F) from existing tree logs
 find "$ROOT" -path "$ROOT/.git" -prune -o -path "$ROOT/flow/coverage" -prune -o -name 'spike*.log' -print 2>/dev/null \
   | grep -vE 'obj_dir|/phase_22_|/phase_20_' | while read f; do

@@ -7,11 +7,8 @@
   },
   "c": {
    "in_scope": 27,
-   "covered": 25,
-   "missing": [
-    "c.jalr",
-    "c.jr"
-   ]
+   "covered": 27,
+   "missing": []
   },
   "m": {
    "in_scope": 8,
@@ -25,11 +22,8 @@
   },
   "zicsr": {
    "in_scope": 6,
-   "covered": 4,
-   "missing": [
-    "csrrci",
-    "csrrsi"
-   ]
+   "covered": 6,
+   "missing": []
   },
   "zifencei": {
    "in_scope": 1,
@@ -107,7 +101,7 @@
  },
  "total": {
   "in_scope": 402,
-  "covered": 362
+  "covered": 366
  },
  "zve32x_nonseg": {
   "covered": 226,

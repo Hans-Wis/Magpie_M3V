@@ -68,9 +68,31 @@ widening vwadd.vx/vwsubu.vx/vwaddu.wx/vwsub.wx、narrowing vnclip[u].wv/.wx。
 segment 由**單一通用 vmem-FSM** 處理所有 nf×eew(gate_78 e2 已測 nf2-4/e8 + nf2 e16/e32 + m2/m4
 群組代表);其餘組合 covered-by-construction,測全 42 為低值冗餘。**op-level 已無缺口。**
 
+## scalar 殘項閉合 → RV32IMC 100%(完成)
+`phase_03_20_isacov_host`(clone phase_03_00 rv32imc lockstep harness)+ `firmware.S` directed:
+c.jalr(indirect call `jalr a0`→16-bit)、c.jr(computed jump `jr a1` + compressed `ret`)、
+csrrsi/csrrci(CSR-immediate,rd≠x0 保 base mnemonic)。**DUT lockstep 13c PASS(G2:DUT 驗證
+非 Spike-only)**。
+- **c: 25→27/27 = 100% ; zicsr: 4→6/6 = 100% → RV32IMC = 100%**(i/m/c 全 100%)。
+- **殘 = wfi(priv,50%)**:**非 RV32IMC**(privileged hint,需 IRQ-wait 情境)——不影響 IMC 100%
+  宣稱,列 priv 桶低值 nice-to-have。
+- **附帶 lint 修**:vexu.v vcompress `vs1_data[cpi[3:0]]`→`[cpi[6:0]]`(128-bit 索引寬度,消
+  WIDTHEXPAND,為 V2 Spyglass/VCS lint 鋪路;值不變,vcompress gate_81/cov/vrand 全綠)。
+- **harness 修**:old tb_spike_lockstep 對 x0-dest jump(c.jr/ret)記 writeback bus,RVFI 應為 0;
+  comparator local 遮罩 rd==0 wdata(架構 don't-care)→ lockstep PASS。加 `-Wno-PINMISSING`
+  (老 TB 未接 core 新增 RVFI/RVVI trace ports,ADR-0045/0048 漣漪)。
+
+## 最終覆蓋(全回歸 + cov + host closure)
+| ext | 覆蓋 |
+|---|---|
+| **RV32IMC(i+m+c)** | **100%** |
+| f / zba / zbb / zbs / zicond / zifencei / **zicsr** | **100%** |
+| priv | 50%(wfi,非 IMC)|
+| **Zve32x non-segment(op-level)** | **100%**(226/226)|
+| Zve32x raw | 87%(226/261;剩 35 = segment 矩陣 waiver)|
+| **TOTAL** | **91%**(366/402)|
+
 ## 下一步(續)
-1. **scalar 小殘**:c.jr/c.jalr(host RVC reg-jump)、csrrci/csrrsi、wfi —— 補 directed 或誠實
-   列 not-emitted(低值,host 面已 i/m/f/zb* 100%)。
-2. **續 V2(Spyglass lint/RDC)/ V3b(整合 soc_m3v_top)/ V5(Verilator code-cov)** 平行。
-- gate_90 **基準 ratchet 到 226**,並斷言 **non-segment zve32x == 100%**(強聲明)+ cov firmware
-  lockstep(G2)+ ledger=32 + 零 excluded-hit。日後只准 ratchet up。
+- **V2(Spyglass lint/RDC)/ V3b(整合 soc_m3v_top)/ V5(Verilator code-cov)** 平行。
+- gate_90(7 tests)凍結:scalar+**RV32IMC+zicsr 100%** + non-segment zve32x 100% + cov/host
+  lockstep(G2)+ ledger=32 + 零 excluded-hit。只准 ratchet up。
