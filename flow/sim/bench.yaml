@@ -52,11 +52,12 @@ benchmarks:
   - id: mlperf_kws
     family: mlperf_tiny
     class: ds_cnn
-    rtl_e2e: false
+    rtl_e2e: true
     verify: bit_exact
-    blocker: multi-layer DS-CNN build script; depthwise via block-diagonal (stride-1)
-    effort: M
-    note: DS-CNN keyword spotting — layer-wise golden then e2e (F1.3)
+    gate: gate_95_mlperf_kws_e2e.py
+    note: DS-CNN (conv 3x3 -> depthwise-separable block -> FC head) chained bit-exact vs
+          BUILTIN_REF (ADR-0064 F1.3). stride-1 VALID representative dims; production
+          stride-2 first conv + global-avg-pool are F1.4 backlog (mechanism-independent).
 
   - id: mlperf_vww
     family: mlperf_tiny
