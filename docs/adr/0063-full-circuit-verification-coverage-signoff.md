@@ -100,12 +100,21 @@ G3 raw+effective 並列,簽核只認 effective · G4 waiver 必 ADR-ID+owner+rev
 - **ADR**:本 roadmap = ADR-0063;方法細節隨相落 sub-ADR(0064 ISA-cov 方法 / 0065 code-cov 簽核 /
   0066 vplan / 0067 green-wash+雙sim,開工時才寫,不預佔內容)。
 
-## §8 現況 / 首步(V0+V1 便宜早收)
-1. **V0**:`flow/coverage/{isa_coverage,isa_exclusions}.yaml` + `platform/lib/isa_cov.py`(spike-log
-   ingester)。
-2. **V1**:對 phase_20/21/22/23 + gates 既有 spike.log 跑 ingester → 首份 ISA gap 報告(零新 sim)。
-3. **V2**(平行):Spyglass 用 M3V filelist 重跑 → lint/RDC 現況。
-4. **V3b**:確認/建 `soc_m3v_top` 整合 DUT(全電路的先決條件)。
-- **must-have 簽核**:lockstep+整合 top 綠 · ISA 100% in-scope + ledger 凍結 · VCS line≥95%/FSM
-  可達 100% · covergroup(mat/CQ/AXI/trap)100% defined bins · RVV cross ≥90% in-scope · Spyglass
-  lint/RDC clean · 雙 sim ≥98% · waiver <5%/block。
+## §8 現況 — **V1 + V5 已完成並凍結(checkpoint,2026-07-06)**
+> ⭐ **User 裁示:coverage 階段凍結記錄,轉 benchmark 功能驗證 + 架構效能。** V1/V5 凍結為
+> 里程碑;V2(Spyglass)/V3(整合 top)/V4(covergroup)/V6(VCS)/V7-8 為後續。
+
+- **V0+V1 指令覆蓋 ✅ 凍結**(`flow/v2_pipeline/lib/isa_cov.py` + `flow/coverage/isa_scope.json`
+  + `collect.sh`,gate_90):**RV32IMC = 100%**(i/m/c)· f/zba/zbb/zbs/zicond/zicsr = 100% ·
+  **Zve32x non-segment op-level = 100%**(226/226;segment 矩陣 representative-waiver)· TOTAL 91%。
+  誠實界:32 scope-cut 移出分母零 credit、ledger 凍結。閉合測試:firmware_cov(45 op-form)、
+  phase_03_21(Zb*)、phase_03_22(CSR)全 lockstep 驗。
+- **V5 code 覆蓋 ✅ 凍結**(`flow/coverage/verilator/{run_cov.sh,combine_cov.py,codecov_report.json}`,
+  gate_91,5-DUT vec/tflm/host/debug-mvd/debug-trig,line=union·toggle=per-owner):**TOTAL line
+  77%**(708/924)· vexu 98%/99% · fexu 93%/95% · mat_engine 75%/94% · npu_dma 77% · bmu 94% ·
+  idu 86% · **csr 53% / trigger 70% / dm 57%(debug DV)**。剩殘皆 documented(合法 unreachable
+  PMP-body/PMP_ENTRIES=0、needs-debug-DV 增量、error-ladder backlog #3、U-shadow/WARL 分歧)。
+- **凍結報告**:`docs/reports/2026-07-06_v1_instruction_coverage.md` + `..._v5_code_coverage.md`。
+- **後續(未做,標記)**:V2 Spyglass lint/RDC(已先清 vexu 1 WIDTHEXPAND)· V3b 整合 soc_m3v_top ·
+  V4 covergroup(VCS)· V6 VCS signoff(cond/branch/fsm)· pmp/trigger/PMP-body 正式 waiver(需獨立
+  review)· V5 backlog #3(error-ladder→npu_axil_regs)。**回到本 roadmap 時從此 checkpoint 續。**
