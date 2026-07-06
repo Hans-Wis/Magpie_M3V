@@ -13,16 +13,23 @@ Authority note (G1): this is COMPLETENESS (did we exercise the encoding), NOT co
 — every test counted here is itself Spike-lockstep verified elsewhere.
 """
 import json
+import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "flow/v2_pipeline/lib"))
 import isa_cov  # noqa: E402
 
+PHASE = ROOT / "flow/v2_pipeline/phase_22_vector_csr_lockstep"
+
 REPORT = ROOT / "flow/coverage/isa_cov_report.json"
 SCALAR_FULL = ("i", "m", "f", "zba", "zbb", "zbs", "zicond", "zifencei")
-ZVE32X_BASELINE = 181            # covered / 261 in-scope as of 2026-07-06 (ratchet up only)
+ZVE32X_BASELINE = 226            # covered / 261 in-scope (V1 closure; ratchet up only)
 EXCLUSION_COUNT = 32             # frozen scope-cut ledger (strided/indexed/ff/vlm/whole-reg)
 
 
@@ -71,5 +78,26 @@ def test_baseline_report_thresholds():
         assert pe["covered"] == pe["in_scope"], f"{ext} regressed below 100% ({pe})"
     z = d["per_ext"]["zve32x"]
     assert z["covered"] >= ZVE32X_BASELINE, f"Zve32x coverage regressed: {z['covered']} < {ZVE32X_BASELINE}"
+    # the strong op-level claim: every NON-SEGMENT Zve32x form is exercised (segment
+    # nf*eew matrix is a documented representative-coverage waiver, ADR-0063).
+    ns = d["zve32x_nonseg"]
+    assert not ns["missing"], f"non-segment Zve32x op-forms uncovered: {ns['missing']}"
+    assert ns["covered"] == ns["in_scope"], "non-segment Zve32x must stay 100%"
     assert d["excluded"] == EXCLUSION_COUNT, "exclusion ledger drifted (G6)"
     assert not d["excluded_hit"], f"excluded ops were hit + would be credited: {d['excluded_hit']}"
+
+
+@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
+def test_cov_closure_firmware_lockstep():
+    # G2: the 45 op-forms counted for closure are Spike-lockstep VERIFIED, not toggle-only.
+    r = subprocess.run(["make", "-C", str(PHASE), "cov"], capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout[-3000:]
+    m = re.search(r"PASS: vcsr-lockstep matched (\d+) commits", r.stdout)
+    assert m and int(m.group(1)) >= 60, r.stdout[-1500:]
+
+
+def test_cov_firmware_exercises_closed_forms():
+    fw = (PHASE / "firmware_cov.S").read_text()
+    for pat in (r"vand\.vi", r"vsll\.vi", r"vaadd\.vx", r"vmsleu\.vv", r"vnclip\.wv",
+                r"vwaddu\.wx", r"vmerge\.vim", r"vssra\.vx"):
+        assert re.search(pat, fw), f"cov closure lost {pat}"

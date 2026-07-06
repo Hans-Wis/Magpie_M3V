@@ -6,7 +6,7 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 LOGS="$ROOT/flow/coverage/logs"; mkdir -p "$LOGS"; rm -f "$LOGS"/*.log
 P22="$ROOT/flow/v2_pipeline/phase_22_vector_csr_lockstep"
 P20="$ROOT/flow/v2_pipeline/phase_20_npu_core_lockstep"
-VEC="grid vill valu s1 s2 b1 b2 b3 b4 c1 c2 c3 c4a c4b c4c c4d c5 d1a d1b d2 e1 e2 e3 f f1 f2 ecmp s3 s3i pool vmem vwide kernel"
+VEC="grid vill valu s1 s2 b1 b2 b3 b4 c1 c2 c3 c4a c4b c4c c4d c5 d1a d1b d2 e1 e2 e3 f f1 f2 ecmp cov s3 s3i pool vmem vwide kernel"
 for t in $VEC; do make -C "$P22" $t >/dev/null 2>&1 && cp "$P22/spike.log" "$LOGS/vec_$t.log" || true; done
 for t in directed "random SEED=1" "random SEED=2"; do
   make -C "$P20" $t >/dev/null 2>&1 && cp "$P20/spike.log" "$LOGS/npu_$(echo $t|tr ' =' '__').log" || true; done

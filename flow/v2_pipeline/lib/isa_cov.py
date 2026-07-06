@@ -218,7 +218,18 @@ def main():
         print(f"{ext:<10}{n:>9}{c:>9}{pct:>6.0f}%   {miss}")
     print("-" * 78)
     print(f"{'TOTAL':<10}{tot_s:>9}{tot_c:>9}{100.0*tot_c/tot_s:>6.0f}%")
-    print(f"\nexcluded (scope-cut, out of denominator): {len(excl)}")
+    # segment nf*eew matrix = generic vmem FSM, representative-tested (ADR-0063 waiver);
+    # the meaningful op-level metric is NON-SEGMENT Zve32x coverage.
+    zmiss = dict((r[0], r[3]) for r in rows).get("zve32x", [])
+    seg_miss = [m for m in zmiss if re.match(r"v[sl]seg", m)]
+    nonseg_miss = [m for m in zmiss if not re.match(r"v[sl]seg", m)]
+    zn = next(n for e, n, _, _ in rows if e == "zve32x")
+    eff_den = zn - len(seg_miss)
+    eff_cov = eff_den - len(nonseg_miss)
+    print(f"\nZve32x non-segment (op-level, segment matrix representative-waived): "
+          f"{eff_cov}/{eff_den} = {100.0*eff_cov/eff_den:.0f}%  "
+          f"(segment combos waived: {len(seg_miss)})")
+    print(f"excluded (scope-cut, out of denominator): {len(excl)}")
     if excl_hit:
         print(f"  !! excluded ops HIT (no credit — investigate): {', '.join(excl_hit)}")
     if surprises:
@@ -229,6 +240,8 @@ def main():
             "per_ext": {ext: {"in_scope": n, "covered": c, "missing": miss}
                         for ext, n, c, miss in rows},
             "total": {"in_scope": tot_s, "covered": tot_c},
+            "zve32x_nonseg": {"covered": eff_cov, "in_scope": eff_den,
+                              "missing": nonseg_miss, "segment_waived": len(seg_miss)},
             "excluded": len(excl), "excluded_hit": excl_hit, "surprises": surprises,
         }, indent=1))
         print(f"\nwrote {a.json}")

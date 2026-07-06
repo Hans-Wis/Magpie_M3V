@@ -50,12 +50,27 @@ fault-only-first(vle*ff)、mask ld/st(vlm/vsm)、whole-reg ld/st(vl1r/vs1r…)�
 - **Zve32x = 69%**:主缺口 = segment 矩陣(低值)+ 30+ op-form(可閉合)。
 - **零 excluded-op credit、ledger 凍結** → 誠實界守衛通過。
 
-## 下一步(V1 閉合 + 續)
-1. **閉合 op-form 缺口**:對 vand/vsll/vsrl/vsadd/vsaddu 的 .vi、averaging 的 .vx、compares 的
-   .vx/.vi、narrow 的 .w* 補 directed(每個仍 Spike-lockstep,G2)→ zve32x 拉到 ~85%+。
-2. **segment 矩陣**:決定 representative-coverage waiver(ADR-ID)或補幾個 nf×eew corner。
-3. **scalar 小缺**:c.jr/c.jalr(host RVC register-jump)、csrrci/csrrsi、wfi —— 補 directed 或
-   誠實列為 not-emitted。
-4. **續 V2(Spyglass)/ V3b(整合 top)** 平行。
-- gate_90 已把**基準凍結**(scalar 100% + zve32x≥181 + ledger=32 + 零 excluded-hit),日後只准
-  ratchet up。
+## V1 閉合(完成)= zve32x 69%→87%,non-segment op-level 100%
+`firmware_cov.S`(phase_22 `make cov`)系統性打過 **45 個未測 op-form**(.vi/.vx/.vv/.w*),
+每個 vse+lw 觀察 → **Spike-lockstep 176 commits 全符**(G2:執行 **且** 驗證,非 toggle-only)。
+涵蓋:vand.vi/vsll.vi/vsrl.vi、vor.vx/vmax[u].vx/vmin[u].vx/vremu.vx、compares 全 .vx/.vi/.vv、
+vmnor.mm、vmerge.vxm/.vim、averaging 全 .vx/.vv、saturating .vx/.vi、scaling vssrl/vssra .vv/.vx、
+widening vwadd.vx/vwsubu.vx/vwaddu.wx/vwsub.wx、narrowing vnclip[u].wv/.wx。
+
+**閉合後(全回歸 + cov)**:
+| | 覆蓋 |
+|---|---|
+| Zve32x(raw)| **226/261 = 87%** |
+| **Zve32x non-segment(op-level,segment 矩陣 representative-waived)** | **226/226 = 100%** |
+| TOTAL(raw)| **362/402 = 90%** |
+
+**剩 35 = 全 segment nf×eew 矩陣**(`vlseg3e16.v`…)。**representative-coverage waiver(ADR-0063)**:
+segment 由**單一通用 vmem-FSM** 處理所有 nf×eew(gate_78 e2 已測 nf2-4/e8 + nf2 e16/e32 + m2/m4
+群組代表);其餘組合 covered-by-construction,測全 42 為低值冗餘。**op-level 已無缺口。**
+
+## 下一步(續)
+1. **scalar 小殘**:c.jr/c.jalr(host RVC reg-jump)、csrrci/csrrsi、wfi —— 補 directed 或誠實
+   列 not-emitted(低值,host 面已 i/m/f/zb* 100%)。
+2. **續 V2(Spyglass lint/RDC)/ V3b(整合 soc_m3v_top)/ V5(Verilator code-cov)** 平行。
+- gate_90 **基準 ratchet 到 226**,並斷言 **non-segment zve32x == 100%**(強聲明)+ cov firmware
+  lockstep(G2)+ ledger=32 + 零 excluded-hit。日後只准 ratchet up。
