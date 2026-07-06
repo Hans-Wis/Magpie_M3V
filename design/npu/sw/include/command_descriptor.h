@@ -18,6 +18,7 @@ typedef enum {
     CQ_OP_MAT_EWISE_MUL = 0x09,
     CQ_OP_MAT_RMSNORM = 0x0A,
     CQ_OP_MAT_EWISE_ADD_REQUANT = 0x0B,
+    CQ_OP_MAT_ROPE = 0x0C,
 } cq_opcode_t;
 
 typedef enum {

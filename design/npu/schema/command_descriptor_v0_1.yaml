@@ -194,6 +194,21 @@
         "len"
       ],
       "notes": "ADR-0062 F1.6 S1: residual add on the sequencer core. dst[i]=sat8( (a[i]*R_NUM + b[i]*X_NUM + (1<<(SHIFT-1))) >> SHIFT ); independent input scales folded to R_NUM/X_NUM (Q16), out_zp=0. Mirror of MAT_EWISE_MUL. W0.RPT = element count."
+    },
+    {
+      "name": "MAT_ROPE",
+      "value": 12,
+      "w1": "(src_tcm_byte<<16)|dst_tcm_byte",
+      "w2": "table_tcm_byte (hd int16 cos Q15, then hd int16 sin Q15, for this sequence position)",
+      "w3": "param_tcm_byte (8B: mult_q31, rdbpot_shift+31)",
+      "fields": [
+        "src",
+        "dst",
+        "table",
+        "param",
+        "len"
+      ],
+      "notes": "ADR-0062 F1.6 S2: neox RoPE on one head-vector (head_dim=W0.RPT). half=hd/2; rot_i = -src[i+half] (i<half) else src[i-half]; acc = src_i*cos_q15_i + rot_i*sin_q15_i (int32 Q15); dst[i] = clamp(rdbpot(srdhm(acc, mult), shift-31), -128, 127). Requant multiplier per-tensor; only the cos/sin table pointer varies with sequence position. Nonlinear-in-RTL, pure int."
     }
   ],
   "err_causes": [

@@ -138,31 +138,74 @@ def _align32(x):
     return (x + 31) & ~31
 
 
-def emit_rmsnorm(case: Path, a_q, g, seq, H):
-    """ADR-0062 S1: RMSNorm*(1+w) on the NPU sequencer (MAT_RMSNORM). One descriptor per
-    row; the rsqrt coefficients + per-layer constants ride in a TCM param blob sourced from
-    the golden (gemma_quant_s1) — zero firmware constants, non-circular SSOT. Returns
-    (result_words, seq*H) for unpack_contiguous."""
-    nrm = g["nrm"]
+def _rmsnorm_blob(nrm, coeffs, eps_q, inv_sqrt2):
     hdr = struct.pack("<IIIiiiiI", nrm["SA2_Q"] & 0xFFFFFFFF, nrm["OUT_NUM"] & 0xFFFFFFFF,
-                      g["eps_q"], g["coeffs"][0], g["coeffs"][1], g["coeffs"][2],
-                      g["coeffs"][3], gq1.INV_SQRT2_Q16)
+                      eps_q, coeffs[0], coeffs[1], coeffs[2], coeffs[3], inv_sqrt2)
     wq = b"".join(struct.pack("<h", int(w)) for w in nrm["w_q16"])   # H int16 Q2.14
-    blob = hdr + wq                                                  # 32 + 2H bytes
-    a_b = _pack_rows(a_q)
+    return hdr + wq                                                  # 32 + 2H bytes
+
+
+def emit_rmsnorm_rows(case: Path, rows_q, nrm, coeffs, eps_q, inv_sqrt2, nrows, H):
+    """MAT_RMSNORM over `nrows` rows of length H. rows_q is [nrows][H] int8. Reused by S1
+    (H=hidden) and S2 QK-norm (H=head_dim). Coeffs/constants ride a TCM param blob from the
+    golden (zero firmware constants, non-circular SSOT). Returns (result_words, nrows*H)."""
+    blob = _rmsnorm_blob(nrm, coeffs, eps_q, inv_sqrt2)
+    a_b = _pack_rows(rows_q)
     a_pad = a_b + b"\0" * ((-len(a_b)) % 32)
     combined = a_pad + blob
     ring, loaded = _load_w(combined)
     a_base = TCM_IN
     blob_base = a_base + len(a_pad)
     out_base = _align32(blob_base + len(blob))
-    for r in range(seq):
+    for r in range(nrows):
         ring += cq_codec.encode("MAT_RMSNORM", src=a_base + r * H, dst=out_base + r * H,
                                 param=blob_base, rpt=H)
-    store, rwords = _store(out_base, seq * H)
+    store, rwords = _store(out_base, nrows * H)
     ring += store
     _write_case(case, ring, [(SHARED_IN, loaded)], rwords)
-    return rwords, seq * H
+    return rwords, nrows * H
+
+
+def emit_rmsnorm(case: Path, a_q, g, seq, H):
+    """ADR-0062 S1: RMSNorm*(1+w) row-per-descriptor. Thin wrapper over emit_rmsnorm_rows."""
+    return emit_rmsnorm_rows(case, a_q, g["nrm"], g["coeffs"], g["eps_q"],
+                             gq1.INV_SQRT2_Q16, seq, H)
+
+
+def emit_rope(case: Path, x_q, cos_q, sin_q, rmeta, seq, n, hd):
+    """ADR-0062 S2: neox RoPE on [seq,n,hd] int8 via MAT_ROPE (one head-vector per
+    descriptor). cos_q/sin_q are [seq,hd] Q15 int16; the per-position table pointer varies,
+    the requant mult/shift are per-tensor. Returns (result_words, seq*n*hd)."""
+    x_b = bytearray()
+    for p in range(seq):
+        for h in range(n):
+            for i in range(hd):
+                x_b.append(int(x_q[p][h][i]) & 0xFF)
+    x_pad = bytes(x_b) + b"\0" * ((-len(x_b)) % 32)
+    tbl_b = bytearray()
+    for p in range(seq):
+        for i in range(hd):
+            tbl_b += struct.pack("<h", int(cos_q[p][i]))
+        for i in range(hd):
+            tbl_b += struct.pack("<h", int(sin_q[p][i]))
+    tbl_pad = bytes(tbl_b) + b"\0" * ((-len(tbl_b)) % 32)
+    param = struct.pack("<ii", rmeta["mult_q31"] if rmeta["mult_q31"] < (1 << 31)
+                        else rmeta["mult_q31"] - (1 << 32), rmeta["shift"])
+    combined = x_pad + tbl_pad + param
+    ring, loaded = _load_w(combined)
+    x_base = TCM_IN
+    tbl_base = x_base + len(x_pad)
+    param_base = tbl_base + len(tbl_pad)
+    out_base = _align32(param_base + len(param))
+    for p in range(seq):
+        for h in range(n):
+            off = (p * n + h) * hd
+            ring += cq_codec.encode("MAT_ROPE", src=x_base + off, dst=out_base + off,
+                                    table=tbl_base + p * (4 * hd), param=param_base, rpt=hd)
+    store, rwords = _store(out_base, seq * n * hd)
+    ring += store
+    _write_case(case, ring, [(SHARED_IN, loaded)], rwords)
+    return rwords, seq * n * hd
 
 
 def emit_add_requant(case: Path, r_q, an_q, g, seq, H, shift=16):

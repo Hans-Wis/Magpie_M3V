@@ -519,6 +519,38 @@ void main(void)
             }
             break;
         }
+        case CQ_OP_MAT_ROPE: {
+            /* ADR-0062 S2: neox RoPE on one head-vector. W1=(src<<16)|dst; W2=table
+             * (hd int16 cos Q15, then hd int16 sin Q15); W3=param [mult_q31, shift];
+             * W0.RPT=hd. rot_i = -src[i+half] (i<half) else src[i-half]. */
+            uint32_t hd = cq_w0_rpt(w0);
+            uint32_t half = hd >> 1;
+            uint32_t src = (w1 >> 16) & 0xFFFFu;
+            uint32_t dst = w1 & 0xFFFFu;
+            volatile int8_t *s = (volatile int8_t *)src;
+            volatile int8_t *d = (volatile int8_t *)dst;
+            volatile int16_t *cs = (volatile int16_t *)w2;
+            volatile int16_t *sn = (volatile int16_t *)(w2 + 2u * hd);
+            volatile int32_t *pp = (volatile int32_t *)w3;
+            int32_t mult, shift;
+            uint32_t i;
+            if (hd == 0u)
+                break;
+            if (src > (TCM_SCRATCH_B - hd) || dst > (TCM_SCRATCH_B - hd) ||
+                (w2 & 1u) != 0u || w2 > (TCM_SCRATCH_B - 4u * hd) ||
+                (w3 & 3u) != 0u || w3 > (TCM_SCRATCH_B - 8u))
+                cq_halt(CQ_ERR_MAT_PARAM);
+            mult = pp[0]; shift = pp[1];
+            for (i = 0u; i < hd; i++) {
+                int32_t rot = (i < half) ? -(int32_t)s[i + half] : (int32_t)s[i - half];
+                int32_t acc = (int32_t)s[i] * cs[i] + rot * sn[i];
+                int32_t q = seq_rdbpot(seq_srdhm(acc, mult), shift - 31);
+                if (q < -128) q = -128;
+                if (q > 127)  q = 127;
+                d[i] = (int8_t)q;
+            }
+            break;
+        }
         default:
             cq_halt(CQ_ERR_BAD_OPCODE);
             break;
