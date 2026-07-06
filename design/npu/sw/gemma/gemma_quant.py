@@ -23,29 +23,19 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parents[1] / "sw/tflm_aot"))
+sys.path.insert(0, str(HERE.parents[1] / "golden"))
 import gemma_ref as ref  # noqa: E402
+# Requant primitives come from the PROVEN mat_engine authority (mat_golden == mat_engine.v),
+# NOT a local copy — a local srdhm using Python >> rounds negatives toward -inf and diverged
+# from the RTL's truncate-toward-zero (Codex F1.5 review: 85/256 out bytes). Single source.
+from mat_golden import srdhm, rdbpot  # noqa: E402
 
 
-# ---- gemmlowp fixed-point requant (identical math to tflm_runtime / mat_engine) ----
-def srdhm(a, b):
-    ov = (a == -2**31 and b == -2**31)
-    ab = int(a) * int(b)
-    nudge = (1 << 30) if ab >= 0 else (1 - (1 << 30))
-    r = (ab + nudge) >> 31
-    return 2**31 - 1 if ov else r
-
-
-def rdbpot(x, exp):
-    if exp <= 0:
-        return x
-    mask = (1 << exp) - 1
-    rem = x & mask
-    thr = (mask >> 1) + (1 if x < 0 else 0)
-    return (x >> exp) + (1 if rem > thr else 0)
-
-
+# ---- gemmlowp fixed-point requant (srdhm/rdbpot imported from mat_golden above) ----
 def qmul(real):
-    """TFLM QuantizeMultiplier -> (q31, shift<=0)."""
+    """TFLM QuantizeMultiplier -> (q31, shift<=0). Enforces the same contract as
+    tflm_runtime.quantize_multiplier: shift < -31 flushes to (0,0); a left-shift
+    (shift > 0) multiplier is unsupported (scope honesty), matching the engine."""
     import math
     if real == 0.0:
         return 0, 0
@@ -53,6 +43,10 @@ def qmul(real):
     q31 = math.floor(q * (1 << 31) + 0.5)
     if q31 == (1 << 31):
         q31 //= 2; s += 1
+    if s < -31:
+        return 0, 0
+    if s > 0:
+        raise ValueError("left-shift multiplier unsupported (scope, matches mat_engine)")
     return q31, s
 
 
