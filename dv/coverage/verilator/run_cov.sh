@@ -8,7 +8,7 @@
 # every run is Spike-lockstep verified in its phase.
 set -e
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
-HERE="$ROOT/flow/coverage/verilator"; DATS="$HERE/dats"; mkdir -p "$DATS"; rm -f "$DATS"/*.dat
+HERE="$ROOT/dv/coverage/verilator"; DATS="$HERE/dats"; mkdir -p "$DATS"; rm -f "$DATS"/*.dat
 VL=/home/edauser/miniforge3/envs/magpie_claude/bin/verilator
 CPU="$ROOT/IP/cpu_m1/rtl"; NPU="$ROOT/IP/npu/rtl"
 COVFLAGS="--coverage-line --coverage-toggle"
