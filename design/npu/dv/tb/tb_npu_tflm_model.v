@@ -78,6 +78,17 @@ module tb_npu_tflm_model;
     reg [31:0] rd;
     integer fdump;
 
+    // ADR-0062 cycle-profile (additive; gated doorbell->DONE). mat_busy = GEMM engine,
+    // dma_busy|wb_busy = MAT_LOAD_W/STORE, rvfi_valid = sequencer instruction retire.
+    integer prof_tot = 0, prof_mat = 0, prof_dma = 0, prof_ret = 0;
+    reg prof_on = 1'b0;
+    always @(posedge clk) if (prof_on) begin
+        prof_tot = prof_tot + 1;
+        if (dut.mat_busy)                    prof_mat = prof_mat + 1;
+        if (dut.dma_busy || dut.wb_busy)     prof_dma = prof_dma + 1;
+        if (dut.rvfi_valid)                  prof_ret = prof_ret + 1;
+    end
+
     task chk(input [31:0] got, input [31:0] exp, input [255:0] nm);
         begin
             checks = checks + 1;
@@ -153,8 +164,10 @@ module tb_npu_tflm_model;
         axil_write(A_CQCTRL, 32'h1);
         axil_write(A_CTRL, 32'h9);            // start + irq_enable
         axil_write(A_TAIL, meta[0]);          // doorbell
+        prof_on = 1'b1;                        // profile window opens at the doorbell
 
         wait_bit(A_STATUS, 1, "layer batch DONE");
+        prof_on = 1'b0;
         chk({31'b0, irq}, 32'h1, "IRQ on final STORE");
         axil_read(A_CQST, rd);
         chk({31'b0, rd[3]}, 32'h0, "no CQ err");
@@ -166,6 +179,8 @@ module tb_npu_tflm_model;
             $fdisplay(fdump, "%08x", shared.mem[32'h600 + i]);
         $fclose(fdump);
 
+        $display("NPU_PROFILE total=%0d mat=%0d dma=%0d ret=%0d",
+                 prof_tot, prof_mat, prof_dma, prof_ret);
         $display("NPU_TFLM_MODEL: %0d checks, %0d errors", checks, errors);
         if (errors == 0) $display("NPU_TFLM_MODEL_PASS");
         else             $display("NPU_TFLM_MODEL_FAIL");
