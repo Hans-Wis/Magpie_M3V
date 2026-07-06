@@ -70,6 +70,13 @@ fp32 不得當 bit-exact pass/fail;nonlinear 不得在 TB/host 算(必 RTL);gelu
 
 ## §6 狀態 / 下一步
 - **本 ADR = foundation + 計畫凍結**(fp32 ref + Tier C S0 golden 已驗)。
-- **下一片 = S0 GeGLU RTL**:firmware(mat_engine GEMM via CQ + gelu LUT scalar/RVV + int
-  mul-requant)+ gate,checkpoint 對 Tier C hex-exact。gate = `gate_gemma3_s0_geglu.py`。
-- gate(foundation)= `tests/gates/gate_83_gemma3_foundation.py`(golden 自洽 + fp32 bound)。
+- **✅ S0 GeGLU RTL e2e 完成(@69212c1)**:3 GEMM 走 mat_engine;nonlinear(gelu 256-LUT、
+  mul-requant)走 sequencer 韌體,經新 CQ op `MAT_ACT_LUT`/`MAT_EWISE_MUL`(nonlinear-in-RTL,
+  非 host);host-chained 5-step,每 checkpoint(gate/gelu/up/prod/out)對 Tier-C **hex-exact**。
+  gate = `sim/gates/gate_gemma3_s0_geglu.py`(2/2);全 6 tflm gate 不回歸(16/16)。
+  完整性 review(Grok+Codex)+ golden requant 修(對 mat_golden bit-exact,§ADR-0062 non-circular)
+  見 `docs/reports/2026-07-06_gemma_s0s5_completeness.md`;TCM-relocation blocker 修法見
+  `docs/reports/2026-07-06_gemma_s0_e2e_blocker.md`。
+- **下一片 = S1(post-attn RMSNorm + residual,rsqrt Q31 integer poly)** → S2 RoPE → S3
+  softmax(+int32-logit 決策)→ S4 GQA → S5 整合。
+- gate(foundation)= `sim/gates/gate_83_gemma3_foundation.py`(golden 自洽 + fp32 bound)。
