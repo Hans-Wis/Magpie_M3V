@@ -8,14 +8,14 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(ROOT / "IP/npu/sw/tflm_aot"))
+sys.path.insert(0, str(ROOT / "sim/models"))
 sys.path.insert(0, str(ROOT / "IP/npu/sw"))
 import tflm_runtime as rt  # noqa: E402
 
 CASE = ROOT / "tflm_model"
 COVBIN = ROOT / "flow/coverage/verilator/obj_tflm/Vcov_tflm"
 DATS = ROOT / "flow/coverage/verilator/dats"
-ART = ROOT / "IP/npu/sw/tflm_aot/artifacts"
+ART = ROOT / "sim/models/artifacts"
 
 
 def run_layer(tag, layer, rows):

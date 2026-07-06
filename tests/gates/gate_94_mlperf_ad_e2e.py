@@ -20,7 +20,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "IP/npu/sw/tflm_aot"))
+sys.path.insert(0, str(ROOT / "sim/models"))
 from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_RTL  # noqa: E402
 import tflm_runtime as rt  # noqa: E402
 
@@ -29,7 +29,7 @@ RTL = [ROOT / f"IP/npu/rtl/{m}.v" for m in
 RTL += CPU_M1_RTL
 TB = [ROOT / "IP/npu/dv/tb/axi_full_rwmem.v", ROOT / "IP/npu/dv/tb/tb_npu_tflm_model.v"]
 CASE = ROOT / "tflm_model"
-ART = ROOT / "IP/npu/sw/tflm_aot/artifacts"
+ART = ROOT / "sim/models/artifacts"
 
 
 def run_layer(binary, layer, rows):
@@ -70,7 +70,7 @@ def test_ad_artifact_provenance_regen(tmp_path):
     if subprocess.run([sys.executable, "-c", "import tensorflow"],
                       env=env, capture_output=True).returncode != 0:
         pytest.skip("tensorflow unavailable — provenance not-run")
-    src = ROOT / "IP/npu/sw/tflm_aot"
+    src = ROOT / "sim/models"
     work = tmp_path / "aot"
     shutil.copytree(src, work, ignore=shutil.ignore_patterns("artifacts", "__pycache__"))
     r = subprocess.run([sys.executable, str(work / "build_model_ad.py")],

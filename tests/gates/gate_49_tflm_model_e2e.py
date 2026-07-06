@@ -27,7 +27,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "IP/npu/sw/tflm_aot"))
+sys.path.insert(0, str(ROOT / "sim/models"))
 from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_RTL  # noqa: E402
 import tflm_runtime as rt  # noqa: E402
 
@@ -80,7 +80,7 @@ def test_artifact_provenance_regen(tmp_path):
                            env=env, capture_output=True)
     if probe.returncode != 0:
         pytest.skip("tensorflow unavailable — provenance not-run")
-    src = ROOT / "IP/npu/sw/tflm_aot"
+    src = ROOT / "sim/models"
     work = tmp_path / "aot"
     shutil.copytree(src, work, ignore=shutil.ignore_patterns("artifacts"))
     r = subprocess.run([sys.executable, str(work / "build_model.py")],

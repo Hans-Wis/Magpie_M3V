@@ -15,8 +15,8 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-BENCH = ROOT / "flow/sim/bench.yaml"
-MATRIX = ROOT / "flow/sim/functional_matrix.json"
+BENCH = ROOT / "sim/bench.yaml"
+MATRIX = ROOT / "sim/functional_matrix.json"
 GATES = ROOT / "tests/gates"
 
 
@@ -44,7 +44,7 @@ def test_not_run_benches_name_a_blocker():
 
 
 def test_functional_matrix_matches_ssot():
-    assert MATRIX.exists(), "run flow/sim/run_bench.py --json flow/sim/functional_matrix.json"
+    assert MATRIX.exists(), "run sim/run_bench.py --json sim/functional_matrix.json"
     rows = {r["id"]: r for r in json.loads(MATRIX.read_text())}
     for s in _specs():
         assert s["id"] in rows, f"{s['id']} missing from functional_matrix.json"

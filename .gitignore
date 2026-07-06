@@ -1,5 +1,6 @@
 # ============ Magpie_M1 .gitignore — snapshot SOURCE + key deliverables ============
 # build / tool scratch (regenerable)
+**/.designgraph/
 **/obj_dir/
 **/work/
 **/alib*/

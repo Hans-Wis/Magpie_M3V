@@ -22,7 +22,7 @@ import math
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "IP/npu/sw"))
 sys.path.insert(0, str(ROOT / "IP/npu/golden"))
 
