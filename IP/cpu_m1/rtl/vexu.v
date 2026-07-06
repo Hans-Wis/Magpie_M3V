@@ -185,6 +185,14 @@ module vexu #(
     // idx[3,0,7,2,9,1,5,4] -> [13,10,17,12,0,11,15,14]; .vx/.vi broadcast vs2[idx].
     wire op_vrgather = (f6 == 6'b001100) && (is_opivv || is_opivx || is_opivi);
     wire vrg_illegal = op_vrgather && ((vd_i == vs2_i) || (is_opivv && (vd_i == vs1_i)));
+    // Phase-E tail (ADR-0060): vcompress.vm vd,vs2,vs1 — pack active vs2 elements
+    // (mask = BIT i of the explicit vs1 operand, NOT v0) into contiguous low vd
+    // lanes. OPMVV f6=010111, vm=1 in the encoding (v0 unused; mask is vs1).
+    // m1-only (LMUL>1 auto-illegal via grp_only_illegal, non-beats_op); vstart=0
+    // (global rule); tail UNDISTURBED. Spike-probed: mask 0x4D over [10..17] ->
+    // [10,12,13,16]; empty mask keeps vd. require_noover: vd not overlap vs2/vs1.
+    wire op_vcompress = (f6 == 6'b010111) && is_opmvv && vm;
+    wire compress_illegal = op_vcompress && ((vd_i == vs2_i) || (vd_i == vs1_i));
     wire op_widen = op_wmulany || op_wmaccany || op_waddsub;
 
     // ---------------- S1 (ADR-0049): min/max, compares, mask logicals ----------------
@@ -445,7 +453,8 @@ module vexu #(
                     op_mm || op_cmp || op_mlog || op_s2same || op_nc || op_b1 ||
                     op_nsr || op_vext || op_adcsbc || op_madcb || op_vmvr ||
                     op_muls || op_mac || op_vsmul || op_vdivr ||
-                    op_vcpop || op_vfirst || op_vid || op_vms || op_viota || op_slide || op_vrgather;
+                    op_vcpop || op_vfirst || op_vid || op_vms || op_viota || op_slide || op_vrgather ||
+                    op_vcompress;
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
@@ -479,6 +488,7 @@ module vexu #(
                         (!known_op ||
                          (q_vstart != 32'h0) ||
                          widen_illegal || vext_illegal || slide_illegal || vrg_illegal ||
+                         compress_illegal ||
                          (op_mv && (vs2_i != 5'd0)) ||
                          (op_merge && (vd_i == 5'd0)) ||
                          // S1 (Codex, Spike-confirmed): a MASKED body op may not
@@ -1098,6 +1108,37 @@ module vexu #(
     endgenerate
     wire [127:0] res_rg = (vsew == 3'b000) ? res_rg8 :
                           (vsew == 3'b001) ? res_rg16 : res_rg32;
+
+    // ---- Phase-E tail vcompress: j=0; for i in [0,vl): if vs1 mask bit i set,
+    // vd[j++] = vs2[i]; positions [j,vl) and [vl,vlmax) undisturbed. m1 (<=16
+    // lanes), vstart=0 (global). Variable-base part-select realizes the running
+    // write index combinationally (unrolled per SEW). ----
+    reg [127:0] res_compress;
+    integer     cpi;
+    reg [4:0]   cpwj;
+    always @* begin
+        res_compress = vd_old;               // tail / inactive undisturbed
+        cpwj = 5'd0;
+        if (vsew == 3'b000) begin
+            for (cpi = 0; cpi < 16; cpi = cpi + 1)
+                if (({27'b0, cpwj} < 32'd16) && (cpi < q_vl) && vs1_data[cpi[3:0]]) begin
+                    res_compress[cpwj*8 +: 8] = vs2_data[cpi*8 +: 8];
+                    cpwj = cpwj + 5'd1;
+                end
+        end else if (vsew == 3'b001) begin
+            for (cpi = 0; cpi < 8; cpi = cpi + 1)
+                if ((cpi < q_vl) && vs1_data[cpi[3:0]]) begin
+                    res_compress[cpwj*16 +: 16] = vs2_data[cpi*16 +: 16];
+                    cpwj = cpwj + 5'd1;
+                end
+        end else begin
+            for (cpi = 0; cpi < 4; cpi = cpi + 1)
+                if ((cpi < q_vl) && vs1_data[cpi[3:0]]) begin
+                    res_compress[cpwj*32 +: 32] = vs2_data[cpi*32 +: 32];
+                    cpwj = cpwj + 5'd1;
+                end
+        end
+    end
 
     // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
     localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
@@ -1732,6 +1773,7 @@ module vexu #(
                      op_viota ? res_viota :
                      op_slide ? res_slide :
                      op_vrgather ? res_rg :
+                     op_vcompress ? res_compress :
                      op_mvsx ? res_sx :
                      (vsew == 3'b000) ? res8 :
                      (vsew == 3'b001) ? res16 : res32;
