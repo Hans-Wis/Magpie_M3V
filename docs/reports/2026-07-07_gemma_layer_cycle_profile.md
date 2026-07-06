@@ -57,6 +57,34 @@ below the table are estimates.
    `__ashrdi3` variable 64-bit shift compiled as a **per-element function call** in the
    RMSNorm/RoPE/requant inner loops + CPI.
 
+## MAC-engine internal split (S_RUN vs S_RSC) — measured
+
+Of the 5,658 mat-engine busy cycles across the whole layer:
+- **S_RUN (actual MAC): 1,104 cycles** = **0.29% of wall-clock**.
+- **S_RSC (requant): 4,290 cycles** = 76% of engine busy (**~4× the MAC cycles**).
+- other (LOADACC/CFG): 264.
+- **Spatial packing = 50.0%**: 141,312 useful MACs / (1,104 × 256 = 282,624 MAC-slots). Exactly
+  half the lanes compute zeros — the seq=4→8 pad on the M/N dimension. Vanishes at seq = mult of 8.
+
+**Reframing "the 256-MAC engine is 98.5% idle":** the array is not the bottleneck and adding MACs
+is pointless — it does the entire layer's matrix work in 1,104 cycles. It is idle because
+(a) **requant dominates its own busy time 4×**, and (b) it is gated behind DMA + scalar spin-poll:
+GEMM steps are 116k wall-clock but the engine is busy only 5.6k → idle ~95% even *within* GEMM
+steps, waiting on weight DMA (35k) and synchronous core orchestration (~76k core* in GEMM steps).
+
+**MAC-utilization levers (besides RVV), by measured value:**
+1. **De-serialize GEMM orchestration (temporal — the big one):** double-buffer weights (engine runs
+   while next tile's B loads), autonomous tile sequencing (no return-to-firmware spin-poll between
+   tiles). Attacks the ~76k core* + overlaps the 35k DMA inside GEMM steps.
+2. **Fuse per-input GEMMs:** Q/K/V share input hin → one N=96 pass; gate+up share hff → one N=256
+   pass. One weight load + one resident activation instead of 2–3, amortizes requant setup.
+3. **Amortize requant (S_RSC 4,290, 4× the MAC):** requant is per-8×8-tile fixed cost; at seq=4 half
+   its outputs are padding. Filling M=8 (real seq / more batched rows) halves the wasted requant.
+4. **Keep activations resident (fusion):** each GEMM currently reloads its input shared→TCM; a fused
+   in-NPU layer keeps intermediates in DTCM and removes the reload DMA the engine waits behind.
+5. **Do NOT add MACs / widen the array:** S_RUN is 0.29% of wall-clock; a 512-MAC array saves ~550
+   of 375,672 cycles. The 50% spatial waste is a seq=4 artifact, gone at production seq.
+
 ## Prioritized opportunities (projected)
 
 | # | action | target | projected |

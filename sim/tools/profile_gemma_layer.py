@@ -32,9 +32,9 @@ RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in
 TB = [ROOT / "design/npu/dv/tb/axi_full_rwmem.v", ROOT / "design/npu/dv/tb/tb_npu_tflm_model.v"]
 CASE = ROOT / "sim/work/tflm_model"
 _C = (s1.RSQRT_C, s1.EPS_Q, s1.INV_SQRT2_Q16)
-_PAT = re.compile(r"NPU_PROFILE total=(\d+) mat=(\d+) dma=(\d+) ret=(\d+)")
+_PAT = re.compile(r"NPU_PROFILE total=(\d+) mat=(\d+) dma=(\d+) ret=(\d+) run=(\d+) rsc=(\d+)")
 
-records = []   # (label, kind, total, mat, dma, ret)
+records = []   # (label, kind, total, mat, dma, ret, run, rsc)
 
 
 def build(mdir):
@@ -51,8 +51,8 @@ def run(binary, label, kind):
     out = subprocess.run([str(binary)], cwd=ROOT, capture_output=True, text=True, timeout=300).stdout
     assert "NPU_TFLM_MODEL_PASS" in out, out
     m = _PAT.search(out)
-    tot, mat, dma, ret = (int(x) for x in m.groups())
-    records.append((label, kind, tot, mat, dma, ret))
+    tot, mat, dma, ret, run, rsc = (int(x) for x in m.groups())
+    records.append((label, kind, tot, mat, dma, ret, run, rsc))
     return CASE / "result.dump"
 
 
@@ -144,27 +144,37 @@ def main():
     mn = rmsnorm("RMSNorm_postffn", m_lin, ck["nrm_pff"], ck["s_mn"], hid)
     residual("residual_2", xmid, mn, ck["res2"], hid)
 
+    # ---- useful MACs (analytic, from dims) ----
+    useful = (seq * (nh * hd) * hid + 2 * seq * (nkv * hd) * hid          # q,k,v proj
+              + nh * seq * seq * hd + nh * seq * hd * seq                  # QK^T, AV
+              + seq * hid * (nh * hd)                                      # o_proj
+              + 2 * seq * inter * hid + seq * hid * inter)                 # gate,up,down
+
     # ---- report ----
     w = max(len(r[0]) for r in records)
-    print(f"\n{'step':<{w}}  {'kind':<7} {'total':>7} {'mat':>7} {'dma':>7} {'ret':>7} "
-          f"{'core*':>7}")
-    print("-" * (w + 44))
-    for lab, kind, tot, mat, dma, ret in records:
-        core = tot - mat - dma          # core-active-non-engine (scalar compute + orchestration)
-        print(f"{lab:<{w}}  {kind:<7} {tot:>7} {mat:>7} {dma:>7} {ret:>7} {core:>7}")
+    print(f"\n{'step':<{w}}  {'kind':<7} {'total':>7} {'mat':>7} {'run':>6} {'rsc':>6} "
+          f"{'dma':>7} {'core*':>7}")
+    print("-" * (w + 48))
+    for lab, kind, tot, mat, dma, ret, rn, rc in records:
+        core = tot - mat - dma
+        print(f"{lab:<{w}}  {kind:<7} {tot:>7} {mat:>7} {rn:>6} {rc:>6} {dma:>7} {core:>7}")
     tot_all = sum(r[2] for r in records)
     mat_all = sum(r[2] for r in records if r[1] == "GEMM")
     non_all = sum(r[2] for r in records if r[1] == "nonlin")
-    dma_all = sum(r[3] for r in records)  # placeholder; recompute below
     dma_all = sum(r[4] for r in records)
     matbusy = sum(r[3] for r in records)
-    print("-" * (w + 44))
-    print(f"{'TOTAL wall-clock (sum of step doorbell->DONE)':<{w}}  {tot_all:>7} cycles")
-    print(f"  GEMM steps      : {mat_all:>7} cycles ({100*mat_all/tot_all:4.1f}% wall)  "
-          f"[mat-engine busy {matbusy}]")
-    print(f"  nonlinear steps : {non_all:>7} cycles ({100*non_all/tot_all:4.1f}% wall)")
-    print(f"  DMA busy (all)  : {dma_all:>7} cycles ({100*dma_all/tot_all:4.1f}% wall)")
-    print(f"  sequencer retires (all steps): {sum(r[5] for r in records)}")
+    run_all = sum(r[6] for r in records)
+    rsc_all = sum(r[7] for r in records)
+    print("-" * (w + 48))
+    print(f"TOTAL wall-clock: {tot_all} cycles")
+    print(f"  GEMM steps {mat_all} ({100*mat_all/tot_all:.1f}%) | nonlinear {non_all} "
+          f"({100*non_all/tot_all:.1f}%) | DMA busy {dma_all} ({100*dma_all/tot_all:.1f}%)")
+    print(f"  mat-engine busy {matbusy} ({100*matbusy/tot_all:.1f}% wall): "
+          f"S_RUN(MAC) {run_all}, S_RSC(requant) {rsc_all}, other {matbusy-run_all-rsc_all}")
+    print(f"  useful MACs (analytic) {useful}; MAC-slots in S_RUN {run_all*256}; "
+          f"spatial packing {100*useful/(run_all*256):.1f}%")
+    print(f"  => MAC array does {useful} useful MACs in {run_all} S_RUN cycles out of "
+          f"{tot_all} wall-clock ({100*run_all/tot_all:.2f}% of wall-clock)")
 
 
 if __name__ == "__main__":

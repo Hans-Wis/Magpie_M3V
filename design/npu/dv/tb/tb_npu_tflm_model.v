@@ -80,11 +80,13 @@ module tb_npu_tflm_model;
 
     // ADR-0062 cycle-profile (additive; gated doorbell->DONE). mat_busy = GEMM engine,
     // dma_busy|wb_busy = MAT_LOAD_W/STORE, rvfi_valid = sequencer instruction retire.
-    integer prof_tot = 0, prof_mat = 0, prof_dma = 0, prof_ret = 0;
+    integer prof_tot = 0, prof_mat = 0, prof_dma = 0, prof_ret = 0, prof_run = 0, prof_rsc = 0;
     reg prof_on = 1'b0;
     always @(posedge clk) if (prof_on) begin
         prof_tot = prof_tot + 1;
         if (dut.mat_busy)                    prof_mat = prof_mat + 1;
+        if (dut.u_mat.state == 4'd1)         prof_run = prof_run + 1;   // S_RUN = MAC
+        if (dut.u_mat.state == 4'd3)         prof_rsc = prof_rsc + 1;   // S_RSC = requant
         if (dut.dma_busy || dut.wb_busy)     prof_dma = prof_dma + 1;
         if (dut.rvfi_valid)                  prof_ret = prof_ret + 1;
     end
@@ -179,8 +181,8 @@ module tb_npu_tflm_model;
             $fdisplay(fdump, "%08x", shared.mem[32'h600 + i]);
         $fclose(fdump);
 
-        $display("NPU_PROFILE total=%0d mat=%0d dma=%0d ret=%0d",
-                 prof_tot, prof_mat, prof_dma, prof_ret);
+        $display("NPU_PROFILE total=%0d mat=%0d dma=%0d ret=%0d run=%0d rsc=%0d",
+                 prof_tot, prof_mat, prof_dma, prof_ret, prof_run, prof_rsc);
         $display("NPU_TFLM_MODEL: %0d checks, %0d errors", checks, errors);
         if (errors == 0) $display("NPU_TFLM_MODEL_PASS");
         else             $display("NPU_TFLM_MODEL_FAIL");
