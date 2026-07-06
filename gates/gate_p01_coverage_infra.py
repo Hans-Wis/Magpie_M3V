@@ -16,6 +16,15 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 COV = ROOT / "IP/cpu_m1/dv/cov"
 
+# The reporter self-tests run on SYNTHETIC data (always available). The one test that runs on
+# REAL VCS coverage needs phase_04_0*_coverage/coverage.dat — licensed-EDA artifacts absent in a
+# fresh checkout. Skip (not-run) rather than fail; M3V code coverage = Verilator in dv/gates.
+_needs_real_cov = pytest.mark.skipif(
+    not list(ROOT.glob("flow/v2_pipeline/phase_04_0*_coverage/coverage.dat")),
+    reason="real VCS coverage.dat absent — licensed-EDA (EXTERNAL_DEPS.md §2/§3); "
+    "synthetic-data infra tests still run",
+)
+
 
 def _cm():
     spec = importlib.util.spec_from_file_location("cov_metrics", COV / "cov_metrics.py")
@@ -124,6 +133,7 @@ def test_p01_branch_expr_requires_real_vcs_run():
         cm.parse_urg("/nonexistent")
 
 
+@_needs_real_cov
 def test_p01_reporter_runs_on_real_coverage():
     import glob
     cm = _cm()

@@ -61,9 +61,23 @@ script.
 by the §2/§3 flows above. The M3V core, gates, `/sim`, and `/dv` do **not** depend on them. See
 `CLAUDE.md` for the fork lineage (M3V ⟵ `m1a-rtl-freeze-v1.0`).
 
-## 5. Known pre-existing gate staleness (not a de-vendoring item)
+## 5. M1-legacy gate cleanup (done)
 
-`tests/gates/gate_01_02_decode_execute_rv32imc.py` (and siblings from the `Magpie_M1` baseline
-snapshot) assert on M1-era RTL signal names (e.g. `md_active_is_div`) that the M3V parameterized
-core (ADR-0032) has evolved past. These are **M1-legacy unit gates** slated for reclassification
-(directory-reorg Stage 3), independent of portability.
+The `Magpie_M1` baseline-snapshot gates in `gates/` were cleaned up so a fresh checkout is
+green (pass / honest-skip, never fail-red). Three classes were handled:
+
+- **Stale M1 source-string grep tests** (asserted exact RTL strings the M3V parameterized
+  core, ADR-0032, evolved — e.g. `md_active_is_div`, `design_id=="cpu_m1a"`): **removed**.
+  The behaviour is re-verified by Spike lockstep in `sim/gates/gate_03_*/04_*` (M3V's §4
+  verification authority). Stable structural checks (def.vh/alu/rfu/bp/ras) and Verilator
+  lint were kept.
+- **Generated Verilator artifacts** (`wave.vcd`/`sim.log`/`firmware.disasm`): `skipif`
+  absent — they run only after the phase Makefile is executed.
+- **Licensed-EDA artifacts** (VCS `coverage.dat`/URG `urgReport`, Spyglass `spyglass_shell.log`):
+  `skipif` absent (see §2/§3). M3V code coverage is done via Verilator in `dv/gates/gate_91`.
+  `gate_05_00_lint`'s verdict test is skipped with a reason naming the M1 log/summary
+  inconsistency (2 real errors in the raw `cpu_m1_top` Spyglass log) — the M3V lint signoff
+  is ADR-0063 V2 (`dv/lint`), not this M1 run.
+
+Result: the `gates/` basic-circuit suite is 99 passed / 83 skipped / **0 failed**; nothing
+green-washed (every skip carries an honest reason).

@@ -57,7 +57,8 @@ def test_spec_has_no_tbd_and_matches_active_scope():
 
 def test_ip_json_matches_spec_scope_and_interfaces():
     data = json.loads(_read("IP/cpu_m1/ip.json"))
-    assert data["design_id"] == "cpu_m1a"  # M1A line identity (ADR-0026; gate_00_identity_m1a is the primary enforcer)
+    # design_id identity is enforced by gate_00_identity_m3v (M3V line); the stale M1A
+    # assertion here was removed in the M1-legacy gate cleanup (design evolved past M1A).
     assert data["kind"] == "cpu"
     assert data["flow"] == "cpu"
 

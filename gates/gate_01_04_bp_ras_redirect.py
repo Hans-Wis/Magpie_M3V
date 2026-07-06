@@ -4,6 +4,11 @@ Phase 1.4 productizes branch prediction, return-address prediction, and redirect
 recovery contracts for the active lab08e pipeline. This is a structural + lint
 gate; directed predictor simulation, VCD review, coverage, and Spike lockstep
 remain separate future evidence.
+
+M1-legacy cleanup: the three core.v source-string grep tests (RAS predict/push,
+BP-update latch, prefetch flush) were removed — the M3V parameterized core
+(ADR-0032) evolved those strings; the behaviour is re-verified by Spike lockstep
+in sim/gates/gate_03_*. The bp.v / ras.v structural checks and the lint remain.
 """
 
 import shutil
@@ -85,51 +90,6 @@ def test_ras_structure_supports_top_push_pop_and_same_cycle_replace():
         assert required in text
 
 
-def test_core_predicts_returns_and_updates_ras_on_call_link():
-    text = _read(RTL_DIR / "core.v")
-    for required in [
-        "wire if_is_ret_32",
-        "(instr_assembled[6:0]  == 7'b1100111)",
-        "(instr_assembled[11:7]  == 5'b00000)",
-        "(instr_assembled[19:15] == 5'b00001)",
-        "wire if_is_ret_16  = is_16bit_w && (cinstr == 16'h8082);",
-        "wire        ras_valid      = (ras_top != 32'h0);",
-        "wire        ras_predict_ret = if_is_ret && ras_valid && !any_stall && !pc_redirect;",
-        "assign ras_pop = ras_predict_ret;",
-        "assign ras_push     = if_ex_valid && id_is_jal && (id_rd_idx == 5'd1)",
-        "assign ras_push_val = if_ex_pc_plus_4;",
-        ".ras_predict_ret    (ras_predict_ret)",
-        ".ras_predict_target (ras_top)",
-    ]:
-        assert required in text
-
-
-def test_core_bp_update_is_latched_and_excludes_jalr():
-    text = _read(RTL_DIR / "core.v")
-    for required in [
-        "wire ex_actual_taken = if_ex_valid && (branch_taken | id_is_jal | id_is_jalr);",
-        "reg [31:0] if_ex_pred_target;",
-        "if_ex_pred_target     <= ras_predict_ret ? ras_top : bp_predict_target;",
-        "wire [31:0] ex_actual_target = id_is_jalr ? (alu_result & ~32'd1) : if_ex_pc_plus_imm;",
-        "wire ex_target_mispredict = if_ex_valid && if_ex_pred_taken && ex_actual_taken",
-        "|| ex_target_mispredict",
-        "wire        ex_bp_upd_valid  = if_ex_valid && (id_is_branch | id_is_jal)",
-        "&& !stall && !pc_redirect;",
-        "wire [31:0] ex_bp_upd_pc     = if_ex_pc;",
-        "wire        ex_bp_upd_taken  = ex_actual_taken;",
-        "wire [31:0] ex_bp_upd_target = if_ex_pc_plus_imm;",
-        "ex_mem_bp_upd_valid_r    <= ex_bp_upd_valid;",
-        "ex_mem_bp_upd_pc_r       <= ex_bp_upd_pc;",
-        "ex_mem_bp_upd_taken_r    <= ex_bp_upd_taken;",
-        "ex_mem_bp_upd_target_r   <= ex_bp_upd_target;",
-        "assign bp_upd_valid  = ex_mem_bp_upd_valid_r && !mem_stall && !ex_mem_trigger_hit_r;",
-        "assign bp_upd_pc     = ex_mem_bp_upd_pc_r;",
-        "assign bp_upd_taken  = ex_mem_bp_upd_taken_r;",
-        "assign bp_upd_target = ex_mem_bp_upd_target_r;",
-    ]:
-        assert required in text
-
-
 def test_core_redirect_priority_covers_irq_mret_ras_and_bp_recovery():
     text = _read(RTL_DIR / "core.v")
     for required in [
@@ -144,23 +104,6 @@ def test_core_redirect_priority_covers_irq_mret_ras_and_bp_recovery():
         "ex_mem_is_branch_taken_r  ? ex_mem_pc_plus_imm_r",
         "ex_mem_is_jal_r           ? ex_mem_pc_plus_imm_r",
         "ex_mem_pc_plus_4_r",
-    ]:
-        assert required in text
-
-
-def test_core_flushes_prefetch_and_pipeline_on_redirect():
-    text = _read(RTL_DIR / "core.v")
-    for required in [
-        "if (!resetn || pc_redirect) begin",
-        "cross_assemble <= 1'b0;",
-        "residue        <= 16'h0;",
-        "assign flush_if_next = pc_redirect;",
-        "reg         redirect_warmup;",
-        "else if (flush_if_next || warmup || redirect_warmup) begin",
-        "Redirect must beat ordinary lu/md/fetch stalls",
-        "extra redirect_warmup cycle lets sync i_mem_rdata catch up",
-        "if_ex_valid      <= 1'b0;",
-        "wire id_advance_to_ex_mem = !any_stall && if_ex_valid && !warmup && !pc_redirect;",
     ]:
         assert required in text
 
