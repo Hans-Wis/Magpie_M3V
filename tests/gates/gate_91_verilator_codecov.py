@@ -26,11 +26,13 @@ OWNED = [("vexu.v", 95, 95), ("fexu.v", 90, 90),
          ("mat_engine.v", 70, 85), ("npu_dma.v", 70, 50),
          ("npu_axil_regs.v", 55, 0), ("core.v", 65, 0), ("div.v", 70, 0),
          ("alu.v", 95, 95), ("lsu.v", 95, 95),
-         ("bmu.v", 90, 90), ("idu.v", 80, 80)]     # V5 backlog #2 closed (Zb* + CSR/decode)
+         ("bmu.v", 90, 90), ("idu.v", 80, 80),      # V5 backlog #2 closed (Zb* + CSR/decode)
+         ("trigger.v", 65, 0), ("dm.v", 50, 0)]     # V5 backlog #4 (debug-mode DV)
 # remaining hard residuals — documented, not gated (feature-limited or non-deterministic).
 BACKLOG_STIMULUS = {
-    "csr.v": "Debug-Module CSR interface (needs debug-mode DV, backlog #4) + PMP-write "
-             "body unreachable at PMP_ENTRIES=0 + U-shadow/WARL DUT<->Spike divergence",
+    "csr.v": "debug-CSR interface partly covered by debug DV (backlog #4); residual = "
+             "csr_debug arms for CSRs not abstract-accessed + PMP-write body dead at "
+             "PMP_ENTRIES=0 + U-shadow/WARL DUT<->Spike divergence",
     "cdec.v": "compressed-decode corner tests",
     "pmp.v": "PMP (bypass, documented-limited — waiver candidate)",
     "trigger.v": "debug-trigger (bypass, documented-limited — waiver candidate)",

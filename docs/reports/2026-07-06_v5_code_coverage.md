@@ -102,7 +102,20 @@ host 刺激(RVC/CSR/random/trap)把 div/idu/bp 拉高。
 | ~10 = **PMP-write body `if(PMP_ENTRIES!=0)`** | **PMP_ENTRIES=0 靜態不可達(dead)** | **合法 unreachable(config-scoped waiver 候選,同 pmp.v)** |
 | ~5 = U-shadow counters / WARL 分歧 | DUT↔Spike 分歧 | 記錄 |
 
-## 剩餘(backlog #3/#4 + 合法 unreachable)
+## V5 backlog #4 閉合(debug-mode DV)= csr 45%→53%、trigger 37%→70%
+**既有 debug DV harness 直接復用**(非從頭建):`phase_06_00_debug_mvd`(core debug-mode +
+`soc/dm.v` Debug Module,DMI-direct 驅動 halt + abstract CSR access)、`phase_06_02_debug_trigger`
+(trigger cross/aligned/store)。自建 coverage DUT(避改 M1 gated Makefile,加 -Wno-PINMISSING/
+-Wno-WIDTHEXPAND 消 M3V core RVFI-port 漣漪),跑 → 收 coverage → combine。
+- **csr.v 45%→53%**(debug-CSR 介面 csr_debug_read/debug_csr_we 被 DM abstract 命令打進)
+- **trigger.v 37%→70%**(trigger match/fire 邏輯)
+- **dm.v 57%**(新入報告 = Debug Module 本身)
+- **TOTAL line 72%→77%**(708/924)
+- **證明**:debug-CSR 介面**可達可覆蓋**(非死路)→ 先前「needs debug DV」的 backlog 已閉。
+  csr 剩殘 = ①debug DV 只 abstract-access 少數 CSR,其餘 csr_debug arm 需擴 DV 刺激(增量可補)
+  ②PMP-write body(PMP_ENTRIES=0 dead)③U-shadow/WARL 分歧。
+
+## 剩餘(backlog #3 + 合法 unreachable)
 | 模組 | line | 性質 |
 |---|---|---|
 | csr.v | 45% | Debug-DM 介面(backlog #4 需 debug DV)+ PMP-body(unreachable)+ 分歧 |

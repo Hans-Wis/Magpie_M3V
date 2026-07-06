@@ -4,3 +4,7 @@ obj_host/
 dats/
 merged.dat
 merged_all.dat
+obj_dbg_mvd/
+obj_dbg_trig/
+obj_debug/
+obj_trig/

@@ -68,7 +68,7 @@
   },
   "core.v": {
    "line": [
-    71,
+    76,
     99
    ],
    "toggle": [
@@ -90,14 +90,14 @@
   },
   "csr.v": {
    "line": [
-    62,
+    73,
     138
    ],
    "toggle": [
-    788,
+    1046,
     4758
    ],
-   "toggle_owner": "vec"
+   "toggle_owner": "host"
   },
   "div.v": {
    "line": [
@@ -105,8 +105,19 @@
     10
    ],
    "toggle": [
-    346,
+    347,
     688
+   ],
+   "toggle_owner": "host"
+  },
+  "dm.v": {
+   "line": [
+    13,
+    23
+   ],
+   "toggle": [
+    625,
+    1478
    ],
    "toggle_owner": "host"
   },
@@ -160,10 +171,10 @@
     1
    ],
    "toggle": [
-    80,
+    82,
     462
    ],
-   "toggle_owner": "tflm"
+   "toggle_owner": "host"
   },
   "lsu.v": {
    "line": [
@@ -193,7 +204,7 @@
     2
    ],
    "toggle": [
-    493,
+    494,
     606
    ],
    "toggle_owner": "host"
@@ -266,14 +277,36 @@
   },
   "rfu.v": {
    "line": [
-    4,
+    5,
     5
    ],
    "toggle": [
-    227,
+    322,
     370
    ],
-   "toggle_owner": "vec"
+   "toggle_owner": "host"
+  },
+  "tb_debug_mvd.v": {
+   "line": [
+    27,
+    27
+   ],
+   "toggle": [
+    515,
+    1630
+   ],
+   "toggle_owner": "host"
+  },
+  "tb_debug_trigger.v": {
+   "line": [
+    36,
+    36
+   ],
+   "toggle": [
+    329,
+    1312
+   ],
+   "toggle_owner": "host"
   },
   "tb_npu_lockstep.v": {
    "line": [
@@ -310,14 +343,14 @@
   },
   "trigger.v": {
    "line": [
-    10,
+    19,
     27
    ],
    "toggle": [
-    218,
+    396,
     1196
    ],
-   "toggle_owner": "vec"
+   "toggle_owner": "host"
   },
   "vexu.v": {
    "line": [
@@ -332,8 +365,8 @@
   }
  },
  "total_line": [
-  606,
-  838
+  708,
+  924
  ],
  "method": "line=union effective; toggle=max per owning DUT (vec/tflm/host)"
 }

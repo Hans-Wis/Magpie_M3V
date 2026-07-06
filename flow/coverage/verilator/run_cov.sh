@@ -41,5 +41,16 @@ for ph in phase_03_20_isacov_host:rvc_csr phase_03_21_isacov_bmu:bmu phase_03_22
   [ -f "$ROOT/flow/v2_pipeline/$d/coverage.dat" ] && cp "$ROOT/flow/v2_pipeline/$d/coverage.dat" "$DATS/host_$tag.dat"
 done
 
+# ---- 4. debug DUTs (DM abstract CSR + trigger) -> csr debug interface / trigger / dm.v ----
+SOC="$ROOT/IP/cpu_m1/soc"
+DBGSRC="$(srcs 'rfu alu idu ifu lsu csr trigger mul div forward hazard bp ras cdec vexu fexu core' $CPU) $SOC/dm.v"
+for pair in tb_debug_mvd:phase_06_00_debug_mvd:mvd tb_debug_trigger:phase_06_02_debug_trigger:trig; do
+  top="${pair%%:*}"; rest="${pair#*:}"; ph="${rest%%:*}"; tag="${rest##*:}"
+  od="$HERE/obj_dbg_$tag"
+  [ -x "$od/Vcov_$tag" ] || $VL --binary --timing -j 4 --top-module $top --timescale 1ns/1ns $COVFLAGS -I$CPU -I$SOC -Wall $WAIVERS -Wno-PROCASSINIT -Mdir "$od" -o Vcov_$tag $DBGSRC "$ROOT/flow/v2_pipeline/$ph/$top.v"
+  (cd "$ROOT/flow/v2_pipeline/$ph" && rm -f coverage.dat && "$od/Vcov_$tag" >/dev/null 2>&1)
+  [ -f "$ROOT/flow/v2_pipeline/$ph/coverage.dat" ] && cp "$ROOT/flow/v2_pipeline/$ph/coverage.dat" "$DATS/host_debug_$tag.dat"
+done
+
 # ---- combine ----
 python3 "$HERE/combine_cov.py" "$DATS" --json "$HERE/codecov_report.json"
