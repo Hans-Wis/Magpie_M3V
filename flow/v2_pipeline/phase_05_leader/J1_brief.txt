@@ -1,6 +1,6 @@
 ROLE: Codex EXECUTOR (gpt-5.5) for Magpie_M1, directed by Claude (Project Leader). Do the work, run tools, verify. Clean-room (no copying external cores). design_id=cpu_m1, RV32IMC_Zicsr_Zifencei. You MAY use Verilator + Spike (OSS). Do NOT run licensed EDA in this job.
 
-CONTEXT: 4-stage pipeline core at IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e (top for IP = cpu_m1_top.v, bare = core.v). Misalign policy = precise trap mcause 4 (load) / 6 (store), mtval=addr; a misaligned access issues NO bus request (ADR-0005). Existing lockstep harness: flow/v2_pipeline/phase_03_05_random_lockstep (tb_random_lockstep.v + random_lockstep.py vs Spike). Gates live in tests/gates/, pure pytest. platform/lib at /home/edauser/project/platform/lib (sim, spike_ref). Note: phase_03_* gates only check CACHED logs — they do NOT rebuild/re-run RTL, which let a real regression slip (misalign operator-precedence bug). 
+CONTEXT: 4-stage pipeline core at design/cpu_m1/rtl/pipeline_v2/ch2_lab08e (top for IP = cpu_m1_top.v, bare = core.v). Misalign policy = precise trap mcause 4 (load) / 6 (store), mtval=addr; a misaligned access issues NO bus request (ADR-0005). Existing lockstep harness: flow/v2_pipeline/phase_03_05_random_lockstep (tb_random_lockstep.v + random_lockstep.py vs Spike). Gates live in tests/gates/, pure pytest. platform/lib at /home/edauser/project/platform/lib (sim, spike_ref). Note: phase_03_* gates only check CACHED logs — they do NOT rebuild/re-run RTL, which let a real regression slip (misalign operator-precedence bug). 
 
 DELIVERABLE J1 — two items:
 
@@ -10,7 +10,7 @@ DELIVERABLE J1 — two items:
   - gate asserts the above from the produced log.
 
 (B) Re-validating lockstep gate (tests/gates/gate_03_08_lockstep_revalidate.py):
-  - This gate must REBUILD the RTL from IP/cpu_m1/rtl/... and RE-RUN the random Spike lockstep against the CURRENT core.v (not read a cached log). Reuse phase_03_05 harness (build with -Wno-PINMISSING; mem_stall defaults 0 for bare core). Assert per-commit match vs Spike (>=80 commits). This closes the cached-log integrity hole.
+  - This gate must REBUILD the RTL from design/cpu_m1/rtl/... and RE-RUN the random Spike lockstep against the CURRENT core.v (not read a cached log). Reuse phase_03_05 harness (build with -Wno-PINMISSING; mem_stall defaults 0 for bare core). Assert per-commit match vs Spike (>=80 commits). This closes the cached-log integrity hole.
 
 CONSTRAINTS:
 - Do NOT modify RTL semantics. Do NOT touch other gates/phases. Use explicit file paths (no git add -A).

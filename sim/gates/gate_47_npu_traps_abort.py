@@ -25,22 +25,22 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_RTL, verilator_sim  # noqa: E402
 
-RTL = [ROOT / f"IP/npu/rtl/{m}.v" for m in
+RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in
        ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine")]
 RTL += CPU_M1_RTL
-TB = [ROOT / "IP/npu/dv/tb/axi_full_rwmem.v", ROOT / "IP/npu/dv/tb/tb_npu_p05.v"]
+TB = [ROOT / "design/npu/dv/tb/axi_full_rwmem.v", ROOT / "design/npu/dv/tb/tb_npu_p05.v"]
 
 
 @pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
 def test_traps_abort_recovery(tmp_path):
     for hexf in ("trap_test.hex", "firmware.hex"):
-        assert (ROOT / "IP/npu/sw/cq_sequencer" / hexf).exists(), f"{hexf} missing"
+        assert (ROOT / "design/npu/sw/cq_sequencer" / hexf).exists(), f"{hexf} missing"
     verilator_sim(tmp_path, "tb_npu_p05", RTL + TB, "NPU_P05_PASS", extra_args=CPU_M1_ARGS)
 
 
 def test_ssot_carries_the_fault_namespace():
     import json
-    d = json.loads((ROOT / "IP/npu/schema/command_descriptor_v0_1.yaml").read_text())
+    d = json.loads((ROOT / "design/npu/schema/command_descriptor_v0_1.yaml").read_text())
     names = {e["name"]: e["value"] for e in d["err_causes"]}
     assert names.get("ABORTED") == 8 and names.get("MAT_PARAM") == 7
     assert names.get("CORE_TRAP_FLAG") == 0x80000000

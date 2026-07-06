@@ -14,11 +14,11 @@ reasoning summaries: none
 session id: 019f310a-9aa8-79c3-8fce-e9f7302d3e8d
 --------
 user
-Surgical review (no edits; numbered findings). Magpie_M3V vexu.v ADR-0055 Phase-B B2: narrowing shift vnsrl/vnsra (f6 101100/101101, .wv/.wx/.wi) reusing the vnclip wide bus minus round/clip (result = low SEW bits of vs2(2*SEW) >> d, d=b[3:0]@SEW8 / b[4:0]@SEW16; SEW32 narrowing absent=Zve32x no 64b src); and vzext/vsext.vf2/vf4 (OPMVV f6=010010, vs1[2:1]=11 vf2/10 vf4, vs1[0]=sext; vf2 needs SEW>=16, vf4 needs SEW32, vf8 illegal). Both added to known_op, grp_only_illegal (stay <=m1), and the masked vd==v0 illegal check. vnsra uses a self-determined signed wire (nsra_w). Verified: Spike lockstep zve32x 92 commits. Look for LATENT bugs the directed lockstep may miss: (1) narrowing shamt mask width per SEW correct (log2(2*SEW))? (2) vnsra arithmetic sign in BOTH g_nc8/g_nc16? (3) nc_sat set for op_nsr but only aggregated into vxsat under op_nc — confirm op_nsr can't wrongly set vxsat. (4) vext source-lane extraction (vf2 e16 reads vs2[gi*8+:8]; vf2 e32 reads [gi*16+:16]; vf4 e32 reads [gi*8+:8]) — correct low-lane packing & sign/zero extend? (5) vext legality complete (vf8 illegal, vf4@SEW16 illegal, vf2@SEW8 illegal)? (6) decode: vext OPMVV f6=010010 — any collision with existing OPMVV ops at that f6, or with future vsbc (OPIVV same f6)? (7) does vext/nsr need to be OUT of beats_op (they are — confirm they don't accidentally enter is_grp)? Read /tmp/claude-1000/-home-edauser-project-SOC-Magpie-M3V/4fbea76a-d14b-44c4-be15-55488b94edcb/scratchpad/b2_diff.txt and IP/cpu_m1/rtl/vexu.v. Report defects with line refs or say none.
+Surgical review (no edits; numbered findings). Magpie_M3V vexu.v ADR-0055 Phase-B B2: narrowing shift vnsrl/vnsra (f6 101100/101101, .wv/.wx/.wi) reusing the vnclip wide bus minus round/clip (result = low SEW bits of vs2(2*SEW) >> d, d=b[3:0]@SEW8 / b[4:0]@SEW16; SEW32 narrowing absent=Zve32x no 64b src); and vzext/vsext.vf2/vf4 (OPMVV f6=010010, vs1[2:1]=11 vf2/10 vf4, vs1[0]=sext; vf2 needs SEW>=16, vf4 needs SEW32, vf8 illegal). Both added to known_op, grp_only_illegal (stay <=m1), and the masked vd==v0 illegal check. vnsra uses a self-determined signed wire (nsra_w). Verified: Spike lockstep zve32x 92 commits. Look for LATENT bugs the directed lockstep may miss: (1) narrowing shamt mask width per SEW correct (log2(2*SEW))? (2) vnsra arithmetic sign in BOTH g_nc8/g_nc16? (3) nc_sat set for op_nsr but only aggregated into vxsat under op_nc — confirm op_nsr can't wrongly set vxsat. (4) vext source-lane extraction (vf2 e16 reads vs2[gi*8+:8]; vf2 e32 reads [gi*16+:16]; vf4 e32 reads [gi*8+:8]) — correct low-lane packing & sign/zero extend? (5) vext legality complete (vf8 illegal, vf4@SEW16 illegal, vf2@SEW8 illegal)? (6) decode: vext OPMVV f6=010010 — any collision with existing OPMVV ops at that f6, or with future vsbc (OPIVV same f6)? (7) does vext/nsr need to be OUT of beats_op (they are — confirm they don't accidentally enter is_grp)? Read /tmp/claude-1000/-home-edauser-project-SOC-Magpie-M3V/4fbea76a-d14b-44c4-be15-55488b94edcb/scratchpad/b2_diff.txt and design/cpu_m1/rtl/vexu.v. Report defects with line refs or say none.
 codex
 I’ll do this as a review only: read the provided diff and the current `vexu.v`, then trace the decode, lane extraction, shift, saturation, and grouping paths against your seven risk points.
 exec
-/bin/bash -lc "nl -ba IP/cpu_m1/rtl/vexu.v | sed -n '1,260p'" in /home/edauser/project/SOC/Magpie_M3V
+/bin/bash -lc "nl -ba design/cpu_m1/rtl/vexu.v | sed -n '1,260p'" in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
      1	// =============================================================================
      2	// vexu.v — Zve32x vector EXU, Stage 3B slice (ADR-0036). VLEN=128, ELEN=32.
@@ -284,10 +284,10 @@ exec
 exec
 /bin/bash -lc "sed -n '1,260p' /tmp/claude-1000/-home-edauser-project-SOC-Magpie-M3V/4fbea76a-d14b-44c4-be15-55488b94edcb/scratchpad/b2_diff.txt" in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
-diff --git a/IP/cpu_m1/rtl/vexu.v b/IP/cpu_m1/rtl/vexu.v
+diff --git a/design/cpu_m1/rtl/vexu.v b/design/cpu_m1/rtl/vexu.v
 index e0f4240..767bb8b 100644
---- a/IP/cpu_m1/rtl/vexu.v
-+++ b/IP/cpu_m1/rtl/vexu.v
+--- a/design/cpu_m1/rtl/vexu.v
++++ b/design/cpu_m1/rtl/vexu.v
 @@ -148,6 +148,27 @@ module vexu #(
      wire op_b1    = op_and || op_or || op_xor || op_rsub ||
                      op_sll || op_srl || op_sra;
@@ -429,7 +429,7 @@ index e0f4240..767bb8b 100644
                       op_mvsx ? res_sx :
 
 exec
-/bin/bash -lc "nl -ba IP/cpu_m1/rtl/vexu.v | sed -n '260,620p'" in /home/edauser/project/SOC/Magpie_M3V
+/bin/bash -lc "nl -ba design/cpu_m1/rtl/vexu.v | sed -n '260,620p'" in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
    260	                         (q_vstart != 32'h0) ||
    261	                         widen_illegal ||
@@ -796,7 +796,7 @@ exec
 codex
 The decode and legality pieces are in one compact area, but the datapath risk is in the generated lanes. I’m checking this against RVV element indexing rules now, especially where source EEW differs from destination SEW.
 exec
-/bin/bash -lc "nl -ba IP/cpu_m1/rtl/vexu.v | sed -n '620,940p'" in /home/edauser/project/SOC/Magpie_M3V
+/bin/bash -lc "nl -ba design/cpu_m1/rtl/vexu.v | sed -n '620,940p'" in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
    620	            // averaging: (a +/- b) >> 1 with vxrm; signed uses arithmetic shift
    621	            wire [8:0] avg_x   = avg_sub ? (avg_signed ? sxd[8:0] : uxd)
@@ -1079,7 +1079,7 @@ exec
    898	`default_nettype wire
 
 exec
-/bin/bash -lc 'rg -n "op_vext|op_nsr|vnsr|vnsra|vnsrl|vzext|vsext|101100|101101|010010|nc_sat|q_vxsat|part_sat_or|beats_op|is_grp" IP/cpu_m1/rtl/vexu.v' in /home/edauser/project/SOC/Magpie_M3V
+/bin/bash -lc 'rg -n "op_vext|op_nsr|vnsr|vnsra|vnsrl|vzext|vsext|101100|101101|010010|nc_sat|q_vxsat|part_sat_or|beats_op|is_grp" design/cpu_m1/rtl/vexu.v' in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
 38:    output wire         q_is_grp,     // S3: multi-beat register-group op (hold like vmem)
 44:    output wire         q_vxsat,      // S2: saturation occurred (active lanes)
@@ -1126,12 +1126,12 @@ exec
 878:                     op_vext ? ((vsew == 3'b001) ? res_ext16 : res_ext32) :
 
 exec
-/bin/bash -lc 'git diff -- IP/cpu_m1/rtl/vexu.v' in /home/edauser/project/SOC/Magpie_M3V
+/bin/bash -lc 'git diff -- design/cpu_m1/rtl/vexu.v' in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
-diff --git a/IP/cpu_m1/rtl/vexu.v b/IP/cpu_m1/rtl/vexu.v
+diff --git a/design/cpu_m1/rtl/vexu.v b/design/cpu_m1/rtl/vexu.v
 index e0f4240..767bb8b 100644
---- a/IP/cpu_m1/rtl/vexu.v
-+++ b/IP/cpu_m1/rtl/vexu.v
+--- a/design/cpu_m1/rtl/vexu.v
++++ b/design/cpu_m1/rtl/vexu.v
 @@ -148,6 +148,27 @@ module vexu #(
      wire op_b1    = op_and || op_or || op_xor || op_rsub ||
                      op_sll || op_srl || op_sra;
@@ -1278,7 +1278,7 @@ exec
 ./docs/adr/0049-rvv-phase-a.md
 ./docs/adr/0036-rvv-zve32x-exu.md
 ./docs/reviews/2026-07-04_gemini_backfill_and_rvv_dossier.md
-./IP/npu/sw/rvv_zve32x_smoke
+./design/npu/sw/rvv_zve32x_smoke
 ./tests/gates/gate_62_rvv_b1_intcore.py
 ./tests/gates/__pycache__/gate_57_rvv_s2_sat.cpython-311-pytest-9.0.3.pyc
 ./tests/gates/__pycache__/gate_62_rvv_b1_intcore.cpython-311-pytest-9.0.3.pyc
@@ -1659,122 +1659,122 @@ exec
    110	
 
 exec
-/bin/bash -lc 'rg -n "vlmul|vsew|vill|SEW/LMUL|mf8|vtype" IP/cpu_m1/rtl -S' in /home/edauser/project/SOC/Magpie_M3V
+/bin/bash -lc 'rg -n "vlmul|vsew|vill|SEW/LMUL|mf8|vtype" design/cpu_m1/rtl -S' in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
-IP/cpu_m1/rtl/core.v:83:    output     [31:0] rvvi_vtype,
-IP/cpu_m1/rtl/core.v:612:    reg [31:0] ex_mem_vcfg_vtype_r;
-IP/cpu_m1/rtl/core.v:714:        input [31:0] vtype;
-IP/cpu_m1/rtl/core.v:721:            sew_bits = 32'd8 << vtype[5:3];
-IP/cpu_m1/rtl/core.v:722:            base_elems = 32'd16 >> vtype[5:3]; // VLEN=128, SEW in {8,16,32}
-IP/cpu_m1/rtl/core.v:725:            if (vtype[31] || (vtype[30:8] != 23'h0) || (vtype[5:3] > 3'd2) ||
-IP/cpu_m1/rtl/core.v:726:                (vtype[2:0] == 3'b100)) begin
-IP/cpu_m1/rtl/core.v:730:            case (vtype[2:0])
-IP/cpu_m1/rtl/core.v:736:                    vlmax = base_elems >> 3;       // mf8
-IP/cpu_m1/rtl/core.v:763:    wire [31:0] rvv_cur_vtype  = (ex_mem_valid_r && ex_mem_vcfg_we_r) ? ex_mem_vcfg_vtype_r :
-IP/cpu_m1/rtl/core.v:764:                                 (ex_wb_valid_r  && ex_wb_vcfg_we_r)  ? ex_wb_vcfg_vtype_r : csr_vtype;
-IP/cpu_m1/rtl/core.v:782:    wire [31:0] rvv_req_vtype  = id_is_vsetvl   ? rs2_val :
-IP/cpu_m1/rtl/core.v:785:    wire [32:0] rvv_new_info   = rvv_vlmax_info(rvv_req_vtype);
-IP/cpu_m1/rtl/core.v:786:    wire [32:0] rvv_old_info   = rvv_vlmax_info(rvv_cur_vtype);
-IP/cpu_m1/rtl/core.v:787:    wire        rvv_new_vtype_legal = rvv_new_info[32];
-IP/cpu_m1/rtl/core.v:795:    wire        rvv_vill_next = !rvv_new_vtype_legal ||
-IP/cpu_m1/rtl/core.v:800:    wire [31:0] rvv_vl_next = rvv_vill_next ? 32'h0 : rvv_vl_next_raw;
-IP/cpu_m1/rtl/core.v:801:    wire [31:0] rvv_vtype_next = rvv_vill_next ? 32'h8000_0000 : rvv_req_vtype;
-IP/cpu_m1/rtl/core.v:907:        .q_vtype    (rvv_cur_vtype),
-IP/cpu_m1/rtl/core.v:1276:    wire [31:0] csr_vtype;
-IP/cpu_m1/rtl/core.v:1320:    reg [31:0] ex_wb_vcfg_vtype_r;
-IP/cpu_m1/rtl/core.v:1447:        .vcfg_vtype         (ex_wb_vcfg_vtype_r),
-IP/cpu_m1/rtl/core.v:1488:        .vtype_o            (csr_vtype),
-IP/cpu_m1/rtl/core.v:1515:                `CSR_VTYPE : id_csr_rdata = ex_mem_vcfg_vtype_r;
-IP/cpu_m1/rtl/core.v:1674:            ex_mem_vcfg_vtype_r      <= 32'h8000_0000;
-IP/cpu_m1/rtl/core.v:1774:            ex_mem_vcfg_vtype_r      <= rvv_vtype_next;
-IP/cpu_m1/rtl/core.v:1984:            ex_wb_vcfg_vtype_r      <= 32'h8000_0000;
-IP/cpu_m1/rtl/core.v:2084:            ex_wb_vcfg_vtype_r      <= ex_mem_vcfg_vtype_r;
-IP/cpu_m1/rtl/core.v:2398:    assign rvvi_vtype    = csr_vtype;
-IP/cpu_m1/rtl/csr.v:54:    input  [31:0]     vcfg_vtype,
-IP/cpu_m1/rtl/csr.v:119:    output [31:0]     vtype_o,
-IP/cpu_m1/rtl/csr.v:157:    reg [31:0] vtype_reg;
-IP/cpu_m1/rtl/csr.v:278:                `CSR_VTYPE   : csr_debug_read = (EN_RVV != 0) ? vtype_reg : 32'h0;
-IP/cpu_m1/rtl/csr.v:326:            `CSR_VTYPE   : csr_rdata = (EN_RVV != 0) ? vtype_reg : 32'h0;
-IP/cpu_m1/rtl/csr.v:413:                `CSR_VTYPE : csr_rdata = vcfg_vtype;
-IP/cpu_m1/rtl/csr.v:516:            vtype_reg    <= 32'h8000_0000;
-IP/cpu_m1/rtl/csr.v:649:                    `CSR_VTYPE   : if (EN_RVV != 0) vtype_reg <= debug_csr_wdata;
-IP/cpu_m1/rtl/csr.v:684:                vtype_reg  <= vcfg_vtype;
-IP/cpu_m1/rtl/csr.v:744:    assign vtype_o      = (EN_RVV != 0) ? vtype_reg : 32'h8000_0000;
-IP/cpu_m1/rtl/cpu_m1_axil_top.v:100:        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(),
-IP/cpu_m1/rtl/vexu.v:13://   vmerge.vvm/vxm/vim, vmv.x.s. LMUL: m1 + fractional (mf2/mf4/mf8-legal
-IP/cpu_m1/rtl/vexu.v:34:    input  wire [31:0]  q_vtype,     // effective (forwarded) vtype
-IP/cpu_m1/rtl/vexu.v:169:                    ((ext_vf2 && ((vsew == 3'b001) || (vsew == 3'b010))) ||
-IP/cpu_m1/rtl/vexu.v:170:                     (ext_vf4 &&  (vsew == 3'b010)));
-IP/cpu_m1/rtl/vexu.v:173:    wire        vill  = q_vtype[31];
-IP/cpu_m1/rtl/vexu.v:174:    wire [2:0]  vlmul = q_vtype[2:0];
-IP/cpu_m1/rtl/vexu.v:175:    wire [2:0]  vsew  = q_vtype[5:3];
-IP/cpu_m1/rtl/vexu.v:178:    wire lmul_m2   = (vlmul == 3'b001);
-IP/cpu_m1/rtl/vexu.v:179:    wire lmul_m4   = (vlmul == 3'b010);
-IP/cpu_m1/rtl/vexu.v:180:    wire lmul_m8   = (vlmul == 3'b011);
-IP/cpu_m1/rtl/vexu.v:182:    wire cfg_illegal = vill || lmul_m8;
-IP/cpu_m1/rtl/vexu.v:202:    wire [2:0] frac_sh  = (vlmul == 3'b111) ? 3'd1 :
-IP/cpu_m1/rtl/vexu.v:203:                          (vlmul == 3'b110) ? 3'd2 :
-IP/cpu_m1/rtl/vexu.v:204:                          (vlmul == 3'b101) ? 3'd3 : 3'd0;
-IP/cpu_m1/rtl/vexu.v:209:    wire [6:0] vlmax_el = ({2'b0, 5'd16 >> vsew} << int_sh) >> frac_sh;
-IP/cpu_m1/rtl/vexu.v:222:    wire widen_lmul_ok = (vlmul == 3'b111) || (vlmul == 3'b110) || (vlmul == 3'b101);
-IP/cpu_m1/rtl/vexu.v:224:                         (!widen_lmul_ok || (vsew == 3'b010) ||
-IP/cpu_m1/rtl/vexu.v:253:    wire nc_illegal = (op_nc || op_nsr) && (!widen_lmul_ok || (vsew == 3'b010));
-IP/cpu_m1/rtl/vexu.v:283:    wire [5:0]  nl_el     = (vsew == 3'b000) ? 6'd16 : (vsew == 3'b001) ? 6'd8 : 6'd4;
-IP/cpu_m1/rtl/vexu.v:574:        red_sum = (vsew == 3'b000) ? {24'b0, vs1_data[7:0]} :
-IP/cpu_m1/rtl/vexu.v:575:                  (vsew == 3'b001) ? {16'b0, vs1_data[15:0]} : vs1_data[31:0];
-IP/cpu_m1/rtl/vexu.v:578:                case (vsew)
-IP/cpu_m1/rtl/vexu.v:586:    wire [127:0] res_red = (vsew == 3'b000) ? {vd_old[127:8],  red_sum[7:0]} :
-IP/cpu_m1/rtl/vexu.v:587:                           (vsew == 3'b001) ? {vd_old[127:16], red_sum[15:0]} :
-IP/cpu_m1/rtl/vexu.v:590:    wire [127:0] res_sx = (vsew == 3'b000) ? {vd_old[127:8],  q_rs1[7:0]} :
-IP/cpu_m1/rtl/vexu.v:591:                          (vsew == 3'b001) ? {vd_old[127:16], q_rs1[15:0]} :
-IP/cpu_m1/rtl/vexu.v:825:    wire [127:0] res_s2 = (vsew == 3'b000) ? res_s2_8 :
-IP/cpu_m1/rtl/vexu.v:826:                          (vsew == 3'b001) ? res_s2_16 : res_s2_32;
-IP/cpu_m1/rtl/vexu.v:827:    wire [127:0] res_nc = (vsew == 3'b000) ? res_nc8 : res_nc16;
-IP/cpu_m1/rtl/vexu.v:828:    wire part_sat_or = (op_s2same && ((vsew == 3'b000) ? (|s2_sat8) :
-IP/cpu_m1/rtl/vexu.v:829:                                      (vsew == 3'b001) ? (|s2_sat16_x[7:0]) :
-IP/cpu_m1/rtl/vexu.v:831:                       (op_nc && ((vsew == 3'b000) ? (|nc_sat8) : (|nc_sat16)));
-IP/cpu_m1/rtl/vexu.v:837:                            (vsew == 3'b000) ? res8 :
-IP/cpu_m1/rtl/vexu.v:838:                            (vsew == 3'b001) ? res16 : res32;
-IP/cpu_m1/rtl/vexu.v:839:    wire [15:0] cmp_seg  = (vsew == 3'b000) ? cmp_bits8 :
-IP/cpu_m1/rtl/vexu.v:840:                           (vsew == 3'b001) ? {8'b0, cmp_bits16} :
-IP/cpu_m1/rtl/vexu.v:842:    wire [127:0] mask_nl = (vsew == 3'b000) ? 128'hFFFF :
-IP/cpu_m1/rtl/vexu.v:843:                           (vsew == 3'b001) ? 128'hFF : 128'hF;
-IP/cpu_m1/rtl/vexu.v:852:    wire [127:0] res_cmp = (vsew == 3'b000) ? {cmpd_old[127:16], cmp_bits8}  :
-IP/cpu_m1/rtl/vexu.v:853:                           (vsew == 3'b001) ? {cmpd_old[127:8],  cmp_bits16} :
-IP/cpu_m1/rtl/vexu.v:878:                     op_vext ? ((vsew == 3'b001) ? res_ext16 : res_ext32) :
-IP/cpu_m1/rtl/vexu.v:879:                     op_widen ? ((vsew == 3'b000) ? res_w8 : res_w16) :
-IP/cpu_m1/rtl/vexu.v:882:                     (vsew == 3'b000) ? res8 :
-IP/cpu_m1/rtl/vexu.v:883:                     (vsew == 3'b001) ? res16 : res32;
-IP/cpu_m1/rtl/vexu.v:892:    assign q_scalar = (vsew == 3'b000) ? {{24{e0_8[7]}},  e0_8} :
-IP/cpu_m1/rtl/vexu.v:893:                      (vsew == 3'b001) ? {{16{e0_16[15]}}, e0_16} :
-IP/cpu_m1/rtl/cpu_m1_top.v:94:    output     [31:0] rvvi_vtype,
-IP/cpu_m1/rtl/cpu_m1_top.v:248:        .rvvi_vtype         (rvvi_vtype),
+design/cpu_m1/rtl/core.v:83:    output     [31:0] rvvi_vtype,
+design/cpu_m1/rtl/core.v:612:    reg [31:0] ex_mem_vcfg_vtype_r;
+design/cpu_m1/rtl/core.v:714:        input [31:0] vtype;
+design/cpu_m1/rtl/core.v:721:            sew_bits = 32'd8 << vtype[5:3];
+design/cpu_m1/rtl/core.v:722:            base_elems = 32'd16 >> vtype[5:3]; // VLEN=128, SEW in {8,16,32}
+design/cpu_m1/rtl/core.v:725:            if (vtype[31] || (vtype[30:8] != 23'h0) || (vtype[5:3] > 3'd2) ||
+design/cpu_m1/rtl/core.v:726:                (vtype[2:0] == 3'b100)) begin
+design/cpu_m1/rtl/core.v:730:            case (vtype[2:0])
+design/cpu_m1/rtl/core.v:736:                    vlmax = base_elems >> 3;       // mf8
+design/cpu_m1/rtl/core.v:763:    wire [31:0] rvv_cur_vtype  = (ex_mem_valid_r && ex_mem_vcfg_we_r) ? ex_mem_vcfg_vtype_r :
+design/cpu_m1/rtl/core.v:764:                                 (ex_wb_valid_r  && ex_wb_vcfg_we_r)  ? ex_wb_vcfg_vtype_r : csr_vtype;
+design/cpu_m1/rtl/core.v:782:    wire [31:0] rvv_req_vtype  = id_is_vsetvl   ? rs2_val :
+design/cpu_m1/rtl/core.v:785:    wire [32:0] rvv_new_info   = rvv_vlmax_info(rvv_req_vtype);
+design/cpu_m1/rtl/core.v:786:    wire [32:0] rvv_old_info   = rvv_vlmax_info(rvv_cur_vtype);
+design/cpu_m1/rtl/core.v:787:    wire        rvv_new_vtype_legal = rvv_new_info[32];
+design/cpu_m1/rtl/core.v:795:    wire        rvv_vill_next = !rvv_new_vtype_legal ||
+design/cpu_m1/rtl/core.v:800:    wire [31:0] rvv_vl_next = rvv_vill_next ? 32'h0 : rvv_vl_next_raw;
+design/cpu_m1/rtl/core.v:801:    wire [31:0] rvv_vtype_next = rvv_vill_next ? 32'h8000_0000 : rvv_req_vtype;
+design/cpu_m1/rtl/core.v:907:        .q_vtype    (rvv_cur_vtype),
+design/cpu_m1/rtl/core.v:1276:    wire [31:0] csr_vtype;
+design/cpu_m1/rtl/core.v:1320:    reg [31:0] ex_wb_vcfg_vtype_r;
+design/cpu_m1/rtl/core.v:1447:        .vcfg_vtype         (ex_wb_vcfg_vtype_r),
+design/cpu_m1/rtl/core.v:1488:        .vtype_o            (csr_vtype),
+design/cpu_m1/rtl/core.v:1515:                `CSR_VTYPE : id_csr_rdata = ex_mem_vcfg_vtype_r;
+design/cpu_m1/rtl/core.v:1674:            ex_mem_vcfg_vtype_r      <= 32'h8000_0000;
+design/cpu_m1/rtl/core.v:1774:            ex_mem_vcfg_vtype_r      <= rvv_vtype_next;
+design/cpu_m1/rtl/core.v:1984:            ex_wb_vcfg_vtype_r      <= 32'h8000_0000;
+design/cpu_m1/rtl/core.v:2084:            ex_wb_vcfg_vtype_r      <= ex_mem_vcfg_vtype_r;
+design/cpu_m1/rtl/core.v:2398:    assign rvvi_vtype    = csr_vtype;
+design/cpu_m1/rtl/csr.v:54:    input  [31:0]     vcfg_vtype,
+design/cpu_m1/rtl/csr.v:119:    output [31:0]     vtype_o,
+design/cpu_m1/rtl/csr.v:157:    reg [31:0] vtype_reg;
+design/cpu_m1/rtl/csr.v:278:                `CSR_VTYPE   : csr_debug_read = (EN_RVV != 0) ? vtype_reg : 32'h0;
+design/cpu_m1/rtl/csr.v:326:            `CSR_VTYPE   : csr_rdata = (EN_RVV != 0) ? vtype_reg : 32'h0;
+design/cpu_m1/rtl/csr.v:413:                `CSR_VTYPE : csr_rdata = vcfg_vtype;
+design/cpu_m1/rtl/csr.v:516:            vtype_reg    <= 32'h8000_0000;
+design/cpu_m1/rtl/csr.v:649:                    `CSR_VTYPE   : if (EN_RVV != 0) vtype_reg <= debug_csr_wdata;
+design/cpu_m1/rtl/csr.v:684:                vtype_reg  <= vcfg_vtype;
+design/cpu_m1/rtl/csr.v:744:    assign vtype_o      = (EN_RVV != 0) ? vtype_reg : 32'h8000_0000;
+design/cpu_m1/rtl/cpu_m1_axil_top.v:100:        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(),
+design/cpu_m1/rtl/vexu.v:13://   vmerge.vvm/vxm/vim, vmv.x.s. LMUL: m1 + fractional (mf2/mf4/mf8-legal
+design/cpu_m1/rtl/vexu.v:34:    input  wire [31:0]  q_vtype,     // effective (forwarded) vtype
+design/cpu_m1/rtl/vexu.v:169:                    ((ext_vf2 && ((vsew == 3'b001) || (vsew == 3'b010))) ||
+design/cpu_m1/rtl/vexu.v:170:                     (ext_vf4 &&  (vsew == 3'b010)));
+design/cpu_m1/rtl/vexu.v:173:    wire        vill  = q_vtype[31];
+design/cpu_m1/rtl/vexu.v:174:    wire [2:0]  vlmul = q_vtype[2:0];
+design/cpu_m1/rtl/vexu.v:175:    wire [2:0]  vsew  = q_vtype[5:3];
+design/cpu_m1/rtl/vexu.v:178:    wire lmul_m2   = (vlmul == 3'b001);
+design/cpu_m1/rtl/vexu.v:179:    wire lmul_m4   = (vlmul == 3'b010);
+design/cpu_m1/rtl/vexu.v:180:    wire lmul_m8   = (vlmul == 3'b011);
+design/cpu_m1/rtl/vexu.v:182:    wire cfg_illegal = vill || lmul_m8;
+design/cpu_m1/rtl/vexu.v:202:    wire [2:0] frac_sh  = (vlmul == 3'b111) ? 3'd1 :
+design/cpu_m1/rtl/vexu.v:203:                          (vlmul == 3'b110) ? 3'd2 :
+design/cpu_m1/rtl/vexu.v:204:                          (vlmul == 3'b101) ? 3'd3 : 3'd0;
+design/cpu_m1/rtl/vexu.v:209:    wire [6:0] vlmax_el = ({2'b0, 5'd16 >> vsew} << int_sh) >> frac_sh;
+design/cpu_m1/rtl/vexu.v:222:    wire widen_lmul_ok = (vlmul == 3'b111) || (vlmul == 3'b110) || (vlmul == 3'b101);
+design/cpu_m1/rtl/vexu.v:224:                         (!widen_lmul_ok || (vsew == 3'b010) ||
+design/cpu_m1/rtl/vexu.v:253:    wire nc_illegal = (op_nc || op_nsr) && (!widen_lmul_ok || (vsew == 3'b010));
+design/cpu_m1/rtl/vexu.v:283:    wire [5:0]  nl_el     = (vsew == 3'b000) ? 6'd16 : (vsew == 3'b001) ? 6'd8 : 6'd4;
+design/cpu_m1/rtl/vexu.v:574:        red_sum = (vsew == 3'b000) ? {24'b0, vs1_data[7:0]} :
+design/cpu_m1/rtl/vexu.v:575:                  (vsew == 3'b001) ? {16'b0, vs1_data[15:0]} : vs1_data[31:0];
+design/cpu_m1/rtl/vexu.v:578:                case (vsew)
+design/cpu_m1/rtl/vexu.v:586:    wire [127:0] res_red = (vsew == 3'b000) ? {vd_old[127:8],  red_sum[7:0]} :
+design/cpu_m1/rtl/vexu.v:587:                           (vsew == 3'b001) ? {vd_old[127:16], red_sum[15:0]} :
+design/cpu_m1/rtl/vexu.v:590:    wire [127:0] res_sx = (vsew == 3'b000) ? {vd_old[127:8],  q_rs1[7:0]} :
+design/cpu_m1/rtl/vexu.v:591:                          (vsew == 3'b001) ? {vd_old[127:16], q_rs1[15:0]} :
+design/cpu_m1/rtl/vexu.v:825:    wire [127:0] res_s2 = (vsew == 3'b000) ? res_s2_8 :
+design/cpu_m1/rtl/vexu.v:826:                          (vsew == 3'b001) ? res_s2_16 : res_s2_32;
+design/cpu_m1/rtl/vexu.v:827:    wire [127:0] res_nc = (vsew == 3'b000) ? res_nc8 : res_nc16;
+design/cpu_m1/rtl/vexu.v:828:    wire part_sat_or = (op_s2same && ((vsew == 3'b000) ? (|s2_sat8) :
+design/cpu_m1/rtl/vexu.v:829:                                      (vsew == 3'b001) ? (|s2_sat16_x[7:0]) :
+design/cpu_m1/rtl/vexu.v:831:                       (op_nc && ((vsew == 3'b000) ? (|nc_sat8) : (|nc_sat16)));
+design/cpu_m1/rtl/vexu.v:837:                            (vsew == 3'b000) ? res8 :
+design/cpu_m1/rtl/vexu.v:838:                            (vsew == 3'b001) ? res16 : res32;
+design/cpu_m1/rtl/vexu.v:839:    wire [15:0] cmp_seg  = (vsew == 3'b000) ? cmp_bits8 :
+design/cpu_m1/rtl/vexu.v:840:                           (vsew == 3'b001) ? {8'b0, cmp_bits16} :
+design/cpu_m1/rtl/vexu.v:842:    wire [127:0] mask_nl = (vsew == 3'b000) ? 128'hFFFF :
+design/cpu_m1/rtl/vexu.v:843:                           (vsew == 3'b001) ? 128'hFF : 128'hF;
+design/cpu_m1/rtl/vexu.v:852:    wire [127:0] res_cmp = (vsew == 3'b000) ? {cmpd_old[127:16], cmp_bits8}  :
+design/cpu_m1/rtl/vexu.v:853:                           (vsew == 3'b001) ? {cmpd_old[127:8],  cmp_bits16} :
+design/cpu_m1/rtl/vexu.v:878:                     op_vext ? ((vsew == 3'b001) ? res_ext16 : res_ext32) :
+design/cpu_m1/rtl/vexu.v:879:                     op_widen ? ((vsew == 3'b000) ? res_w8 : res_w16) :
+design/cpu_m1/rtl/vexu.v:882:                     (vsew == 3'b000) ? res8 :
+design/cpu_m1/rtl/vexu.v:883:                     (vsew == 3'b001) ? res16 : res32;
+design/cpu_m1/rtl/vexu.v:892:    assign q_scalar = (vsew == 3'b000) ? {{24{e0_8[7]}},  e0_8} :
+design/cpu_m1/rtl/vexu.v:893:                      (vsew == 3'b001) ? {{16{e0_16[15]}}, e0_16} :
+design/cpu_m1/rtl/cpu_m1_top.v:94:    output     [31:0] rvvi_vtype,
+design/cpu_m1/rtl/cpu_m1_top.v:248:        .rvvi_vtype         (rvvi_vtype),
 
 exec
 /bin/bash -lc 'rg -n "vsext|vzext|vnsrl|vnsra|overlap|noover|vf8|vf4|vf2|vd == vs2|vd_i == vs2" tests flow docs IP -S' in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
 flow/state/magpie_m3v.phase2_step4_npu_core.state.json:7:  "summary": "Phase 2 Step 4 (ADR-0034): stripped cpu_m1 sequencer (EN_RVC/BP/RAS=0, RESET_PC=0) instantiated inside npu_top, fetching through real npu_tcm core ports (FETCH_SRC=TCM realized as integration wiring). CTRL.start gates core reset (Coral cg-release shape); DONE mailbox @0x0001_0000 -> STATUS.npu_done + level IRQ; TCM write arbitration dma > core > host with host B-response held until grant. Authoritative verification (Claude, not Codex self-report): boot-from-TCM via host AXI load path, busy/done/IRQ/re-run (42->55) directed; Spike rv32im_zicsr_zifencei (NO C) lockstep directed 1164/1164 commits; random 8 seeds x 10,809 commits (loop-wrapped rv32im in 4KB TCM, ebreak-only terminator, mailbox never EOF) 0 divergences; DMA burst overlapped with running core - real overlap proven on internal retire/busy signals, 256-beat region exact, core result exact, program intact; strip coverage: bp/ras/cdec zero coverage points (generate-off at elaboration), no EN_* guard line uncovered, ifu 100%. No regression in existing suite (only pre-existing M1-era artifact gate failures, verified failing at pre-change HEAD).",
-IP/cpu_m1/rtl/vexu.v:8:// half-updated architectural state (vd==vs source overlap would otherwise not
-IP/cpu_m1/rtl/vexu.v:151:    // ---------------- Phase-B B2a (ADR-0055): narrowing shift (vnsrl/vnsra) ----
-IP/cpu_m1/rtl/vexu.v:159:    // ---------------- Phase-B B2b (ADR-0055): vzext/vsext.vf2/vf4 ----------------
-IP/cpu_m1/rtl/vexu.v:161:    // vs1 selects variant: [2:1]=11 vf2 / 10 vf4 / 01 vf8; [0]=1 sign, 0 zero.
-IP/cpu_m1/rtl/vexu.v:162:    // Zve32x: no e64 source -> vf8 always illegal; vf4 needs SEW32 (src8), vf2
-IP/cpu_m1/rtl/vexu.v:165:    wire ext_vf2  = (vs1_i[2:1] == 2'b11);
-IP/cpu_m1/rtl/vexu.v:166:    wire ext_vf4  = (vs1_i[2:1] == 2'b10);
-IP/cpu_m1/rtl/vexu.v:169:                    ((ext_vf2 && ((vsew == 3'b001) || (vsew == 3'b010))) ||
-IP/cpu_m1/rtl/vexu.v:170:                     (ext_vf4 &&  (vsew == 3'b010)));
-IP/cpu_m1/rtl/vexu.v:219:    // <= 1 (single register group) => LMUL must be fractional. Overlap (match
-IP/cpu_m1/rtl/vexu.v:220:    // Spike require_noover): a widening dest may not overlap a NARROWER source;
-IP/cpu_m1/rtl/vexu.v:226:                          (op_wmul && (vd_i == vs2_i)));
-IP/cpu_m1/rtl/vexu.v:252:    // low-part destination overlap (vd == vs2) is spec-legal for narrowing.
-IP/cpu_m1/rtl/vexu.v:265:                         // write v0 (dest overlaps the mask); mask-DEST compares
-IP/cpu_m1/rtl/vexu.v:603:    wire [127:0] res_ext16, res_ext32;   // B2b vzext/vsext
-IP/cpu_m1/rtl/vexu.v:759:            wire        [15:0] nsrl_w = v >> d;            // B2a vnsrl: logical
-IP/cpu_m1/rtl/vexu.v:760:            wire signed [15:0] nsra_w = vs >>> d;          // B2a vnsra: arithmetic (self-det signed)
-IP/cpu_m1/rtl/vexu.v:802:        // ---- B2b vzext/vsext: SEW/2 (vf2) or SEW/4 (vf4) source -> SEW dest ----
-IP/cpu_m1/rtl/vexu.v:803:        for (gi = 0; gi < 8; gi = gi + 1) begin : g_ext16   // dst e16, vf2 (src 8b)
-IP/cpu_m1/rtl/vexu.v:809:        for (gi = 0; gi < 4; gi = gi + 1) begin : g_ext32   // dst e32, vf2 (src 16b) / vf4 (src 8b)
-IP/cpu_m1/rtl/vexu.v:814:            wire [31:0] e  = ext_vf4 ? e4 : e2;
+design/cpu_m1/rtl/vexu.v:8:// half-updated architectural state (vd==vs source overlap would otherwise not
+design/cpu_m1/rtl/vexu.v:151:    // ---------------- Phase-B B2a (ADR-0055): narrowing shift (vnsrl/vnsra) ----
+design/cpu_m1/rtl/vexu.v:159:    // ---------------- Phase-B B2b (ADR-0055): vzext/vsext.vf2/vf4 ----------------
+design/cpu_m1/rtl/vexu.v:161:    // vs1 selects variant: [2:1]=11 vf2 / 10 vf4 / 01 vf8; [0]=1 sign, 0 zero.
+design/cpu_m1/rtl/vexu.v:162:    // Zve32x: no e64 source -> vf8 always illegal; vf4 needs SEW32 (src8), vf2
+design/cpu_m1/rtl/vexu.v:165:    wire ext_vf2  = (vs1_i[2:1] == 2'b11);
+design/cpu_m1/rtl/vexu.v:166:    wire ext_vf4  = (vs1_i[2:1] == 2'b10);
+design/cpu_m1/rtl/vexu.v:169:                    ((ext_vf2 && ((vsew == 3'b001) || (vsew == 3'b010))) ||
+design/cpu_m1/rtl/vexu.v:170:                     (ext_vf4 &&  (vsew == 3'b010)));
+design/cpu_m1/rtl/vexu.v:219:    // <= 1 (single register group) => LMUL must be fractional. Overlap (match
+design/cpu_m1/rtl/vexu.v:220:    // Spike require_noover): a widening dest may not overlap a NARROWER source;
+design/cpu_m1/rtl/vexu.v:226:                          (op_wmul && (vd_i == vs2_i)));
+design/cpu_m1/rtl/vexu.v:252:    // low-part destination overlap (vd == vs2) is spec-legal for narrowing.
+design/cpu_m1/rtl/vexu.v:265:                         // write v0 (dest overlaps the mask); mask-DEST compares
+design/cpu_m1/rtl/vexu.v:603:    wire [127:0] res_ext16, res_ext32;   // B2b vzext/vsext
+design/cpu_m1/rtl/vexu.v:759:            wire        [15:0] nsrl_w = v >> d;            // B2a vnsrl: logical
+design/cpu_m1/rtl/vexu.v:760:            wire signed [15:0] nsra_w = vs >>> d;          // B2a vnsra: arithmetic (self-det signed)
+design/cpu_m1/rtl/vexu.v:802:        // ---- B2b vzext/vsext: SEW/2 (vf2) or SEW/4 (vf4) source -> SEW dest ----
+design/cpu_m1/rtl/vexu.v:803:        for (gi = 0; gi < 8; gi = gi + 1) begin : g_ext16   // dst e16, vf2 (src 8b)
+design/cpu_m1/rtl/vexu.v:809:        for (gi = 0; gi < 4; gi = gi + 1) begin : g_ext32   // dst e32, vf2 (src 16b) / vf4 (src 8b)
+design/cpu_m1/rtl/vexu.v:814:            wire [31:0] e  = ext_vf4 ? e4 : e2;
 tests/gates/gate_52_memory_sizing.py:12:2R budget) AND a forced host-polling overlap makes the counter fire (the
 docs/v2_pipeline_bug_taxonomy.md:9:| BUG-IRQ-0001 | CSR external IRQ pending | Phase 3.1 trap/IRQ lockstep | A one-cycle IRQ pulse overlapping trap entry can leave `ext_pending` set and cause repeated IRQ after `mret`. | Pulse-based external IRQ model uses one sticky pending bit; original lab08e `pulse > trap_enter > hold` priority preserves same-cycle pulses but can retain the current IRQ pulse through trap entry. | Local Magpie_M1 `csr.v` changed to `trap_enter > pulse > hold`; ADR-0003 records this as a local deviation. | `tests/gates/gate_03_01_trap_irq_lockstep.py`; `tests/gates/gate_03_02_irq_collision.py` | Closed for current pulse contract: single compressed IRQ path and collision contract pass. |
 tests/gates/gate_63_rvv_b2_narrow_ext.py:3:B2a narrowing shift (vnsrl/vnsra, .wv/.wx/.wi): wide 2*SEW source >> shamt -> SEW
@@ -1790,16 +1790,16 @@ tests/gates/gate_33_npu_core_arbitration.py:25:def test_dma_vs_core_arbitration_
 tests/gates/gate_43_vector_lsu_tcm.py:18:arbitration (dma > core > host) already proven under overlap by gate_33; a dedicated
 tests/gates/gate_43_vector_lsu_tcm.py:19:vector-vs-DMA overlap test is deferred to the 3D/system stage (honest note).
 docs/v2_pipeline_full_verification_report.md:233:the `ext_pending` mux. If the pulse overlapped trap entry, pending could remain
-IP/npu/dv/tb/tb_npu_core_arb.v:2:// tb_npu_core_arb.v — ADR-0034 gate_33: DMA-vs-core TCM arbitration under overlap.
-IP/npu/dv/tb/tb_npu_core_arb.v:5://   - real overlap observed (core retires instructions while the DMA engine is busy)
-IP/npu/dv/tb/tb_npu_core_arb.v:69:    reg overlap_seen;
-IP/npu/dv/tb/tb_npu_core_arb.v:127:    // overlap evidence: the core retired an instruction on a cycle the DMA engine was busy
-IP/npu/dv/tb/tb_npu_core_arb.v:129:        if (!resetn) overlap_seen <= 1'b0;
-IP/npu/dv/tb/tb_npu_core_arb.v:130:        else if (dut.dma_busy_engine && dut.u_npu_core.u_core.wb_instr_retired) overlap_seen <= 1'b1;
-IP/npu/dv/tb/tb_npu_core_arb.v:171:        chk({31'b0, overlap_seen}, 32'h1, "true_overlap_core_retire_during_dma");
-IP/npu/dv/tb/tb_npu_memsize.v:183:        // ---- S3 checker: host-only traffic = zero; forced overlap = fires ----
-IP/npu/dv/tb/tb_npu_memsize.v:196:            $display("  FAIL checker never fired under forced 3-read overlap");
-IP/npu/dv/tb/tb_npu_memsize.v:198:            $display("  checker fired %0d times under forced overlap (expected)",
+design/npu/dv/tb/tb_npu_core_arb.v:2:// tb_npu_core_arb.v — ADR-0034 gate_33: DMA-vs-core TCM arbitration under overlap.
+design/npu/dv/tb/tb_npu_core_arb.v:5://   - real overlap observed (core retires instructions while the DMA engine is busy)
+design/npu/dv/tb/tb_npu_core_arb.v:69:    reg overlap_seen;
+design/npu/dv/tb/tb_npu_core_arb.v:127:    // overlap evidence: the core retired an instruction on a cycle the DMA engine was busy
+design/npu/dv/tb/tb_npu_core_arb.v:129:        if (!resetn) overlap_seen <= 1'b0;
+design/npu/dv/tb/tb_npu_core_arb.v:130:        else if (dut.dma_busy_engine && dut.u_npu_core.u_core.wb_instr_retired) overlap_seen <= 1'b1;
+design/npu/dv/tb/tb_npu_core_arb.v:171:        chk({31'b0, overlap_seen}, 32'h1, "true_overlap_core_retire_during_dma");
+design/npu/dv/tb/tb_npu_memsize.v:183:        // ---- S3 checker: host-only traffic = zero; forced overlap = fires ----
+design/npu/dv/tb/tb_npu_memsize.v:196:            $display("  FAIL checker never fired under forced 3-read overlap");
+design/npu/dv/tb/tb_npu_memsize.v:198:            $display("  checker fired %0d times under forced overlap (expected)",
 docs/adr/0035-command-queue-ssot.md:97:3. Sequencer DMA-fetch vs core fetch arbitration on the 4KB TCM → gate_36/37 overlap stress (extends gate_33 pattern).
 docs/reviews/2026-07-05_cq_autonomous_prefetch_grok.md:29:| Step 6 only | 64 × (3 writes + mat poll) ≈ **1,500–4,000** cycles (compute-overlapped with requant CP) |
 docs/reviews/2026-07-05_cq_autonomous_prefetch_grok.md:158:| **S3** | Stage `CSR_MAT_A/B` during `mat_run` poll | **Low–medium** — hides 2 MMIO writes (~6–10 cycles) if mat_run ≫ staging | Medium: GO-while-busy ignored → must not write CTRL early; same-bank accumulate forbids overlapping OP issue | Firmware (careful) |
@@ -1838,7 +1838,7 @@ docs/adr/0055-zve32x-phase-b.md:103:- **vzext/vsext = OPMVV(f3=010),f6=010010 �
 docs/adr/0055-zve32x-phase-b.md:104:  vext vs1 uimm 編碼:vf2=00110(z)/00111(s)、vf4=00100/00101、vf8=00010/00011。vext 無 vx/vi。
 docs/adr/0055-zve32x-phase-b.md:105:- **B2 narrowing/vext 的 EMUL/overlap**:dst EMUL = src/2(narrowing)或 ×2/×4(ext);Spike
 docs/adr/0055-zve32x-phase-b.md:106:  `require_noover` 對群組映射檢查 vd 不重疊源。「≤m1」只在 net dst EMUL=1 時套,LMUL=2→1 narrowing
-IP/npu/docs/01_axi_fabric_spec.md:117:- [ ] Double-buffer ping-pong / multi-outstanding bursts (overlap fetch with compute) — throughput.
+design/npu/docs/01_axi_fabric_spec.md:117:- [ ] Double-buffer ping-pong / multi-outstanding bursts (overlap fetch with compute) — throughput.
 docs/adr/0037-matrix-engine.md:44:MAT_PARAM probe (recorded gate transition); DMA∥engine overlap = deferred scoreboard
 docs/adr/0037-matrix-engine.md:88:semantics, DMA∥engine overlap scoreboard (time-division SW contract documented),
 docs/adr/0005-mem-valid-ready-wrapper.md:105:- Single-outstanding only — no overlapped I/D latency hiding (deferred).
@@ -1846,7 +1846,7 @@ docs/adr/0036-rvv-zve32x-exu.md:87:4. Widening dest-overlap/EMUL legality (`vwmu
 docs/adr/0036-rvv-zve32x-exu.md:177:Codex 3D review: **CLEAN** (decode aliasing OPIVV/OPMVV f6=000000, widening overlap rules
 docs/adr/0052-cq-autonomous-mat-op.md:88:**掃到的次要 win**:4a(ring config 迴圈外讀)採納;4b(issue/poll overlap)、4c(硬體 command
 docs/adr/0018-cpu-subsystem-fpga-asic-variants.md:5:- Deciders: Claude (PL), 3-agent consensus (Grok strategy, Gemini overlap, Codex effort), user direction
-IP/cpu_m1/ip.json:133:          "reason": "Phase 3.1 directed trap/IRQ test found repeated IRQ after mret when a one-cycle pulse overlaps trap entry",
+design/cpu_m1/ip.json:133:          "reason": "Phase 3.1 directed trap/IRQ test found repeated IRQ after mret when a one-cycle pulse overlaps trap entry",
 docs/adr/0023-rv32a-optional.md:17:- **Reservation lifetime**: set on LR; cleared on any overlapping store (incl. AMO beat1, failed SC),
 docs/adr/0034-npu-core-tcm-integration.md:84:| `gate_33_npu_core_arbitration` | DMA write burst overlapped with running core (fetch+load/store); both complete, no X, TCM golden intact | scoreboard pass |
 docs/adr/0034-npu-core-tcm-integration.md:96:scoreboard passed with real overlap (core retired instructions while the DMA engine was busy).
@@ -2044,7 +2044,7 @@ flow/v2_pipeline/phase_22_vector_csr_lockstep/firmware_b2.S:110:    vnsrl.wv v0,
 codex
 The current directed gate only exercises non-overlap `vext` cases (`vd=v3`, `vs2=v2/v4`) and a single masked `vnsrl` illegal terminator. That leaves overlap legality as the main untested surface I can see.
 exec
-/bin/bash -lc "nl -ba IP/cpu_m1/rtl/vexu.v | sed -n '216,270p'" in /home/edauser/project/SOC/Magpie_M3V
+/bin/bash -lc "nl -ba design/cpu_m1/rtl/vexu.v | sed -n '216,270p'" in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
    216	    wire mem_illegal = !mem_enc_ok || !emul_ok || !align_ok;
    217	
@@ -2161,7 +2161,7 @@ exec
     54	        _run(tgt, bar)
 
 exec
-/bin/bash -lc "nl -ba IP/cpu_m1/rtl/vexu.v | sed -n '744,833p'" in /home/edauser/project/SOC/Magpie_M3V
+/bin/bash -lc "nl -ba design/cpu_m1/rtl/vexu.v | sed -n '744,833p'" in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
    744	        // ---- vnclip[u]: wide 2*SEW source -> SEW dest with round + clip ----
    745	        for (gi = 0; gi < 8; gi = gi + 1) begin : g_nc8
@@ -2255,7 +2255,7 @@ exec
    833	                     (is_grp ? grp_sat_q : part_sat_or);
 
 exec
-/bin/bash -lc "nl -ba IP/cpu_m1/rtl/core.v | sed -n '714,742p'" in /home/edauser/project/SOC/Magpie_M3V
+/bin/bash -lc "nl -ba design/cpu_m1/rtl/core.v | sed -n '714,742p'" in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
    714	        input [31:0] vtype;
    715	        reg          legal;
@@ -2288,7 +2288,7 @@ exec
    742	                end
 
 exec
-/bin/bash -lc "nl -ba IP/cpu_m1/rtl/core.v | sed -n '742,758p'" in /home/edauser/project/SOC/Magpie_M3V
+/bin/bash -lc "nl -ba design/cpu_m1/rtl/core.v | sed -n '742,758p'" in /home/edauser/project/SOC/Magpie_M3V
  succeeded in 0ms:
    742	                end
    743	                3'b111: begin
@@ -2345,14 +2345,14 @@ exec
 145:	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)objcopy -O verilog --verilog-data-width=4 firmware.elf firmware.hex
 
 codex
-1. [IP/cpu_m1/rtl/vexu.v:257](/home/edauser/project/SOC/Magpie_M3V/IP/cpu_m1/rtl/vexu.v:257): `op_vext` is missing the widening-style `vd == vs2` overlap illegal. The datapath extends a narrower `vs2` lane into wider `vd` lanes at [vexu.v:802](/home/edauser/project/SOC/Magpie_M3V/IP/cpu_m1/rtl/vexu.v:802), but legality only applies `widen_illegal` to `op_widen`, not `op_vext` ([vexu.v:223](/home/edauser/project/SOC/Magpie_M3V/IP/cpu_m1/rtl/vexu.v:223)). So unmasked `vzext/vsext.vf2/vf4 v2, v2` can execute instead of trapping. The directed B2 firmware uses `vd=v3, vs2=v2/v4`, so it would miss this.
+1. [design/cpu_m1/rtl/vexu.v:257](/home/edauser/project/SOC/Magpie_M3V/design/cpu_m1/rtl/vexu.v:257): `op_vext` is missing the widening-style `vd == vs2` overlap illegal. The datapath extends a narrower `vs2` lane into wider `vd` lanes at [vexu.v:802](/home/edauser/project/SOC/Magpie_M3V/design/cpu_m1/rtl/vexu.v:802), but legality only applies `widen_illegal` to `op_widen`, not `op_vext` ([vexu.v:223](/home/edauser/project/SOC/Magpie_M3V/design/cpu_m1/rtl/vexu.v:223)). So unmasked `vzext/vsext.vf2/vf4 v2, v2` can execute instead of trapping. The directed B2 firmware uses `vd=v3, vs2=v2/v4`, so it would miss this.
 
 I found no defects in the seven listed datapath/decode checks: vnsr shamt width is 4/5 bits, vnsra uses signed self-determined wires in both lanes, `op_nsr` cannot leak into `vxsat`, vext lane extraction/packing matches the scoped vf2/vf4 cases, vf8 and low-SEW variants stay illegal by `known_op`, OPMVV f6 collision is f3-gated, and neither B2 op enters `beats_op`/`is_grp`.
 
 No edits made.
 tokens used
 101,965
-1. [IP/cpu_m1/rtl/vexu.v:257](/home/edauser/project/SOC/Magpie_M3V/IP/cpu_m1/rtl/vexu.v:257): `op_vext` is missing the widening-style `vd == vs2` overlap illegal. The datapath extends a narrower `vs2` lane into wider `vd` lanes at [vexu.v:802](/home/edauser/project/SOC/Magpie_M3V/IP/cpu_m1/rtl/vexu.v:802), but legality only applies `widen_illegal` to `op_widen`, not `op_vext` ([vexu.v:223](/home/edauser/project/SOC/Magpie_M3V/IP/cpu_m1/rtl/vexu.v:223)). So unmasked `vzext/vsext.vf2/vf4 v2, v2` can execute instead of trapping. The directed B2 firmware uses `vd=v3, vs2=v2/v4`, so it would miss this.
+1. [design/cpu_m1/rtl/vexu.v:257](/home/edauser/project/SOC/Magpie_M3V/design/cpu_m1/rtl/vexu.v:257): `op_vext` is missing the widening-style `vd == vs2` overlap illegal. The datapath extends a narrower `vs2` lane into wider `vd` lanes at [vexu.v:802](/home/edauser/project/SOC/Magpie_M3V/design/cpu_m1/rtl/vexu.v:802), but legality only applies `widen_illegal` to `op_widen`, not `op_vext` ([vexu.v:223](/home/edauser/project/SOC/Magpie_M3V/design/cpu_m1/rtl/vexu.v:223)). So unmasked `vzext/vsext.vf2/vf4 v2, v2` can execute instead of trapping. The directed B2 firmware uses `vd=v3, vs2=v2/v4`, so it would miss this.
 
 I found no defects in the seven listed datapath/decode checks: vnsr shamt width is 4/5 bits, vnsra uses signed self-determined wires in both lanes, `op_nsr` cannot leak into `vxsat`, vext lane extraction/packing matches the scoped vf2/vf4 cases, vf8 and low-SEW variants stay illegal by `known_op`, OPMVV f6 collision is f3-gated, and neither B2 op enters `beats_op`/`is_grp`.
 

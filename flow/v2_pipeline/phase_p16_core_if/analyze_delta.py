@@ -36,14 +36,14 @@ P16_DEFERRED_PC_PREFIXES = {
 }
 
 STRUCTURAL = {
-    "dbg_pc[0]": "PC bit 0 is 16-bit instruction-alignment constrained; `dbg_pc = if_ex_pc` at IP/cpu_m1/rtl/core.v:1079.",
-    "i_mem_addr[0]": "All fetch address choices are based on aligned `if_pc` plus 2/4/6 or `next_pc_w`; see IP/cpu_m1/rtl/core.v:221.",
-    "if_ex_pc[0]": "IF/EX PC is latched from aligned `if_pc`; see IP/cpu_m1/rtl/core.v:291.",
-    "if_pc[0]": "`ifu` PC is RV32IMC 16-bit aligned and advances by +2/+4; see IP/cpu_m1/rtl/ifu.v:45-52.",
-    "next_pc_w[0]": "`ifu.next_pc` selects aligned redirect/prediction targets or `pc_reg + pc_inc`; see IP/cpu_m1/rtl/ifu.v:45-52.",
-    "redirect_target[0]": "JALR redirect recovery masks bit 0 with `& ~32'd1`; see IP/cpu_m1/rtl/core.v:1045.",
-    "ex_mem_pc_r[0]": "EX/MEM PC is propagated from aligned IF/EX PC; see IP/cpu_m1/rtl/core.v:780.",
-    "ex_wb_pc_r[0]": "EX/WB PC is propagated from aligned EX/MEM PC; see IP/cpu_m1/rtl/core.v:905.",
+    "dbg_pc[0]": "PC bit 0 is 16-bit instruction-alignment constrained; `dbg_pc = if_ex_pc` at design/cpu_m1/rtl/core.v:1079.",
+    "i_mem_addr[0]": "All fetch address choices are based on aligned `if_pc` plus 2/4/6 or `next_pc_w`; see design/cpu_m1/rtl/core.v:221.",
+    "if_ex_pc[0]": "IF/EX PC is latched from aligned `if_pc`; see design/cpu_m1/rtl/core.v:291.",
+    "if_pc[0]": "`ifu` PC is RV32IMC 16-bit aligned and advances by +2/+4; see design/cpu_m1/rtl/ifu.v:45-52.",
+    "next_pc_w[0]": "`ifu.next_pc` selects aligned redirect/prediction targets or `pc_reg + pc_inc`; see design/cpu_m1/rtl/ifu.v:45-52.",
+    "redirect_target[0]": "JALR redirect recovery masks bit 0 with `& ~32'd1`; see design/cpu_m1/rtl/core.v:1045.",
+    "ex_mem_pc_r[0]": "EX/MEM PC is propagated from aligned IF/EX PC; see design/cpu_m1/rtl/core.v:780.",
+    "ex_wb_pc_r[0]": "EX/WB PC is propagated from aligned EX/MEM PC; see design/cpu_m1/rtl/core.v:905.",
 }
 
 CROSS_SLICE = {

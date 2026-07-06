@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PHASE = ROOT / "flow/v2_pipeline/phase_p07_mul"
-COV = ROOT / "IP/cpu_m1/dv/cov"
+COV = ROOT / "design/cpu_m1/dv/cov"
 MODULE = "mul"
 
 import pytest
@@ -31,7 +31,7 @@ def _cm():
 
 
 def test_p04_artifacts_exist():
-    for p in ["../../../IP/cpu_m1/dv/tb/tb_mul_unit.v", "coverage/coverage.dat",
+    for p in ["../../../design/cpu_m1/dv/tb/tb_mul_unit.v", "coverage/coverage.dat",
               "coverage/coverage.info", "vcs/urgReport/mod0.html"]:
         f = (PHASE / p).resolve()
         assert f.exists() and f.stat().st_size > 0, f"missing P07 artifact: {p}"

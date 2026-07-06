@@ -57,7 +57,7 @@ publish-gate producer≠approver). Does NOT substitute for: UVM reuse, RVVI-SV i
 Imperas/Andes review, TÜV/SGS cert, dual-sign human waivers, riscv-arch-test PASS.
 
 ## 6. Immediate next (this informs the reorg already done + the WS6 closure already underway)
-- ✅ Structure reorg to independent deliverable `IP/cpu_m1/{rtl,dv,sim}` (this session) — packaging gap closed.
+- ✅ Structure reorg to independent deliverable `design/cpu_m1/{rtl,dv,sim}` (this session) — packaging gap closed.
 - ✅ V-Plan + DV signoff checklist scaffolded (honest status).
 - ▶ Finish WS6 toggle to **90%** (Grok-vetted: stimulus-first, minimal LEGIT waivers, dual-number).
 - ▶ riscvISACOV mapping + branch/expr/FSM metric (needs licensed sim) + lint 0-warn + CDC-N/A report.

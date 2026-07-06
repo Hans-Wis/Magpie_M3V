@@ -22,14 +22,14 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "IP/npu/sw/host"))
+sys.path.insert(0, str(ROOT / "design/npu/sw/host"))
 from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_RTL, verilator_sim  # noqa: E402
 from cq_host import CqFull, CqProducer  # noqa: E402
 
-RTL = [ROOT / f"IP/npu/rtl/{m}.v" for m in
+RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in
        ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine")]
 RTL += CPU_M1_RTL
-TB = [ROOT / "IP/npu/dv/tb/axi_full_rwmem.v", ROOT / "IP/npu/dv/tb/tb_npu_cq_strided.v"]
+TB = [ROOT / "design/npu/dv/tb/axi_full_rwmem.v", ROOT / "design/npu/dv/tb/tb_npu_cq_strided.v"]
 
 
 @pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
@@ -77,7 +77,7 @@ def test_fence_strictly_before_doorbell():
 
 
 def test_codec_encodes_scatter():
-    sys.path.insert(0, str(ROOT / "IP/npu/sw"))
+    sys.path.insert(0, str(ROOT / "design/npu/sw"))
     import cq_codec
     d = cq_codec.decode(cq_codec.encode(
         "MAT_STORE", dst_addr=0x80001900, src_tcm_byte=0x680,
@@ -91,7 +91,7 @@ def test_codec_encodes_scatter():
 
 
 def test_firmware_stays_below_weight_region():
-    size = ROOT / "IP/npu/sw/cq_sequencer/firmware.elf"
+    size = ROOT / "design/npu/sw/cq_sequencer/firmware.elf"
     # riscv toolchain bin: overridable for portability (public: set RISCV_TOOLCHAIN_BIN).
     # The default is this machine's conda-pkg path; a fresh checkout points it at its own.
     rvbin = os.environ.get(

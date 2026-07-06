@@ -10,7 +10,7 @@ PMP, Debug/DM/Trigger), detected by keyword on the actual RTL line. Everything e
 import sys, re, glob
 from pathlib import Path
 
-RTL = Path(__file__).resolve().parents[3] / "IP/cpu_m1/rtl"
+RTL = Path(__file__).resolve().parents[3] / "design/cpu_m1/rtl"
 OUT_FILES = {"pmp", "trigger"}                       # whole out-of-SKU modules
 OUT_KW = ("pmp", "amo", "debug", "dm_acc", "dm_halt", "dbg_", "dcsr", "dpc", "dscratch",
           "trigger", "tdata", "tselect", "tinfo", "rv32a", "lr_", "_lr_", "sc_fail", "sc_succ",

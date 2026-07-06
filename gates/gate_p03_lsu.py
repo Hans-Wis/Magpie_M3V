@@ -15,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PHASE = ROOT / "flow/v2_pipeline/phase_p03_lsu"
-COV = ROOT / "IP/cpu_m1/dv/cov"
+COV = ROOT / "design/cpu_m1/dv/cov"
 MODULE = "lsu"
 
 _needs_vcs_cov = pytest.mark.skipif(
@@ -33,7 +33,7 @@ def _cm():
 
 @_needs_vcs_cov
 def test_p03_artifacts_exist():
-    for p in ["../../../IP/cpu_m1/dv/tb/tb_lsu_unit.v", "coverage/coverage.dat",
+    for p in ["../../../design/cpu_m1/dv/tb/tb_lsu_unit.v", "coverage/coverage.dat",
               "coverage/coverage.info", "vcs/urgReport/mod0.html"]:
         f = (PHASE / p).resolve()
         assert f.exists() and f.stat().st_size > 0, f"missing P03 artifact: {p}"

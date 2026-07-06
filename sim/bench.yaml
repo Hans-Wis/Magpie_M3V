@@ -83,7 +83,7 @@ benchmarks:
     class: decoder_transformer
     rtl_e2e: false
     verify: tolerance
-    golden: IP/npu/sw/gemma (fp32 ref + int8 Tier-C GeGLU, ADR-0062)
+    golden: design/npu/sw/gemma (fp32 ref + int8 Tier-C GeGLU, ADR-0062)
     blocker: S0..S5 RTL slices not built (GeGLU Tier-C golden verified in NumPy, gate_83)
     effort: XL
     note: Gemma-3 270M decoder layer — sliced S0(GeGLU) first (F1.5)

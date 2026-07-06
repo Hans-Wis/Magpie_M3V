@@ -25,10 +25,10 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_RTL, verilator_sim  # noqa: E402
 
-RTL = [ROOT / f"IP/npu/rtl/{m}.v" for m in
+RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in
        ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine")]
 RTL += CPU_M1_RTL
-TB = [ROOT / "IP/npu/dv/tb/axi_full_rwmem.v", ROOT / "IP/npu/dv/tb/tb_npu_memsize.v"]
+TB = [ROOT / "design/npu/dv/tb/axi_full_rwmem.v", ROOT / "design/npu/dv/tb/tb_npu_memsize.v"]
 
 
 @pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
@@ -38,8 +38,8 @@ def test_sizing_isolation_and_bank_budget(tmp_path):
 
 
 def test_rtl_declares_coral_row4_sizes():
-    top = (ROOT / "IP/npu/rtl/npu_top.v").read_text()
+    top = (ROOT / "design/npu/rtl/npu_top.v").read_text()
     assert re.search(r"TCM_WORDS\s*=\s*8192", top), "DTCM must be 32KB"
     assert re.search(r"ITCM_WORDS\s*=\s*2048", top), "ITCM must be 8KB"
-    tcm = (ROOT / "IP/npu/rtl/npu_tcm.v").read_text()
+    tcm = (ROOT / "design/npu/rtl/npu_tcm.v").read_text()
     assert "bank_violations" in tcm and "npu_itcm" in tcm

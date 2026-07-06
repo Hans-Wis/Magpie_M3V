@@ -1,0 +1,13 @@
++incdir+design/cpu_m1/rtl/variants/ch2_lab08b
+design/cpu_m1/rtl/variants/ch2_lab08b/rfu.v
+design/cpu_m1/rtl/variants/ch2_lab08b/alu.v
+design/cpu_m1/rtl/variants/ch2_lab08b/idu.v
+design/cpu_m1/rtl/variants/ch2_lab08b/ifu.v
+design/cpu_m1/rtl/variants/ch2_lab08b/lsu.v
+design/cpu_m1/rtl/variants/ch2_lab08b/csr.v
+design/cpu_m1/rtl/variants/ch2_lab08b/mul.v
+design/cpu_m1/rtl/variants/ch2_lab08b/div.v
+design/cpu_m1/rtl/variants/ch2_lab08b/forward.v
+design/cpu_m1/rtl/variants/ch2_lab08b/hazard.v
+design/cpu_m1/rtl/variants/ch2_lab08b/bp.v
+design/cpu_m1/rtl/variants/ch2_lab08b/core.v

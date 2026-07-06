@@ -195,9 +195,9 @@ Input is **pre-quantized int8 hidden state** (fixture from Tier C, not live attn
 ## 5. Deliverables for S0 (first PR)
 
 1. `docs/adr/00XX-gemma3-decoder-layer0-verification.md` — this architecture, frozen Tier B YAML schema  
-2. `IP/npu/sw/gemma3/gemma3_layer0_quant.yaml` — scales, checkpoint names, gelu softfloat contract  
-3. `IP/npu/sw/gemma3/golden/gemm_geglu_s0.py` — Tier C NumPy (int GEMM via gemmlowp mirror + softfloat gelu)  
-4. `IP/npu/sw/gemma3/firmware/s0_geglu_main.c` — DMA load, 3 GEMMs, scalar-F gelu loop, Zve32x mul, dump  
+2. `design/npu/sw/gemma3/gemma3_layer0_quant.yaml` — scales, checkpoint names, gelu softfloat contract  
+3. `design/npu/sw/gemma3/golden/gemm_geglu_s0.py` — Tier C NumPy (int GEMM via gemmlowp mirror + softfloat gelu)  
+4. `design/npu/sw/gemma3/firmware/s0_geglu_main.c` — DMA load, 3 GEMMs, scalar-F gelu loop, Zve32x mul, dump  
 5. `tests/gates/gate_gemma3_s0_geglu.py` — checkpoint hex diff + Tier A bound + DTCM budget assert  
 6. Fixture: `tests/fixtures/gemma3_s0_vectors.hex` — generated from golden, committed
 

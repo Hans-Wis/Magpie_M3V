@@ -60,7 +60,7 @@ proc run_corner {corner role target_library_path} {
     puts $prov "corner=$corner"
     puts $prov "corner_role=$role"
     puts $prov "target_library_path=$target_library_path"
-    puts $prov "search_path=. ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $target_library_path]"
+    puts $prov "search_path=. ../../../design/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $target_library_path]"
     puts $prov "target_library=$target_library_path"
     puts $prov "link_library=* $target_library_path dw_foundation.sldb"
     puts $prov "synthetic_library=dw_foundation.sldb"
@@ -82,7 +82,7 @@ proc run_corner {corner role target_library_path} {
     remove_design -all
     define_design_lib WORK -path $work_dir
 
-    set_app_var search_path [list . ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $target_library_path]]
+    set_app_var search_path [list . ../../../design/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $target_library_path]]
     set_app_var target_library [list $target_library_path]
     set_app_var link_library [concat "*" [list $target_library_path] [list dw_foundation.sldb]]
     set_app_var synthetic_library [list dw_foundation.sldb]

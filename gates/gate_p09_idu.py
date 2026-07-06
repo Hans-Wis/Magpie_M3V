@@ -4,7 +4,7 @@
 each uncovered point against idu.v RTL, ruled them structural, approved waivers, accepts. Claude's RTL
 review CORRECTED Grok's charter (which assumed funct3 default coverable; it is not — funct3 is fully
 8/8 decoded). Tier-2: line 100, branch 100, expr >=95, toggle >=95 — after JUSTIFIED structural waivers
-(IP/cpu_m1/dv/cov/waivers/P09_idu.json): funct3-default unreachable, csr_zimm zero-ext, imm_u/imm_b/imm_j
+(design/cpu_m1/dv/cov/waivers/P09_idu.json): funct3-default unreachable, csr_zimm zero-ext, imm_u/imm_b/imm_j
 hardwired-0 format bits. Dual-number RAW + ADJUSTED.
 """
 import importlib.util
@@ -16,7 +16,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PHASE = ROOT / "flow/v2_pipeline/phase_p09_idu"
-COV = ROOT / "IP/cpu_m1/dv/cov"
+COV = ROOT / "design/cpu_m1/dv/cov"
 WAIVER = COV / "waivers/P09_idu.json"
 MODULE = "idu"
 
@@ -32,7 +32,7 @@ def _cm():
 
 
 def test_p09_artifacts_exist():
-    for p in ["../../../IP/cpu_m1/dv/tb/tb_idu_unit.v", "coverage/coverage.dat",
+    for p in ["../../../design/cpu_m1/dv/tb/tb_idu_unit.v", "coverage/coverage.dat",
               "coverage/coverage.info", "vcs/urgReport/mod1.html"]:
         assert (PHASE / p).resolve().exists(), f"missing P09 artifact: {p}"
 

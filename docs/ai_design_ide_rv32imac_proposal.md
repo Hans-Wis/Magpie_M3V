@@ -142,7 +142,7 @@ Magpie_M1's final customer pack should include these report sections:
 |---|---|---|
 | Architecture compatibility | Standard ISA agreement, separated from local directed tests | `flow/arch-test/*.log`, `gate_08_archtest.py` |
 | Spike lockstep | Finds the exact retiring instruction where DUT diverges | `flow/sim/*lockstep*.log`, commit trace |
-| Directed/self-check tests | Fast debug for each architecture phase | `IP/cpu_m1/dv/tests/*`, phase logs |
+| Directed/self-check tests | Fast debug for each architecture phase | `design/cpu_m1/dv/tests/*`, phase logs |
 | Google RISC-V DV random | Reaches states directed tests usually miss | `dv/riscv-dv/out`, seed archive |
 | Benchmark correctness | CoreMark CRC/Dhrystone sanity as long-running software tests | `flow/bench/coremark.log`, `flow/bench/dhrystone.log` |
 | Coverage residual analysis | Measure, find lowest module, add directed test, remeasure, then list every uncovered line below 100% with reason, reachability, closure plan or waiver; separate other reachable gaps from structural/environment-limited gaps | `flow/coverage/dashboard.html`, waiver table |
@@ -164,7 +164,7 @@ The IDE reads these Magpie_M1 artifacts:
 - `tests/gates/gate_*.py` for the gate matrix.
 - `flow/state/*.state.json` for stage state.
 - `flow/sim/**/*.log` and `flow/sim/**/*.vcd` for sim and waveform.
-- `IP/cpu_m1/rtl` for RTL/module review.
+- `design/cpu_m1/rtl` for RTL/module review.
 - `docs/*.md` and generated reports for customer review.
 
 ## Must-Have v1 Sign-off Checklist

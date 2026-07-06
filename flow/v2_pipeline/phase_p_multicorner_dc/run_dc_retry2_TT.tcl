@@ -2,7 +2,7 @@ set top_name cpu_m1_top
 set target_period_ns 1.43
 set target_library_path "/home/edauser/project/SOC/Magpie_X3/APR/ref/db/tcbn28hpcplusbwp40p140tt0p9v25c.db"
 
-set_app_var search_path [list . ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $target_library_path]]
+set_app_var search_path [list . ../../../design/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $target_library_path]]
 set_app_var target_library [list $target_library_path]
 set_app_var link_library [concat "*" [list $target_library_path] [list dw_foundation.sldb]]
 set_app_var synthetic_library [list dw_foundation.sldb]

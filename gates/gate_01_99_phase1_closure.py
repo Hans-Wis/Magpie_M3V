@@ -59,7 +59,7 @@ def _json(path: str):
 
 
 def test_phase1_gate_map_is_hierarchical_and_complete():
-    data = _json("IP/cpu_m1/ip.json")
+    data = _json("design/cpu_m1/ip.json")
     gate_map = data["gate_map"]
     for key, path in PHASE1_GATES.items():
         assert gate_map[key] == path

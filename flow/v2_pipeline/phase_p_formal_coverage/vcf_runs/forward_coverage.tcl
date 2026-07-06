@@ -1,7 +1,7 @@
 set_fml_appmode FPV
 set outdir flow/v2_pipeline/phase_p_formal_coverage
 set design forward
-read_file -top $design -format sverilog -sva -cov all -vcs {+incdir+IP/cpu_m1/rtl IP/cpu_m1/rtl/forward.v IP/cpu_m1/dv/formal/forward_assert_bind.sv}
+read_file -top $design -format sverilog -sva -cov all -vcs {+incdir+design/cpu_m1/rtl design/cpu_m1/rtl/forward.v design/cpu_m1/dv/formal/forward_assert_bind.sv}
 check_fv -block
 redirect -file $outdir/logs/forward_coverage_report_fv.txt {report_fv}
 redirect -file $outdir/logs/forward_coverage_report_fv_verbose.txt {report_fv -verbose -no_summary}

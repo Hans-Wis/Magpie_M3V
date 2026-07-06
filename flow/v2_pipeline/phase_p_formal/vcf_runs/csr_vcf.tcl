@@ -1,6 +1,6 @@
 set_fml_appmode FPV
 set design csr
-read_file -top $design -format sverilog -sva -vcs {+incdir+IP/cpu_m1/rtl IP/cpu_m1/rtl/csr.v IP/cpu_m1/dv/formal/csr_assert_bind.sv}
+read_file -top $design -format sverilog -sva -vcs {+incdir+design/cpu_m1/rtl design/cpu_m1/rtl/csr.v design/cpu_m1/dv/formal/csr_assert_bind.sv}
 create_clock clk -period 10
 create_reset resetn -value low
 sim_run -stable

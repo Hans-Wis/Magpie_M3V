@@ -24,7 +24,7 @@ RESET_PC P0 change is unrelated (all failures are VCD/stale-TB, 154 other gates 
    must be rebuilt against current RTL; every resulting divergence triaged spec/Spike-first before
    any expectation edit.
 
-## Affected phases (re-verify each, then package into IP/cpu_m1/dv/)
+## Affected phases (re-verify each, then package into design/cpu_m1/dv/)
 - phase_03_04_directed_lockstep        (mem_stall)
 - phase_03_07_muldiv_hazard            (mem_stall)
 - phase_04_01_csr_irq_coverage         (mem_stall DONE; mstatus expectation 0x80→0x1880 PENDING spec-validate)
@@ -40,7 +40,7 @@ RESET_PC P0 change is unrelated (all failures are VCD/stale-TB, 154 other gates 
 2. Triage each divergence spec/Spike-first; update expectation ONLY if independently correct; if the
    DUT is wrong, that's a real bug → ADR + fix (not a TB edit).
 3. Regenerate focused wave.vcd; gates green on CURRENT evidence.
-4. Move DV collateral (tb/Makefile/firmware) into `IP/cpu_m1/dv/` (also closes Gemini's "dv/ empty"
+4. Move DV collateral (tb/Makefile/firmware) into `design/cpu_m1/dv/` (also closes Gemini's "dv/ empty"
    packaging gap) and have the coverage gate re-simulate or check freshness (git_rev/rtl_cksum),
    not just presence — so stale evidence can't silently re-accumulate.
 

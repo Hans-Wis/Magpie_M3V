@@ -14,7 +14,7 @@ import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COV = ROOT / "IP/cpu_m1/dv/cov"
+COV = ROOT / "design/cpu_m1/dv/cov"
 
 # The reporter self-tests run on SYNTHETIC data (always available). The one test that runs on
 # REAL VCS coverage needs phase_04_0*_coverage/coverage.dat — licensed-EDA artifacts absent in a

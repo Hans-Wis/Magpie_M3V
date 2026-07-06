@@ -1,7 +1,7 @@
 set_fml_appmode FPV
 set outdir flow/v2_pipeline/phase_p_formal_coverage
 set design rfu
-read_file -top $design -format sverilog -sva -cov all -vcs {+incdir+IP/cpu_m1/rtl IP/cpu_m1/rtl/rfu.v IP/cpu_m1/dv/formal/rfu_assert_bind.sv}
+read_file -top $design -format sverilog -sva -cov all -vcs {+incdir+design/cpu_m1/rtl design/cpu_m1/rtl/rfu.v design/cpu_m1/dv/formal/rfu_assert_bind.sv}
 create_clock clk -period 10
 create_reset resetn -value low
 sim_run -stable

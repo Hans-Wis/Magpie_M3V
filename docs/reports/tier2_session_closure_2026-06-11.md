@@ -3,7 +3,7 @@
 Owner: PL (Claude) · design_id = `cpu_m1` · Authority = Spike per-commit lockstep + pytest gates
 Scope: full-Tier-2 closure campaign (customer-chosen path) against `~/project/SOC/RISCV_sign_off.html`.
 Companion docs: `tier2_acceptance_gap_and_closure.md`, `coverage_report.md`,
-`IP/cpu_m1/dv/vplan/{VPLAN,DV_SIGNOFF_CHECKLIST,FEATURE_FREEZE}.md`.
+`design/cpu_m1/dv/vplan/{VPLAN,DV_SIGNOFF_CHECKLIST,FEATURE_FREEZE}.md`.
 
 ## 1. Headline
 Started from a customer-acceptance review (Gemini+Grok) that found **NOT Tier-2 signable today** —

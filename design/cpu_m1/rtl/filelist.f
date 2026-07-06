@@ -1,0 +1,20 @@
+// cpu_m1 RTL filelist — RV32IMC_Zicsr_Zifencei (flat IP-deliverable rtl/, 2026-06-09)
++incdir+design/cpu_m1/rtl
+design/cpu_m1/rtl/def.vh
+design/cpu_m1/rtl/rfu.v
+design/cpu_m1/rtl/alu.v
+design/cpu_m1/rtl/idu.v
+design/cpu_m1/rtl/ifu.v
+design/cpu_m1/rtl/lsu.v
+design/cpu_m1/rtl/csr.v
+design/cpu_m1/rtl/trigger.v
+design/cpu_m1/rtl/mul.v
+design/cpu_m1/rtl/div.v
+design/cpu_m1/rtl/forward.v
+design/cpu_m1/rtl/hazard.v
+design/cpu_m1/rtl/bp.v
+design/cpu_m1/rtl/ras.v
+design/cpu_m1/rtl/cdec.v
+design/cpu_m1/rtl/vexu.v
+design/cpu_m1/rtl/core.v
+design/cpu_m1/rtl/cpu_m1_top.v

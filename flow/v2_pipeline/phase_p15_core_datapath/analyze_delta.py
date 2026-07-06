@@ -37,10 +37,10 @@ P15_PREFIXES = {
 }
 
 STRUCTURAL = {
-    "ex_mem_pc_plus_4_r[0]": "PC/link bit 0 is instruction-alignment constrained; `if_ex_pc_plus_4 = if_ex_pc + 2/4` at IP/cpu_m1/rtl/core.v:487 and latched at line 783.",
-    "ex_wb_pc_plus_4_r[0]": "PC/link bit 0 is instruction-alignment constrained; `if_ex_pc_plus_4 = if_ex_pc + 2/4` at IP/cpu_m1/rtl/core.v:487 and propagated at lines 908/982.",
-    "ex_mem_pc_r[0]": "Instruction PCs are aligned; IF/EX PC is latched from the fetch PC at IP/cpu_m1/rtl/core.v:291 and propagated at line 780.",
-    "ex_wb_pc_r[0]": "Instruction PCs are aligned; EX/MEM PC propagates to EX/WB at IP/cpu_m1/rtl/core.v:905.",
+    "ex_mem_pc_plus_4_r[0]": "PC/link bit 0 is instruction-alignment constrained; `if_ex_pc_plus_4 = if_ex_pc + 2/4` at design/cpu_m1/rtl/core.v:487 and latched at line 783.",
+    "ex_wb_pc_plus_4_r[0]": "PC/link bit 0 is instruction-alignment constrained; `if_ex_pc_plus_4 = if_ex_pc + 2/4` at design/cpu_m1/rtl/core.v:487 and propagated at lines 908/982.",
+    "ex_mem_pc_r[0]": "Instruction PCs are aligned; IF/EX PC is latched from the fetch PC at design/cpu_m1/rtl/core.v:291 and propagated at line 780.",
+    "ex_wb_pc_r[0]": "Instruction PCs are aligned; EX/MEM PC propagates to EX/WB at design/cpu_m1/rtl/core.v:905.",
 }
 
 CROSS_SLICE_PREFIXES = {

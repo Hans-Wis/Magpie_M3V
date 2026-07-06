@@ -3,7 +3,7 @@
 4-agent loop: Grok charter + Gemini toggle enumeration -> Codex tb_csr_unit.v + Verilator + VCS/URG
 (-cm fsm) -> Claude independently verifies waiver basis vs ras.v RTL, approves, accepts. Tier-2: line
 100, branch 100, expr >=95, toggle >=95, FSM state+arc 100 — after JUSTIFIED structural waivers
-(IP/cpu_m1/dv/cov/waivers/P12_ras.json): counter cycle/instret[27:63], mstatus/mie/mip WPRI-reserved,
+(design/cpu_m1/dv/cov/waivers/P12_ras.json): counter cycle/instret[27:63], mstatus/mie/mip WPRI-reserved,
 mtvec MODE, mepc[0] IALIGN, mstatus_mpp M-mode-forced. Dual-number RAW + ADJUSTED.
 """
 import importlib.util
@@ -15,7 +15,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PHASE = ROOT / "flow/v2_pipeline/phase_p12_ras"
-COV = ROOT / "IP/cpu_m1/dv/cov"
+COV = ROOT / "design/cpu_m1/dv/cov"
 WAIVER = COV / "waivers/P12_ras.json"
 MODULE = "ras"
 
@@ -31,7 +31,7 @@ def _cm():
 
 
 def test_p12_artifacts_exist():
-    for p in ["../../../IP/cpu_m1/dv/tb/tb_csr_unit.v", "coverage/coverage.dat",
+    for p in ["../../../design/cpu_m1/dv/tb/tb_csr_unit.v", "coverage/coverage.dat",
               "coverage/coverage.info", "vcs/urgReport/mod1.html"]:
         assert (PHASE / p).resolve().exists(), f"missing P12 artifact: {p}"
 

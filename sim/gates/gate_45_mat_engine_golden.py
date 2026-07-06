@@ -1,6 +1,6 @@
 """gate_45_mat_engine_golden — ADR-0037 4A: the matrix engine is bit-exact vs the golden.
 
-Regenerates the vectors from IP/npu/golden/mat_golden.py (whose --selftest pins the
+Regenerates the vectors from design/npu/golden/mat_golden.py (whose --selftest pins the
 gemmlowp bit-truths: SRDHM negative-halves-toward-zero, double rounding, INT32_MIN
 saturation) and runs the unit TB: 90 rescale corners + 24 random CLR→OP(rpt)→RESCALE
 sequences with all 64 output bytes compared + param-error probes (bank>=4, shift<31,
@@ -31,6 +31,6 @@ def test_mat_engine_bit_exact_vs_golden():
 
 
 def test_golden_selftest_pins_gemmlowp_truths():
-    r = subprocess.run(["python3", str(ROOT / "IP/npu/golden/mat_golden.py"), "--selftest"],
+    r = subprocess.run(["python3", str(ROOT / "design/npu/golden/mat_golden.py"), "--selftest"],
                        capture_output=True, text=True)
     assert r.returncode == 0 and "golden selftest PASS" in r.stdout

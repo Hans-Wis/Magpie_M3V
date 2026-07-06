@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "IP/npu/sw/gemma"))
+sys.path.insert(0, str(ROOT / "design/npu/sw/gemma"))
 import gemma_ref as ref  # noqa: E402
 import gemma_quant as q  # noqa: E402
 

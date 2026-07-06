@@ -13,7 +13,7 @@ Instrs: `vadc` `vsbc` `vmadc` `vmsbc` (Zve32x). ADR-0055 §6 B3.
 - **Gemini (full-context consistency)**: verdict below.
 
 ## Gemini review verdict (gemini-3.1-flash, full spec + RTL diff)
-Based on a rigorous spec-to-RTL verification of the Phase-B B3 (ADR-0055) carry/borrow implementation in `IP/cpu_m1/rtl/vexu.v`, the design is **completely clean**. 
+Based on a rigorous spec-to-RTL verification of the Phase-B B3 (ADR-0055) carry/borrow implementation in `design/cpu_m1/rtl/vexu.v`, the design is **completely clean**. 
 
 There are no encoding aliasing, legality-matrix holes, LMUL-group edge cases, or tail/mask policy gaps. Here is the architectural sign-off validation for the checklist:
 

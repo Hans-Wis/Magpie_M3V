@@ -15,12 +15,12 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SCHEMA = ROOT / "IP/npu/schema/command_descriptor_v0_1.yaml"
-GEN = ROOT / "IP/npu/schema/gen_cq_ssot.py"
+SCHEMA = ROOT / "design/npu/schema/command_descriptor_v0_1.yaml"
+GEN = ROOT / "design/npu/schema/gen_cq_ssot.py"
 ARTIFACTS = [
-    ROOT / "IP/npu/rtl/cq_defs.vh",
-    ROOT / "IP/npu/sw/include/command_descriptor.h",
-    ROOT / "IP/npu/sw/cq_codec.py",
+    ROOT / "design/npu/rtl/cq_defs.vh",
+    ROOT / "design/npu/sw/include/command_descriptor.h",
+    ROOT / "design/npu/sw/cq_codec.py",
 ]
 
 
@@ -39,10 +39,10 @@ def test_regeneration_is_byte_identical():
 
 
 def test_codec_selftest_and_rsvd_rejection():
-    r = subprocess.run([sys.executable, str(ROOT / "IP/npu/sw/cq_codec.py")],
+    r = subprocess.run([sys.executable, str(ROOT / "design/npu/sw/cq_codec.py")],
                        capture_output=True, text=True)
     assert r.returncode == 0, f"codec self-test failed:\n{r.stdout}\n{r.stderr}"
-    sys.path.insert(0, str(ROOT / "IP/npu/sw"))
+    sys.path.insert(0, str(ROOT / "design/npu/sw"))
     import importlib
     codec = importlib.import_module("cq_codec")
     words = codec.encode("MAT_FENCE")
@@ -59,9 +59,9 @@ def test_codec_selftest_and_rsvd_rejection():
 
 
 def test_frozen_v01_values_in_all_artifacts():
-    vh = (ROOT / "IP/npu/rtl/cq_defs.vh").read_text()
-    h = (ROOT / "IP/npu/sw/include/command_descriptor.h").read_text()
-    py = (ROOT / "IP/npu/sw/cq_codec.py").read_text()
+    vh = (ROOT / "design/npu/rtl/cq_defs.vh").read_text()
+    h = (ROOT / "design/npu/sw/include/command_descriptor.h").read_text()
+    py = (ROOT / "design/npu/sw/cq_codec.py").read_text()
     for text, name in ((vh, "vh"), (h, "h"), (py, "py")):
         for tok in ("MAT_LOAD_W", "MAT_RESCALE", "MAT_FENCE", "ENGINE_NOT_READY"):
             assert tok in text, f"{name} artifact lost frozen token {tok}"

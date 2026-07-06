@@ -38,8 +38,8 @@ def test_phase_05_01_filelist_top_and_library():
     filelist = _read(PHASE_DIR / "files.f")
     tcl = _read(PHASE_DIR / "run_dc.tcl")
     evidence = _read(PHASE_DIR / "library_search_evidence.txt")
-    assert "+incdir+../../../IP/cpu_m1/rtl" in filelist
-    assert "../../../IP/cpu_m1/rtl/cpu_m1_top.v" in filelist
+    assert "+incdir+../../../design/cpu_m1/rtl" in filelist
+    assert "../../../design/cpu_m1/rtl/cpu_m1_top.v" in filelist
     assert "set top_name cpu_m1_top" in tcl
     assert "compile_ultra" in tcl
     assert "tcbn28hpcplusbwp40p140tt0p9v25c.db" in tcl

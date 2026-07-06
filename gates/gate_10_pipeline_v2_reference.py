@@ -13,8 +13,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-LAB08B_RTL_DIR = ROOT / "IP/cpu_m1/rtl/variants/ch2_lab08b"
-LAB08E_RTL_DIR = ROOT / "IP/cpu_m1/rtl"
+LAB08B_RTL_DIR = ROOT / "design/cpu_m1/rtl/variants/ch2_lab08b"
+LAB08E_RTL_DIR = ROOT / "design/cpu_m1/rtl"
 
 
 RTL_FILES = [
@@ -61,21 +61,21 @@ def test_v2_reference_files_are_present():
     for name in LAB08E_EXTRA_RTL_FILES:
         assert (LAB08E_RTL_DIR / name).is_file(), name
 
-    filelist = _read("IP/cpu_m1/rtl/filelist.f")
+    filelist = _read("design/cpu_m1/rtl/filelist.f")
     for name in RTL_FILES:
-        assert f"IP/cpu_m1/rtl/{name}" in filelist
+        assert f"design/cpu_m1/rtl/{name}" in filelist
     for name in LAB08E_EXTRA_RTL_FILES:
-        assert f"IP/cpu_m1/rtl/{name}" in filelist
+        assert f"design/cpu_m1/rtl/{name}" in filelist
 
 
 def test_ip_json_records_v2_reference_variant():
-    data = json.loads(_read("IP/cpu_m1/ip.json"))
+    data = json.loads(_read("design/cpu_m1/ip.json"))
     checkpoint = data["variants"]["v2_pipeline_ch2_lab08b"]
     assert checkpoint["status"] == "roadmap-reference-integration"
     variant = data["variants"]["v2_pipeline_ch2_lab08e"]
     assert variant["status"] == "active-signoff-baseline"
     assert variant["qualification_status"] == "not-yet-qualified"
-    assert variant["local_rtl"] == "IP/cpu_m1/rtl"
+    assert variant["local_rtl"] == "design/cpu_m1/rtl"
     assert "forwarding" in variant["features"]
     assert "flush-redirect" in variant["features"]
     assert "RAS" in variant["features"]

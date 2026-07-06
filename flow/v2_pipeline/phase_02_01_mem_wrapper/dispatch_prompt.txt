@@ -1,17 +1,17 @@
 ROLE: You are Codex acting as PRODUCER/EXECUTOR for Magpie_M1 phase 2.1 (mem_wrapper). You implement + run; you do NOT self-approve (an independent gpt-5.5 review + Claude judgment follow). Clean-room: never copy external cores (CVA6/Rocket/ibex/etc). design_id=cpu_m1, RV32, XLEN=32.
 
-AUTHORITATIVE CONTRACT (do exactly this): docs/adr/0005-mem-valid-ready-wrapper.md and IP/cpu_m1/docs/spec.md "Interfaces". Read them first.
+AUTHORITATIVE CONTRACT (do exactly this): docs/adr/0005-mem-valid-ready-wrapper.md and design/cpu_m1/docs/spec.md "Interfaces". Read them first.
 
 GOAL: turn the fixed-latency core into a valid/ready CPU IP with backpressure.
 
 INPUT FILES (read only what you need):
-- RTL baseline: IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/*.v  (top=core.v; stall path: i_mem_en=!stall; lsu.v=load/store; csr.v=trap/mcause/mtval; hazard.v)
+- RTL baseline: design/cpu_m1/rtl/pipeline_v2/ch2_lab08e/*.v  (top=core.v; stall path: i_mem_en=!stall; lsu.v=load/store; csr.v=trap/mcause/mtval; hazard.v)
 - existing 1-cycle TB mem + lockstep example: flow/v2_pipeline/phase_03_05_random_lockstep/tb_random_lockstep.v
 - reuse libs: platform/lib/sim.py (Verilator lint/run), platform/lib/spike_ref.py (Spike golden), platform/lib/riscv_rand.py
 
 TASKS:
 1. Minimal core.v change: add a single global input `mem_stall`; OR it into the existing stall network so the whole pipeline freezes when asserted (i_mem_en must deassert under stall). Keep the diff minimal; do not restructure the pipeline.
-2. New IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/cpu_m1_top.v: wrap `core`, present Harvard single-outstanding ready-gated valid/ready I-bus + D-bus exactly per ADR-0005 §1. Drive core.mem_stall while any req is outstanding-not-ready. Pass dbg/commit observability through.
+2. New design/cpu_m1/rtl/pipeline_v2/ch2_lab08e/cpu_m1_top.v: wrap `core`, present Harvard single-outstanding ready-gated valid/ready I-bus + D-bus exactly per ADR-0005 §1. Drive core.mem_stall while any req is outstanding-not-ready. Pass dbg/commit observability through.
 3. Misalign = precise trap (mcause 4 load / 6 store, mtval=addr). Check if lsu already detects misalign; if yes wire it to csr trap; if not, add detection in the wrapper/core boundary so a misaligned data access traps and NO misaligned bus request is issued.
 4. Add cpu_m1_top.v to a new filelist flow/v2_pipeline/phase_02_01_mem_wrapper/files.f (reuse ch2_lab08e filelist + the new top).
 5. Write tb flow/v2_pipeline/phase_02_01_mem_wrapper/tb_mem_wrapper.v that drives valid/ready and checks the 4 gate assertions in ADR-0005 §Gate: (a) 0-wait commit trace == bare-core baseline; (b) wait-states {0,1,3,random} on I and D independently lose/dup no commit; (c) a misaligned lw/sw/lh/sh traps with correct mcause+mtval; (d) replay one existing random Spike program through cpu_m1_top with random wait states, per-commit match vs Spike (Spike must run misaligned-trap mode).

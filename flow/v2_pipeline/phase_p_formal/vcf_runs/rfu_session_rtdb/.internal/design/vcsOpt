@@ -1,1 +1,1 @@
-+incdir+IP/cpu_m1/rtl IP/cpu_m1/rtl/rfu.v IP/cpu_m1/dv/formal/rfu_assert_bind.sv
++incdir+design/cpu_m1/rtl design/cpu_m1/rtl/rfu.v design/cpu_m1/dv/formal/rfu_assert_bind.sv

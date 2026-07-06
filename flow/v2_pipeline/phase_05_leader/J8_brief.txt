@@ -6,7 +6,7 @@ RESOURCES:
 - riscv-dv (vendored): /home/edauser/project/SOC/Magpie_X6/vendored/riscv-dv
 - RV32 dv config reference: /home/edauser/project/SOC/Magpie_X3/dv/config  (and SOC/Magpie_X3/dv/AGENTS.md)
 - toolchain: riscv-none-elf-gcc (use -march=rv32imc -mabi=ilp32); spike at ~/.local/bin/spike
-- existing M1 lockstep harness to extend: flow/v2_pipeline/phase_03_05_random_lockstep (tb_random_lockstep.v + random_lockstep.py) ; RTL at IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e (top cpu_m1_top.v / bare core.v); platform/lib/spike_ref.py
+- existing M1 lockstep harness to extend: flow/v2_pipeline/phase_03_05_random_lockstep (tb_random_lockstep.v + random_lockstep.py) ; RTL at design/cpu_m1/rtl/pipeline_v2/ch2_lab08e (top cpu_m1_top.v / bare core.v); platform/lib/spike_ref.py
 - Put new work under flow/v2_pipeline/phase_03_09_riscvdv_lockstep/.
 
 DO:

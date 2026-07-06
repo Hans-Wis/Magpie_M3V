@@ -29,11 +29,11 @@ Adopt a **two-core SoC** for Magpie_M3V: **main CPU `cpu_m1` (frozen) --AXI--> N
 (cpu_m1-derived, modified)**. Loosely-coupled companion accelerator (CoralNPU SoC shape), built
 from our own scalar rather than imported.
 
-- **Main CPU = frozen M1A scalar.** `IP/cpu_m1/rtl/` stays **byte-identical** to the freeze tag; it
+- **Main CPU = frozen M1A scalar.** `design/cpu_m1/rtl/` stays **byte-identical** to the freeze tag; it
   is the control CPU that orchestrates the NPU. Re-verified as a no-regression guard, never
   re-claimed. It already exposes an **AXI4-Lite master** (`cpu_m1_axil_top.v` + `axil_bridge.v`,
   vcformal-checked) → the control plane to the NPU exists out of the box.
-- **NPU core = a COPY of the cpu_m1 scalar RTL, MODIFIED.** The copy lives under `IP/npu/` (frozen
+- **NPU core = a COPY of the cpu_m1 scalar RTL, MODIFIED.** The copy lives under `design/npu/` (frozen
   core untouched → freeze not violated) and gains: vector/GEMV/matrix EXU, local ITCM/DTCM +
   128-bit data path, an **AXI slave** (host control/CSR + local-mem window) and an **AXI master**
   (weight/activation DMA). The reused scalar spine is the NPU's control/sequencer; the ML datapath
@@ -87,7 +87,7 @@ then build RTL to that frozen contract.
 
 ## Consequences
 
-- **+** Freeze intact (host + NPU-copy both leave `IP/cpu_m1/rtl/` untouched); CoralNPU SoC shape
+- **+** Freeze intact (host + NPU-copy both leave `design/cpu_m1/rtl/` untouched); CoralNPU SoC shape
   with a **fully-owned, Spike-lockstep-able** scalar on BOTH cores (M1V's imported core cannot claim
   this); host control plane (AXI-Lite) already exists + formal-checked.
 - **+** Evidence hard-isolated from M1A/M1/M1V; M3V re-earns all gates (`gate_00_identity_m3v`).

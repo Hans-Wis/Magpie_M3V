@@ -6,7 +6,7 @@ RISCV_GCC ?= /home/edauser/miniforge3/pkgs/riscv-tools-1.0.6-0_h1234567_g56c29e0
 RISCV_OBJCOPY ?= /home/edauser/miniforge3/pkgs/riscv-tools-1.0.6-0_h1234567_g56c29e0/riscv-tools/bin/riscv64-unknown-elf-objcopy
 RISCV_OBJDUMP ?= /home/edauser/miniforge3/pkgs/riscv-tools-1.0.6-0_h1234567_g56c29e0/riscv-tools/bin/riscv64-unknown-elf-objdump
 
-RTL_DIR  = ../../../IP/cpu_m1/rtl
+RTL_DIR  = ../../../design/cpu_m1/rtl
 RTL_SRCS = $(RTL_DIR)/rfu.v $(RTL_DIR)/alu.v $(RTL_DIR)/idu.v \
            $(RTL_DIR)/ifu.v $(RTL_DIR)/lsu.v $(RTL_DIR)/csr.v \
            $(RTL_DIR)/trigger.v \

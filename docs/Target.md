@@ -30,7 +30,7 @@ Magpie-M1 計畫目標
       - active 目標是 Ch2 `lab08e` 衍生 4-stage pipeline。
       - 包含 fetch/RV32C/pre-fetch、decode、execute、memory、writeback、CSR/trap、commit trace。
       - pipeline hazard、forwarding、flush、wrong-path suppression 都是 active sign-off 必要項。
-      - pipeline target 已整合 Ch2 `lab08e` 到 `IP/cpu_m1/rtl`，目標是把 4-stage + BP + RAS + RV32C + pre-fetch 從 lab 變成實用 IP。
+      - pipeline target 已整合 Ch2 `lab08e` 到 `design/cpu_m1/rtl`，目標是把 4-stage + BP + RAS + RV32C + pre-fetch 從 lab 變成實用 IP。
       - `lab08b` 仍保留為較小 RV32IM pipeline checkpoint。
       - v2 qualification 需另跑 RV32C/pre-fetch/RAS/BP、pipeline hazard/forwarding/flush/commit arbitration、Spike lockstep、coverage、lint/PPA gates。
 
@@ -88,8 +88,8 @@ Magpie-M1 計畫目標
       - flow/state/*.state.json
       - flow/sim/**/*.log
       - flow/sim/**/*.vcd
-      - IP/cpu_m1/rtl
-      - IP/cpu_m1/docs/spec.md
+      - design/cpu_m1/rtl
+      - design/cpu_m1/docs/spec.md
       - flow/coverage
       - dv/riscv-dv/out
 

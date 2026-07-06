@@ -5,12 +5,12 @@ Date: 2026-06-11 · Owner: PL (Claude) · User directive: freeze M1, fork M1A.
 ## Freeze
 
 - **RTL is FROZEN** as of the commit this document lands on (annotated tag **`m1-rtl-freeze-v1.0`**).
-  No further edits under `IP/cpu_m1/rtl/` on this line. The 309-gate xfail-free suite, Spike-lockstep
+  No further edits under `design/cpu_m1/rtl/` on this line. The 309-gate xfail-free suite, Spike-lockstep
   evidence, and the §01 effective-coverage sign-off snapshots (toggle 92.4% / line 90.0% / branch 93.1%
   / expr 95.3%) refer to this RTL state.
 - **Still allowed on M1 after freeze**: documentation, Tier-2 sign-off packaging (SHA-locked DV
   checklist, DV-lead signature flow), evidence re-runs that do not modify RTL. Any such commit must not
-  touch `IP/cpu_m1/rtl/`.
+  touch `design/cpu_m1/rtl/`.
 - A re-open of M1 RTL (e.g. a customer bug) requires a new ADR + un-freeze declaration + full
   regression; otherwise fixes land on the M1A line.
 

@@ -52,10 +52,10 @@ def test_a2_coremark_kpi():
 
 
 def test_a2_rtl_has_bmu_and_tightened_decode():
-    assert (ROOT / "IP/cpu_m1/rtl/bmu.v").exists()
-    idu = (ROOT / "IP/cpu_m1/rtl/idu.v").read_text()
+    assert (ROOT / "design/cpu_m1/rtl/bmu.v").exists()
+    idu = (ROOT / "design/cpu_m1/rtl/idu.v").read_text()
     assert "bmu_slot_illegal" in idu and "BMU_CZEQZ" in idu
-    csr = (ROOT / "IP/cpu_m1/rtl/csr.v").read_text()
+    csr = (ROOT / "design/cpu_m1/rtl/csr.v").read_text()
     assert "(26'h1 << 1)" in csr, "misa.B not set"
-    core = (ROOT / "IP/cpu_m1/rtl/core.v").read_text()
+    core = (ROOT / "design/cpu_m1/rtl/core.v").read_text()
     assert "id_is_bmu ? bmu_result : alu_result" in core

@@ -28,7 +28,7 @@ near-term ship.** This is a fork for User confirmation (see end).
    176-green / functional-100% headline obscures it. (Gemini flagged ~67.8% toggle; actual is lower.)
 2. **DC is trial-not-signoff**: single tt corner, vectorless power, zero-wireload, **2 hold violators**
    (constraints.rpt: u_csr/cycle_cnt_reg[0]/D, primed_reg/D). Indicative, NOT production PPA.
-3. **`IP/cpu_m1/dv/` is empty** (only README) — DV collateral lives flow-internal; packaging gap.
+3. **`design/cpu_m1/dv/` is empty** (only README) — DV collateral lives flow-internal; packaging gap.
 4. **RESET_PC hardcoded**: `cpu_m1_top` boot-primes address 0 (cpu_m1_top.v:86/91); nonzero reset
    vector fetches wrong first word — a real integration bug, not cosmetic.
 5. Do NOT rename `draft`→`production` on gate count alone; do NOT pass bar B by shrinking ISA; do NOT
@@ -71,7 +71,7 @@ Gold adds riscv-arch-test/RVI compliance + assertion coverage + optional formal.
   closure to ≥85% or ADR waivers**; optional first-class retire/trap observability port (helps both
   DV-packaging and gold).
 - **P3 MVP package + handoff gate (gating)**: integration guide + datasheet + DV signoff report +
-  SDC template + move dv collateral into IP/cpu_m1/dv/; ip.json draft→qualified-mvp; non-author
+  SDC template + move dv collateral into design/cpu_m1/dv/; ip.json draft→qualified-mvp; non-author
   handoff test green.
 - **P4 Gold RTL/DV**: async MTI/MSI RTL+ADR+DV+coverage; riscv-arch-test; bar B FULL.
 - **P5 Gold signoff**: CDC/RDC, multi-corner hold-clean STA, DFT/scan, full binders; production-qualified.

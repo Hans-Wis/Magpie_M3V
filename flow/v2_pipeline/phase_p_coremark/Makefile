@@ -19,7 +19,7 @@ COMMON_FLAGS = $(OPT_FLAGS) -march=$(GCC_MARCH) -mabi=$(GCC_MABI) \
                -DMAIN_HAS_NOARGC=1 -DMEM_METHOD=MEM_STATIC \
                -DFLAGS_STR='"$(OPT_FLAGS) -march=$(GCC_MARCH) -mabi=$(GCC_MABI) -ffreestanding -nostartfiles -nostdlib -DITERATIONS=$(ITERATIONS) -DTOTAL_DATA_SIZE=2000 -DPERFORMANCE_RUN=1 -DMEM_METHOD=MEM_STATIC"'
 
-RTL_DIR  = ../../../IP/cpu_m1/rtl
+RTL_DIR  = ../../../design/cpu_m1/rtl
 RTL_SRCS = $(RTL_DIR)/rfu.v $(RTL_DIR)/alu.v $(RTL_DIR)/idu.v \
            $(RTL_DIR)/ifu.v $(RTL_DIR)/lsu.v $(RTL_DIR)/csr.v \
            $(RTL_DIR)/mul.v $(RTL_DIR)/div.v \

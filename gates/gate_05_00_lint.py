@@ -43,8 +43,8 @@ def test_phase_05_00_artifacts_exist():
 
 def test_phase_05_00_filelist_and_top():
     filelist = _read(PHASE_DIR / "files.f")
-    assert "+incdir+../../../IP/cpu_m1/rtl" in filelist
-    assert "../../../IP/cpu_m1/rtl/cpu_m1_top.v" in filelist
+    assert "+incdir+../../../design/cpu_m1/rtl" in filelist
+    assert "../../../design/cpu_m1/rtl/cpu_m1_top.v" in filelist
     tcl = _read(PHASE_DIR / "run_spyglass.tcl")
     assert "set top_name cpu_m1_top" in tcl
     assert "run_goal lint/lint_rtl" in tcl

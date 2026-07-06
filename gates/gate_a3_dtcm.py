@@ -43,11 +43,11 @@ def test_a3_dtcm_in_the_loop_lockstep():
 def test_a3_core_rtl_untouched():
     """A3 = SoC-side macro only; the core/wrapper contract RTL must have no uncommitted diff
     beyond dtcm.v itself (zero scalar regression by construction)."""
-    out = subprocess.run(["git", "diff", "--name-only", "--", "IP/cpu_m1/rtl/"],
+    out = subprocess.run(["git", "diff", "--name-only", "--", "design/cpu_m1/rtl/"],
                          capture_output=True, text=True, cwd=ROOT).stdout.strip().splitlines()
     touched = [f for f in out if not f.endswith("dtcm.v")]
     assert not touched, f"A3 must not touch core RTL: {touched}"
-    assert (ROOT / "IP/cpu_m1/rtl/dtcm.v").exists()
+    assert (ROOT / "design/cpu_m1/rtl/dtcm.v").exists()
 
 
 def test_a3_repair_disposition_honest():

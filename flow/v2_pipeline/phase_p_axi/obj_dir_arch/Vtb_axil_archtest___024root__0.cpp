@@ -903,7 +903,7 @@ void Vtb_axil_archtest___024root___nba_sequent__TOP__0(Vtb_axil_archtest___024ro
         VL_WRITEF_NX("[%0t] %%Error: core.v:156: Assertion failed in %Ntb_axil_archtest.dut.u_cpu.u_core: ADR-0016 invariant: cdec_illegal asserted but expanded=%x != 0\n",0,
                      64,VL_TIME_UNITED_Q(1),-9,vlSymsp->name(),
                      32,vlSelfRef.tb_axil_archtest__DOT__dut__DOT__u_cpu__DOT__u_core__DOT__cdec_expanded);
-        VL_STOP_MT("../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/rtl/core.v", 156, "");
+        VL_STOP_MT("../../../design/cpu_m1/rtl/../../../design/cpu_m1/rtl/core.v", 156, "");
     }
     __Vdly__tb_axil_archtest__DOT__unused_i_bvalid 
         = vlSelfRef.tb_axil_archtest__DOT__unused_i_bvalid;

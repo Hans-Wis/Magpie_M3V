@@ -90,6 +90,6 @@ python3 -m pytest tests/gates/ -q                 # 53 gates (273 pass / 1 xfail
 #   flow/v2_pipeline/phase_p_archtest | phase_p_axi | phase_p_formal | phase_p_multicorner_dc
 #   phase_05_02_clint_directed | ../fpga/pynq_z2 | phase_p_asic
 ```
-Coverage DBs, waivers (`IP/cpu_m1/dv/cov/waivers/`), ADRs (`docs/adr/0001..0019`), lockstep traces,
+Coverage DBs, waivers (`design/cpu_m1/dv/cov/waivers/`), ADRs (`docs/adr/0001..0019`), lockstep traces,
 formal results, the FPGA bitstream, and the design report (`magpie_m1_design_report.html`) are retained
 for customer audit.

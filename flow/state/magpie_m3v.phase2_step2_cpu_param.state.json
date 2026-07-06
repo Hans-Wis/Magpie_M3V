@@ -4,7 +4,7 @@
   "stage": "npu_phase2_step2_cpu_param_scaffold",
   "gate": "host-equivalence lockstep (phase_03_00/01/04/05 live re-run) + dual-config Verilator lint",
   "status": "pass",
-  "summary": "Phase 2 Step 2 (ADR-0032): parameterized cpu_m1 with EN_RVC/EN_BP/EN_RAS (host default=1). Implemented by Codex (surgical, IP/cpu_m1/rtl only), authoritatively verified by Claude: host-equivalence lockstep re-run on the MODIFIED RTL passed on Spike golden across directed(40), trap/irq(13, mepc/mcause/mstatus/mret), random(81) commits; host + stripped(EN_*=0) configs both Verilator-lint 0-error; 15/15 M3V gates green. Host behavior byte-identical (guards are (EN!=0)&&X form).",
+  "summary": "Phase 2 Step 2 (ADR-0032): parameterized cpu_m1 with EN_RVC/EN_BP/EN_RAS (host default=1). Implemented by Codex (surgical, design/cpu_m1/rtl only), authoritatively verified by Claude: host-equivalence lockstep re-run on the MODIFIED RTL passed on Spike golden across directed(40), trap/irq(13, mepc/mcause/mstatus/mret), random(81) commits; host + stripped(EN_*=0) configs both Verilator-lint 0-error; 15/15 M3V gates green. Host behavior byte-identical (guards are (EN!=0)&&X form).",
   "adr": "docs/adr/0032-cpu-param-phase2.md",
   "baseline_tag": "m3v-pre-phase2-cpu",
   "labor": "Grok=architect(ADR-0032), Codex=RTL impl, Claude=review+authoritative lockstep+committer",

@@ -6,7 +6,7 @@
   "status": "pass",
   "summary": "Phase 0 toolchain-applies proof: open RVV Zve32x toolchain (clang -march=rv32im_zve32x_zvl128b) compiles an int8 dot kernel; Spike ISS (VLEN=128) runs it, HTIF exit=240 correct. ISA/ABI/memory-map contract locked (CoralNPU parity, integer-only first; F deferred).",
   "adr": "docs/adr/0031-m3v-hybrid-npu-scope.md",
-  "contract_doc": "IP/npu/docs/00_isa_contract.md",
+  "contract_doc": "design/npu/docs/00_isa_contract.md",
   "date": "2026-07-03",
   "note": "Emitted manually for transparency/IDE discovery (platform record_step stage list does not yet include NPU IP stages). Evidence is cpu_m3v-owned; not claimable from M1A/M1/M1V."
 }

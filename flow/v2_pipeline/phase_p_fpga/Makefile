@@ -1,6 +1,6 @@
 ROOT := ../../..
-RTL_DIR := $(ROOT)/IP/cpu_m1/rtl
-SOC_DIR := $(ROOT)/IP/cpu_m1/soc
+RTL_DIR := $(ROOT)/design/cpu_m1/rtl
+SOC_DIR := $(ROOT)/design/cpu_m1/soc
 BUILD := build
 
 RISCV_GCC ?= riscv-none-elf-gcc

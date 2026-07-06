@@ -4,8 +4,8 @@ VCS ?= vcs
 URG ?= urg
 
 ROOT := ../../..
-RTL_DIR := $(ROOT)/IP/cpu_m1/rtl
-TB := $(ROOT)/IP/cpu_m1/dv/tb/tb_div_unit.v
+RTL_DIR := $(ROOT)/design/cpu_m1/rtl
+TB := $(ROOT)/design/cpu_m1/dv/tb/tb_div_unit.v
 DIV := $(RTL_DIR)/div.v
 
 VFLAGS := --binary -j 4 --coverage --coverage-line --coverage-toggle \
@@ -33,9 +33,9 @@ verilator: $(SIM_BIN)
 vcs:
 	cd vcs && $(VCS) -full64 -sverilog -timescale=1ns/1ps \
 	    -cm line+cond+fsm+tgl+branch -cm_dir simv.vdb \
-	    +incdir+../../../../IP/cpu_m1/rtl \
-	    ../../../../IP/cpu_m1/rtl/div.v \
-	    ../../../../IP/cpu_m1/dv/tb/tb_div_unit.v \
+	    +incdir+../../../../design/cpu_m1/rtl \
+	    ../../../../design/cpu_m1/rtl/div.v \
+	    ../../../../design/cpu_m1/dv/tb/tb_div_unit.v \
 	    -top tb_div_unit -o simv > ../logs/vcs_build.log 2>&1
 	cd vcs && ./simv -cm line+cond+fsm+tgl+branch -cm_dir simv.vdb > ../logs/vcs_run.log 2>&1
 	grep -q '^PASS: div unit ' logs/vcs_run.log

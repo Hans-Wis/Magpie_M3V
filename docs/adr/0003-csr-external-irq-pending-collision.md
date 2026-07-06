@@ -79,7 +79,7 @@ the Magpie_M1 wrapper contract, then re-evaluate whether CSR should implement
 
 ## References
 
-- `IP/cpu_m1/rtl/csr.v`
+- `design/cpu_m1/rtl/csr.v`
 - `~/project/lab/CPU/Ch2/lab08e/rtl/csr.v`
 - `flow/v2_pipeline/phase_03_01_trap_irq_lockstep`
 - `flow/v2_pipeline/phase_03_02_irq_collision`

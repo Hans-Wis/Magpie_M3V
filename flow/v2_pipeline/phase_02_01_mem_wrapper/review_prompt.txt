@@ -3,8 +3,8 @@ ROLE: Codex INDEPENDENT REVIEWER (read-only) for Magpie_M1 Phase 2.1 mem_wrapper
 CONTEXT: cpu_m1_top wraps the lab08e `core` with a Harvard single-outstanding ready-gated valid/ready bus, and adds a global `mem_stall` that FREEZES the pipeline during memory waits. Authority = ADR-0005 (docs/adr/0005-mem-valid-ready-wrapper.md).
 
 REVIEW THESE FILES:
-- IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/cpu_m1_top.v   (the wrapper: per-port fire/busy/rdata_q, mem_stall=(i_busy|d_busy|~primed)&resetn, boot-prime)
-- IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/core.v          (mem_stall input + freeze gating + misalign trap)
+- design/cpu_m1/rtl/pipeline_v2/ch2_lab08e/cpu_m1_top.v   (the wrapper: per-port fire/busy/rdata_q, mem_stall=(i_busy|d_busy|~primed)&resetn, boot-prime)
+- design/cpu_m1/rtl/pipeline_v2/ch2_lab08e/core.v          (mem_stall input + freeze gating + misalign trap)
 - flow/v2_pipeline/phase_02_01_mem_wrapper/tb_equiv.v  (equivalence tb: cpu_m1_top vs bare core, wait modes)
 
 FOCUS / CHECK FOR:

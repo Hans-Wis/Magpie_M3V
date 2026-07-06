@@ -2,7 +2,7 @@ set top_name cpu_m1_top
 set target_period_ns 1.43
 set target_library_path "/home/edauser/project/PDK/TSMC28/logic/tcbn28hpcplusbwp40p140_180b/AN61001_20180509/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp40p140_180a/tcbn28hpcplusbwp40p140ffg0p88v0p99vm40c.db"
 
-set_app_var search_path [list . ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $target_library_path]]
+set_app_var search_path [list . ../../../design/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $target_library_path]]
 set_app_var target_library [list $target_library_path]
 set_app_var link_library [concat "*" [list $target_library_path] [list dw_foundation.sldb]]
 set_app_var synthetic_library [list dw_foundation.sldb]

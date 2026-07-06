@@ -46,7 +46,7 @@ host-side except the SSOT encoder.
 
 ## Verification (gate_48 — authority: independent per-k TFLM reference, NumPy-free)
 
-`IP/npu/golden/tflm_fc.py` holds two independent halves: `fc_reference()` (faithful
+`design/npu/golden/tflm_fc.py` holds two independent halves: `fc_reference()` (faithful
 per-k int32-wrap TFLM kernel) and `compile_fc()` (fold + packing + SSOT descriptors).
 Six corner cases run the FULL loop on real RTL (LOAD_W DMA of a single blob:
 fold + a + b; LOADACC; k_dim reps; RESCALE; STORE writeback; IRQ|LAST), each compared

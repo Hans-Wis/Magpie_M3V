@@ -53,10 +53,10 @@ e2e bit-exact**。本 ADR = 架構確認(Grok 全文 `docs/reviews/2026-07-06_ge
 | S5 | full decoder layer | 全 | 整合 / scale handoff |
 
 ## §4 已驗證 foundation(本 ADR 落地)
-- **`IP/npu/sw/gemma/gemma_ref.py`**:fp32 Gemma-3 decoder layer(sandwich RMSNorm(1+w)
+- **`design/npu/sw/gemma/gemma_ref.py`**:fp32 Gemma-3 decoder layer(sandwich RMSNorm(1+w)
   + QK-norm + RoPE half-split + GQA nh=4/nkv=1 + causal + gelu_tanh GeGLU)。self-check:
   in[4,64]→out[4,64] finite。
-- **`IP/npu/sw/gemma/gemma_quant.py`**:Tier C int8 **S0 GeGLU** golden(2 GEMM per-channel
+- **`design/npu/sw/gemma/gemma_quant.py`**:Tier C int8 **S0 GeGLU** golden(2 GEMM per-channel
   gemmlowp + 256-entry gelu LUT + int mul-requant + down GEMM)。**Tier A 邊界:out 對 fp32
   max_abs_err=0.0125 / range 0.569 = rel 2.2%**(量化誤差有界,sanity 通過)。
 - 小代表性 config(hidden=64/head_dim=16/nh=4/nkv=1/seq=4/inter=128)——**dims 代表性,

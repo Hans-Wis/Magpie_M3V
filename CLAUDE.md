@@ -1,7 +1,7 @@
 # CLAUDE.md — `SOC/Magpie_M3V` · 自建 RV32 NPU（目標:功能取代 Google Coral NPU）
 
 > ⭐ **本 repo = Magpie_M3V**。fork 自 `m1a-rtl-freeze-v1.0`(M1A @ 51a6fe0,完整歷史,remote=parent → `~/project/SOC/Magpie_M1A`);祖系 M1 @ 4e6e1d4。
-> **design_id = `cpu_m3v` / `magpie_m3v`**(物理路徑沿用 `IP/cpu_m1/`;身分以 design_id 為準)。identity gate = `gates/gate_00_identity_m3v.py`。
+> **design_id = `cpu_m3v` / `magpie_m3v`**(物理路徑沿用 `design/cpu_m1/`;身分以 design_id 為準)。identity gate = `gates/gate_00_identity_m3v.py`。
 > **與 sibling 硬隔離**:M1V = IMPORT CoralNPU(ADR-0030);**M3V = 自建**。M1/M1A/M1V 的證據不得由本線宣稱;flow/state 從空白重新掙。
 > **框架註記**:繼承自 M1/M1A 的「AI 設計 flow / IDE 示範 / north-star」**不適用本線**(同 M1V,屬工程交付線)。舊 M1 charter 全文見 git 歷史 / parent repo。
 
@@ -22,7 +22,7 @@
 
 **兩核 SoC**:`cpu_m1`(主 host CPU）`--AXI-->` NPU domain。
 - **cpu_m1 現在是「參數化單一 spine」**(ADR-0032,取代原「凍結複製」構想):`EN_RVC/EN_BP/EN_RAS`(+ 規劃中 `FETCH_SRC=TCM`)。host = 全開;NPU = stripped run-to-completion sequencer,從 TCM 取指、驅動 RVV/矩陣。
-- **NPU domain(`IP/npu/`)**:`npu_top`(AXI4-Lite CSR@0x3000 / TCM@0x3001 / DECERR 解碼)、`npu_dma`(AXI4-full 突發)、`npu_tcm`、level IRQ。淨新 ML datapath(RVV Zve32x + GEMV/矩陣 + writeback DMA + command-queue)長在這裡。
+- **NPU domain(`design/npu/`)**:`npu_top`(AXI4-Lite CSR@0x3000 / TCM@0x3001 / DECERR 解碼)、`npu_dma`(AXI4-full 突發)、`npu_tcm`、level IRQ。淨新 ML datapath(RVV Zve32x + GEMV/矩陣 + writeback DMA + command-queue)長在這裡。
 
 **記憶體映射(以實作為準)**:NPU_CSR **0x3000_xxxx** / DTCM 32KB **0x3001_xxxx** / **ITCM 8KB 0x3002_xxxx**(ADR-0044 Harvard;鏡像載入契約)/ SHARED_MEM(權重+CQ ring)**0x8000_xxxx**。(plan HTML 早稿的 0x4000 作廢。)
 
@@ -102,8 +102,8 @@
 
 ## §6 目錄 / 工具 / 關鍵文件
 
-- `IP/cpu_m1/`(host + NPU 參數化 spine)· `IP/npu/`(NPU domain RTL/dv/docs/sw)· **`gates/`+`sim/gates/`+`dv/gates/`(gate 三分家,見規則 §4.3)**· `sim/`(系統功能驗證:models/patterns/run_bench)· `dv/`(coverage/lint/cdc)· `flow/v2_pipeline/phase_03_0*/`(可重跑 lockstep)· `flow/state/`(cpu_m3v 證據)。
-- **關鍵文件**:`docs/adr/0031`(scope)· `0032`(cpu 參數化+驗證)· `docs/reviews/2026-07-03_multiagent_review.md`(架構 review)· `docs/reviews/2026-07-03_coral_gap_review.md`(**Coral 缺漏對照**)· `IP/npu/docs/00_isa_contract.md` / `01_axi_fabric_spec.md` · **`rv32_npu_design_plan_v4.html`(v0.2,設計報告參考,User 2026-07-03)**——含 **§06 Command 編碼 Spec v0.1**(128-bit descriptor + opcode 表 MAT.CFG/LOAD_W/OP/RESCALE/STORE/ACC_CLR/FENCE + MAC 陣列/acc/執行單元數量 + L1→L5 下降對照);**§06 是 CQ/矩陣的 SSOT 設計參考**(P0②③ 缺漏的設計基準,實作時 RTL 解碼器 + IREE codegen + NumPy golden 共用同一份)。`rv32_npu_design_plan.html`(v0.1)已 superseded。**注意**:設計報告的記憶體映射(0x4000/ITCM/DTCM)與 IREE-plugin/RVVI 為藍圖;**實作真值以本 repo RTL 為準**(NPU_CSR 0x3000 / TCM 0x3001;開源 clang-RVV)。· 參考 lab `~/project/lab/CPU/Ch5_NPU`(Coral de-blackbox)。
+- `design/cpu_m1/`(host + NPU 參數化 spine)· `design/npu/`(NPU domain RTL/dv/docs/sw)· **`gates/`+`sim/gates/`+`dv/gates/`(gate 三分家,見規則 §4.3)**· `sim/`(系統功能驗證:models/patterns/run_bench)· `dv/`(coverage/lint/cdc)· `flow/v2_pipeline/phase_03_0*/`(可重跑 lockstep)· `flow/state/`(cpu_m3v 證據)。
+- **關鍵文件**:`docs/adr/0031`(scope)· `0032`(cpu 參數化+驗證)· `docs/reviews/2026-07-03_multiagent_review.md`(架構 review)· `docs/reviews/2026-07-03_coral_gap_review.md`(**Coral 缺漏對照**)· `design/npu/docs/00_isa_contract.md` / `01_axi_fabric_spec.md` · **`rv32_npu_design_plan_v4.html`(v0.2,設計報告參考,User 2026-07-03)**——含 **§06 Command 編碼 Spec v0.1**(128-bit descriptor + opcode 表 MAT.CFG/LOAD_W/OP/RESCALE/STORE/ACC_CLR/FENCE + MAC 陣列/acc/執行單元數量 + L1→L5 下降對照);**§06 是 CQ/矩陣的 SSOT 設計參考**(P0②③ 缺漏的設計基準,實作時 RTL 解碼器 + IREE codegen + NumPy golden 共用同一份)。`rv32_npu_design_plan.html`(v0.1)已 superseded。**注意**:設計報告的記憶體映射(0x4000/ITCM/DTCM)與 IREE-plugin/RVVI 為藍圖;**實作真值以本 repo RTL 為準**(NPU_CSR 0x3000 / TCM 0x3001;開源 clang-RVV)。· 參考 lab `~/project/lab/CPU/Ch5_NPU`(Coral de-blackbox)。
 - **platform/lib**(直接 import):`pipeline`(record_step/build_report)· `sim`(Verilator)· `spike_ref`(golden)· `riscv_rand`· `wave`· `parsers`。gate 取 platform/lib 慣例照 X6/M1。
 
 ---

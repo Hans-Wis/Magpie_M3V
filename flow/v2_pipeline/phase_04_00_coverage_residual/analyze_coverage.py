@@ -14,7 +14,7 @@ COV_DIR = ROOT / "flow/v2_pipeline/phase_03_06_multi_seed_coverage/coverage"
 INFO = COV_DIR / "coverage.info"
 MERGED_COVERAGE = COV_DIR / "merged_coverage.dat"
 ANNOTATED = COV_DIR / "annotated"
-RTL_DIR = ROOT / "IP/cpu_m1/rtl"
+RTL_DIR = ROOT / "design/cpu_m1/rtl"
 
 
 def _module_name(source_path: str) -> str:

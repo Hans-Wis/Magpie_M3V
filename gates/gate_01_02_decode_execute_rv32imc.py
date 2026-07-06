@@ -16,7 +16,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RTL_DIR = ROOT / "IP/cpu_m1/rtl"
+RTL_DIR = ROOT / "design/cpu_m1/rtl"
 PHASE_DIR = ROOT / "flow/v2_pipeline/phase_01_02_decode_execute_rv32imc"
 
 RTL_FILES = [

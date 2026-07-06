@@ -4,7 +4,7 @@
 (with -cm fsm) -> Claude independently verified RTL waiver basis, approved waivers, accepts. Tier-2:
 line 100, branch 100, expr >=95, toggle >=95, FSM state+arc 100 — after JUSTIFIED structural exclusions.
 
-Structural waivers (IP/cpu_m1/dv/cov/waivers/P08_div.json, approved by Claude after RTL review):
+Structural waivers (design/cpu_m1/dv/cov/waivers/P08_div.json, approved by Claude after RTL review):
 - div.v:134 `default: state<=IDLE` unreachable (state is reg[1:0], all 4 encodings used) -> line+branch.
 - md_op[2] constant 1 (divider sees only DIV-class opcodes; mul-class routed to mul.v) -> toggle.
 RAW reported alongside ADJUSTED (dual-number, never adjusted-only).
@@ -18,7 +18,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PHASE = ROOT / "flow/v2_pipeline/phase_p08_div"
-COV = ROOT / "IP/cpu_m1/dv/cov"
+COV = ROOT / "design/cpu_m1/dv/cov"
 WAIVER = COV / "waivers/P08_div.json"
 MODULE = "div"
 
@@ -35,7 +35,7 @@ def _cm():
 
 
 def test_p08_artifacts_and_waiver_exist():
-    for p in ["../../../IP/cpu_m1/dv/tb/tb_div_unit.v", "coverage/coverage.dat",
+    for p in ["../../../design/cpu_m1/dv/tb/tb_div_unit.v", "coverage/coverage.dat",
               "coverage/coverage.info", "vcs/urgReport/mod1.html"]:
         assert (PHASE / p).resolve().exists(), f"missing P08 artifact: {p}"
     assert WAIVER.exists(), "P08 div waiver file missing"

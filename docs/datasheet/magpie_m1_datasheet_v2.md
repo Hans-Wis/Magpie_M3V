@@ -159,8 +159,8 @@ constraint (soft core on a 28nm-equivalent FPGA fabric) — re-target the FPGA c
 
 ## 8. Deliverables Manifest
 
-- **RTL**: core (`IP/cpu_m1/rtl/`: core + 13 leaf/decode/stateful modules), AXI bridge
-  (`cpu_m1_axil_top`, `axil_bridge`), SoC blocks (`IP/cpu_m1/soc/`: `axil_bootrom`, `axil_dp_bram`,
+- **RTL**: core (`design/cpu_m1/rtl/`: core + 13 leaf/decode/stateful modules), AXI bridge
+  (`cpu_m1_axil_top`, `axil_bridge`), SoC blocks (`design/cpu_m1/soc/`: `axil_bootrom`, `axil_dp_bram`,
   `cpu_m1_fpga_top`), board top (`flow/fpga/pynq_z2/system_pynq_m1`).
 - **DV**: unit TBs, directed firmware, Spike-lockstep harness, riscv-dv, coverage DB, waiver JSON.
 - **Docs**: this datasheet, ADRs (`docs/adr/`), signoff evidence pack, DV-methodology brief, debug report.

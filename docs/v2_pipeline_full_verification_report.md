@@ -10,7 +10,7 @@ lint-only gate are not sufficient qualification evidence.
 
 - Active variant: `v2_pipeline_ch2_lab08e`
 - Source RTL: `~/project/lab/CPU/Ch2/lab08e/rtl`
-- Local RTL: `IP/cpu_m1/rtl`
+- Local RTL: `design/cpu_m1/rtl`
 - ISA target: `RV32IMC_Zicsr_Zifencei`
 - Microarchitecture: 4-stage pipeline + BP + RAS + RV32C + pre-fetch residue
   buffer

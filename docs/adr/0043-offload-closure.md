@@ -20,7 +20,7 @@ doorbell 前 fence hook)、flush 契約文件化(現行 DV host=TB 無快取;SoC
    權重切片的 gather 語義)。
 2. **MAT.STORE W3[31:16] = dst row stride(words,0=連續)**:scatter 寫回
    `dma_writeback(src + r·cols, dst + r·stride·4, cols)`——輸出 tile 落進更大張量的切片。
-3. **Host producer ABI(`IP/npu/sw/host/cq_host.py`)**:`CqProducer.push(descs)` 先讀
+3. **Host producer ABI(`design/npu/sw/host/cq_host.py`)**:`CqProducer.push(descs)` 先讀
    CQ_STATUS.FULL / HEAD-TAIL 空間,不足即拒絕(RING_OVERRUN 由生產者紀律防範——與
    ADR-0035 一致,device 端偵測維持 deferred);`commit()` 執行 **fence hook →(SoC:cache
    flush)→ TAIL doorbell** 順序。DV 中 fence = no-op 佔位,契約寫入 `00_isa_contract.md`。

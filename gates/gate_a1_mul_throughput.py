@@ -41,13 +41,13 @@ def test_a1_macstream_kpi():
 
 
 def test_a1_rtl_is_issue_decoupled():
-    core = (ROOT / "IP/cpu_m1/rtl/core.v").read_text()
+    core = (ROOT / "design/cpu_m1/rtl/core.v").read_text()
     assert "mul_issue = id_advance_to_ex_mem && id_is_mul" in core
     assert "ex_mem_is_mul_r" in core
     assert "!hz_operand_stall" in core, "md_start must be gated on operand_stall (ERRATA-0001 class)"
-    hazard = (ROOT / "IP/cpu_m1/rtl/hazard.v").read_text()
+    hazard = (ROOT / "design/cpu_m1/rtl/hazard.v").read_text()
     assert "operand_stall" in hazard
-    mul = (ROOT / "IP/cpu_m1/rtl/mul.v").read_text()
+    mul = (ROOT / "design/cpu_m1/rtl/mul.v").read_text()
     assert "input             issue" in mul and "output" in mul and "done" not in re.sub(r"//.*", "", mul), "mul.v must be the stateless pipelined unit (no done handshake)"
 
 

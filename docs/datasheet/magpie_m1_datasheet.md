@@ -62,7 +62,7 @@ Magpie_M1 is a compact, embedded-class RV32 CPU IP for IoT, MCU, and control SoC
 ### 2.3 Trap model
 - Exceptions: illegal instruction, ecall, ebreak, misaligned load/store (policy per ADR), interrupts per `mie`/`mip`
 - Vector: `mtvec` direct mode; `mepc`/`mcause`/`mtval` on entry; `mret` return
-- Nested traps: handler behavior per project ADR/trap spec — see `IP/cpu_m1/docs/spec.md`
+- Nested traps: handler behavior per project ADR/trap spec — see `design/cpu_m1/docs/spec.md`
 - **IRQ timing**: level/edge hookup via top-level IRQ port; precise cycle relationship `TODO` (see integration §5.3)
 
 ### 2.4 Reset architectural state
@@ -146,7 +146,7 @@ Fixed-latency backend: tie `ready`/`rvalid` per integration §5.2.
 
 Magpie_M1 does not include an internal memory map decoder — SoC must decode addresses and honor imem/dmem protocol.
 
-**Fixed-latency shim** (example): 1-cycle SRAM — assert `imem_ready`/`imem_rvalid` and `dmem_ready` with documented phase relation in `IP/cpu_m1/docs/spec.md`.
+**Fixed-latency shim** (example): 1-cycle SRAM — assert `imem_ready`/`imem_rvalid` and `dmem_ready` with documented phase relation in `design/cpu_m1/docs/spec.md`.
 
 ### 5.3 Reset sequence
 1. Assert `rst_n=0` for ≥ `TODO` cycles.
@@ -185,10 +185,10 @@ Signoff authority: **Spike per-commit lockstep** + pytest development gates + st
 
 | Category | Path / artifact |
 |---|---|
-| RTL | `IP/cpu_m1/rtl/` + `IP/cpu_m1/dv/sim/*.f` filelist |
-| IP manifest | `IP/cpu_m1/ip.json` |
-| DV | `IP/cpu_m1/dv/tb/`, `dv/fixtures/`, gate tests `tests/gates/` |
-| Documentation | `IP/cpu_m1/docs/spec.md`, `docs/adr/`, this datasheet |
+| RTL | `design/cpu_m1/rtl/` + `design/cpu_m1/dv/sim/*.f` filelist |
+| IP manifest | `design/cpu_m1/ip.json` |
+| DV | `design/cpu_m1/dv/tb/`, `dv/fixtures/`, gate tests `tests/gates/` |
+| Documentation | `design/cpu_m1/docs/spec.md`, `docs/adr/`, this datasheet |
 | Coverage | Tier-2 DB + exclusion/waiver list `TODO path` |
 | Waivers | Spyglass/coverage waivers with justification |
 | ADRs | Architecture decisions (`docs/adr/0001`–`0016` relevant set) |

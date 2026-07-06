@@ -1,30 +1,30 @@
-0 ../../../IP/cpu_m1/rtl/def.vh
-1 ../../../IP/cpu_m1/rtl/rfu.v
-    2 ../../../IP/cpu_m1/rtl/def.vh
-3 ../../../IP/cpu_m1/rtl/alu.v
-    4 ../../../IP/cpu_m1/rtl/def.vh
-5 ../../../IP/cpu_m1/rtl/idu.v
-    6 ../../../IP/cpu_m1/rtl/def.vh
-7 ../../../IP/cpu_m1/rtl/ifu.v
-    8 ../../../IP/cpu_m1/rtl/def.vh
-9 ../../../IP/cpu_m1/rtl/lsu.v
-    10 ../../../IP/cpu_m1/rtl/def.vh
-11 ../../../IP/cpu_m1/rtl/csr.v
-    12 ../../../IP/cpu_m1/rtl/def.vh
-13 ../../../IP/cpu_m1/rtl/mul.v
-    14 ../../../IP/cpu_m1/rtl/def.vh
-15 ../../../IP/cpu_m1/rtl/div.v
-    16 ../../../IP/cpu_m1/rtl/def.vh
-17 ../../../IP/cpu_m1/rtl/forward.v
-    18 ../../../IP/cpu_m1/rtl/def.vh
-19 ../../../IP/cpu_m1/rtl/hazard.v
-    20 ../../../IP/cpu_m1/rtl/def.vh
-21 ../../../IP/cpu_m1/rtl/bp.v
-    22 ../../../IP/cpu_m1/rtl/def.vh
-23 ../../../IP/cpu_m1/rtl/ras.v
-    24 ../../../IP/cpu_m1/rtl/def.vh
-25 ../../../IP/cpu_m1/rtl/cdec.v
-    26 ../../../IP/cpu_m1/rtl/def.vh
-27 ../../../IP/cpu_m1/rtl/core.v
-    28 ../../../IP/cpu_m1/rtl/def.vh
-29 ../../../IP/cpu_m1/rtl/cpu_m1_top.v
+0 ../../../design/cpu_m1/rtl/def.vh
+1 ../../../design/cpu_m1/rtl/rfu.v
+    2 ../../../design/cpu_m1/rtl/def.vh
+3 ../../../design/cpu_m1/rtl/alu.v
+    4 ../../../design/cpu_m1/rtl/def.vh
+5 ../../../design/cpu_m1/rtl/idu.v
+    6 ../../../design/cpu_m1/rtl/def.vh
+7 ../../../design/cpu_m1/rtl/ifu.v
+    8 ../../../design/cpu_m1/rtl/def.vh
+9 ../../../design/cpu_m1/rtl/lsu.v
+    10 ../../../design/cpu_m1/rtl/def.vh
+11 ../../../design/cpu_m1/rtl/csr.v
+    12 ../../../design/cpu_m1/rtl/def.vh
+13 ../../../design/cpu_m1/rtl/mul.v
+    14 ../../../design/cpu_m1/rtl/def.vh
+15 ../../../design/cpu_m1/rtl/div.v
+    16 ../../../design/cpu_m1/rtl/def.vh
+17 ../../../design/cpu_m1/rtl/forward.v
+    18 ../../../design/cpu_m1/rtl/def.vh
+19 ../../../design/cpu_m1/rtl/hazard.v
+    20 ../../../design/cpu_m1/rtl/def.vh
+21 ../../../design/cpu_m1/rtl/bp.v
+    22 ../../../design/cpu_m1/rtl/def.vh
+23 ../../../design/cpu_m1/rtl/ras.v
+    24 ../../../design/cpu_m1/rtl/def.vh
+25 ../../../design/cpu_m1/rtl/cdec.v
+    26 ../../../design/cpu_m1/rtl/def.vh
+27 ../../../design/cpu_m1/rtl/core.v
+    28 ../../../design/cpu_m1/rtl/def.vh
+29 ../../../design/cpu_m1/rtl/cpu_m1_top.v

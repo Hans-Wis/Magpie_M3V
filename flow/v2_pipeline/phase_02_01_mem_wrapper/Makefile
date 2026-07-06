@@ -7,7 +7,7 @@ VERILATOR ?= /home/edauser/miniforge3/envs/magpie_claude/bin/verilator
 GCC_MARCH = rv32imc_zicsr_zifencei
 GCC_MABI  = ilp32
 
-RTL_DIR   = ../../../IP/cpu_m1/rtl
+RTL_DIR   = ../../../design/cpu_m1/rtl
 RTL_SRCS  = $(shell cat files.f)
 TB_RTL    = tb_mem_wrapper.v
 

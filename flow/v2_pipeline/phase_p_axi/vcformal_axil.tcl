@@ -1,6 +1,6 @@
 set_fml_appmode FPV
 read_file -top axil_bridge_formal -format sverilog -sva {
-  ../../../IP/cpu_m1/rtl/axil_bridge.v
+  ../../../design/cpu_m1/rtl/axil_bridge.v
   axil_bridge_formal.sv
 }
 create_clock clk -period 10

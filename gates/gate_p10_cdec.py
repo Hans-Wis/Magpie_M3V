@@ -2,7 +2,7 @@
 
 4-agent loop: Grok charter -> Codex tb_cdec_unit.v + Verilator + VCS/URG -> Claude independently verified
 each uncovered point against cdec.v RTL, approved structural waivers, accepts. Tier-2: line 100, branch
-100, expr >=95, toggle >=95 — after JUSTIFIED structural waivers (IP/cpu_m1/dv/cov/waivers/P10_cdec.json):
+100, expr >=95, toggle >=95 — after JUSTIFIED structural waivers (design/cpu_m1/dv/cov/waivers/P10_cdec.json):
 RV64/FP-only compressed-encoding default arms (line 169 + 4 branches, ISA scope RV32IMC) + compressed-
 immediate format-constant bits + rd_rs1_p/rs2_p {2'b01,..} reg-pair constants. Dual-number RAW+ADJUSTED.
 """
@@ -15,7 +15,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PHASE = ROOT / "flow/v2_pipeline/phase_p10_cdec"
-COV = ROOT / "IP/cpu_m1/dv/cov"
+COV = ROOT / "design/cpu_m1/dv/cov"
 WAIVER = COV / "waivers/P10_cdec.json"
 MODULE = "cdec"
 WAIVED_RV64FP_BRANCHES = 4  # RV64/FP default:illegal arms unreachable in RV32IMC
@@ -32,7 +32,7 @@ def _cm():
 
 
 def test_p10_artifacts_and_waiver_exist():
-    for p in ["../../../IP/cpu_m1/dv/tb/tb_cdec_unit.v", "coverage/coverage.dat",
+    for p in ["../../../design/cpu_m1/dv/tb/tb_cdec_unit.v", "coverage/coverage.dat",
               "coverage/coverage.info", "vcs/urgReport/mod1.html"]:
         assert (PHASE / p).resolve().exists(), f"missing P10 artifact: {p}"
     assert WAIVER.exists()

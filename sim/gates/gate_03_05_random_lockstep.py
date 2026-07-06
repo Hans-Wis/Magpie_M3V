@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PHASE_DIR = ROOT / "flow/v2_pipeline/phase_03_05_random_lockstep"
-CORE = ROOT / "IP/cpu_m1/rtl/core.v"
+CORE = ROOT / "design/cpu_m1/rtl/core.v"
 
 
 def _read(path: Path) -> str:

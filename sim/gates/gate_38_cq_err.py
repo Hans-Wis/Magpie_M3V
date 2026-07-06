@@ -17,11 +17,11 @@ import pytest
 from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_RTL, verilator_sim
 
 ROOT = Path(__file__).resolve().parents[2]
-RTL = [ROOT / f"IP/npu/rtl/{m}.v" for m in ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine")]
+RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine")]
 RTL += CPU_M1_RTL
 
 
 @pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
 def test_cq_err_ladder_halts_and_recovers(tmp_path):
-    files = RTL + [ROOT / "IP/npu/dv/tb/axi_full_rwmem.v", ROOT / "IP/npu/dv/tb/tb_npu_cq_ring_err.v"]
+    files = RTL + [ROOT / "design/npu/dv/tb/axi_full_rwmem.v", ROOT / "design/npu/dv/tb/tb_npu_cq_ring_err.v"]
     verilator_sim(tmp_path, "tb_npu_cq_ring_err", files, "NPU_CQ_ERR_PASS", extra_args=CPU_M1_ARGS)

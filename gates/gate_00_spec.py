@@ -37,7 +37,7 @@ def test_adr_scope_is_superseded_to_lab08e():
 
 
 def test_spec_has_no_tbd_and_matches_active_scope():
-    text = _read("IP/cpu_m1/docs/spec.md")
+    text = _read("design/cpu_m1/docs/spec.md")
     assert "TBD" not in text
     for required in [
         "RV32IMC_Zicsr_Zifencei",
@@ -56,7 +56,7 @@ def test_spec_has_no_tbd_and_matches_active_scope():
 
 
 def test_ip_json_matches_spec_scope_and_interfaces():
-    data = json.loads(_read("IP/cpu_m1/ip.json"))
+    data = json.loads(_read("design/cpu_m1/ip.json"))
     # design_id identity is enforced by gate_00_identity_m3v (M3V line); the stale M1A
     # assertion here was removed in the M1-legacy gate cleanup (design evolved past M1A).
     assert data["kind"] == "cpu"
@@ -76,28 +76,28 @@ def test_ip_json_matches_spec_scope_and_interfaces():
     assert data["microarchitecture"]["pipeline_stages"] == 4
     assert data["variants"]["v1_fsm"]["status"] == "superseded-for-implementation"
     assert data["variants"]["v2_pipeline_ch2_lab08b"]["status"] == "roadmap-reference-integration"
-    assert data["variants"]["v2_pipeline_ch2_lab08b"]["local_rtl"] == "IP/cpu_m1/rtl/variants/ch2_lab08b"
+    assert data["variants"]["v2_pipeline_ch2_lab08b"]["local_rtl"] == "design/cpu_m1/rtl/variants/ch2_lab08b"
     assert data["variants"]["v2_pipeline_ch2_lab08e"]["status"] == "active-signoff-baseline"
-    assert data["variants"]["v2_pipeline_ch2_lab08e"]["local_rtl"] == "IP/cpu_m1/rtl"
+    assert data["variants"]["v2_pipeline_ch2_lab08e"]["local_rtl"] == "design/cpu_m1/rtl"
     assert data["variants"]["v2_pipeline_ch2_lab08e"]["qualification_status"] == "not-yet-qualified"
     modifications = {
         item["file"]: item for item in data["variants"]["v2_pipeline_ch2_lab08e"]["local_modifications"]
     }
-    assert modifications["IP/cpu_m1/rtl/csr.v"]["adr"] == (
+    assert modifications["design/cpu_m1/rtl/csr.v"]["adr"] == (
         "docs/adr/0003-csr-external-irq-pending-collision.md"
     )
-    assert "ext_pending priority" in modifications["IP/cpu_m1/rtl/csr.v"]["change"]
-    assert modifications["IP/cpu_m1/rtl/core.v"]["adr"] == (
+    assert "ext_pending priority" in modifications["design/cpu_m1/rtl/csr.v"]["change"]
+    assert modifications["design/cpu_m1/rtl/core.v"]["adr"] == (
         "docs/adr/0004-m-unit-result-latch.md"
     )
-    assert "md_result_q" in modifications["IP/cpu_m1/rtl/core.v"]["change"]
+    assert "md_result_q" in modifications["design/cpu_m1/rtl/core.v"]["change"]
     assert data["evidence"]["verification_report"] == "docs/v2_pipeline_full_verification_report.md"
     assert data["evidence"]["rtl_deviation_adr"] == "docs/adr/0003-csr-external-irq-pending-collision.md"
     assert data["evidence"]["bug_taxonomy"] == "docs/v2_pipeline_bug_taxonomy.md"
 
 
 def test_gate_map_matches_lab08e_development_flow():
-    data = json.loads(_read("IP/cpu_m1/ip.json"))
+    data = json.loads(_read("design/cpu_m1/ip.json"))
     expected = {
         # M1A line additions (ADR-0026: identity + Phase A planned stages, status not-run until opened)
         "m1a_identity",

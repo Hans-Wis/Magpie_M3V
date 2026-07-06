@@ -1,5 +1,5 @@
-RTL=../../../IP/cpu_m1/rtl
-SOC=../../../IP/cpu_m1/soc
+RTL=../../../design/cpu_m1/rtl
+SOC=../../../design/cpu_m1/soc
 VERILATOR?=verilator
 SHELL:=/bin/bash
 .SHELLFLAGS:=-o pipefail -c

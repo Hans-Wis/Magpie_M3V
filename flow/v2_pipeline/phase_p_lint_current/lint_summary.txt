@@ -9,8 +9,8 @@ timestamp=2026-06-09T21:41:34+08:00..2026-06-09T21:41:41+08:00
 command=cd /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_lint_current && sg_shell -licqueue -tcl run_spyglass.tcl | tee spyglass_waiver_fix.log
 filelist=flow/v2_pipeline/phase_p_lint_current/files.f
 waiver_file=flow/v2_pipeline/phase_p_lint_current/magpie_m1_lint_waivers.awl
-source_filelist=IP/cpu_m1/rtl/filelist.f normalized to phase-relative paths
-rtl_scope=IP/cpu_m1/rtl/def.vh + IP/cpu_m1/rtl/*.v flat current CPU IP RTL
+source_filelist=design/cpu_m1/rtl/filelist.f normalized to phase-relative paths
+rtl_scope=design/cpu_m1/rtl/def.vh + design/cpu_m1/rtl/*.v flat current CPU IP RTL
 
 reported_fatals=0
 reported_errors=0

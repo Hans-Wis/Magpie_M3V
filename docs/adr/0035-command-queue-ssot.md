@@ -65,11 +65,11 @@ ERR codes: 0x01 BAD_OPCODE, 0x02 RSVD_VIOLATION (rsvd≠0 per SSOT mask), 0x03 R
 0x04 ENGINE_NOT_READY, 0x05 DMA_FAULT, 0x06 DESC_ALIGN. On ERR: queue halts, HEAD frozen,
 CQ_STATUS.err=1, ERR_CAUSE latched, no DONE. Recovery = CQ_CTRL flush stub (full abort = P0⑤).
 
-**4. SSOT mechanics.** `IP/npu/schema/command_descriptor_v0_1.yaml` = single truth
+**4. SSOT mechanics.** `design/npu/schema/command_descriptor_v0_1.yaml` = single truth
 (opcode enum, W0 masks, per-opcode W1–W3 layouts, RESCALE Q31 constants, rsvd rules).
-Generator `IP/npu/schema/gen_cq_ssot.py` emits three checked-in artifacts:
-`IP/npu/rtl/cq_defs.vh` (RTL localparams), `IP/npu/sw/include/command_descriptor.h`
-(sequencer firmware), `IP/npu/sw/cq_codec.py` (golden encoder/decoder for TBs + future host
+Generator `design/npu/schema/gen_cq_ssot.py` emits three checked-in artifacts:
+`design/npu/rtl/cq_defs.vh` (RTL localparams), `design/npu/sw/include/command_descriptor.h`
+(sequencer firmware), `design/npu/sw/cq_codec.py` (golden encoder/decoder for TBs + future host
 runtime). `gate_35` regenerates and fails on any git-diff divergence (four-way SSOT per v4
 §06: RTL decoder / codegen target / golden / assembler share one definition).
 

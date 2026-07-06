@@ -23,8 +23,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "IP/npu/sw"))
-sys.path.insert(0, str(ROOT / "IP/npu/golden"))
+sys.path.insert(0, str(ROOT / "design/npu/sw"))
+sys.path.insert(0, str(ROOT / "design/npu/golden"))
 
 import cq_codec  # noqa: E402  (SSOT — generated)
 from tflm_fc import wrap32  # noqa: E402

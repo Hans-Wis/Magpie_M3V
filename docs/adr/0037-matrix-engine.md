@@ -7,7 +7,7 @@
 - Date: 2026-07-04
 - Relates: ADR-0035 (CQ transport — the descriptors this engine serves), v4 **§06 Command
   編碼 Spec v0.1 = SSOT**, ADR-0031 (64→256 MAC roadmap). Verification authority =
-  **bit-accurate NumPy golden** (`IP/npu/golden/mat_golden.py`) — matrix is not ISA; Spike
+  **bit-accurate NumPy golden** (`design/npu/golden/mat_golden.py`) — matrix is not ISA; Spike
   is not involved (CLAUDE.md §3 row 3).
 
 ## Decision — engine contract (v0.1 freeze)

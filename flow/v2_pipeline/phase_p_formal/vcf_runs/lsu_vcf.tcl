@@ -1,6 +1,6 @@
 set_fml_appmode FPV
 set design lsu
-read_file -top $design -format sverilog -sva -vcs {+incdir+IP/cpu_m1/rtl IP/cpu_m1/rtl/lsu.v IP/cpu_m1/dv/formal/lsu_assert_bind.sv}
+read_file -top $design -format sverilog -sva -vcs {+incdir+design/cpu_m1/rtl design/cpu_m1/rtl/lsu.v design/cpu_m1/dv/formal/lsu_assert_bind.sv}
 check_fv -block
 redirect -file flow/v2_pipeline/phase_p_formal/logs/lsu_vcf_report_fv.txt {report_fv}
 redirect -file flow/v2_pipeline/phase_p_formal/logs/lsu_vcf_report_fv_verbose.txt {report_fv -verbose -no_summary}

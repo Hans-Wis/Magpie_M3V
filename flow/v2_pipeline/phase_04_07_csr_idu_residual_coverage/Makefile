@@ -3,7 +3,7 @@ VERILATOR ?= /home/edauser/miniforge3/envs/magpie_claude/bin/verilator
 TRACE_DEPTH ?= 2
 RUN_ARGS ?=
 
-RTL_DIR  = ../../../IP/cpu_m1/rtl
+RTL_DIR  = ../../../design/cpu_m1/rtl
 RTL_SRCS = $(RTL_DIR)/csr.v $(RTL_DIR)/idu.v
 TB_RTL   = tb_csr_idu_residual_coverage.v
 

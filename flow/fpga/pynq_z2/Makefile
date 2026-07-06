@@ -1,6 +1,6 @@
 ROOT := ../../..
-RTL_DIR := $(ROOT)/IP/cpu_m1/rtl
-SOC_DIR := $(ROOT)/IP/cpu_m1/soc
+RTL_DIR := $(ROOT)/design/cpu_m1/rtl
+SOC_DIR := $(ROOT)/design/cpu_m1/soc
 
 RISCV_PREFIX ?= /home/edauser/.local/opt/riscv/xpack-riscv-none-elf-gcc-13.2.0-2/bin/riscv-none-elf-
 VIVADO ?= /tools/Xilinx/Vivado/2024.2/bin/vivado

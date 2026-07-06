@@ -4,8 +4,8 @@ VCS ?= vcs
 URG ?= urg
 
 ROOT := ../../..
-RTL_DIR := $(ROOT)/IP/cpu_m1/rtl
-TB := $(ROOT)/IP/cpu_m1/dv/tb/tb_ras_unit.v
+RTL_DIR := $(ROOT)/design/cpu_m1/rtl
+TB := $(ROOT)/design/cpu_m1/dv/tb/tb_ras_unit.v
 RAS := $(RTL_DIR)/ras.v
 
 VFLAGS := --binary -j 4 --coverage --coverage-line --coverage-toggle \
@@ -37,9 +37,9 @@ verilator: $(SIM_BIN)
 vcs: dirs
 	cd vcs && $(VCS) -full64 -sverilog -timescale=1ns/1ps \
 	    -cm $(CM) -cm_dir simv.vdb \
-	    +incdir+../../../../IP/cpu_m1/rtl \
-	    ../../../../IP/cpu_m1/rtl/ras.v \
-	    ../../../../IP/cpu_m1/dv/tb/tb_ras_unit.v \
+	    +incdir+../../../../design/cpu_m1/rtl \
+	    ../../../../design/cpu_m1/rtl/ras.v \
+	    ../../../../design/cpu_m1/dv/tb/tb_ras_unit.v \
 	    -top tb_ras_unit -o simv > ../logs/vcs_build.log 2>&1
 	cd vcs && ./simv -cm $(CM) -cm_dir simv.vdb > ../logs/vcs_run.log 2>&1
 	grep -q '^PASS: ras unit ' logs/vcs_run.log

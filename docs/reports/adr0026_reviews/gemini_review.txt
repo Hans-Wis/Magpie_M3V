@@ -1,7 +1,7 @@
 (a) Contradictions:
 - **MUL Latency**: ADR-0026 §D2 A1 "pipelined MUL (latency 2)" vs. Evaluation §4/Baseline §4 "1-cycle MUL" (docs/reports/m1a_performance_evaluation.md, docs/reports/m1_benchmark_baseline.md).
 - **Dual-Issue Scope**: ADR-0026 §D1 "Dual-issue is explicitly OUT" vs. Evaluation §6 "per-MHz scalar parity ... likely needs dual-issue" to match M55's 4.2 CoreMark/MHz.
-- **ISA String**: ADR-0026 §Consequences "rv32imc_zba_zbb_zbs_zicond..." vs. ip.json `sku1_mvp.isa` "RV32IMC_Zicsr_Zifencei" (IP/cpu_m1/ip.json).
+- **ISA String**: ADR-0026 §Consequences "rv32imc_zba_zbb_zbs_zicond..." vs. ip.json `sku1_mvp.isa` "RV32IMC_Zicsr_Zifencei" (design/cpu_m1/ip.json).
 
 (b) Missing References:
 - **docs/adr/0002-pipeline-v2-ch2-integration.md**: Foundational for the "4-stage in-order spine" and "M1 §2 convention" cited in §D1/§D2.

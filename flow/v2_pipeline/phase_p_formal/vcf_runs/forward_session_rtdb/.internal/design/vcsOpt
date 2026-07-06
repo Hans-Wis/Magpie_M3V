@@ -1,1 +1,1 @@
-+incdir+IP/cpu_m1/rtl IP/cpu_m1/rtl/forward.v IP/cpu_m1/dv/formal/forward_assert_bind.sv
++incdir+design/cpu_m1/rtl design/cpu_m1/rtl/forward.v design/cpu_m1/dv/formal/forward_assert_bind.sv

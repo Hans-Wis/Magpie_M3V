@@ -39,7 +39,7 @@ CROSS_SLICE = {
 }
 
 STRUCTURAL_NOTES = {
-    "wb_trap_cause": "bits outside supported cause constants are structural at IP/cpu_m1/rtl/core.v:993 (cause mux literals 0x0000000b/3/2/4/6/0x8000000b)",
+    "wb_trap_cause": "bits outside supported cause constants are structural at design/cpu_m1/rtl/core.v:993 (cause mux literals 0x0000000b/3/2/4/6/0x8000000b)",
 }
 
 
@@ -121,7 +121,7 @@ def main() -> int:
             "",
             "- Covered: P17 directed fixture toggled the Verilator points listed above.",
             "- Reachable: any missing owned signal remains reachable and requires more fixture work; no fixture gap is marked structural.",
-            "- Structural: `wb_trap_cause` upper/unused cause-code bits are tied by the literal cause mux at `IP/cpu_m1/rtl/core.v:993`; no other structural claims.",
+            "- Structural: `wb_trap_cause` upper/unused cause-code bits are tied by the literal cause mux at `design/cpu_m1/rtl/core.v:993`; no other structural claims.",
             "- Cross-slice: " + "; ".join(f"`{name}` owner {owner}" for name, owner in CROSS_SLICE.items()) + ".",
             "- Excluded merged leaf: standalone `csr.v` register behavior belongs to P11 and is not re-covered here.",
             "- Tokens: no active Codex goal token counter was available from `get_goal`; token budget/usage was therefore not machine-recorded.",

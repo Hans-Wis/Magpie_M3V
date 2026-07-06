@@ -16,8 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_host_rtl_present():
-    core = ROOT / "IP/cpu_m1/rtl/core.v"
-    assert core.is_file(), "cpu_m1 host core.v missing — IP/cpu_m1/rtl must be intact"
+    core = ROOT / "design/cpu_m1/rtl/core.v"
+    assert core.is_file(), "cpu_m1 host core.v missing — design/cpu_m1/rtl must be intact"
 
 
 def test_cpu_m1_modification_is_adr_governed():

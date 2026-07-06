@@ -39,9 +39,9 @@ dequant/softmax) · L0 I-cache (TCM-only) · clock/power gating (physical phase)
    flow, and clock/power gating as architectural FACTS — none are in RTL. → add a "built vs aspirational"
    banner + point to this review (done).
 2. **Memory-map conflict**: plan says `NPU_CSR@0x4000_0000`; built/spec is `0x3000/0x3001`. → plan banner.
-3. `IP/npu/ip.json` **stale**: NPU `status:"not-started"` and "frozen cpu_m1 never touched" — both now
+3. `design/npu/ip.json` **stale**: NPU `status:"not-started"` and "frozen cpu_m1 never touched" — both now
    false (Phase 1/1.5 RTL exists; Phase 2 params landed). → update (done).
-4. `IP/npu/docs/01_axi_fabric_spec.md` §4 still lists "wstrb ignored" as a limitation — contradicted by
+4. `design/npu/docs/01_axi_fabric_spec.md` §4 still lists "wstrb ignored" as a limitation — contradicted by
    the Phase 1.5 byte-merge fix in §7. → correct (done).
 5. ADR-0032 Step 2 prose mentions `FETCH_SRC` while Step 2 RTL added only `EN_RVC/EN_BP/EN_RAS`
    (FETCH_SRC is correctly Step 4). → clarified.

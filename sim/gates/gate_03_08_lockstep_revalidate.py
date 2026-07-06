@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PHASE = ROOT / "flow/v2_pipeline/phase_03_05_random_lockstep"
-RTL = ROOT / "IP/cpu_m1/rtl"
+RTL = ROOT / "design/cpu_m1/rtl"
 
 VFLAGS = (
     "--binary -j 4 --trace --trace-depth 2 --trace-structs "
@@ -39,7 +39,7 @@ def test_phase_03_08_rebuilds_current_rtl_and_reruns_lockstep():
     assert res.returncode == 0, out[-5000:]
     assert "--top-module tb_random_lockstep" in out
     assert "-Wno-PINMISSING" in out
-    assert "../../../IP/cpu_m1/rtl/core.v" in out
+    assert "../../../design/cpu_m1/rtl/core.v" in out
     assert (PHASE / "dut_commit.trace").stat().st_mtime_ns > before
     assert "PASS: random lockstep matched" in out
 

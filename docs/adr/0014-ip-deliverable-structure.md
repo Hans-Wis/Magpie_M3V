@@ -5,8 +5,8 @@
   ADR-0012 (two-SKU), ADR-0002 (lab08e integration provenance).
 
 ## Context
-The active RTL lived under `IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/` — a path carrying lab heritage —
-while `IP/cpu_m1/dv/{tb,sim}` and `dv/fixtures/` were empty shells; all DV/sim lived inside
+The active RTL lived under `design/cpu_m1/rtl/pipeline_v2/ch2_lab08e/` — a path carrying lab heritage —
+while `design/cpu_m1/dv/{tb,sim}` and `dv/fixtures/` were empty shells; all DV/sim lived inside
 `flow/v2_pipeline/phase_*` (development record). The 3-agent customer-standard review (Grok/Codex/
 Gemini) flagged this "dv/ empty packaging gap": there was no curated, independently-deliverable IP
 structure to hand a customer.
@@ -15,7 +15,7 @@ structure to hand a customer.
 Reorganize the cpu_m1 IP into a clean, independently-deliverable structure with three pillars:
 
 ```
-IP/cpu_m1/
+design/cpu_m1/
 ├── rtl/                 ← flat deliverable RTL (16 modules + def.vh), extracted from ch2_lab08e
 │   ├── *.v, def.vh
 │   ├── filelist.f, cpu_m1.f   single source of truth

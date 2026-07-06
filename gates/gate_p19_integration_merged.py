@@ -12,7 +12,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 MERGED = ROOT / "flow/v2_pipeline/phase_p15_18_merged/merged_urgReport"
-COV = ROOT / "IP/cpu_m1/dv/cov"
+COV = ROOT / "design/cpu_m1/dv/cov"
 CLOSURE = ROOT / "docs/reports/integration_closure.md"
 
 pytestmark = pytest.mark.skipif(not MERGED.is_dir(), reason="P15-18 merge not yet produced")

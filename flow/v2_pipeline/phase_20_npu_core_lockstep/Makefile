@@ -15,8 +15,8 @@ VERILATOR ?= /home/edauser/miniforge3/envs/magpie_claude/bin/verilator
 GCC_MARCH = rv32im_zicsr_zifencei
 GCC_MABI  = ilp32
 
-CPU_RTL_DIR = ../../../IP/cpu_m1/rtl
-NPU_RTL_DIR = ../../../IP/npu/rtl
+CPU_RTL_DIR = ../../../design/cpu_m1/rtl
+NPU_RTL_DIR = ../../../design/npu/rtl
 CPU_SRCS = $(addprefix $(CPU_RTL_DIR)/, rfu.v alu.v bmu.v idu.v ifu.v lsu.v csr.v \
            trigger.v pmp.v mul.v div.v forward.v hazard.v bp.v ras.v cdec.v vexu.v core.v cpu_m1_top.v)
 NPU_SRCS = $(addprefix $(NPU_RTL_DIR)/, npu_top.v npu_axil_regs.v npu_dma.v npu_tcm.v axil_decerr.v mat_engine.v)

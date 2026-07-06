@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parents[2]
-RTL_DIR = REPO / "IP/cpu_m1/rtl"
+RTL_DIR = REPO / "design/cpu_m1/rtl"
 RISCV_DV = Path("/home/edauser/project/SOC/Magpie_X6/vendored/riscv-dv")
 SPIKE = Path(os.environ.get("SPIKE", "/home/edauser/.local/bin/spike"))
 GCC = os.environ.get("RISCV_GCC", "riscv-none-elf-gcc")

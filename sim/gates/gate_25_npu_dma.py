@@ -13,8 +13,8 @@ import pytest
 from gate_20_axi_fabric import verilator_lint, verilator_sim
 
 ROOT = Path(__file__).resolve().parents[2]
-RTL = [ROOT / f"IP/npu/rtl/{m}.v" for m in ("axil_1to2", "npu_axil_regs", "npu_dma")]
-TB = [ROOT / "IP/npu/dv/tb/axi_full_mem.v", ROOT / "IP/npu/dv/tb/tb_npu_dma.v"]
+RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in ("axil_1to2", "npu_axil_regs", "npu_dma")]
+TB = [ROOT / "design/npu/dv/tb/axi_full_mem.v", ROOT / "design/npu/dv/tb/tb_npu_dma.v"]
 
 
 @pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")

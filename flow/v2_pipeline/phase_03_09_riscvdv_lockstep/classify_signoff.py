@@ -2,7 +2,7 @@
 """Whole-core toggle SIGN-OFF classifier for the Tier-2-Narrow (RV32IMC core-only) contract.
 
 Computes the DEFENSIBLE effective toggle coverage by partitioning every cold toggle point against
-the Feature-Freeze SKU contract (IP/cpu_m1/dv/vplan/FEATURE_FREEZE.md):
+the Feature-Freeze SKU contract (design/cpu_m1/dv/vplan/FEATURE_FREEZE.md):
 
   OUT-OF-SKU  (legitimately excluded — not in the SKU-1 deliverable feature set):
     - PMP        (PMP_ENTRIES=0 optional)          : module u_pmp_*, any `pmp*` net

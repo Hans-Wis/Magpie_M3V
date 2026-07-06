@@ -162,8 +162,8 @@ scope-derived development gates.
 ## Sign-off Checklist
 
 - [ ] `ADR-0001` is accepted.
-- [ ] `IP/cpu_m1/docs/spec.md` has no TBD.
-- [ ] `IP/cpu_m1/ip.json` interfaces and risks match the spec.
+- [ ] `design/cpu_m1/docs/spec.md` has no TBD.
+- [ ] `design/cpu_m1/ip.json` interfaces and risks match the spec.
 - [ ] All scope-derived development gates are present or explicitly not-applicable.
 - [ ] Must-have RV32IM_Zicsr directed tests pass.
 - [ ] Spike lockstep/reference comparison is archived for supported tests.

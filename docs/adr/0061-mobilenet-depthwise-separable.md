@@ -32,7 +32,7 @@ MobileNet-class 模型。本 ADR 建立**第一個 depthwise-separable block e2e
   列為 follow-up。
 
 ## §2 契約 + 實作
-- **offline**(`IP/npu/sw/tflm_aot/build_model_dw.py`):Keras `[1,6,6,8] → DepthwiseConv2D
+- **offline**(`design/npu/sw/tflm_aot/build_model_dw.py`):Keras `[1,6,6,8] → DepthwiseConv2D
   3×3 VALID relu → Conv2D 1×1 cout=8 relu` → full-int8 tflite → BUILTIN_REF golden(全中間層)。
   `_dw_block_diagonal`:DEPTHWISE weight `[1,kh,kw,cin]` → block-diagonal `[cout=cin][K=72]`
   於 runtime im2col k-order `(ky,kx,ci)→k=(ky·kw+kx)·cin+ci`;per-channel scale 沿 cin→cout。

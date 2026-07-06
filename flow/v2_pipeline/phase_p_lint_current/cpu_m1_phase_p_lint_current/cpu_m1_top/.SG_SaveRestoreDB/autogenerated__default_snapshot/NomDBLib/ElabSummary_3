@@ -1,6 +1,6 @@
 ================================================================================
 Elaborated Name: 'core'
-    (RTL Design Unit name: 'core', ../../../IP/cpu_m1/rtl/core.v:18)
+    (RTL Design Unit name: 'core', ../../../design/cpu_m1/rtl/core.v:18)
      Parameters (Total: 1)
          RESET_PC = 0 (default: 32'h00000000)
      Instances (Total: 1): cpu_m1_top.u_core 
@@ -8,14 +8,14 @@ Elaborated Name: 'core'
 ================================================================================
 
 Elaborated Name: 'cdec'
-    (RTL Design Unit name: 'cdec', ../../../IP/cpu_m1/rtl/cdec.v:26)
+    (RTL Design Unit name: 'cdec', ../../../design/cpu_m1/rtl/cdec.v:26)
      Parameters (Total: 0)
      Instances (Total: 1): cpu_m1_top.u_core.u_cdec 
 
 ================================================================================
 
 Elaborated Name: 'bp'
-    (RTL Design Unit name: 'bp', ../../../IP/cpu_m1/rtl/bp.v:29)
+    (RTL Design Unit name: 'bp', ../../../design/cpu_m1/rtl/bp.v:29)
      Parameters (Total: 5)
          IDX_BITS = 5 (default: 5)
          IDX_LSB  = 1 (default: 1)
@@ -27,7 +27,7 @@ Elaborated Name: 'bp'
 ================================================================================
 
 Elaborated Name: 'ras'
-    (RTL Design Unit name: 'ras', ../../../IP/cpu_m1/rtl/ras.v:29)
+    (RTL Design Unit name: 'ras', ../../../design/cpu_m1/rtl/ras.v:29)
      Parameters (Total: 2)
          DEPTH    = 8 (default: 8)
          PTR_BITS = 3 (default: 3)
@@ -36,7 +36,7 @@ Elaborated Name: 'ras'
 ================================================================================
 
 Elaborated Name: 'ifu'
-    (RTL Design Unit name: 'ifu', ../../../IP/cpu_m1/rtl/ifu.v:24)
+    (RTL Design Unit name: 'ifu', ../../../design/cpu_m1/rtl/ifu.v:24)
      Parameters (Total: 1)
          RESET_PC = 0 (default: 32'h00000000)
      Instances (Total: 1): cpu_m1_top.u_core.u_ifu 
@@ -44,42 +44,42 @@ Elaborated Name: 'ifu'
 ================================================================================
 
 Elaborated Name: 'idu'
-    (RTL Design Unit name: 'idu', ../../../IP/cpu_m1/rtl/idu.v:24)
+    (RTL Design Unit name: 'idu', ../../../design/cpu_m1/rtl/idu.v:24)
      Parameters (Total: 0)
      Instances (Total: 1): cpu_m1_top.u_core.u_idu 
 
 ================================================================================
 
 Elaborated Name: 'rfu'
-    (RTL Design Unit name: 'rfu', ../../../IP/cpu_m1/rtl/rfu.v:19)
+    (RTL Design Unit name: 'rfu', ../../../design/cpu_m1/rtl/rfu.v:19)
      Parameters (Total: 0)
      Instances (Total: 1): cpu_m1_top.u_core.u_rfu 
 
 ================================================================================
 
 Elaborated Name: 'forward'
-    (RTL Design Unit name: 'forward', ../../../IP/cpu_m1/rtl/forward.v:19)
+    (RTL Design Unit name: 'forward', ../../../design/cpu_m1/rtl/forward.v:19)
      Parameters (Total: 0)
      Instances (Total: 1): cpu_m1_top.u_core.u_forward 
 
 ================================================================================
 
 Elaborated Name: 'alu'
-    (RTL Design Unit name: 'alu', ../../../IP/cpu_m1/rtl/alu.v:25)
+    (RTL Design Unit name: 'alu', ../../../design/cpu_m1/rtl/alu.v:25)
      Parameters (Total: 0)
      Instances (Total: 1): cpu_m1_top.u_core.u_alu 
 
 ================================================================================
 
 Elaborated Name: 'mul'
-    (RTL Design Unit name: 'mul', ../../../IP/cpu_m1/rtl/mul.v:22)
+    (RTL Design Unit name: 'mul', ../../../design/cpu_m1/rtl/mul.v:22)
      Parameters (Total: 0)
      Instances (Total: 1): cpu_m1_top.u_core.u_mul 
 
 ================================================================================
 
 Elaborated Name: 'div'
-    (RTL Design Unit name: 'div', ../../../IP/cpu_m1/rtl/div.v:20)
+    (RTL Design Unit name: 'div', ../../../design/cpu_m1/rtl/div.v:20)
      Parameters (Total: 4)
          IDLE  = 0 (default: 2'd0)
          WORK  = 1 (default: 2'd1)
@@ -90,14 +90,14 @@ Elaborated Name: 'div'
 ================================================================================
 
 Elaborated Name: 'lsu'
-    (RTL Design Unit name: 'lsu', ../../../IP/cpu_m1/rtl/lsu.v:31)
+    (RTL Design Unit name: 'lsu', ../../../design/cpu_m1/rtl/lsu.v:31)
      Parameters (Total: 0)
      Instances (Total: 2): cpu_m1_top.u_core.u_lsu_wb, cpu_m1_top.u_core.u_lsu_id 
 
 ================================================================================
 
 Elaborated Name: 'csr'
-    (RTL Design Unit name: 'csr', ../../../IP/cpu_m1/rtl/csr.v:31)
+    (RTL Design Unit name: 'csr', ../../../design/cpu_m1/rtl/csr.v:31)
      Parameters (Total: 1)
          mstatus_mpp = 3 (default: 2'b11)
      Instances (Total: 1): cpu_m1_top.u_core.u_csr 
@@ -105,14 +105,14 @@ Elaborated Name: 'csr'
 ================================================================================
 
 Elaborated Name: 'hazard'
-    (RTL Design Unit name: 'hazard', ../../../IP/cpu_m1/rtl/hazard.v:19)
+    (RTL Design Unit name: 'hazard', ../../../design/cpu_m1/rtl/hazard.v:19)
      Parameters (Total: 0)
      Instances (Total: 1): cpu_m1_top.u_core.u_hazard 
 
 ================================================================================
 
 Elaborated Name: 'cpu_m1_top'
-    (RTL Design Unit name: 'cpu_m1_top', ../../../IP/cpu_m1/rtl/cpu_m1_top.v:29)
+    (RTL Design Unit name: 'cpu_m1_top', ../../../design/cpu_m1/rtl/cpu_m1_top.v:29)
      Parameters (Total: 1)
          RESET_PC = 0 (default: 32'h00000000)
 ================================================================================

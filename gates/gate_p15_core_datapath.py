@@ -5,7 +5,7 @@ First INTEGRATION gate. Authority = Spike per-commit lockstep (not a unit golden
 muldiv busy stall, flush-vs-forward priority, wb_sel/result mux, mem_stall, forward value bus) — the
 incremental coverage on core.v not already owned by leaf islands. Closed +519 core.v toggles.
 
-Honest disposition (IP/cpu_m1/dv/cov/waivers/P15_core_datapath.json):
+Honest disposition (design/cpu_m1/dv/cov/waivers/P15_core_datapath.json):
 - PC[0] structural waiver (pipeline PC regs latch the aligned fetch PC; bit 0 always 0).
 - PC[31:8] address-range bits deferred to P16_IF (memory/PC-range placement).
 - misalign/trap-detect signals deferred to P17_CSR_TRAP (need mtvec trap harness for lockstep).
@@ -19,7 +19,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PHASE = ROOT / "flow/v2_pipeline/phase_p15_core_datapath"
-COV = ROOT / "IP/cpu_m1/dv/cov"
+COV = ROOT / "design/cpu_m1/dv/cov"
 WAIVER = COV / "waivers/P15_core_datapath.json"
 
 pytestmark = pytest.mark.skipif(

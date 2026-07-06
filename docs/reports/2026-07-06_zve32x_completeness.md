@@ -1,7 +1,7 @@
 # Zve32x Drop-in 完整度報告 — Magpie_M3V NPU
 
 > 日期 2026-07-06 · design_id `cpu_m3v` · HEAD `be545da` · 權威 = Spike lockstep
-> `--isa=rv32imf_zve32x_zvl128b`(phase_22)· 資料來源 = `IP/cpu_m1/rtl/vexu.v` decode
+> `--isa=rv32imf_zve32x_zvl128b`(phase_22)· 資料來源 = `design/cpu_m1/rtl/vexu.v` decode
 > (code-first,§6)+ ADR-0036/0049/0055-0060。
 
 ## 0. 結論(誠實界)

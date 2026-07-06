@@ -30,7 +30,7 @@ IP target is `lab08e`: 4-stage + BP + RAS + RV32C + pre-fetch.
 1. Supersede the ADR-0001 FSM implementation baseline. Do not pursue FSM as a
    parallel sign-off track.
 2. Promote Ch2 `lab08e` as the active Magpie_M1 implementation target under
-   `IP/cpu_m1/rtl/`.
+   `design/cpu_m1/rtl/`.
 3. Keep the copied Ch2 RTL as an integrated target reference. It is not yet
    qualified as Magpie_M1 sign-off RTL until wrappers, commit trace, DV,
    coverage, lint, and PPA gates close.

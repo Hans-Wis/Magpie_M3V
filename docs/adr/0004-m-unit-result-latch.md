@@ -34,7 +34,7 @@ once an M operation has started.
 
 ## Consequences
 
-- `IP/cpu_m1/rtl/core.v` is now a local Magpie_M1 RTL
+- `design/cpu_m1/rtl/core.v` is now a local Magpie_M1 RTL
   deviation from the copied `lab08e` source.
 - Phase 3.4 remains the directed regression for hand-authored RV32IMC/M
   sequences.

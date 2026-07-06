@@ -1,6 +1,6 @@
 ROOT := ../../..
-RTL_DIR := $(ROOT)/IP/cpu_m1/rtl
-SOC_DIR := $(ROOT)/IP/cpu_m1/soc
+RTL_DIR := $(ROOT)/design/cpu_m1/rtl
+SOC_DIR := $(ROOT)/design/cpu_m1/soc
 X3_SRAM_DIR := /home/edauser/project/SOC/Magpie_X3/core_ip/soc/tsmc28/sram
 TSMC_SRAM_V := $(X3_SRAM_DIR)/dpsram_out/tsdn28hpcpa512x32m4mwaso_130a/VERILOG/tsdn28hpcpa512x32m4mwaso_130a_tt0p9v25c.v
 BUILD := build

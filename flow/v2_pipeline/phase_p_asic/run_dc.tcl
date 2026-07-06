@@ -55,7 +55,7 @@ if {![file exists $sram_db]} {
 }
 
 define_design_lib WORK -path work
-set_app_var search_path [list . ../../../IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $stdcell_db] [file dirname $sram_db]]
+set_app_var search_path [list . ../../../design/cpu_m1/rtl/pipeline_v2/ch2_lab08e [file dirname $stdcell_db] [file dirname $sram_db]]
 set_app_var target_library [list $stdcell_db]
 set_app_var link_library [concat "*" [list $stdcell_db] [list $sram_db] [list dw_foundation.sldb]]
 set_app_var synthetic_library [list dw_foundation.sldb]

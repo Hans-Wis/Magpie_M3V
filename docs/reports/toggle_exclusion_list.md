@@ -1,7 +1,7 @@
 # cpu_m1 — Toggle Coverage Exclusion List & Effective-Coverage Sign-off (Tier-2 §04/§05)
 
 Rev 1.0 · 2026-06-11 · Owner: PL (Claude) · design_id = `cpu_m1`
-Contract: **Tier-2-Narrow (RV32IMC core-only)** per `IP/cpu_m1/dv/vplan/FEATURE_FREEZE.md` (SKU-1).
+Contract: **Tier-2-Narrow (RV32IMC core-only)** per `design/cpu_m1/dv/vplan/FEATURE_FREEZE.md` (SKU-1).
 Authority: Spike per-commit lockstep + pytest gates. Generator: `classify_signoff.py` on the merged
 farm coverage DB (`coverage_merged/farm_all3.dat`, 33 seeds: 8 base + CSR-read 4 + fence 4 + RAS-inline 4
 + CSR-pattern 8 + RAS-nested 5). **DV-lead human signature: PENDING** (this is the artifact to sign).

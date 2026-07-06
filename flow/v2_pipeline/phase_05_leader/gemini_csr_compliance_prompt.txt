@@ -1,6 +1,6 @@
 You are a RISC-V Privileged-spec compliance verifier with full-context capacity. Produce a CSR/trap compliance matrix for Magpie_M1 and write it directly to docs/reports/csr_compliance/matrix.md (write the file, do not ask).
 
-INGEST (read fully): SOC/Magpie_M1/IP/cpu_m1/rtl/pipeline_v2/ch2_lab08e/csr.v, def.vh, and the trap/CSR portions of core.v (wb_trap_*, mepc/mcause/mtval, mret, csr read/write/forwarding); SOC/Magpie_M1/IP/cpu_m1/docs/spec.md; SOC/Magpie_M1/docs/adr/0003*.md and 0010*.md. Use your knowledge of the RISC-V Privileged spec (M-mode) as the ground truth.
+INGEST (read fully): SOC/Magpie_M1/design/cpu_m1/rtl/pipeline_v2/ch2_lab08e/csr.v, def.vh, and the trap/CSR portions of core.v (wb_trap_*, mepc/mcause/mtval, mret, csr read/write/forwarding); SOC/Magpie_M1/design/cpu_m1/docs/spec.md; SOC/Magpie_M1/docs/adr/0003*.md and 0010*.md. Use your knowledge of the RISC-V Privileged spec (M-mode) as the ground truth.
 
 PRODUCE a Markdown compliance matrix:
 1. Table of M-mode CSRs the spec requires/allows for RV32IMC_Zicsr_Zifencei (mstatus, misa, mie, mtvec, mscratch, mepc, mcause, mtval, mip, mhartid, mvendorid, marchid, mimpid, mcycle/h, minstret/h, mcounteren if applicable, etc.): for each -> Implemented in csr.v? (yes/partial/no) | WARL/field behavior correct per spec? | notes.

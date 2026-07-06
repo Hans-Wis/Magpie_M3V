@@ -46,7 +46,7 @@ To prepare for the Phase 3 RVV `Zve32x` Execution Unit (EXU) design, the archite
 
 ### 1. VLEN, ELEN, and Zve32x Subset
 *   **Hardware Config:** Kelvin implements the standard RISC-V Vector Extension version 1.0 under the `Zve32x` and `Zvl128b` constraints.
-*   **Vector Parameterization:** The physical vector register length (**VLEN**) is pinned at **128 bits**, and the maximum element length (**ELEN**) is **32 bits** (`docs/adr/0031` / `IP/npu/docs/00_isa_contract.md`). 
+*   **Vector Parameterization:** The physical vector register length (**VLEN**) is pinned at **128 bits**, and the maximum element length (**ELEN**) is **32 bits** (`docs/adr/0031` / `design/npu/docs/00_isa_contract.md`). 
 *   **Supported EEW/SEW:** It supports Element Execution Widths (EEW) and Selected Element Widths (SEW) of **8, 16, and 32 bits**.
 *   **Float Support:** In strict alignment with `Zve32x`, vector floating-point support is completely omitted (integer-only datapath).
 

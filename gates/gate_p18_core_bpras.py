@@ -14,7 +14,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 PHASE = ROOT / "flow/v2_pipeline/phase_p18_core_bpras"
-COV = ROOT / "IP/cpu_m1/dv/cov"
+COV = ROOT / "design/cpu_m1/dv/cov"
 
 pytestmark = pytest.mark.skipif(
     not (PHASE / "coverage.dat").exists(), reason="P18 phase not yet run")

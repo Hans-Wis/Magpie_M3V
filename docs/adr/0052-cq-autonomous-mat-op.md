@@ -120,7 +120,7 @@ FIFO)= **RTL,scope-creep,defer**(Grok 早先:engine 側 double-buffer 對同 ban
 
 ## §5 review 後才實作(§2 第 4 問)
 
-accepted 後:我方外科改 `cq_sequencer.c`(或 Codex)→ `make -C IP/npu/sw/cq_sequencer` 重生
+accepted 後:我方外科改 `cq_sequencer.c`(或 Codex)→ `make -C design/npu/sw/cq_sequencer` 重生
 firmware.hex → 跑 gate_36/37/39/46/47/53/54 全綠 + throughput 出數字 → 處理 gate_39 MMIO-shadow
 重生 → Codex review diff → commit。**BATCH_N 起手 8**(Grok);**不動 RTL/SSOT**。
 

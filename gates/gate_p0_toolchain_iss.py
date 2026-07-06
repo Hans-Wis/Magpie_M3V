@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-SW = ROOT / "IP/npu/sw/rvv_zve32x_smoke"
+SW = ROOT / "design/npu/sw/rvv_zve32x_smoke"
 MARCH = "rv32im_zve32x_zvl128b"
 EXPECTED = 240
 

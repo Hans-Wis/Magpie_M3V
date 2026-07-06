@@ -13,7 +13,7 @@ PHASE_DIR = Path(__file__).resolve().parent
 COV_DIR = ROOT / "flow/v2_pipeline/phase_04_04_illegal_munit_coverage/coverage"
 INFO = COV_DIR / "coverage.info"
 MERGED_DAT = COV_DIR / "merged_with_phase_04_04.dat"
-RTL_DIR = ROOT / "IP/cpu_m1/rtl"
+RTL_DIR = ROOT / "design/cpu_m1/rtl"
 
 
 def _module_name(path: str) -> str:

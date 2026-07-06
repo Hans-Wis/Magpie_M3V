@@ -103,12 +103,12 @@ properties to reach the Tier-2 ≥90% bar). 40/40 SVA properties proven, 0 CEX.
 
 ## 6. Exclusion list (current waivers)
 Structural-only, dual-number RAW+ADJUSTED, `spike_impact:none`, producer≠approver, retained in
-`IP/cpu_m1/dv/cov/waivers/`. The toggle/expr §04 waivers from §2.3/§3 are TO BE AUTHORED as part of
+`design/cpu_m1/dv/cov/waivers/`. The toggle/expr §04 waivers from §2.3/§3 are TO BE AUTHORED as part of
 closure (not yet applied — so the whole-core numbers above are RAW, honest).
 
 ### 2.6 Waiver applied (2026-06-11)
 
-§04 structural waiver authored: `IP/cpu_m1/dv/cov/waivers/toggle_structural_waivers.json` (PMP 921 + trigger 835 = 1756 bits, PMP_ENTRIES=0/debug-trigger-inactive in default SKU, spike_impact:none, **producer=Claude / approver_dv_lead=PENDING-SIGN**). **In-SKU adjusted toggle = 10905/18694 = 58.3%.** Remaining directed buckets to 95%: u_csr 3079 (riscv-dv `gen_csr_test.py` walking-bit CSR test — next step), u_ras 624 (call/return density), debug-mode glue.
+§04 structural waiver authored: `design/cpu_m1/dv/cov/waivers/toggle_structural_waivers.json` (PMP 921 + trigger 835 = 1756 bits, PMP_ENTRIES=0/debug-trigger-inactive in default SKU, spike_impact:none, **producer=Claude / approver_dv_lead=PENDING-SIGN**). **In-SKU adjusted toggle = 10905/18694 = 58.3%.** Remaining directed buckets to 95%: u_csr 3079 (riscv-dv `gen_csr_test.py` walking-bit CSR test — next step), u_ras 624 (call/return density), debug-mode glue.
 
 ### 2.7 Directed CSR-injection + refined waiver (2026-06-11, executed)
 

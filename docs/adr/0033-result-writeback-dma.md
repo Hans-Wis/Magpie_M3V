@@ -4,7 +4,7 @@
   integrating Grok (contract/DV) + Gemini (full-context Coral confirmation); approver = User (directive
   "b: writeback DMA, three-agent"). Reviewers concurred.
 - Date: 2026-07-03
-- Relates: closes gap ① of `docs/reviews/2026-07-03_coral_gap_review.md`; extends `IP/npu/docs/01_axi_fabric_spec.md`.
+- Relates: closes gap ① of `docs/reviews/2026-07-03_coral_gap_review.md`; extends `design/npu/docs/01_axi_fabric_spec.md`.
 
 ## Architecture confirmation vs Coral (§2 step 1)
 

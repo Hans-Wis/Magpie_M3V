@@ -513,7 +513,7 @@ void Vtb_axil_equiv_cpu_m1_top___nba_sequent__TOP__tb_axil_equiv__DOT__u_native_
         VL_WRITEF_NX("[%0t] %%Error: core.v:156: Assertion failed in %Ntb_axil_equiv.u_native.u_core: ADR-0016 invariant: cdec_illegal asserted but expanded=%x != 0\n",0,
                      64,VL_TIME_UNITED_Q(1),-9,vlSymsp->name(),
                      32,vlSelfRef.__PVT__u_core__DOT__cdec_expanded);
-        VL_STOP_MT("../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/rtl/core.v", 156, "");
+        VL_STOP_MT("../../../design/cpu_m1/rtl/../../../design/cpu_m1/rtl/core.v", 156, "");
     }
     __Vdly__u_core__DOT__u_ras__DOT__ptr = vlSelfRef.__PVT__u_core__DOT__u_ras__DOT__ptr;
     __VdlySet__u_core__DOT__u_ras__DOT__stack__v0 = 0U;
@@ -3739,7 +3739,7 @@ void Vtb_axil_equiv_cpu_m1_top___nba_sequent__TOP__tb_axil_equiv__DOT__u_axi__DO
         VL_WRITEF_NX("[%0t] %%Error: core.v:156: Assertion failed in %Ntb_axil_equiv.u_axi.u_cpu.u_core: ADR-0016 invariant: cdec_illegal asserted but expanded=%x != 0\n",0,
                      64,VL_TIME_UNITED_Q(1),-9,vlSymsp->name(),
                      32,vlSelfRef.__PVT__u_core__DOT__cdec_expanded);
-        VL_STOP_MT("../../../IP/cpu_m1/rtl/../../../IP/cpu_m1/rtl/core.v", 156, "");
+        VL_STOP_MT("../../../design/cpu_m1/rtl/../../../design/cpu_m1/rtl/core.v", 156, "");
     }
     __Vdly__u_core__DOT__u_ras__DOT__ptr = vlSelfRef.__PVT__u_core__DOT__u_ras__DOT__ptr;
     __VdlySet__u_core__DOT__u_ras__DOT__stack__v0 = 0U;

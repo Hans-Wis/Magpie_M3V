@@ -19,7 +19,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RTL = ROOT / "IP/cpu_m1/rtl"
+RTL = ROOT / "design/cpu_m1/rtl"
 PHASE = ROOT / "flow/v2_pipeline/phase_02_01_mem_wrapper"
 RTL_FILES = ["rfu.v", "alu.v", "idu.v", "ifu.v", "lsu.v", "csr.v", "trigger.v", "mul.v",
              "div.v", "forward.v", "hazard.v", "bp.v", "ras.v", "cdec.v",
@@ -32,7 +32,7 @@ def _read(p: Path) -> str:
 
 def test_adr_and_spec_present():
     assert (ROOT / "docs/adr/0005-mem-valid-ready-wrapper.md").is_file()
-    assert "valid/ready" in _read(ROOT / "IP/cpu_m1/docs/spec.md")
+    assert "valid/ready" in _read(ROOT / "design/cpu_m1/docs/spec.md")
 
 
 def test_core_has_mem_stall_input_and_freeze_gating():

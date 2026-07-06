@@ -11,7 +11,7 @@ file mkdir $rpt_dir
 source "$here/lib_setup.tcl"
 
 define_design_lib WORK -path "$here/work"
-analyze -format sverilog -define SYNTHESIS "$root_dir/IP/npu/rtl/mat_engine.v"
+analyze -format sverilog -define SYNTHESIS "$root_dir/design/npu/rtl/mat_engine.v"
 elaborate mat_engine
 current_design mat_engine
 link

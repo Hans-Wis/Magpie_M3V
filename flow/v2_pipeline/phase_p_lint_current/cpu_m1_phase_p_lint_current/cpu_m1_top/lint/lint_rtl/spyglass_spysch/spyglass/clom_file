@@ -5,7 +5,7 @@ Run Setup Info
 ===============================================================================
 Option          Value             Origin  File                           LineNo
 ===============================================================================
-+incdir         ../../../IP/cpu_m1/rtl CmdLine -                              -
++incdir         ../../../design/cpu_m1/rtl CmdLine -                              -
 --goal_info     lint/lint_rtl@    CmdLine -                              -
 --strict_sgdc_check <ON>              Config  $SPYGLASS_HOME/.spyglass.setup 40
 -awl            magpie_m1_lint_waivers.awl CmdLine -                              -
@@ -181,22 +181,22 @@ Option          Value             Origin  File                           LineNo
 -templatedir    /soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff CmdLine -                              -
 -top            cpu_m1_top        CmdLine -                              -
 -wdir           ./cpu_m1_phase_p_lint_current/cpu_m1_top/lint/lint_rtl CmdLine -                              -
-<design_files>  ../../../IP/cpu_m1/rtl/alu.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/bp.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/cdec.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/core.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/cpu_m1_top.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/csr.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/def.vh APICall -                              -
-                ../../../IP/cpu_m1/rtl/div.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/forward.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/hazard.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/idu.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/ifu.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/lsu.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/mul.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/ras.v APICall -                              -
-                ../../../IP/cpu_m1/rtl/rfu.v APICall -                              -
+<design_files>  ../../../design/cpu_m1/rtl/alu.v APICall -                              -
+                ../../../design/cpu_m1/rtl/bp.v APICall -                              -
+                ../../../design/cpu_m1/rtl/cdec.v APICall -                              -
+                ../../../design/cpu_m1/rtl/core.v APICall -                              -
+                ../../../design/cpu_m1/rtl/cpu_m1_top.v APICall -                              -
+                ../../../design/cpu_m1/rtl/csr.v APICall -                              -
+                ../../../design/cpu_m1/rtl/def.vh APICall -                              -
+                ../../../design/cpu_m1/rtl/div.v APICall -                              -
+                ../../../design/cpu_m1/rtl/forward.v APICall -                              -
+                ../../../design/cpu_m1/rtl/hazard.v APICall -                              -
+                ../../../design/cpu_m1/rtl/idu.v APICall -                              -
+                ../../../design/cpu_m1/rtl/ifu.v APICall -                              -
+                ../../../design/cpu_m1/rtl/lsu.v APICall -                              -
+                ../../../design/cpu_m1/rtl/mul.v APICall -                              -
+                ../../../design/cpu_m1/rtl/ras.v APICall -                              -
+                ../../../design/cpu_m1/rtl/rfu.v APICall -                              -
 
 
 Rules Parameter

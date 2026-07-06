@@ -1,9 +1,9 @@
 """gate_00_identity_m3v - M3V identity hard-separation smoke gate.
 
 Magpie_M3V is a full-history fork of Magpie_M1A (tag m1a-rtl-freeze-v1.0). It is the
-*self-built HYBRID NPU* successor: the frozen M1A scalar core (IP/cpu_m1/) stays as the host,
+*self-built HYBRID NPU* successor: the frozen M1A scalar core (design/cpu_m1/) stays as the host,
 and all net-new ML acceleration (tightly-coupled int8/int4 GEMV TCU + TCM/DMA) lands under
-IP/npu/. This is a SIBLING of Magpie_M1V (which took the CoralNPU IMPORT route, ADR-0030) —
+design/npu/. This is a SIBLING of Magpie_M1V (which took the CoralNPU IMPORT route, ADR-0030) —
 their evidence is hard-isolated.
 
 Per the evidence-separation rule (CLAUDE.md §9 / docs/M1A_DESIGN_FREEZE.md): M1A's / M1's
@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_ip_json_identity_is_cpu_m3v():
-    j = json.loads((ROOT / "IP/cpu_m1/ip.json").read_text())
+    j = json.loads((ROOT / "design/cpu_m1/ip.json").read_text())
     assert j["design_id"] == "cpu_m3v", f"design_id must be cpu_m3v, got {j['design_id']!r}"
     assert j["name"] == "cpu_m3v"
     pf = j.get("provenance_fork")

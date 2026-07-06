@@ -8,7 +8,7 @@
 
 ## Context / governance change
 
-M3V's `IP/cpu_m1/` was inherited under a byte-identical freeze (`gate_10_host_noregress`). The User
+M3V's `design/cpu_m1/` was inherited under a byte-identical freeze (`gate_10_host_noregress`). The User
 has **relaxed this for M3V**: cpu_m1 may be modified, but **every modification must be fully verified**
 (Spike per-commit lockstep + gates, no regression). This unlocks the cleaner Phase-2 solution: one
 parameterized cpu_m1 source serving BOTH the host CPU and the NPU scalar sequencer, instead of a

@@ -1,6 +1,6 @@
 """gate_44_phase0_kernel_e2e — ADR-0036 Stage 3D: the Phase 3 EXIT BAR.
 
-The UNMODIFIED Phase 0 kernel (IP/npu/sw/rvv_zve32x_smoke/vdot_i8.c, compiled by clang
+The UNMODIFIED Phase 0 kernel (design/npu/sw/rvv_zve32x_smoke/vdot_i8.c, compiled by clang
 with the exact Phase 0 -march=rv32im_zve32x_zvl128b) runs on the EN_RVV sequencer inside
 npu_top: vsetvli(e32m1/e8mf4/keep-vl e16mf2) -> vle8.v x2 -> vwmul.vv -> vwadd.wv
 (vd==vs2 accumulate) -> vmv.s.x -> vredsum.vs -> vmv.x.s. dot([1..8],[2..9]) = 240.
@@ -50,6 +50,6 @@ def test_phase0_kernel_end_to_end():
 
 def test_kernel_is_the_phase0_source_and_march():
     mk = (PHASE / "Makefile").read_text()
-    assert "IP/npu/sw/rvv_zve32x_smoke/vdot_i8.c" in mk, "kernel source swapped"
+    assert "design/npu/sw/rvv_zve32x_smoke/vdot_i8.c" in mk, "kernel source swapped"
     assert "KERNEL_MARCH = rv32im_zve32x_zvl128b" in mk, "kernel -march drifted from Phase 0"
     assert "-O2" in mk

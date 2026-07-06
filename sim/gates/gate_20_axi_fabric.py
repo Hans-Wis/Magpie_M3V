@@ -14,14 +14,14 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-RTL = [ROOT / "IP/npu/rtl/axil_1to2.v", ROOT / "IP/npu/rtl/npu_axil_regs.v"]
-TB = [ROOT / "IP/npu/dv/tb/axil_mem16.v", ROOT / "IP/npu/dv/tb/tb_axil_fabric.v"]
+RTL = [ROOT / "design/npu/rtl/axil_1to2.v", ROOT / "design/npu/rtl/npu_axil_regs.v"]
+TB = [ROOT / "design/npu/dv/tb/axil_mem16.v", ROOT / "design/npu/dv/tb/tb_axil_fabric.v"]
 TOP = "tb_axil_fabric"
 LINT_WAIVERS = ["-Wno-DECLFILENAME", "-Wno-MULTITOP", "-Wno-UNUSEDSIGNAL"]
 
 # Since ADR-0034 (Phase 2 Step 4) npu_top instantiates the cpu_m1 sequencer, so every
 # gate that elaborates npu_top needs the cpu_m1 sources + its include dir.
-CPU_M1_DIR = ROOT / "IP/cpu_m1/rtl"
+CPU_M1_DIR = ROOT / "design/cpu_m1/rtl"
 CPU_M1_RTL = [CPU_M1_DIR / f"{m}.v" for m in (
     "rfu", "alu", "bmu", "idu", "ifu", "lsu", "csr", "trigger", "pmp",
     "mul", "div", "forward", "hazard", "bp", "ras", "cdec", "vexu", "core", "cpu_m1_top")]

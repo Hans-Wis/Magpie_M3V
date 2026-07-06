@@ -3,7 +3,7 @@
 ##user: edauser
 ##cwd: /home/edauser/project/SOC/Magpie_M1/flow/v2_pipeline/phase_p_lint_current
 ##lang: verilog+vhdl
-##args: -mSpyGlass::Compatibility::v2_7_3 -mSpyGlass::Compatibility::v2_7_3 -mSpyGlass::Compatibility::v2_7_3 -nl -top 'cpu_m1_top' -wdir './cpu_m1_phase_p_lint_current/cpu_m1_top/lint/lint_rtl' -lib WORK ./cpu_m1_phase_p_lint_current/cpu_m1_top/WORK -mixed -awl 'magpie_m1_lint_waivers.awl' +incdir+../../../IP/cpu_m1/rtl+ -dbdir './cpu_m1_phase_p_lint_current/cpu_m1_top/.SG_SaveRestoreDB' -batch -policy='openmore,starc,starc2005,erc,simulation,lint,latch,spyglass,morelint,timing' -rules='badimplicitSM1,badimplicitSM2,badimplicitSM4,BlockHeader,bothedges,STARC05-2.1.6.5,STARC05-2.3.1.2c,W421,W442a,W442b,W442c,W442f,sim_race02,W110a,W416,CheckDelayTimescale-ML,PragmaComments-ML,STARC05-2.10.2.3,STARC05-2.11.3.1,STARC05-2.3.1.5b,W215,W216,W289,W292,W293,W317,W352,W398,W422,W424,W426,W467,W480,W481a,W481b,W496a,W496b,W71,NoAssignX-ML,NoXInCase-ML,ParamWidthMismatch-ML,ReportPortInfo-ML,STARC05-2.1.3.1,STARC05-2.1.5.3,STARC05-2.2.3.3,STARC05-2.3.1.6,W110,W116,W122,W123,W19,W218,W240,W263,W337,W362,W486,W499,W502,W505,W66,InferLatch,RegInputOutput-ML,STARC05-2.3.4.1v,STARC05-2.5.1.7,STARC05-2.5.1.9,STARC05-2.10.3.2a,W336,W414,W450L,UndrivenInTerm-ML,BufClock,checkPinConnectedToSupply,CombLoop,FlopClockConstant,FlopEConst,FlopSRConst,LatchFeedback,STARC05-1.2.1.2,STARC05-1.3.1.3,STARC05-1.4.3.4,STARC05-2.1.4.5,STARC05-2.4.1.5,STARC05-2.5.1.2,W392,W415,STARC05-2.10.1.4a,STARC05-2.10.1.4b,W156,STARC05-2.3.3.1,W415a,W287b,W224,W287a,W528,mixedsenselist,W339a' --goal_info 'lint/lint_rtl@' -projectwdir './cpu_m1_phase_p_lint_current' -templatedir '/soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff' --template_info 'lint/lint_rtl' -overloadrules 'STARC05-2.1.6.5+severity=Warning,STARC05-2.3.1.2c+severity=Error,W421+severity=Error,sim_race02+severity=Warning,W416+severity=Error,PragmaComments-ML+severity=Data,STARC05-2.10.2.3+severity=Warning,STARC05-2.11.3.1+severity=Warning,STARC05-2.3.1.5b+severity=Error,W289+severity=Error,W293+severity=Error,W352+severity=Error,W398+severity=Error,W422+severity=Error,W71+severity=Error,ParamWidthMismatch-ML+severity=Warning,ReportPortInfo-ML+severity=Data,STARC05-2.1.3.1+severity=Warning,STARC05-2.1.5.3+severity=Warning,STARC05-2.2.3.3+severity=Warning,STARC05-2.3.1.6+severity=Warning,W110+severity=Error,W122+severity=Error,W123+severity=Error,W19+severity=Error,W218+severity=Error,W505+severity=Error,W66+severity=Error,InferLatch+severity=Error,RegInputOutput-ML+severity=Data,STARC05-2.3.4.1v+severity=Warning,STARC05-2.5.1.7+severity=Warning,STARC05-2.5.1.9+severity=Warning,W336+severity=Error,W414+severity=Error,W450L+severity=Warning,UndrivenInTerm-ML+severity=Error,BufClock+severity=Warning,checkPinConnectedToSupply+severity=Error,CombLoop+msgLabel=CombLoop+severity=Error,FlopClockConstant+msgLabel=FlopClockConstant+severity=Error,LatchFeedback+severity=Error,STARC05-1.2.1.2+severity=Error,STARC05-1.3.1.3+severity=Warning,STARC05-1.4.3.4+severity=Warning,STARC05-2.1.4.5+severity=Warning,STARC05-2.4.1.5+severity=Error,W415+msgLabel=W415+severity=Error' -enable_save_restore -enable_fast_traversal -enable_save_restore_builtin 'true' -assume_driver_load=yes -checkInHierarchy=yes -checkRTLCInst=yes -checkalldimension=yes -checkconstassign=yes -checkfullbus=yes -checkfullrecord=yes -chkTopModule=yes -enableE2Q=yes -ignoreModuleInstance=yes -new_flow_width=yes -nocheckoverflow=yes -report_inferred_cell=yes -reportundrivenout=no -strict=W342,W343 -treat_latch_as_combinational=yes -64bit 
+##args: -mSpyGlass::Compatibility::v2_7_3 -mSpyGlass::Compatibility::v2_7_3 -mSpyGlass::Compatibility::v2_7_3 -nl -top 'cpu_m1_top' -wdir './cpu_m1_phase_p_lint_current/cpu_m1_top/lint/lint_rtl' -lib WORK ./cpu_m1_phase_p_lint_current/cpu_m1_top/WORK -mixed -awl 'magpie_m1_lint_waivers.awl' +incdir+../../../design/cpu_m1/rtl+ -dbdir './cpu_m1_phase_p_lint_current/cpu_m1_top/.SG_SaveRestoreDB' -batch -policy='openmore,starc,starc2005,erc,simulation,lint,latch,spyglass,morelint,timing' -rules='badimplicitSM1,badimplicitSM2,badimplicitSM4,BlockHeader,bothedges,STARC05-2.1.6.5,STARC05-2.3.1.2c,W421,W442a,W442b,W442c,W442f,sim_race02,W110a,W416,CheckDelayTimescale-ML,PragmaComments-ML,STARC05-2.10.2.3,STARC05-2.11.3.1,STARC05-2.3.1.5b,W215,W216,W289,W292,W293,W317,W352,W398,W422,W424,W426,W467,W480,W481a,W481b,W496a,W496b,W71,NoAssignX-ML,NoXInCase-ML,ParamWidthMismatch-ML,ReportPortInfo-ML,STARC05-2.1.3.1,STARC05-2.1.5.3,STARC05-2.2.3.3,STARC05-2.3.1.6,W110,W116,W122,W123,W19,W218,W240,W263,W337,W362,W486,W499,W502,W505,W66,InferLatch,RegInputOutput-ML,STARC05-2.3.4.1v,STARC05-2.5.1.7,STARC05-2.5.1.9,STARC05-2.10.3.2a,W336,W414,W450L,UndrivenInTerm-ML,BufClock,checkPinConnectedToSupply,CombLoop,FlopClockConstant,FlopEConst,FlopSRConst,LatchFeedback,STARC05-1.2.1.2,STARC05-1.3.1.3,STARC05-1.4.3.4,STARC05-2.1.4.5,STARC05-2.4.1.5,STARC05-2.5.1.2,W392,W415,STARC05-2.10.1.4a,STARC05-2.10.1.4b,W156,STARC05-2.3.3.1,W415a,W287b,W224,W287a,W528,mixedsenselist,W339a' --goal_info 'lint/lint_rtl@' -projectwdir './cpu_m1_phase_p_lint_current' -templatedir '/soft/synopsys/spyglass/X-2025.06-SP1/SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff' --template_info 'lint/lint_rtl' -overloadrules 'STARC05-2.1.6.5+severity=Warning,STARC05-2.3.1.2c+severity=Error,W421+severity=Error,sim_race02+severity=Warning,W416+severity=Error,PragmaComments-ML+severity=Data,STARC05-2.10.2.3+severity=Warning,STARC05-2.11.3.1+severity=Warning,STARC05-2.3.1.5b+severity=Error,W289+severity=Error,W293+severity=Error,W352+severity=Error,W398+severity=Error,W422+severity=Error,W71+severity=Error,ParamWidthMismatch-ML+severity=Warning,ReportPortInfo-ML+severity=Data,STARC05-2.1.3.1+severity=Warning,STARC05-2.1.5.3+severity=Warning,STARC05-2.2.3.3+severity=Warning,STARC05-2.3.1.6+severity=Warning,W110+severity=Error,W122+severity=Error,W123+severity=Error,W19+severity=Error,W218+severity=Error,W505+severity=Error,W66+severity=Error,InferLatch+severity=Error,RegInputOutput-ML+severity=Data,STARC05-2.3.4.1v+severity=Warning,STARC05-2.5.1.7+severity=Warning,STARC05-2.5.1.9+severity=Warning,W336+severity=Error,W414+severity=Error,W450L+severity=Warning,UndrivenInTerm-ML+severity=Error,BufClock+severity=Warning,checkPinConnectedToSupply+severity=Error,CombLoop+msgLabel=CombLoop+severity=Error,FlopClockConstant+msgLabel=FlopClockConstant+severity=Error,LatchFeedback+severity=Error,STARC05-1.2.1.2+severity=Error,STARC05-1.3.1.3+severity=Warning,STARC05-1.4.3.4+severity=Warning,STARC05-2.1.4.5+severity=Warning,STARC05-2.4.1.5+severity=Error,W415+msgLabel=W415+severity=Error' -enable_save_restore -enable_fast_traversal -enable_save_restore_builtin 'true' -assume_driver_load=yes -checkInHierarchy=yes -checkRTLCInst=yes -checkalldimension=yes -checkconstassign=yes -checkfullbus=yes -checkfullrecord=yes -chkTopModule=yes -enableE2Q=yes -ignoreModuleInstance=yes -new_flow_width=yes -nocheckoverflow=yes -report_inferred_cell=yes -reportundrivenout=no -strict=W342,W343 -treat_latch_as_combinational=yes -64bit 
 ##verbosity level: 2
 ##spysch_dirname: ./cpu_m1_phase_p_lint_current/cpu_m1_top/lint/lint_rtl/spyglass_spysch
 ##vdb_delimiter: @@
@@ -1511,52 +1511,52 @@
 ElabSummary@@ElabSummary@@Info@@./cpu_m1_phase_p_lint_current/cpu_m1_top/lint/lint_rtl/spyglass_reports/SpyGlass/elab_summary.rpt@@0@@1@@2@@Please refer file './cpu_m1_phase_p_lint_current/cpu_m1_top/lint/lint_rtl/spyglass_reports/SpyGlass/elab_summary.rpt' for elab summary report
 ##sde_property: msg_label DEFAULT
 ##sde_property: msg_id DEFAULT
-##files_verilog: ../../../IP/cpu_m1/rtl/cpu_m1_top.v ../../../IP/cpu_m1/rtl/core.v ../../../IP/cpu_m1/rtl/cdec.v ../../../IP/cpu_m1/rtl/bp.v ../../../IP/cpu_m1/rtl/ras.v ../../../IP/cpu_m1/rtl/ifu.v ../../../IP/cpu_m1/rtl/idu.v ../../../IP/cpu_m1/rtl/rfu.v ../../../IP/cpu_m1/rtl/forward.v ../../../IP/cpu_m1/rtl/alu.v ../../../IP/cpu_m1/rtl/mul.v ../../../IP/cpu_m1/rtl/div.v ../../../IP/cpu_m1/rtl/lsu.v ../../../IP/cpu_m1/rtl/csr.v ../../../IP/cpu_m1/rtl/hazard.v
-##sde_property: file ../../../IP/cpu_m1/rtl/def.vh -id 1 -inactiveList slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1
-##sde_property: file ../../../IP/cpu_m1/rtl/rfu.v -id 2 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 15 1 slc 21 21 1 slc 24 24 1 slc 27 27 1 slc 41 41 1 slc 45 45 1
-##sde_property: file ../../../IP/cpu_m1/rtl/alu.v -id 3 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 19 1 slc 23 24 1 slc 30 31 1 slc 37 37 1
-##sde_property: file ../../../IP/cpu_m1/rtl/idu.v -id 4 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 20 1 slc 27 27 1 slc 32 32 1 slc 35 35 1 slc 39 39 1 slc 41 41 1 slc 43 43 1 slc 45 46 1 slc 50 50 1 slc 55 55 1 slc 57 58 1 slc 63 66 1 slc 68 68 1 slc 72 74 1 mlc 77 42 77 0 slc 78 78 1 mlc 79 41 79 0 slc 85 87 1 slc 94 96 1 slc 110 115 1 slc 119 120 1 slc 122 122 1 slc 124 130 1 slc 135 137 1 slc 149 158 1 slc 161 161 1 slc 165 165 1 slc 195 195 1 slc 197 197 1 slc 200 200 1 slc 207 207 1 slc 209 211 1 slc 217 218 1 slc 220 222 1 slc 226 228 1 slc 231 237 1
-##sde_property: file ../../../IP/cpu_m1/rtl/ifu.v -id 5 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 20 1 slc 30 30 1 slc 40 40 1 slc 43 44 1
-##sde_property: file ../../../IP/cpu_m1/rtl/lsu.v -id 6 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 27 1 slc 32 33 1 slc 39 39 1 slc 42 42 1 slc 46 46 1 slc 50 52 1 slc 80 82 1
-##sde_property: file ../../../IP/cpu_m1/rtl/csr.v -id 7 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 27 1 slc 35 35 1 slc 39 39 1 slc 42 44 1 slc 46 46 1 slc 49 49 1 slc 51 51 1 slc 55 55 1 slc 58 58 1 slc 61 61 1 slc 67 74 1 slc 79 79 1 slc 81 81 1 slc 87 91 1 slc 128 131 1 slc 141 143 1 slc 147 147 1 slc 158 158 1 slc 161 161 1 slc 165 166 1 slc 172 172 1 slc 180 180 1 slc 185 188 1 slc 197 197 1 slc 200 204 1 slc 212 214 1
-##sde_property: file ../../../IP/cpu_m1/rtl/mul.v -id 8 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 18 1 slc 39 43 1 slc 63 63 1 slc 69 69 1
-##sde_property: file ../../../IP/cpu_m1/rtl/div.v -id 9 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 16 1 slc 37 37 1 slc 39 39 1 slc 44 44 1 slc 46 48 1 slc 52 58 1 slc 60 60 1 slc 78 78 1 slc 89 89 1 slc 115 115 1 slc 118 119 1
-##sde_property: file ../../../IP/cpu_m1/rtl/forward.v -id 10 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 15 1 slc 20 20 1 slc 24 24 1 slc 28 28 1 slc 32 33 1 slc 35 35 1 slc 42 42 1 slc 47 47 1 slc 52 54 1 mlc 59 42 59 0 mlc 61 41 61 0
-##sde_property: file ../../../IP/cpu_m1/rtl/hazard.v -id 11 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 15 1 slc 20 20 1 slc 26 26 1 slc 32 32 1 slc 38 38 1 slc 44 45 1 mlc 50 42 50 0 mlc 52 41 52 0 slc 54 54 1
-##sde_property: file ../../../IP/cpu_m1/rtl/bp.v -id 12 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 25 1 slc 33 33 1 slc 38 38 1 slc 45 49 1 slc 51 53 1 slc 64 64 1 slc 66 68 1 slc 75 76 1 slc 82 84 1 slc 91 94 1 slc 100 100 1 slc 107 107 1 slc 125 125 1
-##sde_property: file ../../../IP/cpu_m1/rtl/ras.v -id 13 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 25 1 slc 33 34 1 slc 36 37 1 slc 39 39 1 slc 46 46 1 slc 48 48 1 slc 58 62 1 slc 67 68 1 slc 71 71 1 slc 74 74 1
-##sde_property: file ../../../IP/cpu_m1/rtl/cdec.v -id 14 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 22 1 slc 32 42 1 slc 44 44 1 slc 48 57 1 slc 59 60 1 slc 63 63 1 slc 66 66 1 slc 69 69 1 slc 72 72 1 slc 75 75 1 slc 78 78 1 slc 82 82 1 slc 85 85 1 slc 88 88 1 slc 96 98 1 slc 101 102 1 slc 106 106 1 slc 110 110 1 slc 113 113 1 slc 116 118 1 slc 121 121 1 slc 125 125 1 slc 129 129 1 slc 134 134 1 slc 138 138 1 slc 145 145 1 slc 148 149 1 slc 153 153 1 slc 158 158 1 slc 162 162 1 slc 164 168 1 slc 174 174 1 slc 178 178 1 slc 183 183 1 slc 189 191 1 slc 194 196 1 slc 200 200 1 slc 205 205 1 slc 208 209 1 slc 212 212 1 slc 215 215 1 slc 218 218 1 slc 221 221 1 slc 225 225 1 slc 231 231 1 slc 234 234 1 slc 237 237 1
-##sde_property: file ../../../IP/cpu_m1/rtl/core.v -id 15 -include ../../../IP/cpu_m1/rtl/def.vh -inactiveList slc 1 14 1 slc 26 26 1 slc 28 28 1 slc 31 31 1 slc 38 38 1 slc 41 41 1 slc 47 49 1 slc 53 53 1 slc 56 72 1 slc 75 77 1 slc 84 84 1 slc 98 100 1 slc 102 102 1 slc 108 108 1 slc 110 111 1 slc 114 116 1 slc 122 125 1 slc 130 131 1 slc 135 135 1 slc 139 139 1 compiler_directive 150 156 slc 159 163 1 slc 169 177 1 slc 183 183 1 slc 187 187 1 slc 226 230 1 slc 235 236 1 slc 239 239 1 slc 245 245 1 slc 249 249 1 slc 253 253 1 slc 257 257 1 slc 262 264 1 slc 272 272 1 slc 285 288 1 slc 298 298 1 slc 313 315 1 slc 323 323 1 slc 373 375 1 slc 392 394 1 slc 439 439 1 slc 471 473 1 slc 489 490 1 slc 495 496 1 slc 500 502 1 slc 512 513 1 slc 515 517 1 slc 524 525 1 slc 530 533 1 slc 590 594 1 slc 597 597 1 slc 599 601 1 slc 604 604 1 mlc 605 45 605 0 slc 611 611 1 slc 614 614 1 mlc 616 44 616 0 slc 618 621 1 slc 628 630 1 slc 633 633 1 slc 641 643 1 slc 655 655 1 mlc 661 42 661 0 slc 661 661 1 mlc 663 41 663 0 mlc 673 42 673 0 slc 674 674 1 mlc 675 41 675 0 slc 698 698 1 slc 700 700 1 slc 729 731 1 slc 749 760 1 slc 762 763 1 slc 765 765 1 slc 827 827 1 slc 829 829 1 slc 852 855 1 slc 860 860 1 slc 866 873 1 slc 911 912 1 slc 943 943 1 slc 962 962 1 slc 969 973 1 mlc 974 45 974 0 mlc 985 44 985 0 slc 987 987 1 slc 1001 1001 1 slc 1017 1017 1 slc 1022 1031 1 slc 1037 1037 1 slc 1045 1045 1 slc 1050 1054 1 slc 1062 1062 1 slc 1065 1068 1 slc 1076 1078 1 slc 1086 1088 1
-##sde_property: file ../../../IP/cpu_m1/rtl/cpu_m1_top.v -id 16 -inactiveList slc 1 27 1 slc 30 32 1 slc 40 40 1 slc 46 46 1 slc 62 62 1 slc 70 70 1 slc 81 81 1 slc 83 85 1 slc 88 92 1 slc 104 104 1 slc 113 114 1 slc 117 117 1 slc 132 132 1 slc 146 146 1
-#span cpu_m1_top ../../../IP/cpu_m1/rtl/cpu_m1_top.v 29 170 ../../../IP/cpu_m1/rtl/cpu_m1_top.v 1 170
+##files_verilog: ../../../design/cpu_m1/rtl/cpu_m1_top.v ../../../design/cpu_m1/rtl/core.v ../../../design/cpu_m1/rtl/cdec.v ../../../design/cpu_m1/rtl/bp.v ../../../design/cpu_m1/rtl/ras.v ../../../design/cpu_m1/rtl/ifu.v ../../../design/cpu_m1/rtl/idu.v ../../../design/cpu_m1/rtl/rfu.v ../../../design/cpu_m1/rtl/forward.v ../../../design/cpu_m1/rtl/alu.v ../../../design/cpu_m1/rtl/mul.v ../../../design/cpu_m1/rtl/div.v ../../../design/cpu_m1/rtl/lsu.v ../../../design/cpu_m1/rtl/csr.v ../../../design/cpu_m1/rtl/hazard.v
+##sde_property: file ../../../design/cpu_m1/rtl/def.vh -id 1 -inactiveList slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 slc 1 13 1 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 compiler_directive 16 218 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1 slc 219 219 1
+##sde_property: file ../../../design/cpu_m1/rtl/rfu.v -id 2 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 15 1 slc 21 21 1 slc 24 24 1 slc 27 27 1 slc 41 41 1 slc 45 45 1
+##sde_property: file ../../../design/cpu_m1/rtl/alu.v -id 3 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 19 1 slc 23 24 1 slc 30 31 1 slc 37 37 1
+##sde_property: file ../../../design/cpu_m1/rtl/idu.v -id 4 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 20 1 slc 27 27 1 slc 32 32 1 slc 35 35 1 slc 39 39 1 slc 41 41 1 slc 43 43 1 slc 45 46 1 slc 50 50 1 slc 55 55 1 slc 57 58 1 slc 63 66 1 slc 68 68 1 slc 72 74 1 mlc 77 42 77 0 slc 78 78 1 mlc 79 41 79 0 slc 85 87 1 slc 94 96 1 slc 110 115 1 slc 119 120 1 slc 122 122 1 slc 124 130 1 slc 135 137 1 slc 149 158 1 slc 161 161 1 slc 165 165 1 slc 195 195 1 slc 197 197 1 slc 200 200 1 slc 207 207 1 slc 209 211 1 slc 217 218 1 slc 220 222 1 slc 226 228 1 slc 231 237 1
+##sde_property: file ../../../design/cpu_m1/rtl/ifu.v -id 5 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 20 1 slc 30 30 1 slc 40 40 1 slc 43 44 1
+##sde_property: file ../../../design/cpu_m1/rtl/lsu.v -id 6 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 27 1 slc 32 33 1 slc 39 39 1 slc 42 42 1 slc 46 46 1 slc 50 52 1 slc 80 82 1
+##sde_property: file ../../../design/cpu_m1/rtl/csr.v -id 7 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 27 1 slc 35 35 1 slc 39 39 1 slc 42 44 1 slc 46 46 1 slc 49 49 1 slc 51 51 1 slc 55 55 1 slc 58 58 1 slc 61 61 1 slc 67 74 1 slc 79 79 1 slc 81 81 1 slc 87 91 1 slc 128 131 1 slc 141 143 1 slc 147 147 1 slc 158 158 1 slc 161 161 1 slc 165 166 1 slc 172 172 1 slc 180 180 1 slc 185 188 1 slc 197 197 1 slc 200 204 1 slc 212 214 1
+##sde_property: file ../../../design/cpu_m1/rtl/mul.v -id 8 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 18 1 slc 39 43 1 slc 63 63 1 slc 69 69 1
+##sde_property: file ../../../design/cpu_m1/rtl/div.v -id 9 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 16 1 slc 37 37 1 slc 39 39 1 slc 44 44 1 slc 46 48 1 slc 52 58 1 slc 60 60 1 slc 78 78 1 slc 89 89 1 slc 115 115 1 slc 118 119 1
+##sde_property: file ../../../design/cpu_m1/rtl/forward.v -id 10 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 15 1 slc 20 20 1 slc 24 24 1 slc 28 28 1 slc 32 33 1 slc 35 35 1 slc 42 42 1 slc 47 47 1 slc 52 54 1 mlc 59 42 59 0 mlc 61 41 61 0
+##sde_property: file ../../../design/cpu_m1/rtl/hazard.v -id 11 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 15 1 slc 20 20 1 slc 26 26 1 slc 32 32 1 slc 38 38 1 slc 44 45 1 mlc 50 42 50 0 mlc 52 41 52 0 slc 54 54 1
+##sde_property: file ../../../design/cpu_m1/rtl/bp.v -id 12 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 25 1 slc 33 33 1 slc 38 38 1 slc 45 49 1 slc 51 53 1 slc 64 64 1 slc 66 68 1 slc 75 76 1 slc 82 84 1 slc 91 94 1 slc 100 100 1 slc 107 107 1 slc 125 125 1
+##sde_property: file ../../../design/cpu_m1/rtl/ras.v -id 13 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 25 1 slc 33 34 1 slc 36 37 1 slc 39 39 1 slc 46 46 1 slc 48 48 1 slc 58 62 1 slc 67 68 1 slc 71 71 1 slc 74 74 1
+##sde_property: file ../../../design/cpu_m1/rtl/cdec.v -id 14 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 22 1 slc 32 42 1 slc 44 44 1 slc 48 57 1 slc 59 60 1 slc 63 63 1 slc 66 66 1 slc 69 69 1 slc 72 72 1 slc 75 75 1 slc 78 78 1 slc 82 82 1 slc 85 85 1 slc 88 88 1 slc 96 98 1 slc 101 102 1 slc 106 106 1 slc 110 110 1 slc 113 113 1 slc 116 118 1 slc 121 121 1 slc 125 125 1 slc 129 129 1 slc 134 134 1 slc 138 138 1 slc 145 145 1 slc 148 149 1 slc 153 153 1 slc 158 158 1 slc 162 162 1 slc 164 168 1 slc 174 174 1 slc 178 178 1 slc 183 183 1 slc 189 191 1 slc 194 196 1 slc 200 200 1 slc 205 205 1 slc 208 209 1 slc 212 212 1 slc 215 215 1 slc 218 218 1 slc 221 221 1 slc 225 225 1 slc 231 231 1 slc 234 234 1 slc 237 237 1
+##sde_property: file ../../../design/cpu_m1/rtl/core.v -id 15 -include ../../../design/cpu_m1/rtl/def.vh -inactiveList slc 1 14 1 slc 26 26 1 slc 28 28 1 slc 31 31 1 slc 38 38 1 slc 41 41 1 slc 47 49 1 slc 53 53 1 slc 56 72 1 slc 75 77 1 slc 84 84 1 slc 98 100 1 slc 102 102 1 slc 108 108 1 slc 110 111 1 slc 114 116 1 slc 122 125 1 slc 130 131 1 slc 135 135 1 slc 139 139 1 compiler_directive 150 156 slc 159 163 1 slc 169 177 1 slc 183 183 1 slc 187 187 1 slc 226 230 1 slc 235 236 1 slc 239 239 1 slc 245 245 1 slc 249 249 1 slc 253 253 1 slc 257 257 1 slc 262 264 1 slc 272 272 1 slc 285 288 1 slc 298 298 1 slc 313 315 1 slc 323 323 1 slc 373 375 1 slc 392 394 1 slc 439 439 1 slc 471 473 1 slc 489 490 1 slc 495 496 1 slc 500 502 1 slc 512 513 1 slc 515 517 1 slc 524 525 1 slc 530 533 1 slc 590 594 1 slc 597 597 1 slc 599 601 1 slc 604 604 1 mlc 605 45 605 0 slc 611 611 1 slc 614 614 1 mlc 616 44 616 0 slc 618 621 1 slc 628 630 1 slc 633 633 1 slc 641 643 1 slc 655 655 1 mlc 661 42 661 0 slc 661 661 1 mlc 663 41 663 0 mlc 673 42 673 0 slc 674 674 1 mlc 675 41 675 0 slc 698 698 1 slc 700 700 1 slc 729 731 1 slc 749 760 1 slc 762 763 1 slc 765 765 1 slc 827 827 1 slc 829 829 1 slc 852 855 1 slc 860 860 1 slc 866 873 1 slc 911 912 1 slc 943 943 1 slc 962 962 1 slc 969 973 1 mlc 974 45 974 0 mlc 985 44 985 0 slc 987 987 1 slc 1001 1001 1 slc 1017 1017 1 slc 1022 1031 1 slc 1037 1037 1 slc 1045 1045 1 slc 1050 1054 1 slc 1062 1062 1 slc 1065 1068 1 slc 1076 1078 1 slc 1086 1088 1
+##sde_property: file ../../../design/cpu_m1/rtl/cpu_m1_top.v -id 16 -inactiveList slc 1 27 1 slc 30 32 1 slc 40 40 1 slc 46 46 1 slc 62 62 1 slc 70 70 1 slc 81 81 1 slc 83 85 1 slc 88 92 1 slc 104 104 1 slc 113 114 1 slc 117 117 1 slc 132 132 1 slc 146 146 1
+#span cpu_m1_top ../../../design/cpu_m1/rtl/cpu_m1_top.v 29 170 ../../../design/cpu_m1/rtl/cpu_m1_top.v 1 170
 #rtl_idmap cpu_m1_top 1 -lang 1
-#span core ../../../IP/cpu_m1/rtl/core.v 18 1093 ../../../IP/cpu_m1/rtl/core.v 1 1093 ../../../IP/cpu_m1/rtl/def.vh 1 219
+#span core ../../../design/cpu_m1/rtl/core.v 18 1093 ../../../design/cpu_m1/rtl/core.v 1 1093 ../../../design/cpu_m1/rtl/def.vh 1 219
 #rtl_idmap core 2 -lang 1
-#span cdec ../../../IP/cpu_m1/rtl/cdec.v 26 242 ../../../IP/cpu_m1/rtl/cdec.v 1 242 ../../../IP/cpu_m1/rtl/def.vh 1 219
+#span cdec ../../../design/cpu_m1/rtl/cdec.v 26 242 ../../../design/cpu_m1/rtl/cdec.v 1 242 ../../../design/cpu_m1/rtl/def.vh 1 219
 #rtl_idmap cdec 3 -lang 1
-#span bp ../../../IP/cpu_m1/rtl/bp.v 29 141 ../../../IP/cpu_m1/rtl/bp.v 1 141 ../../../IP/cpu_m1/rtl/def.vh 1 219
+#span bp ../../../design/cpu_m1/rtl/bp.v 29 141 ../../../design/cpu_m1/rtl/bp.v 1 141 ../../../design/cpu_m1/rtl/def.vh 1 219
 #rtl_idmap bp 4 -lang 1
-#span ras ../../../IP/cpu_m1/rtl/ras.v 29 79 ../../../IP/cpu_m1/rtl/def.vh 1 219 ../../../IP/cpu_m1/rtl/ras.v 1 79
+#span ras ../../../design/cpu_m1/rtl/ras.v 29 79 ../../../design/cpu_m1/rtl/def.vh 1 219 ../../../design/cpu_m1/rtl/ras.v 1 79
 #rtl_idmap ras 5 -lang 1
-#span ifu ../../../IP/cpu_m1/rtl/ifu.v 24 63 ../../../IP/cpu_m1/rtl/def.vh 1 219 ../../../IP/cpu_m1/rtl/ifu.v 1 63
+#span ifu ../../../design/cpu_m1/rtl/ifu.v 24 63 ../../../design/cpu_m1/rtl/def.vh 1 219 ../../../design/cpu_m1/rtl/ifu.v 1 63
 #rtl_idmap ifu 6 -lang 1
-#span idu ../../../IP/cpu_m1/rtl/idu.v 24 250 ../../../IP/cpu_m1/rtl/def.vh 1 219 ../../../IP/cpu_m1/rtl/idu.v 1 250
+#span idu ../../../design/cpu_m1/rtl/idu.v 24 250 ../../../design/cpu_m1/rtl/def.vh 1 219 ../../../design/cpu_m1/rtl/idu.v 1 250
 #rtl_idmap idu 7 -lang 1
-#span rfu ../../../IP/cpu_m1/rtl/rfu.v 19 51 ../../../IP/cpu_m1/rtl/def.vh 1 219 ../../../IP/cpu_m1/rtl/rfu.v 1 51
+#span rfu ../../../design/cpu_m1/rtl/rfu.v 19 51 ../../../design/cpu_m1/rtl/def.vh 1 219 ../../../design/cpu_m1/rtl/rfu.v 1 51
 #rtl_idmap rfu 8 -lang 1
-#span forward ../../../IP/cpu_m1/rtl/forward.v 19 71 ../../../IP/cpu_m1/rtl/def.vh 1 219 ../../../IP/cpu_m1/rtl/forward.v 1 71
+#span forward ../../../design/cpu_m1/rtl/forward.v 19 71 ../../../design/cpu_m1/rtl/def.vh 1 219 ../../../design/cpu_m1/rtl/forward.v 1 71
 #rtl_idmap forward 9 -lang 1
-#span alu ../../../IP/cpu_m1/rtl/alu.v 25 71 ../../../IP/cpu_m1/rtl/alu.v 1 71 ../../../IP/cpu_m1/rtl/def.vh 1 219
+#span alu ../../../design/cpu_m1/rtl/alu.v 25 71 ../../../design/cpu_m1/rtl/alu.v 1 71 ../../../design/cpu_m1/rtl/def.vh 1 219
 #rtl_idmap alu 10 -lang 1
-#span mul ../../../IP/cpu_m1/rtl/mul.v 22 77 ../../../IP/cpu_m1/rtl/def.vh 1 219 ../../../IP/cpu_m1/rtl/mul.v 1 77
+#span mul ../../../design/cpu_m1/rtl/mul.v 22 77 ../../../design/cpu_m1/rtl/def.vh 1 219 ../../../design/cpu_m1/rtl/mul.v 1 77
 #rtl_idmap mul 11 -lang 1
-#span div ../../../IP/cpu_m1/rtl/div.v 20 139 ../../../IP/cpu_m1/rtl/def.vh 1 219 ../../../IP/cpu_m1/rtl/div.v 1 139
+#span div ../../../design/cpu_m1/rtl/div.v 20 139 ../../../design/cpu_m1/rtl/def.vh 1 219 ../../../design/cpu_m1/rtl/div.v 1 139
 #rtl_idmap div 12 -lang 1
-#span lsu ../../../IP/cpu_m1/rtl/lsu.v 31 110 ../../../IP/cpu_m1/rtl/def.vh 1 219 ../../../IP/cpu_m1/rtl/lsu.v 1 110
+#span lsu ../../../design/cpu_m1/rtl/lsu.v 31 110 ../../../design/cpu_m1/rtl/def.vh 1 219 ../../../design/cpu_m1/rtl/lsu.v 1 110
 #rtl_idmap lsu 13 -lang 1
-#span csr ../../../IP/cpu_m1/rtl/csr.v 31 219 ../../../IP/cpu_m1/rtl/csr.v 1 219 ../../../IP/cpu_m1/rtl/def.vh 1 219
+#span csr ../../../design/cpu_m1/rtl/csr.v 31 219 ../../../design/cpu_m1/rtl/csr.v 1 219 ../../../design/cpu_m1/rtl/def.vh 1 219
 #rtl_idmap csr 14 -lang 1
-#span hazard ../../../IP/cpu_m1/rtl/hazard.v 19 59 ../../../IP/cpu_m1/rtl/def.vh 1 219 ../../../IP/cpu_m1/rtl/hazard.v 1 59
+#span hazard ../../../design/cpu_m1/rtl/hazard.v 19 59 ../../../design/cpu_m1/rtl/def.vh 1 219 ../../../design/cpu_m1/rtl/hazard.v 1 59
 #rtl_idmap hazard 15 -lang 1
 #greybox cpu_m1_top 15
 #greybox core 15
@@ -1573,38 +1573,38 @@ ElabSummary@@ElabSummary@@Info@@./cpu_m1_phase_p_lint_current/cpu_m1_top/lint/li
 #greybox lsu 15
 #greybox csr 15
 #greybox hazard 15
-DetectTopDesignUnits@@DetectTopDesignUnits@@Info@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@29@@1@@2@@Module cpu_m1_top is a top level design unit
+DetectTopDesignUnits@@DetectTopDesignUnits@@Info@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@29@@1@@2@@Module cpu_m1_top is a top level design unit
 ##sde_property: violation -duId 1 
 #rtl_top_modules cpu_m1_top
 ##file_label: SPG_CHECKSUM_RPT_FILE -file ./cpu_m1_phase_p_lint_current/cpu_m1_top/lint/lint_rtl/spyglass_reports/SpyGlass/checksum.rpt -policy SpyGlass -external
-STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@114@@1@@5@@Flipflop 'primed' is assigned over the same signal in an always construct for sequential circuits (at line '103')
+STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@114@@1@@5@@Flipflop 'primed' is assigned over the same signal in an always construct for sequential circuits (at line '103')
 ##sde_property: violation -ruleLang 1 -duId 1 -elabDuId 1 
 ##sde_property: msg_label STARC-2.2.3.3_ve
 ##sde_property: msg_id STARC-2.2.3.3_ve
-W415a@@@@Warning@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@114@@1@@5@@Signal primed is being assigned multiple times ( previous assignment at line 103 ) in same always block [Hierarchy: ':cpu_m1_top']@@0
+W415a@@@@Warning@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@114@@1@@5@@Signal primed is being assigned multiple times ( previous assignment at line 103 ) in same always block [Hierarchy: ':cpu_m1_top']@@0
 ##continue: ST.1(multi_line_viewer) 
 ##sde_property: violation -ruleLang 1 -duId 1 -elabDuId 1 
 ##sde_property: msg_label W415a_msg1
 ##sde_property: msg_id W415a_msg1
 ReportPortInfo-ML@@@@Data@@./cpu_m1_phase_p_lint_current/cpu_m1_top/lint/lint_rtl/spyglass_reports/morelint/ReportPortInfo@@1@@1@@2@@Port Information for top design unit has been generated. For details see report ReportPortInfo.rpt
 ##sde_property: violation -elabDuId 1 
-W287b@@@@Warning@@../../../IP/cpu_m1/rtl/core.v@@614@@1@@5@@Instance output port 'ld_result' is not connected
+W287b@@@@Warning@@../../../design/cpu_m1/rtl/core.v@@614@@1@@5@@Instance output port 'ld_result' is not connected
 ##sde_property: violation -ruleLang 1 -duId 2 -elabDuId 2 
 ##sde_property: msg_label W287b_msg
 ##sde_property: msg_id W287b_msg
-W287b@@@@Warning@@../../../IP/cpu_m1/rtl/core.v@@981@@1@@5@@Instance output port 'mem_wdata' is not connected
+W287b@@@@Warning@@../../../design/cpu_m1/rtl/core.v@@981@@1@@5@@Instance output port 'mem_wdata' is not connected
 ##sde_property: violation -ruleLang 1 -duId 2 -elabDuId 2 
 ##sde_property: msg_label W287b_msg
 ##sde_property: msg_id W287b_msg
-W287b@@@@Warning@@../../../IP/cpu_m1/rtl/core.v@@982@@1@@5@@Instance output port 'mem_wstrb' is not connected
+W287b@@@@Warning@@../../../design/cpu_m1/rtl/core.v@@982@@1@@5@@Instance output port 'mem_wstrb' is not connected
 ##sde_property: violation -ruleLang 1 -duId 2 -elabDuId 2 
 ##sde_property: msg_label W287b_msg
 ##sde_property: msg_id W287b_msg
-W528@@@@Warning@@../../../IP/cpu_m1/rtl/core.v@@146@@1@@10@@Variable 'cdec_illegal' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core']
+W528@@@@Warning@@../../../design/cpu_m1/rtl/core.v@@146@@1@@10@@Variable 'cdec_illegal' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core']
 ##sde_property: violation -ruleLang 1 -duId 2 -elabDuId 2 
 ##sde_property: msg_label veCheckUsage_Viol_Msg
 ##sde_property: msg_id veCheckUsage_Viol_Msg
-W528@@@@Warning@@../../../IP/cpu_m1/rtl/core.v@@893@@1@@10@@Variable 'ex_wb_is_store_r' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core']
+W528@@@@Warning@@../../../design/cpu_m1/rtl/core.v@@893@@1@@10@@Variable 'ex_wb_is_store_r' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core']
 ##sde_property: violation -ruleLang 1 -duId 2 -elabDuId 2 
 ##sde_property: msg_label veCheckUsage_Viol_Msg
 ##sde_property: msg_id veCheckUsage_Viol_Msg
@@ -1612,77 +1612,77 @@ W528@@@@Info@@./cpu_m1_phase_p_lint_current/cpu_m1_top/lint/lint_rtl/spyglass_re
 ##sde_property: violation -ruleLang 1 -elabDuId 3 
 ##sde_property: msg_label SignalUsageReport_Refer
 ##sde_property: msg_id SignalUsageReport_Refer
-W528@@@@Warning@@../../../IP/cpu_m1/rtl/cdec.v@@41@@1@@10@@Variable 'rs1_q0_3[2:0]' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core:u_cdec@cdec']
+W528@@@@Warning@@../../../design/cpu_m1/rtl/cdec.v@@41@@1@@10@@Variable 'rs1_q0_3[2:0]' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core:u_cdec@cdec']
 ##continue:
 ##sde_property: violation -ruleLang 1 -duId 3 -elabDuId 3 -type 1WBusMerge -mergeStr1 rs1_q0_3 -mergeRange1 2:0 -completeRange1 -1:0  
 ##sde_property: msg_label veCheckUsage_Viol_Msg
 ##sde_property: msg_id veCheckUsage_Viol_Msg
-W528@@@@Warning@@../../../IP/cpu_m1/rtl/cdec.v@@42@@1@@10@@Variable 'rd_q0_3[2:0]' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core:u_cdec@cdec']
+W528@@@@Warning@@../../../design/cpu_m1/rtl/cdec.v@@42@@1@@10@@Variable 'rd_q0_3[2:0]' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core:u_cdec@cdec']
 ##continue:
 ##sde_property: violation -ruleLang 1 -duId 3 -elabDuId 3 -type 1WBusMerge -mergeStr1 rd_q0_3 -mergeRange1 2:0 -completeRange1 -1:0  
 ##sde_property: msg_label veCheckUsage_Viol_Msg
 ##sde_property: msg_id veCheckUsage_Viol_Msg
-W528@@@@Warning@@../../../IP/cpu_m1/rtl/forward.v@@60@@1@@10@@Variable '_unused_wb_is_load' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core:u_forward@forward']
+W528@@@@Warning@@../../../design/cpu_m1/rtl/forward.v@@60@@1@@10@@Variable '_unused_wb_is_load' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core:u_forward@forward']
 ##sde_property: violation -ruleLang 1 -duId 9 -elabDuId 9 
 ##sde_property: msg_label veCheckUsage_Viol_Msg
 ##sde_property: msg_id veCheckUsage_Viol_Msg
-STARC05-2.11.3.1@@SepStateNextLogic@@Warning@@../../../IP/cpu_m1/rtl/div.v@@69@@1@@10@@Combinational and sequential parts of an FSM 'div.state' described in same always block
+STARC05-2.11.3.1@@SepStateNextLogic@@Warning@@../../../design/cpu_m1/rtl/div.v@@69@@1@@10@@Combinational and sequential parts of an FSM 'div.state' described in same always block
 ##sde_property: violation -ruleLang 1 -duId 12 -elabDuId 12 
 ##sde_property: msg_label STARC-2.11.3.1_ve
 ##sde_property: msg_id STARC-2.11.3.1_ve
-STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../IP/cpu_m1/rtl/csr.v@@190@@1@@5@@Flipflop 'mepc_reg' is assigned over the same signal in an always construct for sequential circuits (at line '177')
+STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../design/cpu_m1/rtl/csr.v@@190@@1@@5@@Flipflop 'mepc_reg' is assigned over the same signal in an always construct for sequential circuits (at line '177')
 ##sde_property: violation -ruleLang 1 -duId 14 -elabDuId 14 
 ##sde_property: msg_label STARC-2.2.3.3_ve
 ##sde_property: msg_id STARC-2.2.3.3_ve
-STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../IP/cpu_m1/rtl/csr.v@@191@@1@@5@@Flipflop 'mcause_reg' is assigned over the same signal in an always construct for sequential circuits (at line '178')
+STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../design/cpu_m1/rtl/csr.v@@191@@1@@5@@Flipflop 'mcause_reg' is assigned over the same signal in an always construct for sequential circuits (at line '178')
 ##sde_property: violation -ruleLang 1 -duId 14 -elabDuId 14 
 ##sde_property: msg_label STARC-2.2.3.3_ve
 ##sde_property: msg_id STARC-2.2.3.3_ve
-STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../IP/cpu_m1/rtl/csr.v@@192@@1@@5@@Flipflop 'mtval_reg' is assigned over the same signal in an always construct for sequential circuits (at line '179')
+STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../design/cpu_m1/rtl/csr.v@@192@@1@@5@@Flipflop 'mtval_reg' is assigned over the same signal in an always construct for sequential circuits (at line '179')
 ##sde_property: violation -ruleLang 1 -duId 14 -elabDuId 14 
 ##sde_property: msg_label STARC-2.2.3.3_ve
 ##sde_property: msg_id STARC-2.2.3.3_ve
-STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../IP/cpu_m1/rtl/csr.v@@193@@1@@5@@Flipflop 'mstatus_mpie' is assigned over the same signal in an always construct for sequential circuits (at line '171')
+STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../design/cpu_m1/rtl/csr.v@@193@@1@@5@@Flipflop 'mstatus_mpie' is assigned over the same signal in an always construct for sequential circuits (at line '171')
 ##sde_property: violation -ruleLang 1 -duId 14 -elabDuId 14 
 ##sde_property: msg_label STARC-2.2.3.3_ve
 ##sde_property: msg_id STARC-2.2.3.3_ve
-STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../IP/cpu_m1/rtl/csr.v@@194@@1@@5@@Flipflop 'mstatus_mie' is assigned over the same signal in an always construct for sequential circuits (at line '170')
+STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../design/cpu_m1/rtl/csr.v@@194@@1@@5@@Flipflop 'mstatus_mie' is assigned over the same signal in an always construct for sequential circuits (at line '170')
 ##sde_property: violation -ruleLang 1 -duId 14 -elabDuId 14 
 ##sde_property: msg_label STARC-2.2.3.3_ve
 ##sde_property: msg_id STARC-2.2.3.3_ve
-STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../IP/cpu_m1/rtl/csr.v@@196@@1@@5@@Flipflop 'mstatus_mie' is assigned over the same signal in an always construct for sequential circuits (at line '170')
+STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../design/cpu_m1/rtl/csr.v@@196@@1@@5@@Flipflop 'mstatus_mie' is assigned over the same signal in an always construct for sequential circuits (at line '170')
 ##sde_property: violation -ruleLang 1 -duId 14 -elabDuId 14 
 ##sde_property: msg_label STARC-2.2.3.3_ve
 ##sde_property: msg_id STARC-2.2.3.3_ve
-STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../IP/cpu_m1/rtl/csr.v@@197@@1@@5@@Flipflop 'mstatus_mpie' is assigned over the same signal in an always construct for sequential circuits (at line '171')
+STARC05-2.2.3.3@@InitValUsingNBA@@Warning@@../../../design/cpu_m1/rtl/csr.v@@197@@1@@5@@Flipflop 'mstatus_mpie' is assigned over the same signal in an always construct for sequential circuits (at line '171')
 ##sde_property: violation -ruleLang 1 -duId 14 -elabDuId 14 
 ##sde_property: msg_label STARC-2.2.3.3_ve
 ##sde_property: msg_id STARC-2.2.3.3_ve
-W415a@@@@Warning@@../../../IP/cpu_m1/rtl/csr.v@@122@@1@@5@@Signal csr_rdata is being assigned multiple times ( previous assignment at line 100 ) in same always block [Hierarchy: ':cpu_m1_top:u_core@core:u_csr@csr']@@0
+W415a@@@@Warning@@../../../design/cpu_m1/rtl/csr.v@@122@@1@@5@@Signal csr_rdata is being assigned multiple times ( previous assignment at line 100 ) in same always block [Hierarchy: ':cpu_m1_top:u_core@core:u_csr@csr']@@0
 ##continue: ST.3(multi_line_viewer) 
 ##sde_property: violation -ruleLang 1 -duId 14 -elabDuId 14 
 ##sde_property: msg_label W415a_msg1
 ##sde_property: msg_id W415a_msg1
-W415a@@@@Warning@@../../../IP/cpu_m1/rtl/csr.v@@190@@1@@5@@Signal mepc_reg is being assigned multiple times ( previous assignment at line 177 ) in same always block [Hierarchy: ':cpu_m1_top:u_core@core:u_csr@csr']@@0
+W415a@@@@Warning@@../../../design/cpu_m1/rtl/csr.v@@190@@1@@5@@Signal mepc_reg is being assigned multiple times ( previous assignment at line 177 ) in same always block [Hierarchy: ':cpu_m1_top:u_core@core:u_csr@csr']@@0
 ##continue: ST.5(multi_line_viewer) 
 ##sde_property: violation -ruleLang 1 -duId 14 -elabDuId 14 
 ##sde_property: msg_label W415a_msg1
 ##sde_property: msg_id W415a_msg1
-W415a@@@@Warning@@../../../IP/cpu_m1/rtl/csr.v@@191@@1@@5@@Signal mcause_reg is being assigned multiple times ( previous assignment at line 178 ) in same always block [Hierarchy: ':cpu_m1_top:u_core@core:u_csr@csr']@@0
+W415a@@@@Warning@@../../../design/cpu_m1/rtl/csr.v@@191@@1@@5@@Signal mcause_reg is being assigned multiple times ( previous assignment at line 178 ) in same always block [Hierarchy: ':cpu_m1_top:u_core@core:u_csr@csr']@@0
 ##continue: ST.7(multi_line_viewer) 
 ##sde_property: violation -ruleLang 1 -duId 14 -elabDuId 14 
 ##sde_property: msg_label W415a_msg1
 ##sde_property: msg_id W415a_msg1
-W415a@@@@Warning@@../../../IP/cpu_m1/rtl/csr.v@@192@@1@@5@@Signal mtval_reg is being assigned multiple times ( previous assignment at line 179 ) in same always block [Hierarchy: ':cpu_m1_top:u_core@core:u_csr@csr']@@0
+W415a@@@@Warning@@../../../design/cpu_m1/rtl/csr.v@@192@@1@@5@@Signal mtval_reg is being assigned multiple times ( previous assignment at line 179 ) in same always block [Hierarchy: ':cpu_m1_top:u_core@core:u_csr@csr']@@0
 ##continue: ST.9(multi_line_viewer) 
 ##sde_property: violation -ruleLang 1 -duId 14 -elabDuId 14 
 ##sde_property: msg_label W415a_msg1
 ##sde_property: msg_id W415a_msg1
-W528@@@@Warning@@../../../IP/cpu_m1/rtl/hazard.v@@51@@1@@10@@Variable '_unused_wb_signals' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core:u_hazard@hazard']
+W528@@@@Warning@@../../../design/cpu_m1/rtl/hazard.v@@51@@1@@10@@Variable '_unused_wb_signals' set but not read.[Hierarchy: ':cpu_m1_top:u_core@core:u_hazard@hazard']
 ##sde_property: violation -ruleLang 1 -duId 15 -elabDuId 15 
 ##sde_property: msg_label veCheckUsage_Viol_Msg
 ##sde_property: msg_id veCheckUsage_Viol_Msg
-SYNTH_5143@@@@SynthesisWarning@@../../../IP/cpu_m1/rtl/rfu.v@@36@@1@@1000@@rfu -> Initial block is ignored for synthesis
+SYNTH_5143@@@@SynthesisWarning@@../../../design/cpu_m1/rtl/rfu.v@@36@@1@@1000@@rfu -> Initial block is ignored for synthesis
 ##sde_property: violation -ruleLang 1 -duId 8 -elabDuId 8 
 #child lsu lsu lsu -elabDuId 13
 #child hazard hazard hazard -elabDuId 15
@@ -1702,73 +1702,73 @@ SYNTH_5143@@@@SynthesisWarning@@../../../IP/cpu_m1/rtl/rfu.v@@36@@1@@1000@@rfu -
 #top_modules cpu_m1_top
 #bbox_modules
 #precompiled_dulist
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/bp.v@@130@@1@@10@@Port 'resetn' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/bp.v@@130@@1@@10@@Port 'resetn' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.1
 ##sde_property: container S.1 -rtlpath 1 -nonprob
 ##sde_property: violation -duId 4 -elabDuId 1 
 ##sde_property: msg_label RegInputOutput-ML
 ##sde_property: msg_id RegInputOutput-ML
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@95@@1@@10@@Port 'ibus_req' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@95@@1@@10@@Port 'ibus_req' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.2
 ##sde_property: container S.2 -rtlpath 1 -nonprob
 ##sde_property: violation -duId 1 -elabDuId 1 
 ##sde_property: msg_label RegInputOutput-ML
 ##sde_property: msg_id RegInputOutput-ML
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@109@@1@@10@@Port 'ibus_ready' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@109@@1@@10@@Port 'ibus_ready' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.4
 ##sde_property: container S.4 -rtlpath 1 -nonprob
 ##sde_property: violation -duId 1 -elabDuId 1 
 ##sde_property: msg_label RegInputOutput-ML
 ##sde_property: msg_id RegInputOutput-ML
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@119@@1@@10@@Port 'dbus_req' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@119@@1@@10@@Port 'dbus_req' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.5
 ##sde_property: container S.5 -rtlpath 1 -nonprob
 ##sde_property: violation -duId 1 -elabDuId 1 
 ##sde_property: msg_label RegInputOutput-ML
 ##sde_property: msg_id RegInputOutput-ML
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@123@@1@@10@@Port 'dbus_we' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@123@@1@@10@@Port 'dbus_we' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.7
 ##sde_property: container S.7 -rtlpath 1 -nonprob
 ##sde_property: violation -duId 1 -elabDuId 1 
 ##sde_property: msg_label RegInputOutput-ML
 ##sde_property: msg_id RegInputOutput-ML
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@139@@1@@10@@Port 'dbus_ready' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@139@@1@@10@@Port 'dbus_ready' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.10
 ##sde_property: container S.10 -rtlpath 1 -nonprob
 ##sde_property: violation -duId 1 -elabDuId 1 
 ##sde_property: msg_label RegInputOutput-ML
 ##sde_property: msg_id RegInputOutput-ML
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/csr.v@@207@@1@@10@@Port 'irq_external_pulse' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/csr.v@@207@@1@@10@@Port 'irq_external_pulse' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.11
 ##sde_property: container S.11 -rtlpath 1 -nonprob
 ##sde_property: violation -duId 14 -elabDuId 1 
 ##sde_property: msg_label RegInputOutput-ML
 ##sde_property: msg_id RegInputOutput-ML
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@167@@1@@10@@Port 'dbg_state[2:1]' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@167@@1@@10@@Port 'dbg_state[2:1]' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.12
 ##sde_property: container S.12 -rtlpath 1 
 ##sde_property: violation -duId 1 -elabDuId 1 -type 1WBusMerge -mergeStr1 dbg_state -mergeRange1 2:1 -completeRange1 2:1  
 ##sde_property: msg_label RegInputOutput-ML
 ##sde_property: msg_id RegInputOutput-ML
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@121@@1@@10@@Port 'dbus_wdata[31:0]' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@121@@1@@10@@Port 'dbus_wdata[31:0]' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.9
 ##sde_property: container S.9 -rtlpath 1 
 ##sde_property: violation -duId 1 -elabDuId 1 -type 1WBusMerge -mergeStr1 dbus_wdata -mergeRange1 31:0 -completeRange1 31:0  
 ##sde_property: msg_label RegInputOutput-ML
 ##sde_property: msg_id RegInputOutput-ML
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@122@@1@@10@@Port 'dbus_wstrb[3:0]' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@122@@1@@10@@Port 'dbus_wstrb[3:0]' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.8
 ##sde_property: container S.8 -rtlpath 1 
 ##sde_property: violation -duId 1 -elabDuId 1 -type 1WBusMerge -mergeStr1 dbus_wstrb -mergeRange1 3:0 -completeRange1 3:0  
 ##sde_property: msg_label RegInputOutput-ML
 ##sde_property: msg_id RegInputOutput-ML
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@120@@1@@10@@Port 'dbus_addr[31:0]' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@120@@1@@10@@Port 'dbus_addr[31:0]' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.6
 ##sde_property: container S.6 -rtlpath 1 
 ##sde_property: violation -duId 1 -elabDuId 1 -type 1WBusMerge -mergeStr1 dbus_addr -mergeRange1 31:0 -completeRange1 31:0  
 ##sde_property: msg_label RegInputOutput-ML
 ##sde_property: msg_id RegInputOutput-ML
-RegInputOutput-ML@@@@Data@@../../../IP/cpu_m1/rtl/cpu_m1_top.v@@96@@1@@10@@Port 'ibus_addr[31:0]' is not registered [Hierarchy: 'cpu_m1_top']@@0
+RegInputOutput-ML@@@@Data@@../../../design/cpu_m1/rtl/cpu_m1_top.v@@96@@1@@10@@Port 'ibus_addr[31:0]' is not registered [Hierarchy: 'cpu_m1_top']@@0
 ##continue: S.3
 ##sde_property: container S.3 -rtlpath 1 
 ##sde_property: violation -duId 1 -elabDuId 1 -type 1WBusMerge -mergeStr1 ibus_addr -mergeRange1 31:0 -completeRange1 31:0  

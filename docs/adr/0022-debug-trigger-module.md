@@ -14,7 +14,7 @@ breakpoints (PC match) and watchpoints (load/store address match) — non-intrus
 
 ## Decision (per Grok + ibex/spec)
 
-- **Module** `IP/cpu_m1/soc/trigger.v` (or rtl/): **4 triggers** (2 execute + 2 load/store), **mcontrol6
+- **Module** `design/cpu_m1/soc/trigger.v` (or rtl/): **4 triggers** (2 execute + 2 load/store), **mcontrol6
   (type=6)** only; `tinfo` advertises type 6. CSRs: `tselect`, `tdata1`(mcontrol6), `tdata2`(compare
   value), `tinfo`. M-only fields used: execute/load/store, **match=0 (exact)**, **action=1 (enter debug)**,
   **m=1**, u/s=0, chain=0, `size` for watchpoints. Skip timing/chaining in v1.

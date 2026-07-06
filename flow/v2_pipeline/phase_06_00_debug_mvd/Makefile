@@ -1,5 +1,5 @@
-RTL=../../../IP/cpu_m1/rtl
-SOC=../../../IP/cpu_m1/soc
+RTL=../../../design/cpu_m1/rtl
+SOC=../../../design/cpu_m1/soc
 VERILATOR?=verilator
 
 RTL_SRCS=$(RTL)/rfu.v $(RTL)/alu.v $(RTL)/idu.v $(RTL)/ifu.v $(RTL)/lsu.v \

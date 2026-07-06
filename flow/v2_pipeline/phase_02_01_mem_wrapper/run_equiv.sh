@@ -4,7 +4,7 @@
 # Writes equiv_run.log; prints one OK/FAIL line per config + a summary.
 set -u
 cd "$(dirname "$0")"
-R=../../../IP/cpu_m1/rtl
+R=../../../design/cpu_m1/rtl
 VL=$(command -v verilator || echo /home/edauser/miniforge3/envs/magpie_claude/bin/verilator)
 
 "$VL" --binary -j 4 --top-module tb_equiv \

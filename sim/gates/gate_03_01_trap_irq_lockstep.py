@@ -89,7 +89,7 @@ def test_phase_03_01_logs_report_and_rtl_fix_are_recorded():
     full_report = _read(ROOT / "docs/v2_pipeline_full_verification_report.md")
     adr = _read(ROOT / "docs/adr/0003-csr-external-irq-pending-collision.md")
     taxonomy = _read(ROOT / "docs/v2_pipeline_bug_taxonomy.md")
-    csr = _read(ROOT / "IP/cpu_m1/rtl/csr.v")
+    csr = _read(ROOT / "design/cpu_m1/rtl/csr.v")
 
     assert "PASS: trap/IRQ lockstep trace captured prefix commits and CSR events" in sim_log
     assert "PASS: prefix lockstep matched 13 commits; trap events matched mepc/mcause/mstatus/mret" in lockstep_log

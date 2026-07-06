@@ -41,7 +41,7 @@ DUT stops (decodes illegal → traps) at `addi@0x0e`, a legal instruction Spike 
 ## Root-cause hypothesis
 The compressed `c.li@0x4` (2 bytes) shifts subsequent alignment to **odd half-word**, so
 pc 0x6 / 0xa / 0xe are **consecutive high-half (cross-boundary) 32-bit instructions**.
-The lab08e `residue` / `cross_assemble` pre-fetch path (in `IP/cpu_m1/rtl/core.v`
+The lab08e `residue` / `cross_assemble` pre-fetch path (in `design/cpu_m1/rtl/core.v`
 + `ifu.v`) handles 1–2 such instructions but **mis-assembles a RUN** of them, so the
 3rd (`addi@0x0e`) is assembled from wrong bytes → decodes illegal → trap.
 

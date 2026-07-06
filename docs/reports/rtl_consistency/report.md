@@ -2,7 +2,7 @@
 
 **Date:** June 8, 2026  
 **Auditor:** Gemini CLI  
-**Scope:** `IP/cpu_m1/rtl/`  
+**Scope:** `design/cpu_m1/rtl/`  
 
 ## 1. Executive Summary
 The RTL is highly consistent and follows a well-defined architectural pattern (4-stage pipeline with variable-latency memory support). The use of `def.vh` ensures constant consistency across opcode and control encodings. The primary findings relate to potential metastability in the external IRQ path and slight deviations in the Register File reset strategy.

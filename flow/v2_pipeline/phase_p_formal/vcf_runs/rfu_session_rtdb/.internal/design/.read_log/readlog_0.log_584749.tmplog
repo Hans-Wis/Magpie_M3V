@@ -1,6 +1,6 @@
 BEGIN_VIOLATION
 RULE_NAME:SM_IGN_INITIAL
-FILE_NAME:IP/cpu_m1/rtl/rfu.v
+FILE_NAME:design/cpu_m1/rtl/rfu.v
 LINE_NUMBER:44
 VCS_SEVERITY:Warning
 MESSAGE:  Initial block is ignored for synthesis

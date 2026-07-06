@@ -1,6 +1,6 @@
 # Formal Assertions
 
-This report records the real VC Formal run for the existing Tier-2 assertion bind files under `IP/cpu_m1/dv/formal/`. No synthesizable RTL was edited.
+This report records the real VC Formal run for the existing Tier-2 assertion bind files under `design/cpu_m1/dv/formal/`. No synthesizable RTL was edited.
 
 Run command: `flow/v2_pipeline/phase_p_formal/run_vcf_formal.sh`
 
@@ -41,7 +41,7 @@ VC Formal produced reports for all five modules. The tool then exited with code 
 
 Summary: `alu` 3/3 proven, `rfu` 4/4 proven, `forward` 8/8 proven, `lsu` 1/1 proven, `csr` 6/6 proven.
 
-RFU rerun note: `rfu` was rerun alone with `create_reset resetn -value low` so VC Formal starts from the reset state and constrains post-reset operation with `resetn==1`. The rerun found 4 assertions and proved all 4. The raw `regs[0] == 0` invariant proved with safe depth 45, and the attempted x0 write storage assertion proved with safe depth 233. VC Formal still logged `Warning-[SM_IGN_INITIAL] Ignoring Initial block` for `IP/cpu_m1/rtl/rfu.v`, but the reset-state proof no longer depends on that `initial` block.
+RFU rerun note: `rfu` was rerun alone with `create_reset resetn -value low` so VC Formal starts from the reset state and constrains post-reset operation with `resetn==1`. The rerun found 4 assertions and proved all 4. The raw `regs[0] == 0` invariant proved with safe depth 45, and the attempted x0 write storage assertion proved with safe depth 233. VC Formal still logged `Warning-[SM_IGN_INITIAL] Ignoring Initial block` for `design/cpu_m1/rtl/rfu.v`, but the reset-state proof no longer depends on that `initial` block.
 
 Detailed evidence is in `flow/v2_pipeline/phase_p_formal/results.md` and `flow/v2_pipeline/phase_p_formal/logs/`.
 

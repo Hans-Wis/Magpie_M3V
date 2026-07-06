@@ -84,8 +84,8 @@ ALL ─────── V8 (signoff)
 | FSM / sequencer | Location | Must-have transitions | Notes |
 |-----------------|----------|----------------------|-------|
 | **vexu VM_GRP / VMVR / SEGWR** | `cpu_m1` vector unit | Group iter, segment write, LMUL>1 body, `vstart` resume | Phase-B scope: m8, indexed, strided = excluded |
-| **mat_engine S_*** | `IP/npu/mat_engine` | Idle→CFG→LOAD→MAC→REQUANT→STORE→DONE; pipe stall; acc_clr | ADR-0053 2-stage requant pipe |
-| **npu_dma** | `IP/npu/npu_dma` | Idle→AR/R→AW/W→B; burst LEN; SLVERR abort; 2D/strided | Writeback + weight paths |
+| **mat_engine S_*** | `design/npu/mat_engine` | Idle→CFG→LOAD→MAC→REQUANT→STORE→DONE; pipe stall; acc_clr | ADR-0053 2-stage requant pipe |
+| **npu_dma** | `design/npu/npu_dma` | Idle→AR/R→AW/W→B; burst LEN; SLVERR abort; 2D/strided | Writeback + weight paths |
 | **CQ sequencer** | `npu_top` | Ring consume; TAIL doorbell; FULL; ERR ladder; batch prefetch (ADR-0052) | Cross with direct CSR path |
 | **npu_axil_regs** | CSR fabric | CTRL.start; soft_reset; STATUS/DONE; ERR_CAUSE | Hard-reset (ADR-0047) |
 | **cpu_m1 fetch/decode** (NPU strip) | Sequencer | TCM fetch, run-to-completion, trap-to-host | No BP/RAS on NPU |
