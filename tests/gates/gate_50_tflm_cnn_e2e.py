@@ -31,7 +31,7 @@ RTL = [ROOT / f"IP/npu/rtl/{m}.v" for m in
        ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine")]
 RTL += CPU_M1_RTL
 TB = [ROOT / "IP/npu/dv/tb/axi_full_rwmem.v", ROOT / "IP/npu/dv/tb/tb_npu_tflm_model.v"]
-CASE = ROOT / "tflm_model"
+CASE = ROOT / "sim/work/tflm_model"
 
 
 def run_rounds(binary, layer, rows, n_rows, n_out):

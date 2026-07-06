@@ -136,8 +136,8 @@ module tb_npu_tflm_model;
     reg [31:0] meta [0:2];
 
     initial begin
-        $readmemh("tflm_model/tflm_shared.hex", shared.mem);
-        $readmemh("tflm_model/tflm_meta.hex", meta);
+        $readmemh("sim/work/tflm_model/tflm_shared.hex", shared.mem);
+        $readmemh("sim/work/tflm_model/tflm_meta.hex", meta);
     end
 
     initial begin
@@ -158,7 +158,7 @@ module tb_npu_tflm_model;
         axil_read(A_ERRC, rd);
         chk(rd, 32'h0, "ERR_CAUSE clean");
 
-        fdump = $fopen("tflm_model/result.dump", "w");
+        fdump = $fopen("sim/work/tflm_model/result.dump", "w");
         for (i = 0; i < meta[1]; i = i + 1)
             $fdisplay(fdump, "%08x", shared.mem[32'h600 + i]);
         $fclose(fdump);

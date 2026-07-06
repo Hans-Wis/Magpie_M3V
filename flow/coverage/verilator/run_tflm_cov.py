@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT / "sim/models"))
 sys.path.insert(0, str(ROOT / "IP/npu/sw"))
 import tflm_runtime as rt  # noqa: E402
 
-CASE = ROOT / "tflm_model"
+CASE = ROOT / "sim/work/tflm_model"
 COVBIN = ROOT / "flow/coverage/verilator/obj_tflm/Vcov_tflm"
 DATS = ROOT / "flow/coverage/verilator/dats"
 ART = ROOT / "sim/models/artifacts"

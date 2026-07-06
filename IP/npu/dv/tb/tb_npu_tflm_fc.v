@@ -138,8 +138,8 @@ module tb_npu_tflm_fc;
     reg [31:0] exp_words [0:15];
 
     initial begin
-        $readmemh("tflm_case/tflm_shared.hex", shared.mem);
-        $readmemh("tflm_case/tflm_expected.hex", exp_words);
+        $readmemh("sim/work/tflm_case/tflm_shared.hex", shared.mem);
+        $readmemh("sim/work/tflm_case/tflm_expected.hex", exp_words);
     end
 
     initial begin

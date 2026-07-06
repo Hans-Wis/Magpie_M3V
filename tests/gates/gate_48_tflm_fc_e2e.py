@@ -33,7 +33,7 @@ RTL = [ROOT / f"IP/npu/rtl/{m}.v" for m in
        ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine")]
 RTL += CPU_M1_RTL
 TB = [ROOT / "IP/npu/dv/tb/axi_full_rwmem.v", ROOT / "IP/npu/dv/tb/tb_npu_tflm_fc.v"]
-CASE_DIR = ROOT / "tflm_case"
+CASE_DIR = ROOT / "sim/work/tflm_case"
 
 
 @pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
