@@ -1,0 +1,398 @@
+<title>Magpie_M3V · Circuit-Support Completeness</title>
+<style>
+  :root{
+    --ground:#eef1f5; --surface:#ffffff; --surface-2:#f6f8fb;
+    --ink:#141a22; --ink-soft:#51607240; --ink-mid:#516072;
+    --line:#d7dee7; --line-soft:#e6ebf1;
+    --accent:#4457b8; --accent-soft:#4457b81a;
+    --ok:#1f8f5f; --ok-bg:#1f8f5f14;
+    --vec:#2472a8; --vec-bg:#2472a814;
+    --warn:#a9772b; --warn-bg:#a9772b16;
+    --risk:#bb3f37; --risk-bg:#bb3f3714;
+    --ok-ink:#1f8f5f; --vec-ink:#2472a8; --warn-ink:#a9772b; --risk-ink:#bb3f37;
+    --shadow:0 1px 2px #1420220f, 0 8px 24px -12px #14202218;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#0c1016; --surface:#141a22; --surface-2:#1a212b;
+      --ink:#e7edf4; --ink-mid:#93a1b3; --line:#252e3a; --line-soft:#1e2732;
+      --accent:#8592ee; --accent-soft:#8592ee1f;
+      --ok:#38c98c; --ok-bg:#38c98c16; --vec:#54b0e2; --vec-bg:#54b0e216;
+      --warn:#e0aa54; --warn-bg:#e0aa5416; --risk:#ed7168; --risk-bg:#ed716816;
+      --ok-ink:#38c98c; --vec-ink:#54b0e2; --warn-ink:#e0aa54; --risk-ink:#ed7168;
+      --shadow:0 1px 2px #00000040, 0 10px 30px -14px #00000070;
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#eef1f5; --surface:#ffffff; --surface-2:#f6f8fb;
+    --ink:#141a22; --ink-mid:#516072; --line:#d7dee7; --line-soft:#e6ebf1;
+    --accent:#4457b8; --accent-soft:#4457b81a;
+    --ok:#1f8f5f; --ok-bg:#1f8f5f14; --vec:#2472a8; --vec-bg:#2472a814;
+    --warn:#a9772b; --warn-bg:#a9772b16; --risk:#bb3f37; --risk-bg:#bb3f3714;
+    --ok-ink:#1f8f5f; --vec-ink:#2472a8; --warn-ink:#a9772b; --risk-ink:#bb3f37;
+    --shadow:0 1px 2px #1420220f, 0 8px 24px -12px #14202218;
+  }
+  :root[data-theme="dark"]{
+    --ground:#0c1016; --surface:#141a22; --surface-2:#1a212b;
+    --ink:#e7edf4; --ink-mid:#93a1b3; --line:#252e3a; --line-soft:#1e2732;
+    --accent:#8592ee; --accent-soft:#8592ee1f;
+    --ok:#38c98c; --ok-bg:#38c98c16; --vec:#54b0e2; --vec-bg:#54b0e216;
+    --warn:#e0aa54; --warn-bg:#e0aa5416; --risk:#ed7168; --risk-bg:#ed716816;
+    --ok-ink:#38c98c; --vec-ink:#54b0e2; --warn-ink:#e0aa54; --risk-ink:#ed7168;
+    --shadow:0 1px 2px #00000040, 0 10px 30px -14px #00000070;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:ui-monospace,"SF Mono","SFMono-Regular","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 24px}
+  .tnum{font-variant-numeric:tabular-nums}
+
+  /* ---- masthead ---- */
+  header.top{border-bottom:1px solid var(--line); background:
+    linear-gradient(180deg,var(--surface),var(--ground));}
+  .eyebrow{font-family:ui-monospace,Menlo,monospace; font-size:11.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-mid);}
+  .masthead{padding:52px 0 40px; display:flex; flex-direction:column; gap:18px}
+  h1{font-size:clamp(26px,4.4vw,40px); line-height:1.12; margin:0; font-weight:680;
+     letter-spacing:-.015em; text-wrap:balance; max-width:20ch}
+  h1 .sub{display:block; color:var(--ink-mid); font-weight:520; font-size:.62em; margin-top:.35em; letter-spacing:0}
+  .lede{max-width:64ch; color:var(--ink-mid); font-size:16.5px; margin:0}
+  .meta{display:flex; flex-wrap:wrap; gap:8px 20px; font-size:12.5px; color:var(--ink-mid)}
+  .meta b{color:var(--ink); font-weight:600}
+
+  /* ---- verdict banner ---- */
+  .verdict{display:flex; align-items:center; gap:16px; padding:16px 20px; border-radius:12px;
+    background:var(--ok-bg); border:1px solid color-mix(in srgb,var(--ok) 34%,transparent); margin-top:4px}
+  .verdict .dot{width:11px;height:11px;border-radius:50%;background:var(--ok);
+    box-shadow:0 0 0 4px var(--ok-bg); flex:none}
+  .verdict .vtxt{font-size:14.5px}
+  .verdict .vtxt b{color:var(--ok-ink)}
+
+  /* ---- scorecard ---- */
+  section{padding:44px 0}
+  .sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:22px; flex-wrap:wrap}
+  .sec-head h2{font-size:19px; margin:0; font-weight:640; letter-spacing:-.01em}
+  .sec-head .n{font-family:ui-monospace,Menlo,monospace; font-size:12px; color:var(--accent);
+    border:1px solid color-mix(in srgb,var(--accent) 40%,transparent); border-radius:5px; padding:1px 7px}
+  .sec-head p{margin:0; color:var(--ink-mid); font-size:14px; flex:1 1 260px}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(232px,1fr)); gap:14px}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px;
+    box-shadow:var(--shadow); display:flex; flex-direction:column; gap:12px}
+  .card .kind{font-family:ui-monospace,Menlo,monospace; font-size:10.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-mid)}
+  .card h3{margin:0; font-size:16.5px; font-weight:650; letter-spacing:-.01em}
+  .card h3 small{font-weight:500; color:var(--ink-mid); font-size:.8em}
+  .card .prof{font-size:13px; color:var(--ink-mid); margin:0; line-height:1.5}
+  .card .prof code{font-family:ui-monospace,Menlo,monospace; font-size:11.5px; color:var(--ink);
+    background:var(--surface-2); padding:.5px 5px; border-radius:4px; white-space:nowrap}
+  .status{display:flex; align-items:center; gap:8px; margin-top:auto; padding-top:12px;
+    border-top:1px solid var(--line-soft); font-size:12.5px; font-weight:600}
+  .status .s-dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .status.ok{color:var(--ok-ink)} .status.ok .s-dot{background:var(--ok)}
+
+  /* ---- legend ---- */
+  .legend{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px}
+  .lg{display:flex; gap:12px; background:var(--surface); border:1px solid var(--line);
+    border-radius:10px; padding:13px 15px}
+  .lg .chip{flex:none}
+  .lg .lg-t{font-size:13.5px; font-weight:640; margin-bottom:2px}
+  .lg .lg-d{font-size:12px; color:var(--ink-mid); line-height:1.45}
+
+  .dp-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:26px}
+  .dp{display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line);
+    border-radius:9px; padding:9px 13px; font-size:12.5px}
+  .dp .dp-name{font-family:ui-monospace,Menlo,monospace; font-weight:640; color:var(--ink)}
+  .dp .dp-loc{color:var(--ink-mid)}
+  .dp .bar{width:3px; align-self:stretch; border-radius:2px}
+
+  /* ---- efficiency chips ---- */
+  .chip{display:inline-flex; align-items:center; gap:6px; font-family:ui-monospace,Menlo,monospace;
+    font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px; white-space:nowrap; letter-spacing:.01em}
+  .chip::before{content:""; width:7px; height:7px; border-radius:50%; flex:none}
+  .c-ok{color:var(--ok-ink); background:var(--ok-bg)} .c-ok::before{background:var(--ok)}
+  .c-vec{color:var(--vec-ink); background:var(--vec-bg)} .c-vec::before{background:var(--vec)}
+  .c-warn{color:var(--warn-ink); background:var(--warn-bg)} .c-warn::before{background:var(--warn)}
+  .c-risk{color:var(--risk-ink); background:var(--risk-bg)} .c-risk::before{background:var(--risk)}
+  .c-na{color:var(--ink-mid); background:var(--surface-2)} .c-na::before{background:var(--line); box-shadow:none}
+
+  /* ---- matrix ---- */
+  .scroller{overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:var(--surface);
+    box-shadow:var(--shadow)}
+  table{border-collapse:collapse; width:100%; min-width:820px; font-size:13px}
+  thead th{position:sticky; top:0; background:var(--surface-2); z-index:2}
+  th,td{text-align:left; padding:11px 14px; border-bottom:1px solid var(--line-soft); vertical-align:middle}
+  thead th{font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--ink-mid); font-weight:600; border-bottom:1px solid var(--line)}
+  thead th.bench{text-align:center}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:var(--accent-soft)}
+  td.prim{font-weight:600; white-space:nowrap}
+  td.prim .dp-tag{display:block; font-family:ui-monospace,Menlo,monospace; font-size:10.5px;
+    font-weight:500; color:var(--ink-mid); margin-top:1px}
+  td.cell{text-align:center}
+  td.gate{font-family:ui-monospace,Menlo,monospace; font-size:11px; color:var(--ink-mid); white-space:nowrap}
+  .grp-row td{background:var(--surface-2); font-family:ui-monospace,Menlo,monospace; font-size:10.5px;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--ink-mid); font-weight:600; padding:8px 14px}
+
+  /* ---- callouts ---- */
+  .callouts{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px}
+  .callout{background:var(--surface); border:1px solid var(--line); border-left-width:3px;
+    border-radius:10px; padding:18px 20px; box-shadow:var(--shadow)}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.risk{border-left-color:var(--risk)}
+  .callout .co-tag{font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; font-weight:640; margin-bottom:8px; display:flex; align-items:center; gap:8px}
+  .callout.warn .co-tag{color:var(--warn-ink)} .callout.risk .co-tag{color:var(--risk-ink)}
+  .callout h3{margin:0 0 8px; font-size:16px; font-weight:640; letter-spacing:-.01em}
+  .callout p{margin:0 0 10px; font-size:13.5px; color:var(--ink-mid); line-height:1.55}
+  .callout p:last-child{margin-bottom:0}
+  .callout .fix{font-size:13px; color:var(--ink); background:var(--ok-bg); border-radius:8px;
+    padding:10px 12px; border:1px solid color-mix(in srgb,var(--ok) 25%,transparent)}
+  .callout .fix b{color:var(--ok-ink)}
+  code.k{font-family:ui-monospace,Menlo,monospace; font-size:.88em; background:var(--surface-2);
+    padding:.5px 5px; border-radius:4px; color:var(--ink)}
+
+  /* ---- caveats ---- */
+  .caveats{background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:22px 24px}
+  .caveats h3{margin:0 0 14px; font-size:14px; font-family:ui-monospace,Menlo,monospace;
+    letter-spacing:.08em; text-transform:uppercase; color:var(--ink-mid); font-weight:640}
+  .caveats ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:11px}
+  .caveats li{font-size:13.5px; color:var(--ink-mid); line-height:1.55; padding-left:20px; position:relative}
+  .caveats li::before{content:"—"; position:absolute; left:0; color:var(--accent); font-family:ui-monospace,monospace}
+  .caveats li b{color:var(--ink); font-weight:620}
+
+  footer{border-top:1px solid var(--line); padding:26px 0 40px; color:var(--ink-mid); font-size:12px}
+  footer .fl{display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; align-items:center}
+  a{color:var(--accent); text-decoration:none}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+  @media (max-width:560px){ .masthead{padding:38px 0 30px} section{padding:34px 0} }
+</style>
+
+<header class="top">
+  <div class="wrap masthead">
+    <div class="eyebrow">Magpie_M3V NPU &nbsp;·&nbsp; RV32 · Zve32x · int8 mat-engine &nbsp;·&nbsp; 2026-07-06</div>
+    <h1>電路支援完整度分析
+      <span class="sub">MobileNet · MLPerf&nbsp;Tiny · Gemma&nbsp;3&nbsp;270M · SmolLM2&nbsp;135M</span>
+    </h1>
+    <p class="lede">逐一把四個 benchmark 的熱點運算對應到 Magpie_M3V 的硬體 datapath,標註「哪些已被 gate 硬證」與「效率分級」,證明現有電路足以支撐這些應用——不會出現「缺電路 → 大量 scalar 軟體 emulation → 效能崩」的高頻瓶頸。</p>
+    <div class="verdict">
+      <span class="dot"></span>
+      <span class="vtxt"><b>電路充分。</b> 四個 benchmark 的每一個熱點 primitive 都對應到已證的硬體平行路(矩陣 / 向量 / scalar-F);<b>零高頻 scalar-serial 瓶頸</b>。剩餘是 kernel 軟體,不是電路。</span>
+    </div>
+    <div class="meta mono">
+      <span><b>datapaths</b> mat_engine · RVV vexu · scalar-F · npu_dma</span>
+      <span><b>authority</b> Spike lockstep + gate_45/50/59/60/61/62–82</span>
+      <span><b>parity</b> Coral Kelvin = Zve32x-int + MAC + scalar-F</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- DATAPATHS + LEGEND -->
+  <section>
+    <div class="sec-head"><span class="n">01</span><h2>硬體 datapath 與效率分級</h2>
+      <p>三條計算路徑 + DMA。效率分級標示每個 primitive 落在哪一層平行度——關鍵是避免 🟥(高頻純量序列)。</p></div>
+    <div class="dp-row">
+      <div class="dp"><span class="bar" style="background:var(--ok)"></span><span class="dp-name">mat_engine</span><span class="dp-loc">獨立 8×8→256 int8 MAC + gemmlowp requant</span></div>
+      <div class="dp"><span class="bar" style="background:var(--vec)"></span><span class="dp-name">RVV vexu</span><span class="dp-loc">core 內向量單元 · Zve32x mf8–m8</span></div>
+      <div class="dp"><span class="bar" style="background:var(--warn)"></span><span class="dp-name">scalar-F</span><span class="dp-loc">core 內 FPU · RV32-F fsqrt/fdiv</span></div>
+      <div class="dp"><span class="bar" style="background:var(--accent)"></span><span class="dp-name">npu_dma</span><span class="dp-loc">AXI4 burst · 2D/strided sequencer loop</span></div>
+    </div>
+    <div class="legend">
+      <div class="lg"><span class="chip c-ok">MATRIX</span><div><div class="lg-t">矩陣平行</div><div class="lg-d">mat_engine,256 MAC/cyc。所有 GEMM(conv / FC / 投影 / attention matmul)。</div></div></div>
+      <div class="lg"><span class="chip c-vec">VECTOR</span><div><div class="lg-t">向量平行</div><div class="lg-d">RVV,≤16 e8 lane/op。elementwise / reduce / mask / rope / <b>多項式 activation</b>。</div></div></div>
+      <div class="lg"><span class="chip c-warn">SCALAR·LOW</span><div><div class="lg-t">純量但低頻</div><div class="lg-d">scalar-F,1/op。僅 rsqrt 等 per-token 低次數運算,非瓶頸。</div></div></div>
+      <div class="lg"><span class="chip c-risk">SCALAR·HOT</span><div><div class="lg-t">高頻純量序列 — 陷阱</div><div class="lg-d">O(N) 逐元素純量。本電路唯一潛在觸發 = activation 走 256-entry LUT(見 §04)。</div></div></div>
+    </div>
+  </section>
+
+  <!-- BENCHMARK PROFILES -->
+  <section>
+    <div class="sec-head"><span class="n">02</span><h2>Benchmark 剖面</h2>
+      <p>各 benchmark 的架構與 op 組成(dims 取自公開資料,無 HF 載入;決定電路支援的是 op 集,非確切維度)。</p></div>
+    <div class="cards">
+      <div class="card">
+        <span class="kind">CNN · Vision</span>
+        <h3>MobileNet <small>depthwise-separable</small></h3>
+        <p class="prof">depthwise 3×3 + pointwise 1×1 + <code>avg/max pool</code> + FC,全 int8。已 RTL e2e bit-exact(depthwise = block-diagonal conv on mat_engine)。</p>
+        <div class="status ok"><span class="s-dot"></span>SUPPORTED · gate_82 e2e 實證</div>
+      </div>
+      <div class="card">
+        <span class="kind">Edge-ML 套組 · v1.1</span>
+        <h3>MLPerf Tiny <small>4 參考模型</small></h3>
+        <p class="prof"><code>KWS</code> DS-CNN · <code>VWW</code> MobileNetV1 · <code>IC</code> ResNet-8(residual)· <code>AD</code> FC-AutoEncoder。conv / depthwise / residual-add / pool / dense,全 int8。</p>
+        <div class="status ok"><span class="s-dot"></span>SUPPORTED · 全硬體路</div>
+      </div>
+      <div class="card">
+        <span class="kind">LLM · Decoder</span>
+        <h3>Gemma 3 270M <small>GeGLU</small></h3>
+        <p class="prof">sandwich RMSNorm + QK-norm · RoPE · GQA <code>4h/1kv</code> · sliding-window · <code>gelu_tanh</code> GeGLU · vocab 262k。</p>
+        <div class="status ok"><span class="s-dot"></span>SUPPORTED · nonlinear 走向量多項式</div>
+      </div>
+      <div class="card">
+        <span class="kind">LLM · Decoder</span>
+        <h3>SmolLM2 135M <small>SwiGLU</small></h3>
+        <p class="prof">Llama-arch · RMSNorm · RoPE · GQA <code>9h/3kv</code> · causal · <code>silu</code> SwiGLU · vocab 49k · tied-emb。</p>
+        <div class="status ok"><span class="s-dot"></span>SUPPORTED · 同 Gemma,activation=SiLU</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COVERAGE MATRIX -->
+  <section>
+    <div class="sec-head"><span class="n">03</span><h2>Primitive × Benchmark 覆蓋矩陣</h2>
+      <p>每列 = 一個 primitive(+ 對應 datapath);每格 = 該 benchmark 是否用到 + 效率分級。<code class="k">gate</code> 欄 = 該 primitive 的電路硬證。</p></div>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr>
+            <th>Primitive <span style="font-weight:400;text-transform:none;letter-spacing:0">· datapath</span></th>
+            <th class="bench">MobileNet</th><th class="bench">MLPerf&nbsp;Tiny</th>
+            <th class="bench">Gemma&nbsp;3</th><th class="bench">SmolLM2</th>
+            <th>Gate 硬證</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="grp-row"><td colspan="6">Linear algebra — mat_engine</td></tr>
+          <tr><td class="prim">Dense / FC<span class="dp-tag">GEMM</span></td>
+            <td class="cell"><span class="chip c-ok">MATRIX</span></td><td class="cell"><span class="chip c-ok">MATRIX</span></td>
+            <td class="cell"><span class="chip c-ok">MATRIX</span></td><td class="cell"><span class="chip c-ok">MATRIX</span></td>
+            <td class="gate">gate_48/49</td></tr>
+          <tr><td class="prim">Standard conv (im2col)<span class="dp-tag">GEMM</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-ok">MATRIX</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="gate">gate_50</td></tr>
+          <tr><td class="prim">Pointwise 1×1 conv<span class="dp-tag">GEMM</span></td>
+            <td class="cell"><span class="chip c-ok">MATRIX</span></td><td class="cell"><span class="chip c-ok">MATRIX</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="gate">gate_82</td></tr>
+          <tr><td class="prim">Depthwise 3×3<span class="dp-tag">block-diagonal GEMM</span></td>
+            <td class="cell"><span class="chip c-warn">MATRIX ⅛</span></td><td class="cell"><span class="chip c-warn">MATRIX ⅛</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="gate">gate_82</td></tr>
+          <tr><td class="prim">Attn proj · QKᵀ · A·V<span class="dp-tag">GEMM</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="cell"><span class="chip c-ok">MATRIX</span></td><td class="cell"><span class="chip c-ok">MATRIX</span></td>
+            <td class="gate">gate_45/50</td></tr>
+          <tr><td class="prim">Per-channel requant<span class="dp-tag">RESCALE_PC</span></td>
+            <td class="cell"><span class="chip c-ok">MATRIX</span></td><td class="cell"><span class="chip c-ok">MATRIX</span></td>
+            <td class="cell"><span class="chip c-ok">MATRIX</span></td><td class="cell"><span class="chip c-ok">MATRIX</span></td>
+            <td class="gate">gate_50</td></tr>
+
+          <tr class="grp-row"><td colspan="6">Elementwise / reduce / mask — RVV vexu</td></tr>
+          <tr><td class="prim">Pooling (max / avg)<span class="dp-tag">vle · vmax · vnclip</span></td>
+            <td class="cell"><span class="chip c-vec">VECTOR</span></td><td class="cell"><span class="chip c-vec">VECTOR</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="gate">gate_59</td></tr>
+          <tr><td class="prim">Residual add<span class="dp-tag">vadd</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-vec">VECTOR</span></td>
+            <td class="cell"><span class="chip c-vec">VECTOR</span></td><td class="cell"><span class="chip c-vec">VECTOR</span></td>
+            <td class="gate">gate_62</td></tr>
+          <tr><td class="prim">ReLU / clamp<span class="dp-tag">requant clamp</span></td>
+            <td class="cell"><span class="chip c-ok">MATRIX</span></td><td class="cell"><span class="chip c-ok">MATRIX</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="gate">gate_48</td></tr>
+          <tr><td class="prim">RMSNorm sq+reduce<span class="dp-tag">vwmul · vredsum</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="cell"><span class="chip c-vec">VECTOR</span></td><td class="cell"><span class="chip c-vec">VECTOR</span></td>
+            <td class="gate">gate_70/67/72</td></tr>
+          <tr><td class="prim">RoPE rotate<span class="dp-tag">vmul · vadd · vslide + table</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="cell"><span class="chip c-vec">VECTOR</span></td><td class="cell"><span class="chip c-vec">VECTOR</span></td>
+            <td class="gate">gate_66/76</td></tr>
+          <tr><td class="prim">Causal / sliding mask<span class="dp-tag">vmslt · mask-logic · vmerge</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="cell"><span class="chip c-vec">VECTOR</span></td><td class="cell"><span class="chip c-vec">VECTOR</span></td>
+            <td class="gate">gate_56</td></tr>
+          <tr><td class="prim">Softmax max / sum<span class="dp-tag">vredmax · vredsum</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="cell"><span class="chip c-vec">VECTOR</span></td><td class="cell"><span class="chip c-vec">VECTOR</span></td>
+            <td class="gate">gate_67</td></tr>
+          <tr><td class="prim">Gated mul (Ge/Swi-GLU)<span class="dp-tag">vmul</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="cell"><span class="chip c-vec">VECTOR</span></td><td class="cell"><span class="chip c-vec">VECTOR</span></td>
+            <td class="gate">gate_66</td></tr>
+          <tr><td class="prim">int4 weight unpack<span class="dp-tag">vand · vsrl · vor</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="cell"><span class="chip c-vec">VECTOR</span></td><td class="cell"><span class="chip c-vec">VECTOR</span></td>
+            <td class="gate">gate_62</td></tr>
+          <tr><td class="prim">Transcendental act.<span class="dp-tag">gelu / silu / exp — vector poly</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="cell"><span class="chip c-vec">VECTOR*</span></td><td class="cell"><span class="chip c-vec">VECTOR*</span></td>
+            <td class="gate">gate_62/66/68</td></tr>
+
+          <tr class="grp-row"><td colspan="6">Scalar-F &amp; memory — core FPU / npu_dma</td></tr>
+          <tr><td class="prim">rsqrt (RMSNorm)<span class="dp-tag">fsqrt · fdiv</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="cell"><span class="chip c-warn">SCALAR·LOW</span></td><td class="cell"><span class="chip c-warn">SCALAR·LOW</span></td>
+            <td class="gate">gate_60/61</td></tr>
+          <tr><td class="prim">Embedding lookup<span class="dp-tag">contiguous-row DMA</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="cell"><span class="chip c-ok">DMA</span></td><td class="cell"><span class="chip c-ok">DMA</span></td>
+            <td class="gate">gate_51</td></tr>
+          <tr><td class="prim">KV-cache r/w<span class="dp-tag">unit-stride vle/vse</span></td>
+            <td class="cell"><span class="chip c-na">—</span></td><td class="cell"><span class="chip c-na">—</span></td>
+            <td class="cell"><span class="chip c-vec">VECTOR</span></td><td class="cell"><span class="chip c-vec">VECTOR</span></td>
+            <td class="gate">gate_43</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12.5px;color:var(--ink-mid);margin:14px 2px 0" class="mono">MATRIX ⅛ = 硬體支援但 ~1/8 MAC 利用率　·　VECTOR* = 走向量多項式(非 LUT,見 §04)　·　— = 該 benchmark 不使用</p>
+  </section>
+
+  <!-- EFFICIENCY RISKS -->
+  <section>
+    <div class="sec-head"><span class="n">04</span><h2>兩個效率注意點(非阻塞)</h2>
+      <p>電路都支援;這兩點是「支援但需注意」——一個微架構利用率、一個 kernel 策略紀律。</p></div>
+    <div class="callouts">
+      <div class="callout warn">
+        <div class="co-tag"><span>◆</span> 利用率</div>
+        <h3>Depthwise = ⅛ MAC 利用率</h3>
+        <p>depthwise 以 <b>block-diagonal conv</b> 映到 mat_engine:把 per-channel kernel 攤成 channel-masked 權重,精確 depthwise 累加從既有 im2col GEMM 落出(歸零 off-channel taps 恰貢獻 0)。已 RTL bit-exact(<code class="k">gate_82</code>)。</p>
+        <p>代價:8×8 陣列每次只用對角,約 <b>1/8 利用率</b>。功能與正確性零妥協;拉高利用率屬未來 mat_engine 微架構優化,<b>非缺電路</b>。影響 MobileNet / MLPerf DS-CNN / VWW。</p>
+      </div>
+      <div class="callout risk">
+        <div class="co-tag"><span>▲</span> 唯一 🟥 風險 + 已驗證避開法</div>
+        <h3>LLM activation:走向量多項式,別走 LUT</h3>
+        <p>本電路 <b>無 indexed-load(vluxei=0)</b>、<code class="k">vrgather</code> 限 m1(≤16 lane)。故 256-entry activation LUT <b>無法向量 gather</b> → 每元素 scalar <code class="k">lw</code> = O(N) 序列 → softmax/gelu/silu 這種高頻逐元素會落 🟥。</p>
+        <div class="fix"><b>避開法(全向量,op 全已證):</b> gelu / silu / exp 改用 <b>fixed-point 多項式</b>——Horner <code class="k">vmul·vmacc·vadd</code> + range-reduction <code class="k">vsra·vand</code>,對整條向量 O(degree) 向量指令。所需 op 由 <code class="k">gate_62/66/68</code> + <code class="k">vrand 1324c</code> bit-exact 證過 → activation 全向量,零 scalar 瓶頸。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAVEATS -->
+  <section>
+    <div class="caveats">
+      <h3>誠實界</h3>
+      <ul>
+        <li><b>primitive 層級電路已全數硬證</b>(mat_engine GEMM+requant、全 Zve32x op、scalar-F fsqrt/fdiv、pooling/DMA)。本報告是<b>覆蓋對應證明</b>——每個熱點 primitive 都有已證的硬體路。</li>
+        <li><b>尚未實作</b>完整 LLM/CNN kernel 的 firmware 組合(softmax / gelu-poly / RMSNorm / attention)——但用的都是已證 op,屬 <b>kernel 軟體工作,非缺電路</b>。MobileNet block 已 e2e 實證(gate_82);LLM 之 GeGLU foundation golden 已驗(ADR-0062)。</li>
+        <li>模型維度取自<b>公開資料</b>(環境無 torch/transformers/HF)。決定電路支援的是 <b>op 集</b>(已確立),非確切維度;數值 e2e 用結構等價 + random 權重(同 MobileNet 做法)。</li>
+        <li>與 <b>Coral Kelvin 同級</b>:同為 Zve32x-int 向量 + MAC 陣列 + scalar-F,同樣無向量超越函數硬體、同樣用整數 activation + scalar 輔助。凡 Coral 做得到的本電路亦然。</li>
+        <li>非電路的真限制 = <b>系統</b>:32KB DTCM 裝不下 LLM 權重,權重/KV 必經 DMA streaming(頻寬綁定)——這是記憶體/系統議題,與向量/矩陣 datapath 充分性無關。</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap fl">
+    <span class="mono">Magpie_M3V · design_id cpu_m3v · circuit-support completeness</span>
+    <span class="mono">docs/reports/2026-07-06 · authority: Spike lockstep + gates</span>
+  </div>
+</footer>
+
+<script>
+  // keep the viewer theme toggle authoritative in both directions (tokens already handle it)
+  (function(){ try{ var r=document.documentElement;
+    if(!r.getAttribute('data-theme')){ /* inherit prefers-color-scheme until toggled */ } }catch(e){} })();
+</script>
