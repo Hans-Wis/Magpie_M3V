@@ -96,7 +96,7 @@
         "CSR",
         "IRQ"
       ],
-      "reference_gate": "tests/gates/gate_10_pipeline_v2_reference.py",
+      "reference_gate": "gates/gate_10_pipeline_v2_reference.py",
       "qualification_status": "not-yet-qualified"
     },
     "v2_pipeline_ch2_lab08e": {
@@ -143,7 +143,7 @@
         }
       ],
       "verification_report": "docs/v2_pipeline_full_verification_report.md",
-      "reference_gate": "tests/gates/gate_10_pipeline_v2_reference.py",
+      "reference_gate": "gates/gate_10_pipeline_v2_reference.py",
       "qualification_status": "not-yet-qualified"
     }
   },
@@ -190,38 +190,38 @@
     "bug_taxonomy": "docs/v2_pipeline_bug_taxonomy.md"
   },
   "gate_map": {
-    "isa_scope": "tests/gates/gate_00_spec.py",
-    "pipeline_reference": "tests/gates/gate_10_pipeline_v2_reference.py",
-    "fetch_rv32c_prefetch": "tests/gates/gate_01_01_fetch_rv32c_prefetch.py",
-    "decode_execute_rv32imc": "tests/gates/gate_01_02_decode_execute_rv32imc.py",
-    "pipeline_hazard": "tests/gates/gate_01_03_pipeline_hazard.py",
-    "bp_ras_redirect": "tests/gates/gate_01_04_bp_ras_redirect.py",
-    "phase1_closure": "tests/gates/gate_01_99_phase1_closure.py",
-    "trap_interrupt": "tests/gates/gate_02_00_trap_interrupt.py",
-    "mem_wrapper": "tests/gates/gate_02_01_mem_wrapper.py",
-    "spike_lockstep": "tests/gates/gate_03_00_spike_lockstep.py",
-    "trap_irq_lockstep": "tests/gates/gate_03_01_trap_irq_lockstep.py",
-    "irq_collision_contract": "tests/gates/gate_03_02_irq_collision.py",
-    "spike_comparator_lib": "tests/gates/gate_03_03_spike_comparator_lib.py",
-    "directed_lockstep": "tests/gates/gate_03_04_directed_lockstep.py",
-    "random_lockstep": "tests/gates/gate_03_05_random_lockstep.py",
-    "multi_seed_coverage": "tests/gates/gate_03_06_multi_seed_coverage.py",
-    "muldiv_hazard": "tests/gates/gate_03_07_muldiv_hazard.py",
-    "coverage": "tests/gates/gate_04_00_coverage.py",
-    "csr_irq_coverage": "tests/gates/gate_04_01_csr_irq_coverage.py",
-    "bp_ras_coverage": "tests/gates/gate_04_02_bp_ras_coverage.py",
-    "rv32c_cross_coverage": "tests/gates/gate_04_03_rv32c_cross_coverage.py",
-    "illegal_munit_coverage": "tests/gates/gate_04_04_illegal_munit_coverage.py",
-    "residual_triage": "tests/gates/gate_04_05_residual_triage.py",
-    "ras_recovery_coverage": "tests/gates/gate_04_06_ras_recovery_coverage.py",
+    "isa_scope": "gates/gate_00_spec.py",
+    "pipeline_reference": "gates/gate_10_pipeline_v2_reference.py",
+    "fetch_rv32c_prefetch": "gates/gate_01_01_fetch_rv32c_prefetch.py",
+    "decode_execute_rv32imc": "gates/gate_01_02_decode_execute_rv32imc.py",
+    "pipeline_hazard": "gates/gate_01_03_pipeline_hazard.py",
+    "bp_ras_redirect": "gates/gate_01_04_bp_ras_redirect.py",
+    "phase1_closure": "gates/gate_01_99_phase1_closure.py",
+    "trap_interrupt": "gates/gate_02_00_trap_interrupt.py",
+    "mem_wrapper": "gates/gate_02_01_mem_wrapper.py",
+    "spike_lockstep": "sim/gates/gate_03_00_spike_lockstep.py",
+    "trap_irq_lockstep": "sim/gates/gate_03_01_trap_irq_lockstep.py",
+    "irq_collision_contract": "sim/gates/gate_03_02_irq_collision.py",
+    "spike_comparator_lib": "sim/gates/gate_03_03_spike_comparator_lib.py",
+    "directed_lockstep": "sim/gates/gate_03_04_directed_lockstep.py",
+    "random_lockstep": "sim/gates/gate_03_05_random_lockstep.py",
+    "multi_seed_coverage": "sim/gates/gate_03_06_multi_seed_coverage.py",
+    "muldiv_hazard": "sim/gates/gate_03_07_muldiv_hazard.py",
+    "coverage": "sim/gates/gate_04_00_coverage.py",
+    "csr_irq_coverage": "sim/gates/gate_04_01_csr_irq_coverage.py",
+    "bp_ras_coverage": "sim/gates/gate_04_02_bp_ras_coverage.py",
+    "rv32c_cross_coverage": "sim/gates/gate_04_03_rv32c_cross_coverage.py",
+    "illegal_munit_coverage": "sim/gates/gate_04_04_illegal_munit_coverage.py",
+    "residual_triage": "sim/gates/gate_04_05_residual_triage.py",
+    "ras_recovery_coverage": "sim/gates/gate_04_06_ras_recovery_coverage.py",
     "lint_synth_ppa_signoff": [
-      "tests/gates/gate_05_00_lint.py",
-      "tests/gates/gate_05_01_synth_ppa.py"
+      "gates/gate_05_00_lint.py",
+      "gates/gate_05_01_synth_ppa.py"
     ],
-    "m1a_identity": "tests/gates/gate_00_identity_m1a.py",
-    "m1a_a1_mul_throughput": "tests/gates/gate_a1_mul_throughput.py",
-    "m1a_a2_zb_zicond": "tests/gates/gate_a2_zb_zicond.py",
-    "m1a_a3_dtcm": "tests/gates/gate_a3_dtcm.py"
+    "m1a_identity": "gates/gate_00_identity_m1a.py",
+    "m1a_a1_mul_throughput": "gates/gate_a1_mul_throughput.py",
+    "m1a_a2_zb_zicond": "gates/gate_a2_zb_zicond.py",
+    "m1a_a3_dtcm": "gates/gate_a3_dtcm.py"
   },
   "risks": [
     "ADR-0001 FSM path is superseded for implementation; do not present it as active sign-off RTL",

@@ -1,7 +1,7 @@
 # CLAUDE.md — `SOC/Magpie_M3V` · 自建 RV32 NPU（目標:功能取代 Google Coral NPU）
 
 > ⭐ **本 repo = Magpie_M3V**。fork 自 `m1a-rtl-freeze-v1.0`(M1A @ 51a6fe0,完整歷史,remote=parent → `~/project/SOC/Magpie_M1A`);祖系 M1 @ 4e6e1d4。
-> **design_id = `cpu_m3v` / `magpie_m3v`**(物理路徑沿用 `IP/cpu_m1/`;身分以 design_id 為準)。identity gate = `tests/gates/gate_00_identity_m3v.py`。
+> **design_id = `cpu_m3v` / `magpie_m3v`**(物理路徑沿用 `IP/cpu_m1/`;身分以 design_id 為準)。identity gate = `gates/gate_00_identity_m3v.py`。
 > **與 sibling 硬隔離**:M1V = IMPORT CoralNPU(ADR-0030);**M3V = 自建**。M1/M1A/M1V 的證據不得由本線宣稱;flow/state 從空白重新掙。
 > **框架註記**:繼承自 M1/M1A 的「AI 設計 flow / IDE 示範 / north-star」**不適用本線**(同 M1V,屬工程交付線)。舊 M1 charter 全文見 git 歷史 / parent repo。
 
@@ -78,7 +78,7 @@
 
 1. **Reference policy**:RISC-V spec = 架構契約。Coral 是 **Apache-2.0**,可觀察/借用(標 provenance);借架構想法要 ADR。正確性權威 = 本線自身 **Spike lockstep + gate**。
 2. **ADR-per-decision**:任何架構決策/偏離寫 `docs/adr/NNNN-*.md`(MADR)。含每階段架構確認(§2)。
-3. **Phase gate**:每階段 `tests/gates/gate_*.py`,前關綠才進下一步。
+3. **Phase gate**:每階段 `gate_*.py`,前關綠才進下一步。**gate 三分家(reorg Stage 3)**:`gates/`(基本電路/core-unit/scalar pipeline)· `sim/gates/`(系統功能:NPU/AXI/CQ/RVV/mat/benchmark e2e,含共用 harness `gate_20_axi_fabric`)· `dv/gates/`(coverage gate_90/91)。gate 是 `gate_*.py`(非 pytest 預設 `test_*.py`),用明確檔路徑跑。
 4. **驗證權威 = Spike lockstep + bit-accurate golden + scoreboard**。cpu_m1 **可修改但必改必驗**(ADR-0032:host commit-trace 等價;NPU rv32im lockstep)。`gate_10` 已從「byte-identical 凍結」改為「trace 等價 + ADR-governed」。
 5. **模擬引擎政策(User 裁示)**:**Verilator**(`--binary --timing`,in-sandbox)+ **VCS**(signoff,**OUTSIDE-SANDBOX**,經 licensed-EDA 路徑,Codex `-s danger-full-access` 或使用者跑)。**iverilog 不使用**。OSS(verilator/spike/yosys)不受 sandbox 限制。
 6. **誠實界**:未跑 = `not-run` 不假綠;docs 不得宣稱 RTL 沒做的東西(Codex 稽核已抓過一輪,見 gap review §D)。「取代 Coral」宣稱必逐項證據背書。
@@ -102,7 +102,7 @@
 
 ## §6 目錄 / 工具 / 關鍵文件
 
-- `IP/cpu_m1/`(host + NPU 參數化 spine)· `IP/npu/`(NPU domain RTL/dv/docs/sw)· `tests/gates/`(Verilator/lockstep gates)· `flow/v2_pipeline/phase_03_0*/`(可重跑 lockstep)· `flow/state/`(cpu_m3v 證據)。
+- `IP/cpu_m1/`(host + NPU 參數化 spine)· `IP/npu/`(NPU domain RTL/dv/docs/sw)· **`gates/`+`sim/gates/`+`dv/gates/`(gate 三分家,見規則 §4.3)**· `sim/`(系統功能驗證:models/patterns/run_bench)· `dv/`(coverage/lint/cdc)· `flow/v2_pipeline/phase_03_0*/`(可重跑 lockstep)· `flow/state/`(cpu_m3v 證據)。
 - **關鍵文件**:`docs/adr/0031`(scope)· `0032`(cpu 參數化+驗證)· `docs/reviews/2026-07-03_multiagent_review.md`(架構 review)· `docs/reviews/2026-07-03_coral_gap_review.md`(**Coral 缺漏對照**)· `IP/npu/docs/00_isa_contract.md` / `01_axi_fabric_spec.md` · **`rv32_npu_design_plan_v4.html`(v0.2,設計報告參考,User 2026-07-03)**——含 **§06 Command 編碼 Spec v0.1**(128-bit descriptor + opcode 表 MAT.CFG/LOAD_W/OP/RESCALE/STORE/ACC_CLR/FENCE + MAC 陣列/acc/執行單元數量 + L1→L5 下降對照);**§06 是 CQ/矩陣的 SSOT 設計參考**(P0②③ 缺漏的設計基準,實作時 RTL 解碼器 + IREE codegen + NumPy golden 共用同一份)。`rv32_npu_design_plan.html`(v0.1)已 superseded。**注意**:設計報告的記憶體映射(0x4000/ITCM/DTCM)與 IREE-plugin/RVVI 為藍圖;**實作真值以本 repo RTL 為準**(NPU_CSR 0x3000 / TCM 0x3001;開源 clang-RVV)。· 參考 lab `~/project/lab/CPU/Ch5_NPU`(Coral de-blackbox)。
 - **platform/lib**(直接 import):`pipeline`(record_step/build_report)· `sim`(Verilator)· `spike_ref`(golden)· `riscv_rand`· `wave`· `parsers`。gate 取 platform/lib 慣例照 X6/M1。
 
