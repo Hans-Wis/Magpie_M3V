@@ -62,7 +62,7 @@ def test_pool_kernels_lockstep_and_tflm_exact():
 
 def test_pool_artifact_provenance_regen(tmp_path):
     env = dict(os.environ,
-               LD_LIBRARY_PATH="/home/edauser/miniforge3/envs/magpie_claude/lib")
+               LD_LIBRARY_PATH=os.path.join(os.environ.get("CONDA_PREFIX", ""), "lib"))
     probe = subprocess.run([sys.executable, "-c", "import tensorflow"],
                            env=env, capture_output=True)
     if probe.returncode != 0:

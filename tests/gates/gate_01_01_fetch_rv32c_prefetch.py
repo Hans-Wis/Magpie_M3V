@@ -102,7 +102,7 @@ def test_fetch_phase_filelist_contains_cdec_ras_and_core():
 
 
 def test_fetch_rv32c_prefetch_verilator_lint_only():
-    verilator = shutil.which("verilator") or "/home/edauser/miniforge3/envs/magpie_claude/bin/verilator"
+    verilator = shutil.which("verilator") or "verilator"
     assert Path(verilator).exists(), f"verilator not found: {verilator}"
     cmd = [
         verilator,

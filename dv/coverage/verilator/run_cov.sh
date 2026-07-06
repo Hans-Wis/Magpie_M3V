@@ -9,7 +9,7 @@
 set -e
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 HERE="$ROOT/dv/coverage/verilator"; DATS="$HERE/dats"; mkdir -p "$DATS"; rm -f "$DATS"/*.dat
-VL=/home/edauser/miniforge3/envs/magpie_claude/bin/verilator
+VL="${CONDA_PREFIX:+$CONDA_PREFIX/bin/verilator}"; VL="${VL:-verilator}"
 CPU="$ROOT/IP/cpu_m1/rtl"; NPU="$ROOT/IP/npu/rtl"
 COVFLAGS="--coverage-line --coverage-toggle"
 WAIVERS="-Wno-fatal -Wno-DECLFILENAME -Wno-TIMESCALEMOD -Wno-UNUSEDSIGNAL -Wno-SYNCASYNCNET -Wno-PINMISSING -Wno-WIDTHEXPAND"

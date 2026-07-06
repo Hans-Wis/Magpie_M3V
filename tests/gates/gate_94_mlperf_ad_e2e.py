@@ -66,7 +66,7 @@ def test_mlperf_ad_autoencoder_bit_exact(tmp_path):
 
 
 def test_ad_artifact_provenance_regen(tmp_path):
-    env = dict(os.environ, LD_LIBRARY_PATH="/home/edauser/miniforge3/envs/magpie_claude/lib")
+    env = dict(os.environ, LD_LIBRARY_PATH=os.path.join(os.environ.get("CONDA_PREFIX", ""), "lib"))
     if subprocess.run([sys.executable, "-c", "import tensorflow"],
                       env=env, capture_output=True).returncode != 0:
         pytest.skip("tensorflow unavailable — provenance not-run")

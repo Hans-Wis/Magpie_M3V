@@ -41,6 +41,11 @@ migrated here — the M3V lint/CDC/RDC signoff is **ADR-0063 V2** and lands in `
 
 ## GitHub-readiness note
 
-Repo hygiene debt (Stage 4 de-vendoring): generated logs in `flow/v2_pipeline/phase_*`
-(`spike.log`, `sim.log`, `firmware.hex`) are historically tracked and should be gitignored;
-external-PDK links (`Magpie_X3`/`X6`) in the DC/APR flow must be isolated before public.
+De-vendoring is tracked in the top-level [`EXTERNAL_DEPS.md`](../EXTERNAL_DEPS.md). Stage 4
+resolved the public-runnable toolchain paths (verilator via PATH, `LD_LIBRARY_PATH` via
+`$CONDA_PREFIX`, `RISCV_TOOLCHAIN_BIN` override) and *marked+isolated* the external signoff flow
+(Synopsys DC/Spyglass + TSMC28 PDK from `Magpie_X3`, vendored riscv-dv from `Magpie_X6`).
+
+Note: the per-phase `*_report.md` / `logs/*.log` under `flow/v2_pipeline/phase_*` are **committed
+evidence baselines** that the gates read directly (e.g. `gate_31/32/39/41/42/43/45`) — they are
+*not* junk to gitignore; removing them breaks those gates.

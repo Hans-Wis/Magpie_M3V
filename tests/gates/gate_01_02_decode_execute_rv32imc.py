@@ -205,7 +205,7 @@ def test_core_integrates_decode_execute_writeback_and_muldiv_stall_paths():
 
 
 def test_phase_01_02_verilator_lint_only():
-    verilator = shutil.which("verilator") or "/home/edauser/miniforge3/envs/magpie_claude/bin/verilator"
+    verilator = shutil.which("verilator") or "verilator"
     assert Path(verilator).exists(), f"verilator not found: {verilator}"
     cmd = [
         verilator,

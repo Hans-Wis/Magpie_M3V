@@ -75,7 +75,7 @@ def test_wrapper_valid_ready_contract_and_boot_prime():
 
 
 def test_verilator_lint_clean():
-    vl = shutil.which("verilator") or "/home/edauser/miniforge3/envs/magpie_claude/bin/verilator"
+    vl = shutil.which("verilator") or "verilator"
     assert Path(vl).exists(), f"verilator not found: {vl}"
     cmd = [vl, "--lint-only", "-Wall", "-Wno-DECLFILENAME", "-Wno-TIMESCALEMOD",
            "-Wno-UNUSEDSIGNAL", "-Wno-PROCASSINIT", f"-I{RTL}",

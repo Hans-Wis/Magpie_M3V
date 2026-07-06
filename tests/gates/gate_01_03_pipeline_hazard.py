@@ -136,7 +136,7 @@ def test_core_redirect_priority_and_recovery_targets_are_encoded():
 
 
 def test_phase_01_03_verilator_lint_only():
-    verilator = shutil.which("verilator") or "/home/edauser/miniforge3/envs/magpie_claude/bin/verilator"
+    verilator = shutil.which("verilator") or "verilator"
     assert Path(verilator).exists(), f"verilator not found: {verilator}"
     cmd = [
         verilator,

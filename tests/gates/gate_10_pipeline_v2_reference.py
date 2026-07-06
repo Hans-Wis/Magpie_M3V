@@ -110,7 +110,7 @@ def test_v2_full_verification_report_requires_magpie_evidence():
 
 
 def test_v2_reference_verilator_lint_only():
-    verilator = shutil.which("verilator") or "/home/edauser/miniforge3/envs/magpie_claude/bin/verilator"
+    verilator = shutil.which("verilator") or "verilator"
     assert Path(verilator).exists(), f"verilator not found: {verilator}"
     cmd = [
         verilator,

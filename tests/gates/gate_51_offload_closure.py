@@ -13,6 +13,7 @@
     region — LOAD_W overwriting live statics was a real near-miss this phase.
 """
 
+import os
 import shutil
 import subprocess
 import sys
@@ -91,10 +92,15 @@ def test_codec_encodes_scatter():
 
 def test_firmware_stays_below_weight_region():
     size = ROOT / "IP/npu/sw/cq_sequencer/firmware.elf"
+    # riscv toolchain bin: overridable for portability (public: set RISCV_TOOLCHAIN_BIN).
+    # The default is this machine's conda-pkg path; a fresh checkout points it at its own.
+    rvbin = os.environ.get(
+        "RISCV_TOOLCHAIN_BIN",
+        "/home/edauser/miniforge3/pkgs/"
+        "riscv-tools-1.0.6-0_h1234567_g56c29e0/riscv-tools/bin")
     r = subprocess.run(["riscv64-unknown-elf-size", str(size)],
                        capture_output=True, text=True,
-                       env={"PATH": "/home/edauser/miniforge3/pkgs/"
-                            "riscv-tools-1.0.6-0_h1234567_g56c29e0/riscv-tools/bin"})
+                       env=dict(os.environ, PATH=rvbin + os.pathsep + os.environ.get("PATH", "")))
     if r.returncode != 0:
         pytest.skip("riscv size tool unavailable — not-run")
     text, data, bss = [int(x) for x in r.stdout.splitlines()[1].split()[:3]]
