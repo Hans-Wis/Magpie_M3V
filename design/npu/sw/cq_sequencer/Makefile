@@ -17,6 +17,7 @@ firmware.elf: cq_sequencer.c ../include/command_descriptor.h sequencer.lds
 
 firmware.hex: firmware.elf
 	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)objcopy -O verilog --verilog-data-width=4 $< $@
+	sed -i 's/\r$$//' $@   # objcopy verilog emits CRLF; normalize for $$readmemh / git
 
 firmware.disasm: firmware.elf
 	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)objdump -d $< > $@

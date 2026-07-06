@@ -48,13 +48,6 @@ def test_s0_lut_and_requant_contract():
     assert len(lut) == 256 and int(np.argmin(lut)) < 128, "gelu LUT not the documented table"
 
 
-@pytest.mark.skip(reason="F1.5 S0 e2e blocked on firmware TCM-layout: the MAT_ACT_LUT/"
-                  "MAT_EWISE_MUL handlers (+int64 srdhm/rdbpot) grow the sequencer .text/.bss "
-                  "to 0x854, overlapping the weight-DMA region at TCM_WEIGHT_B=0x700 (4K linker "
-                  "region) — corrupts latched CFG state, hangs ALL GEMMs. Fix = relocate the CQ "
-                  "data regions past the code (MAT_OUT out_base is CSR-configurable) or shrink "
-                  "srdhm. Runtime + gate + handler design are ready; see "
-                  "docs/reports/2026-07-06_gemma_s0_e2e_blocker.md.")
 @pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
 def test_s0_geglu_bit_exact_on_rtl(tmp_path):
     t = gr.s0_tensors()

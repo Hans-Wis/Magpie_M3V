@@ -81,7 +81,8 @@ __attribute__((naked, section(".init"))) void _start(void)
     __asm__ volatile (
         "la   t0, trap_handler\n"  /* mtvec FIRST: traps are host-visible from here on */
         "csrw mtvec, t0\n"
-        "li   sp, 0x0f00\n"
+        "li   sp, 0x8000\n"        /* stack at top of DTCM (32KB), grows down away from the
+                                    * weight/blob region (was 0x0F00 = inside it) */
         "call main\n"
         "1: j 1b\n"
     );
@@ -153,6 +154,29 @@ static void dma_writeback(uint32_t src_word, uint32_t dst, uint32_t len_words)
     csr_write(CSR_WB_LEN, len_words);
     csr_write(CSR_WB_GO, 1u);
     wait_done(STATUS_WB_DONE);
+}
+
+/* ADR-0062 S0: gemmlowp requant primitives for MAT_EWISE_MUL, bit-exact to
+ * mat_golden.py / mat_engine.v (trunc toward zero for negative srdhm). */
+static int32_t seq_srdhm(int32_t a, int32_t b)
+{
+    int64_t ab, s;
+    if (a == (int32_t)0x80000000 && b == (int32_t)0x80000000)
+        return 0x7FFFFFFF;
+    ab = (int64_t)a * (int64_t)b;
+    s = ab + ((ab >= 0) ? (1 << 30) : (1 - (1 << 30)));
+    return (int32_t)(s / (int64_t)((int64_t)1 << 31));
+}
+
+static int32_t seq_rdbpot(int32_t x, int32_t exp)
+{
+    int32_t mask, rem, thr;
+    if (exp <= 0)
+        return x;
+    mask = (int32_t)((1u << exp) - 1u);
+    rem = x & mask;
+    thr = (mask >> 1) + ((x < 0) ? 1 : 0);
+    return (x >> exp) + ((rem > thr) ? 1 : 0);
 }
 
 void main(void)
@@ -314,6 +338,49 @@ void main(void)
             csr_write(CSR_MAT_CLAMP, w3);
             mat_run(rmode ? MAT_CMD_RESCALE_PC : MAT_CMD_RESCALE,
                     cq_w0_acc(w0), 1u);
+            break;
+        }
+        case CQ_OP_MAT_ACT_LUT: {
+            /* ADR-0062 S0: dst[i] = lut[(int8)src[i] + 128]. W1=src, W2=dst TCM
+             * byte addrs; W3=256-entry int8 LUT byte addr; W0.RPT = len (<=255). */
+            uint32_t len = cq_w0_rpt(w0);
+            volatile int8_t *src = (volatile int8_t *)w1;
+            volatile int8_t *dst = (volatile int8_t *)w2;
+            volatile uint8_t *lut = (volatile uint8_t *)w3;
+            uint32_t i;
+            if (len == 0u)
+                break;
+            if (w1 > (TCM_SCRATCH_B - len) || w2 > (TCM_SCRATCH_B - len) ||
+                w3 > (TCM_SCRATCH_B - 256u))
+                cq_halt(CQ_ERR_MAT_PARAM);
+            for (i = 0u; i < len; i++)
+                dst[i] = (int8_t)lut[(uint8_t)((int32_t)src[i] + 128)];
+            break;
+        }
+        case CQ_OP_MAT_EWISE_MUL: {
+            /* ADR-0062 S0: dst[i] = clamp(rdbpot(srdhm(a[i]*b[i], mult), shift-31)).
+             * W1=mult_q31; W2=(src_a<<16)|src_b; W3=(dst<<16)|shift; W0.RPT=len. */
+            uint32_t len = cq_w0_rpt(w0);
+            uint32_t src_a = (w2 >> 16) & 0xFFFFu;
+            uint32_t src_b = w2 & 0xFFFFu;
+            uint32_t dst = (w3 >> 16) & 0xFFFFu;
+            uint32_t shift = w3 & 0xFFu;
+            volatile int8_t *a = (volatile int8_t *)src_a;
+            volatile int8_t *b = (volatile int8_t *)src_b;
+            volatile int8_t *d = (volatile int8_t *)dst;
+            uint32_t i;
+            if (len == 0u)
+                break;
+            if (src_a > (TCM_SCRATCH_B - len) || src_b > (TCM_SCRATCH_B - len) ||
+                dst > (TCM_SCRATCH_B - len))
+                cq_halt(CQ_ERR_MAT_PARAM);
+            for (i = 0u; i < len; i++) {
+                int32_t prod = (int32_t)a[i] * (int32_t)b[i];
+                int32_t q = seq_rdbpot(seq_srdhm(prod, (int32_t)w1), (int32_t)shift - 31);
+                if (q < -128) q = -128;
+                if (q > 127)  q = 127;
+                d[i] = (int8_t)q;
+            }
             break;
         }
         default:

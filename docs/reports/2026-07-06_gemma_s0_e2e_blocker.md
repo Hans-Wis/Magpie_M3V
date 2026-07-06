@@ -1,6 +1,23 @@
-# Gemma S0 GeGLU RTL e2e — implementation status + firmware TCM blocker
+# Gemma S0 GeGLU RTL e2e — DONE (firmware TCM blocker resolved)
 
-Date: 2026-07-06 · F1.5. Design + golden verified; e2e blocked on a firmware-size collision.
+Date: 2026-07-06 · F1.5. **RESOLVED** — S0 is bit-exact on RTL (gate_gemma3_s0_geglu 2/2;
+all 6 tflm gates still green). Root cause + fix below (kept for the record).
+
+## Resolution
+The blocker was a firmware memory-layout collision, fixed with **zero RTL / zero runtime-address
+changes** — purely `sequencer.lds` + `_start`:
+- `.rodata` (the switch jump table, read as DATA from DTCM) and `.bss` (latched CFG state) were
+  landing at 0x81c / 0x840 — inside the weight-blob DMA region (0x700..~0xD40) — so a GEMM weight
+  blob overwrote the jump table / state → the switch jumped to garbage → hang (all GEMMs).
+- Fix: put `.text` in ITCM (fetched there), and park all **DTCM-read** data (`.rodata`/`.data`/
+  `.bss`) at **0x1000** — above the CQ scratch regions (weight/blob ~0xD40, descriptor scratch
+  0xF80) and below the 8K ITCM top (the same hex is `$readmemh`'d into both the 8K ITCM and the
+  32K DTCM, so LMAs must fit the smaller one). Moved the **stack** 0x0F00→0x8000 (top of DTCM,
+  grows down away from the blob). Makefile now normalizes objcopy's CRLF.
+Verified: gate_50 + all tflm gates + gemma S0 e2e — 16/16.
+
+---
+## Original diagnosis (for the record)
 
 ## What's done + verified
 - **Completeness review** (Grok+Codex) + **Tier-C golden fix** (srdhm now bit-exact to
