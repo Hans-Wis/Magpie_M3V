@@ -22,10 +22,12 @@ sys.path.insert(0, str(ROOT / "design/npu/sw"))
 sys.path.insert(0, str(ROOT / "design/npu/sw/gemma"))
 sys.path.insert(0, str(ROOT / "design/npu/golden"))
 
+import struct                      # noqa: E402
 import cq_codec                    # noqa: E402  (SSOT)
 import tflm_runtime as rt          # noqa: E402  (GEMM lowering + hex writer + unpack)
 import gemma_ref as gref           # noqa: E402
 import gemma_quant as gq           # noqa: E402
+import gemma_quant_s1 as gq1       # noqa: E402  (S1 Tier-C golden + rsqrt SSOT)
 
 # TCM byte layout for the nonlinear steps (all < 0xF00 scratch; firmware bound-checks this).
 TCM_IN = 0x700          # MAT_LOAD_W target (activation inputs land here, contiguous)
@@ -130,6 +132,62 @@ def emit_ewise_mul(case: Path, gelu, up, mult_q31, shift, seq, inter):
     ring += store
     _write_case(case, ring, [(SHARED_IN, blob)], rwords)
     return rwords, seq * inter
+
+
+def _align32(x):
+    return (x + 31) & ~31
+
+
+def emit_rmsnorm(case: Path, a_q, g, seq, H):
+    """ADR-0062 S1: RMSNorm*(1+w) on the NPU sequencer (MAT_RMSNORM). One descriptor per
+    row; the rsqrt coefficients + per-layer constants ride in a TCM param blob sourced from
+    the golden (gemma_quant_s1) — zero firmware constants, non-circular SSOT. Returns
+    (result_words, seq*H) for unpack_contiguous."""
+    nrm = g["nrm"]
+    hdr = struct.pack("<IIIiiiiI", nrm["SA2_Q"] & 0xFFFFFFFF, nrm["OUT_NUM"] & 0xFFFFFFFF,
+                      g["eps_q"], g["coeffs"][0], g["coeffs"][1], g["coeffs"][2],
+                      g["coeffs"][3], gq1.INV_SQRT2_Q16)
+    wq = b"".join(struct.pack("<h", int(w)) for w in nrm["w_q16"])   # H int16 Q2.14
+    blob = hdr + wq                                                  # 32 + 2H bytes
+    a_b = _pack_rows(a_q)
+    a_pad = a_b + b"\0" * ((-len(a_b)) % 32)
+    combined = a_pad + blob
+    ring, loaded = _load_w(combined)
+    a_base = TCM_IN
+    blob_base = a_base + len(a_pad)
+    out_base = _align32(blob_base + len(blob))
+    for r in range(seq):
+        ring += cq_codec.encode("MAT_RMSNORM", src=a_base + r * H, dst=out_base + r * H,
+                                param=blob_base, rpt=H)
+    store, rwords = _store(out_base, seq * H)
+    ring += store
+    _write_case(case, ring, [(SHARED_IN, loaded)], rwords)
+    return rwords, seq * H
+
+
+def emit_add_requant(case: Path, r_q, an_q, g, seq, H, shift=16):
+    """ADR-0062 S1: residual add r + a_normed on the NPU sequencer (MAT_EWISE_ADD_REQUANT).
+    One descriptor per row; R_NUM/X_NUM from the golden (independent input scales)."""
+    res = g["res"]
+    hdr = struct.pack("<iiI", res["R_NUM"], res["X_NUM"], shift)     # 12 bytes
+    r_b = _pack_rows(r_q)
+    an_b = _pack_rows(an_q)
+    r_pad = r_b + b"\0" * ((-len(r_b)) % 32)
+    an_pad = an_b + b"\0" * ((-len(an_b)) % 32)
+    combined = r_pad + an_pad + hdr
+    ring, loaded = _load_w(combined)
+    r_base = TCM_IN
+    an_base = r_base + len(r_pad)
+    blob_base = an_base + len(an_pad)
+    out_base = _align32(blob_base + len(hdr))
+    for r in range(seq):
+        ring += cq_codec.encode("MAT_EWISE_ADD_REQUANT", src_a=r_base + r * H,
+                                src_b=an_base + r * H, dst=out_base + r * H,
+                                param=blob_base, rpt=H)
+    store, rwords = _store(out_base, seq * H)
+    ring += store
+    _write_case(case, ring, [(SHARED_IN, loaded)], rwords)
+    return rwords, seq * H
 
 
 def unpack_contiguous(dump_path: Path, seq, n):

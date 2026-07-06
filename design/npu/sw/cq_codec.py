@@ -1,7 +1,7 @@
 # GENERATED from command_descriptor_v0_1.yaml - DO NOT EDIT
 
 W0_RSVD_MASK = 0xFF008000
-OPCODES = {'MAT_CFG': 1, 'MAT_LOAD_W': 2, 'MAT_OP': 3, 'MAT_RESCALE': 4, 'MAT_STORE': 5, 'MAT_ACC_CLR': 6, 'MAT_FENCE': 7, 'MAT_ACT_LUT': 8, 'MAT_EWISE_MUL': 9}
+OPCODES = {'MAT_CFG': 1, 'MAT_LOAD_W': 2, 'MAT_OP': 3, 'MAT_RESCALE': 4, 'MAT_STORE': 5, 'MAT_ACC_CLR': 6, 'MAT_FENCE': 7, 'MAT_ACT_LUT': 8, 'MAT_EWISE_MUL': 9, 'MAT_RMSNORM': 10, 'MAT_EWISE_ADD_REQUANT': 11}
 OPCODE_NAMES = {v: k for k, v in OPCODES.items()}
 ERR_CAUSES = {'BAD_OPCODE': 1, 'RSVD_VIOLATION': 2, 'RING_OVERRUN': 3, 'ENGINE_NOT_READY': 4, 'DMA_FAULT': 5, 'DESC_ALIGN': 6, 'MAT_PARAM': 7, 'ABORTED': 8, 'CORE_TRAP_FLAG': 2147483648}
 CSR_OFFSETS = {'CQ_RING_BASE': 64, 'CQ_RING_SIZE': 68, 'CQ_HEAD': 72, 'CQ_TAIL': 76, 'CQ_CTRL': 80, 'CQ_STATUS': 84, 'ERR_CAUSE': 88, 'CQ_EVENT': 92, 'MAT_A_ADDR': 96, 'MAT_B_ADDR': 100, 'MAT_CTRL': 104, 'MAT_MULT': 108, 'MAT_RSP': 112, 'MAT_CLAMP': 116, 'MAT_OUT_BASE': 120, 'MAT_STATUS': 124, 'ERR_PC': 128}
@@ -64,6 +64,10 @@ def encode(op, **fields):
         return [w0, fields.get('src', 0) & 0xFFFFFFFF, fields.get('dst', 0) & 0xFFFFFFFF, fields.get('lut', 0) & 0xFFFFFFFF]
     if opv == OPCODES['MAT_EWISE_MUL']:
         return [w0, fields.get('multiplier_q31', 0) & 0xFFFFFFFF, ((fields.get('src_a', 0) & 0xFFFF) << 16) | (fields.get('src_b', 0) & 0xFFFF), ((fields.get('dst', 0) & 0xFFFF) << 16) | (fields.get('shift', 0) & 0xFF)]
+    if opv == OPCODES['MAT_RMSNORM']:
+        return [w0, fields.get('src', 0) & 0xFFFFFFFF, fields.get('dst', 0) & 0xFFFFFFFF, fields.get('param', 0) & 0xFFFFFFFF]
+    if opv == OPCODES['MAT_EWISE_ADD_REQUANT']:
+        return [w0, ((fields.get('src_a', 0) & 0xFFFF) << 16) | (fields.get('src_b', 0) & 0xFFFF), fields.get('dst', 0) & 0xFFFFFFFF, fields.get('param', 0) & 0xFFFFFFFF]
     raise ValueError('bad opcode %r' % (op,))
 
 def decode(words):
@@ -95,6 +99,10 @@ def decode(words):
         d.update({'src': w1, 'dst': w2, 'lut': w3, 'len': d['rpt']})
     elif opv == OPCODES['MAT_EWISE_MUL']:
         d.update({'multiplier_q31': w1, 'src_a': (w2 >> 16) & 0xFFFF, 'src_b': w2 & 0xFFFF, 'dst': (w3 >> 16) & 0xFFFF, 'shift': w3 & 0xFF, 'len': d['rpt']})
+    elif opv == OPCODES['MAT_RMSNORM']:
+        d.update({'src': w1, 'dst': w2, 'param': w3, 'len': d['rpt']})
+    elif opv == OPCODES['MAT_EWISE_ADD_REQUANT']:
+        d.update({'src_a': (w1 >> 16) & 0xFFFF, 'src_b': w1 & 0xFFFF, 'dst': w2, 'param': w3, 'len': d['rpt']})
     return d
 
 def _self_test():
@@ -108,6 +116,8 @@ def _self_test():
         'MAT_FENCE': dict(fence=1),
         'MAT_ACT_LUT': dict(src=0x100, dst=0x200, lut=0x300, rpt=128),
         'MAT_EWISE_MUL': dict(multiplier_q31=0x40000000, src_a=0x100, src_b=0x200, dst=0x300, shift=38, rpt=128),
+        'MAT_RMSNORM': dict(src=0x700, dst=0x900, param=0x800, rpt=64),
+        'MAT_EWISE_ADD_REQUANT': dict(src_a=0x100, src_b=0x200, dst=0x300, param=0x400, rpt=64),
     }
     for name, fields in samples.items():
         words = encode(name, **fields)

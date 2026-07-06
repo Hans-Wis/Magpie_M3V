@@ -165,6 +165,35 @@
         "len"
       ],
       "notes": "ADR-0065 F1.5 S0: elementwise int8*int8 -> per-tensor gemmlowp requant -> int8, on the sequencer core. dst[i] = clamp(rdbpot(srdhm(a[i]*b[i], mult_q31), shift-31), -128, 127); out_zp=0. srdhm/rdbpot MUST match mat_golden/mat_engine (trunc-toward-zero). W0.RPT = element count."
+    },
+    {
+      "name": "MAT_RMSNORM",
+      "value": 10,
+      "w1": "src_tcm_byte",
+      "w2": "dst_tcm_byte",
+      "w3": "param_tcm_byte (32B header: SA2_Q,OUT_NUM,EPS_Q,c0,c1,c2,c3,INV_SQRT2_Q16; then H int16 (1+w) Q2.14 weights)",
+      "fields": [
+        "src",
+        "dst",
+        "param",
+        "len"
+      ],
+      "notes": "ADR-0062 F1.6 S1: Gemma RMSNorm one row per descriptor on the sequencer core. sum_sq=Sum(src^2); mean_sq=sum_sq//H; arg_q=mean_sq*SA2_Q+EPS_Q; (y_adj,sh)=rsqrt_q31(arg_q) via degree-3 mantissa poly (coeffs from the golden param blob, zero firmware constants -> non-circular SSOT); out_i=sat8( ((src_i*y_adj*w_q16_i)>>14 * OUT_NUM + rbias) >> (47+sh) ). W0.RPT=H (<=255). Nonlinear-in-RTL: no scalar-F, pure int fixed-point."
+    },
+    {
+      "name": "MAT_EWISE_ADD_REQUANT",
+      "value": 11,
+      "w1": "(src_a_tcm_byte<<16)|src_b_tcm_byte",
+      "w2": "dst_tcm_byte",
+      "w3": "param_tcm_byte (12B: R_NUM,X_NUM,SHIFT)",
+      "fields": [
+        "src_a",
+        "src_b",
+        "dst",
+        "param",
+        "len"
+      ],
+      "notes": "ADR-0062 F1.6 S1: residual add on the sequencer core. dst[i]=sat8( (a[i]*R_NUM + b[i]*X_NUM + (1<<(SHIFT-1))) >> SHIFT ); independent input scales folded to R_NUM/X_NUM (Q16), out_zp=0. Mirror of MAT_EWISE_MUL. W0.RPT = element count."
     }
   ],
   "err_causes": [

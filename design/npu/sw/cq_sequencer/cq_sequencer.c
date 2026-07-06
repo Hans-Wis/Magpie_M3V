@@ -57,6 +57,40 @@ static volatile cq_desc_t *const scratch = (volatile cq_desc_t *)TCM_SCRATCH_B;
 
 static volatile uint32_t cfg_m, cfg_n, cfg_k, cfg_tile_flags, acc_mask_latch;
 
+/* 64-bit variable shifts (S1 rsqrt/requant) call these libgcc DImode helpers, which
+ * -nostdlib omits. Implement them freestanding via 32-bit halves only (little-endian
+ * RISC-V), so they compile to hardware sll/srl/sra with no recursive DImode call. GCC's
+ * calling convention: DItype (long long) value, SItype (int) shift count in [0,63]. */
+typedef union { long long ll; struct { unsigned int lo, hi; } s; } u_dw;
+
+long long __ashldi3(long long v, int b)
+{
+    u_dw w; w.ll = v;
+    if (b == 0) return v;
+    if (b >= 32) { w.s.hi = w.s.lo << (b - 32); w.s.lo = 0u; }
+    else { w.s.hi = (w.s.hi << b) | (w.s.lo >> (32 - b)); w.s.lo <<= b; }
+    return w.ll;
+}
+
+long long __lshrdi3(long long v, int b)
+{
+    u_dw w; w.ll = v;
+    if (b == 0) return v;
+    if (b >= 32) { w.s.lo = w.s.hi >> (b - 32); w.s.hi = 0u; }
+    else { w.s.lo = (w.s.lo >> b) | (w.s.hi << (32 - b)); w.s.hi >>= b; }
+    return w.ll;
+}
+
+long long __ashrdi3(long long v, int b)
+{
+    u_dw w; w.ll = v;
+    int hi = (int)w.s.hi;                 /* signed high word -> arithmetic shift */
+    if (b == 0) return v;
+    if (b >= 32) { w.s.lo = (unsigned int)(hi >> (b - 32)); w.s.hi = (unsigned int)(hi >> 31); }
+    else { w.s.lo = (w.s.lo >> b) | ((unsigned int)hi << (32 - b)); w.s.hi = (unsigned int)(hi >> b); }
+    return w.ll;
+}
+
 /* ADR-0038: terminal trap handler — reports the fault to the host through the
  * latch-once ERR_PC/ERR_CAUSE pair (cause bit31 = CORE_TRAP flag | mcause);
  * the cq_err rising edge raises the host ERR IRQ. Then spin (Kelvin io_fault
@@ -177,6 +211,35 @@ static int32_t seq_rdbpot(int32_t x, int32_t exp)
     rem = x & mask;
     thr = (mask >> 1) + ((x < 0) ? 1 : 0);
     return (x >> exp) + ((rem > thr) ? 1 : 0);
+}
+
+/* ADR-0062 S1: fixed-point rsqrt (degree-3 mantissa polynomial), bit-exact to
+ * gemma_quant_s1.rsqrt_q31. Coefficients arrive from the golden param blob (zero
+ * firmware constants -> no golden/firmware drift). Returns rsqrt(arg_q/2^16) as
+ * y_adj / 2^(31+sh); *sh_out may be negative for arg_real < 1. arg_q > 0. */
+static int32_t rsqrt_q31(uint64_t arg_q, const int32_t *coeff, uint32_t inv_sqrt2,
+                         int32_t *sh_out)
+{
+    uint64_t t = arg_q;
+    int32_t p = -1;
+    while (t) { p++; t >>= 1; }           /* p = bit_length(arg_q) - 1 */
+    uint64_t norm = (p >= 47) ? (arg_q >> (p - 47)) : (arg_q << (47 - p));
+    uint32_t f = (uint32_t)((norm >> 31) & 0xFFFFu);   /* 47 - 16 = 31; UQ0.16 fraction */
+    int64_t acc = coeff[3];
+    acc = (((acc * (int64_t)f) + (1 << 15)) >> 16) + coeff[2];
+    acc = (((acc * (int64_t)f) + (1 << 15)) >> 16) + coeff[1];
+    acc = (((acc * (int64_t)f) + (1 << 15)) >> 16) + coeff[0];
+    int32_t y_adj = (int32_t)acc;          /* rsqrt(m) UQ0.31, m in [1,2) */
+    int32_t e = p - 16;                    /* arg_real = m * 2^e */
+    int32_t sh;
+    if (e & 1) {                           /* odd (two's-complement & matches Python) */
+        y_adj = (int32_t)(((int64_t)y_adj * (int64_t)inv_sqrt2 + (1 << 15)) >> 16);
+        sh = (e - 1) >> 1;                 /* arithmetic >> floors (matches Python) */
+    } else {
+        sh = e >> 1;
+    }
+    *sh_out = sh;
+    return y_adj;
 }
 
 void main(void)
@@ -380,6 +443,79 @@ void main(void)
                 if (q < -128) q = -128;
                 if (q > 127)  q = 127;
                 d[i] = (int8_t)q;
+            }
+            break;
+        }
+        case CQ_OP_MAT_RMSNORM: {
+            /* ADR-0062 S1: one row of Gemma RMSNorm*(1+w) on the sequencer core.
+             * W1=src, W2=dst TCM byte addrs; W3=32B-aligned param blob:
+             *   [0]=SA2_Q [1]=OUT_NUM [2]=EPS_Q [3..6]=rsqrt coeffs [7]=INV_SQRT2_Q16,
+             *   then H int16 (1+w) Q2.14 weights. W0.RPT = H. */
+            uint32_t H = cq_w0_rpt(w0);
+            volatile int8_t *src = (volatile int8_t *)w1;
+            volatile int8_t *dst = (volatile int8_t *)w2;
+            volatile int32_t *ph = (volatile int32_t *)w3;
+            volatile int16_t *wq = (volatile int16_t *)(w3 + 32u);
+            uint32_t i;
+            int64_t sum_sq;
+            uint32_t mean_sq;
+            uint64_t arg_q;
+            int32_t coeff[4], y_adj, sh, rsh;
+            int64_t rbias;
+            if (H == 0u)
+                break;
+            if (w1 > (TCM_SCRATCH_B - H) || w2 > (TCM_SCRATCH_B - H) ||
+                (w3 & 31u) != 0u || w3 > (TCM_SCRATCH_B - 32u - 2u * H))
+                cq_halt(CQ_ERR_MAT_PARAM);
+            coeff[0] = ph[3]; coeff[1] = ph[4]; coeff[2] = ph[5]; coeff[3] = ph[6];
+            sum_sq = 0;
+            for (i = 0u; i < H; i++) {
+                int32_t v = src[i];
+                sum_sq += (int64_t)v * v;
+            }
+            /* sum_sq <= H*127^2 <= 255*16129 < 2^22, so the row-mean divide is 32-bit
+             * (hardware divu) — avoids a 64-bit __divdi3 and is exact (sum_sq >= 0). */
+            mean_sq = (uint32_t)sum_sq / H;                     /* floor (sum_sq >= 0) */
+            arg_q = (uint64_t)mean_sq * (uint32_t)ph[0] + (uint32_t)ph[2];  /* *SA2_Q + EPS_Q */
+            y_adj = rsqrt_q31(arg_q, coeff, (uint32_t)ph[7], &sh);
+            rsh = 47 + sh;                                      /* (61+sh) - 14 */
+            rbias = (int64_t)1 << (rsh - 1);
+            for (i = 0u; i < H; i++) {
+                int64_t t = (int64_t)src[i] * (int64_t)y_adj;
+                int64_t acc = (t * (int64_t)wq[i]) >> 14;       /* *(1+w) Q2.14, arith >> */
+                int64_t vv = (acc * (int64_t)(uint32_t)ph[1] + rbias) >> rsh;  /* *OUT_NUM */
+                if (vv < -128) vv = -128;
+                if (vv > 127)  vv = 127;
+                dst[i] = (int8_t)vv;
+            }
+            break;
+        }
+        case CQ_OP_MAT_EWISE_ADD_REQUANT: {
+            /* ADR-0062 S1: residual add. W1=(src_a<<16)|src_b, W2=dst; W3=param blob
+             * [R_NUM, X_NUM, SHIFT]; W0.RPT=len. dst[i]=sat8((a*R_NUM+b*X_NUM+bias)>>SHIFT). */
+            uint32_t len = cq_w0_rpt(w0);
+            uint32_t src_a = (w1 >> 16) & 0xFFFFu;
+            uint32_t src_b = w1 & 0xFFFFu;
+            volatile int8_t *a = (volatile int8_t *)src_a;
+            volatile int8_t *b = (volatile int8_t *)src_b;
+            volatile int8_t *d = (volatile int8_t *)w2;
+            volatile int32_t *ph = (volatile int32_t *)w3;
+            int32_t r_num, x_num;
+            uint32_t shift, i;
+            int64_t bias;
+            if (len == 0u)
+                break;
+            if (src_a > (TCM_SCRATCH_B - len) || src_b > (TCM_SCRATCH_B - len) ||
+                w2 > (TCM_SCRATCH_B - len) || (w3 & 3u) != 0u || w3 > (TCM_SCRATCH_B - 12u))
+                cq_halt(CQ_ERR_MAT_PARAM);
+            r_num = ph[0]; x_num = ph[1]; shift = (uint32_t)ph[2];
+            bias = (shift > 0u) ? ((int64_t)1 << (shift - 1u)) : 0;
+            for (i = 0u; i < len; i++) {
+                int64_t acc = (int64_t)a[i] * r_num + (int64_t)b[i] * x_num;
+                int64_t vv = (acc + bias) >> shift;
+                if (vv < -128) vv = -128;
+                if (vv > 127)  vv = 127;
+                d[i] = (int8_t)vv;
             }
             break;
         }
