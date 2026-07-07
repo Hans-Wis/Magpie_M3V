@@ -32,8 +32,11 @@ RMSNorm(×4 各 ~23.8-24.1k) · gate/up_proj 各 18,002。**單步之冠 = ewise
 | **E0** | baseline（RVV Cycle-1 residual）| RVV firmware | residual | — | — | ✅ gate 綠 | **BENCHMARK** |
 | **E1** | **ADR-0066 MAT_REQUANT_VEC — ewise_mul requant 卸給 mat_engine 64-bit** | RTL(+S_LV)+ SSOT + firmware + runtime | ewise_mul 36,966（單步之冠）| *(E1a RTL done, E1b runtime pending)* | — | E1a ✅ | 🔄 E1a 完成 |
 | **PA** | **ADR-0067 v2 Phase A — GEMM 硬體 tile sequencer**（npu_ml_ctrl）| 新 RTL(control shell)+ mux + firmware + gate_67 | GEMM per-tile 編排稅 | **q_proj 13,350→4,282 = 3.12×** | — | ✅ 512/512 byte-exact | ✅ **達標(超 ≥2×)** |
+| **B1** | **Phase B B1 — activation-stationary**（activation 載一次@TCM 0xB40)| npu_ml_ctrl S_LOADA + mode bit + runtime blob 重打包 | DMA 冗餘 activation 重載 | **4,282→3,403 = vs 韌體 3.92×** | **−879(dma −893)** | ✅ 512/512 | ✅ **達標** |
 
 **PA 實測分解(gate_67,q_proj 8-tile,我獨立跑)**:ML 硬體路 4,282 = mat **680**(=韌體 680,計算不變)+ dma **3,408**(≈韌體 3,618)+ **編排 194**(韌體 core* 9,052→194,**46× 縮**)。**省的 100% 是 per-tile 韌體編排稅**;mat=680 相同證同一 GEMM(apples-to-apples)。**新瓶頸=DMA(80%)→ Phase B(overlap + activation-stationary)。** RTL review-clean(Grok 無 FSM bug + Codex 3 must-fix 已修:registered readback / !cfg_bypass / err 終止)· ML_V2_EN=0 零回歸(gate_45/46)。commits d360a03/6df51ed/3958919。
+
+**B1 實測(gate_67 B1 test,我獨立跑,@415ac80)**:q_proj 4,282→**3,403**,dma 3,408→**2,515(−893=冗餘 activation,精準命中投影)**,mat 680 不變,other 194→208(多一次 S_LOADA)。**bit-exact 512/512(同 golden)**。設計+Grok/Codex review 一致(B1-first / TCM_ACT=0xB40 / group-scoped / bit-exact 驗證取代 E1 交易等價 / B2 延後)。gate_67 加 dma<3000 守衛防「照載不誤」。scope=n_groups==1(case assert)。Phase A 路仍 4,282 可選;零回歸。**效能軌跡:韌體 13,350 → PA 4,282(3.12×)→ B1 3,403(3.92×)。下一步 B1.1 header-trim(Grok ~2,400=~5.5×,Codex 提醒較大 layout surgery)/ B1.2 multi-group / B2 double-buffer(延)。**
 
 ---
 
