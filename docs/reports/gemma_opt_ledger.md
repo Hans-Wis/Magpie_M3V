@@ -30,7 +30,10 @@ RMSNorm(×4 各 ~23.8-24.1k) · gate/up_proj 各 18,002。**單步之冠 = ewise
 | # | 實驗 | 改動層 | 攻擊 | vs baseline | vs prev | bit-exact | 判定 |
 |---|---|---|---|---:|---:|---|---|
 | **E0** | baseline（RVV Cycle-1 residual）| RVV firmware | residual | — | — | ✅ gate 綠 | **BENCHMARK** |
-| **E1** | **ADR-0066 MAT_REQUANT_VEC — ewise_mul requant 卸給 mat_engine 64-bit** | RTL(+S_LV)+ SSOT + firmware + runtime | ewise_mul 36,966（單步之冠）| *(進行中)* | *(進行中)* | pending | 🔄 進行中 |
+| **E1** | **ADR-0066 MAT_REQUANT_VEC — ewise_mul requant 卸給 mat_engine 64-bit** | RTL(+S_LV)+ SSOT + firmware + runtime | ewise_mul 36,966（單步之冠）| *(E1a RTL done, E1b runtime pending)* | — | E1a ✅ | 🔄 E1a 完成 |
+| **PA** | **ADR-0067 v2 Phase A — GEMM 硬體 tile sequencer**（npu_ml_ctrl）| 新 RTL(control shell)+ mux + firmware + gate_67 | GEMM per-tile 編排稅 | **q_proj 13,350→4,282 = 3.12×** | — | ✅ 512/512 byte-exact | ✅ **達標(超 ≥2×)** |
+
+**PA 實測分解(gate_67,q_proj 8-tile,我獨立跑)**:ML 硬體路 4,282 = mat **680**(=韌體 680,計算不變)+ dma **3,408**(≈韌體 3,618)+ **編排 194**(韌體 core* 9,052→194,**46× 縮**)。**省的 100% 是 per-tile 韌體編排稅**;mat=680 相同證同一 GEMM(apples-to-apples)。**新瓶頸=DMA(80%)→ Phase B(overlap + activation-stationary)。** RTL review-clean(Grok 無 FSM bug + Codex 3 must-fix 已修:registered readback / !cfg_bypass / err 終止)· ML_V2_EN=0 零回歸(gate_45/46)。commits d360a03/6df51ed/3958919。
 
 ---
 
