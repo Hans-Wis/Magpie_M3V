@@ -21,10 +21,10 @@ CASE = ROOT / "sim/work/ml_v2_gemm"
 FWDIR = ROOT / "design/npu/sw/ml_job_driver"
 
 
-def _build_firmware(n_tiles: int) -> str:
+def _build_firmware(n_tiles: int, ml_cfg: int = 0) -> str:
     subprocess.run(["make", "clean"], cwd=FWDIR, check=True, capture_output=True, text=True)
-    r = subprocess.run(["make", f"N_TILES={n_tiles}", "all", "size"], cwd=FWDIR,
-                       capture_output=True, text=True)
+    r = subprocess.run(["make", f"N_TILES={n_tiles}", f"ML_CFG={ml_cfg}", "all", "size"],
+                       cwd=FWDIR, capture_output=True, text=True)
     assert r.returncode == 0, f"ml_job_driver build failed:\n{r.stdout}\n{r.stderr}"
     return r.stdout + r.stderr
 
@@ -86,3 +86,26 @@ def test_ml_v2_gemm_matches_firmware_golden(tmp_path):
     if bd:
         print(f"ML_V2_BREAKDOWN mat={bd.group(1)} dma={bd.group(2)} other={bd.group(3)}")
     print(f"ML_V2_BIT_EXACT_PASS n_tiles={n_tiles} bytes={len(exp)}")
+
+
+@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
+def test_ml_v2_gemm_b1_activation_stationary(tmp_path):
+    """ADR-0067 Phase B B1: same q_proj GEMM with activation loaded ONCE (stationary).
+    Bit-exact vs the same golden; DMA must drop (~896 fewer redundant activation words)."""
+    _ng, n_tiles = ml_v2_gemm_case.generate(CASE, n=64, stationary=True)
+    build_log = _build_firmware(n_tiles, ml_cfg=2)   # ML_JOB_CFG[1] = stationary
+    assert (FWDIR / "ml_job_driver.hex").exists(), build_log
+
+    out = _run_verilator(tmp_path)
+    got = _dump_bytes(CASE / "result.dump")
+    exp = (CASE / "ml_v2_golden.bin").read_bytes()
+    assert got == exp, "B1 byte mismatch:\n" + _first_mismatch(got, exp)
+
+    cyc = int(re.search(r"ML_V2_CYCLES=(\d+)", out).group(1))
+    bd = re.search(r"ML_V2_BREAKDOWN mat_busy=(\d+) dma_busy=(\d+) other=(\d+)", out)
+    dma = int(bd.group(2))
+    # activation-stationary must actually cut DMA (Phase A dma was ~3,408); guard the
+    # win so a "load anyway" regression can't pass silently.
+    assert dma < 3000, f"B1 dma={dma} did not drop vs Phase A ~3,408 (activation not stationary?)"
+    print(f"ML_V2_B1_CYCLES={cyc} mat={bd.group(1)} dma={dma} other={bd.group(3)}")
+    print(f"ML_V2_B1_BIT_EXACT_PASS n_tiles={n_tiles} bytes={len(exp)}")

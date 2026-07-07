@@ -95,6 +95,18 @@ module npu_ml_ctrl #(
     localparam [31:0] DST_STRIDE = 32'h0000_0040;   // per-tile writeback spacing
     localparam [16:0] STORE_LEN  = 17'd16;          // 64 int8 = 16 words
 
+    // ===== B1 activation-stationary (ADR-0067 Phase B) — selected by ML_JOB_CFG[1] =====
+    //  Activation (same input for all tiles in a group) is loaded ONCE to a resident
+    //  TCM slot = the freed Phase-A weight window (0xB40, past MAT_OUT/weights, below
+    //  scratch). Per-tile blob shrinks to [header|weights] (272w, no activation), so
+    //  weights land at 0x940 and OP a/b swap: a=resident act(0xB40), b=weights(0x940).
+    localparam [31:0] ACT_SRC     = 32'h8000_1C00;  // resident-activation shared src
+    localparam [31:0] ACT_DSTW    = 32'h0000_02D0;  // TCM_ACT 0xB40 >> 2
+    localparam [16:0] ACT_LEN     = 17'd128;         // 8 rows x 64 K int8 = 512B
+    localparam [16:0] LOAD_LEN_B1 = 17'd272;         // [header 0x240 | weights 512B]
+    localparam [31:0] OP_A_B1     = 32'h0000_0B40;   // resident activation (a)
+    localparam [31:0] OP_B_B1     = 32'h0000_0940;   // per-tile weights (b)
+
     // ===== CSR offsets (core_csr_addr[7:2]); 0x21+ = 0x84+ are free =====
     localparam [5:0] A_NTILES = 6'h21;  // 0x84 RW  job tile count (n_groups*n_tiles)
     localparam [5:0] A_GO     = 6'h22;  // 0x88 WO  pulse [0]=go, [1]=irq_en
@@ -104,6 +116,7 @@ module npu_ml_ctrl #(
     // ===== job registers =====
     reg [15:0] job_ntiles;
     reg        cfg_bypass;
+    reg        stationary;   // ML_JOB_CFG[1]: B1 activation-stationary mode
     reg        irq_en;
     reg        job_busy, job_done_l, job_err;
     reg [15:0] tile_i;
@@ -120,7 +133,8 @@ module npu_ml_ctrl #(
     localparam [3:0]
         S_IDLE=4'd0, S_LDW=4'd1, S_LDW_W=4'd2, S_CLR=4'd3, S_CLR_W=4'd4,
         S_OP=4'd5, S_OP_W=4'd6, S_RSC=4'd7, S_RSC_W=4'd8, S_STO=4'd9,
-        S_STO_W=4'd10, S_NEXT=4'd11, S_ABORT=4'd12, S_DONE=4'd13;
+        S_STO_W=4'd10, S_NEXT=4'd11, S_ABORT=4'd12, S_DONE=4'd13,
+        S_LOADA=4'd14, S_LOADA_W=4'd15;   // B1: one-time activation load
     reg [3:0] state;
 
     // per-tile varying addresses
@@ -137,6 +151,7 @@ module npu_ml_ctrl #(
         if (!resetn) begin
             state <= S_IDLE; job_busy <= 1'b0; job_done_l <= 1'b0; job_err <= 1'b0;
             tile_i <= 16'b0; job_ntiles <= 16'b0; cfg_bypass <= 1'b0; irq_en <= 1'b0;
+            stationary <= 1'b0;
             busy_seen <= 1'b0; ml_csr_hit <= 1'b0; ml_csr_rdata <= 32'b0;
             ml_mat_go <= 1'b0; ml_dma_go <= 1'b0; ml_wb_go <= 1'b0;
             ml_mat_cmd <= 3'b0; ml_mat_bank <= 4'b0; ml_mat_rpt <= 8'b0;
@@ -159,13 +174,15 @@ module npu_ml_ctrl #(
             if (csr_wr) begin
                 case (csr_a)
                     A_NTILES: job_ntiles <= core_csr_wdata[15:0];
-                    A_CFG:    cfg_bypass  <= core_csr_wdata[0];
+                    A_CFG: begin cfg_bypass <= core_csr_wdata[0];
+                                 stationary <= core_csr_wdata[1]; end   // B1 mode
                     // start only when NOT bypassed (else mux drops ml_*_go -> hang, Codex P1)
                     A_GO: if ((ML_V2_EN != 0) && !job_busy && core_csr_wdata[0]
                               && !abort_i && !cfg_bypass) begin
                               job_busy <= 1'b1; job_done_l <= 1'b0; job_err <= 1'b0;
                               tile_i <= 16'b0; irq_en <= core_csr_wdata[1];
-                              busy_seen <= 1'b0; state <= S_LDW;
+                              // B1: load the resident activation once before the tile loop
+                              busy_seen <= 1'b0; state <= stationary ? S_LOADA : S_LDW;
                           end
                     default: ;
                 endcase
@@ -182,9 +199,22 @@ module npu_ml_ctrl #(
                 case (state)
                     S_IDLE: ;   // wait for A_GO
 
+                    // B1 activation-stationary: DMA the resident activation ONCE
+                    // (per job here; per-group when n_groups>1 = B1.2) before the loop.
+                    S_LOADA: begin
+                        ml_dma_src <= ACT_SRC; ml_dma_dst <= ACT_DSTW; ml_dma_len <= ACT_LEN;
+                        ml_dma_go <= 1'b1; busy_seen <= 1'b0; state <= S_LOADA_W;
+                    end
+                    S_LOADA_W: begin
+                        if (dma_err) begin job_err <= 1'b1; job_busy <= 1'b0; state <= S_IDLE; end
+                        else if (dma_busy) busy_seen <= 1'b1;
+                        else if (busy_seen && dma_done) state <= S_LDW;
+                    end
+
                     // ISSUE states: latch operands + pulse go, clear busy_seen.
                     S_LDW: begin
-                        ml_dma_src <= load_src; ml_dma_dst <= LOAD_DSTW; ml_dma_len <= LOAD_LEN;
+                        ml_dma_src <= load_src; ml_dma_dst <= LOAD_DSTW;
+                        ml_dma_len <= stationary ? LOAD_LEN_B1 : LOAD_LEN;   // B1: weights-only
                         ml_dma_go <= 1'b1; busy_seen <= 1'b0; state <= S_LDW_W;
                     end
                     S_LDW_W: begin
@@ -206,7 +236,9 @@ module npu_ml_ctrl #(
 
                     S_OP: begin
                         ml_mat_cmd <= CMD_OP; ml_mat_bank <= 4'd0; ml_mat_rpt <= OP_RPT;
-                        ml_mat_a_addr <= OP_A_ADDR; ml_mat_b_addr <= OP_B_ADDR;
+                        // B1: a=resident activation(0xB40), b=per-tile weights(0x940)
+                        ml_mat_a_addr <= stationary ? OP_A_B1 : OP_A_ADDR;
+                        ml_mat_b_addr <= stationary ? OP_B_B1 : OP_B_ADDR;
                         ml_mat_go <= 1'b1; busy_seen <= 1'b0; state <= S_OP_W;
                     end
                     S_OP_W: begin

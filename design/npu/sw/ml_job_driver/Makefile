@@ -5,10 +5,11 @@ TOOLCHAIN_ENV    = LD_LIBRARY_PATH=$(TOOLCHAIN_LIBS)
 
 GCC_MARCH = rv32im_zicsr_zifencei
 GCC_MABI  = ilp32
-CFLAGS    = -march=$(GCC_MARCH) -mabi=$(GCC_MABI) -Os -ffreestanding -fno-builtin -nostartfiles -nostdlib -DN_TILES=$(N_TILES)
+CFLAGS    = -march=$(GCC_MARCH) -mabi=$(GCC_MABI) -Os -ffreestanding -fno-builtin -nostartfiles -nostdlib -DN_TILES=$(N_TILES) -DML_CFG=$(ML_CFG)
 LDS       = ../cq_sequencer/sequencer.lds
 LDFLAGS   = -Wl,-Bstatic,-T,$(LDS),--strip-debug
 N_TILES  ?= 8
+ML_CFG   ?= 0
 
 .PHONY: all clean size
 

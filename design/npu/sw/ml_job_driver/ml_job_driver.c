@@ -3,6 +3,10 @@
 #ifndef N_TILES
 #define N_TILES 8u
 #endif
+/* ML_JOB_CFG value: bit0=legacy_bypass, bit1=B1 activation-stationary (ADR-0067 Phase B) */
+#ifndef ML_CFG
+#define ML_CFG 0u
+#endif
 
 #define CSR_ML_NTILES 0x84u
 #define CSR_ML_GO     0x88u
@@ -35,7 +39,7 @@ static __attribute__((noinline)) void csr_write(uint32_t off, uint32_t value)
 
 int main(void)
 {
-    csr_write(CSR_ML_CFG, 0u);
+    csr_write(CSR_ML_CFG, (uint32_t)ML_CFG);
     csr_write(CSR_ML_NTILES, (uint32_t)N_TILES);
     csr_write(CSR_ML_GO, 1u);
 
