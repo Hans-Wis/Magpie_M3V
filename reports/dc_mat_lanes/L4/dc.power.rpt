@@ -1,0 +1,58 @@
+ 
+****************************************
+Report : power
+        -analysis_effort low
+Design : mat_engine_LANES4
+Version: X-2025.06-SP2
+Date   : Tue Jul  7 13:55:12 2026
+****************************************
+
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp40p140tt0p9v25c (File: /home/edauser/project/PDK/TSMC28/logic/tcbn28hpcplusbwp40p140_180b/AN61001_20180509/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp40p140_180a/tcbn28hpcplusbwp40p140tt0p9v25c.db)
+
+
+Operating Conditions: tt0p9v25c   Library: tcbn28hpcplusbwp40p140tt0p9v25c
+Wire Load Model Mode: segmented
+
+Design        Wire Load Model            Library
+------------------------------------------------
+mat_engine_LANES4      ZeroWireload      tcbn28hpcplusbwp40p140tt0p9v25c
+
+
+Global Operating Voltage = 0.9  
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1nW
+
+
+Attributes
+----------
+i - Including register clock pin internal power
+
+
+  Cell Internal Power  =  41.0195 mW   (81%)
+  Net Switching Power  =   9.6928 mW   (19%)
+                         ---------
+Total Dynamic Power    =  50.7123 mW  (100%)
+
+Cell Leakage Power     =  60.2518 uW
+
+
+                 Internal         Switching           Leakage            Total
+Power Group      Power            Power               Power              Power   (   %    )  Attrs
+--------------------------------------------------------------------------------------------------
+io_pad             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+memory             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+black_box          0.0000            0.0000            0.0000            0.0000  (   0.00%)
+clock_network     23.6719            0.0000            0.0000           23.6719  (  46.62%)  i
+register       2.4529e-03        2.3393e-04        1.1860e+04        1.4505e-02  (   0.03%)
+sequential         0.0000            0.0000            0.0000            0.0000  (   0.00%)
+combinational     17.3463            9.6922        4.8392e+04           27.0874  (  53.35%)
+--------------------------------------------------------------------------------------------------
+Total             41.0206 mW         9.6924 mW     6.0252e+04 nW        50.7738 mW
+1

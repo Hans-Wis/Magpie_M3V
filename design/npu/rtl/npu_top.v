@@ -19,7 +19,8 @@ module npu_top #(
     parameter integer TCM_WORDS  = 8192,   // DTCM 32KB (ADR-0044, Coral row 4)
     parameter integer TCM_AW     = 13,
     parameter integer ITCM_WORDS = 2048,   // ITCM 8KB
-    parameter integer ITCM_AW    = 11
+    parameter integer ITCM_AW    = 11,
+    parameter integer MAT_LANES  = 4       // K-fusion width of MAC array: 1/2/4 => 64/128/256 MAC
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -290,7 +291,7 @@ module npu_top #(
     wire [255:0]      eng_a_rdata, eng_b_rdata;
     wire [31:0]       eng_wdata;
 
-    mat_engine #(.TCM_AW(TCM_AW)) u_mat (
+    mat_engine #(.TCM_AW(TCM_AW), .LANES(MAT_LANES)) u_mat (
         .clk(clk), .resetn(domain_rstn),
         .go(mat_go), .abort_i(npu_abort), .cmd(mat_cmd), .arg_bank(mat_bank), .arg_rpt(mat_rpt),
         .a_addr(mat_a_addr), .b_addr(mat_b_addr),

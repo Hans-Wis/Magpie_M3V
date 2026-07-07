@@ -5,3 +5,6 @@ default.svf
 *.log
 synth_mat_1p2.tcl
 filenames.log
+work_l*/
+DONE_LANES_PPA
+*.svf

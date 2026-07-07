@@ -10,6 +10,7 @@
 `timescale 1ns/1ps
 
 module tb_mat_engine;
+    parameter integer LANES = 4;
     reg clk = 1'b0;
     reg resetn = 1'b0;
     always #5 clk = ~clk;
@@ -36,7 +37,7 @@ module tb_mat_engine;
     endgenerate
     always @(posedge clk) if (t_we) mem[t_waddr] <= t_wdata;
 
-    mat_engine #(.TCM_AW(10)) dut (
+    mat_engine #(.TCM_AW(10), .LANES(LANES)) dut (
         .clk(clk), .resetn(resetn),
         .go(go), .abort_i(1'b0), .cmd(cmd), .arg_bank(arg_bank), .arg_rpt(arg_rpt),
         .a_addr(a_addr), .b_addr(b_addr),
@@ -49,6 +50,7 @@ module tb_mat_engine;
     );
 
     integer errors = 0, checks = 0;
+    integer limit_v;
 
     integer go_cycles;
     task pulse_go;
@@ -176,9 +178,10 @@ module tb_mat_engine;
         cmd = 3'd1; arg_bank = 4'd0; arg_rpt = 8'd64; a_addr = 32'h0; b_addr = 32'h400;
         pulse_go();
         checks = checks + 1;
-        if (go_cycles > 16 + 6) begin
+        limit_v = ((64 + LANES - 1) / LANES) + 6;
+        if (go_cycles > limit_v) begin
             errors = errors + 1;
-            $display("  FAIL throughput rpt=64: %0d cycles (limit 22)", go_cycles);
+            $display("  FAIL throughput rpt=64: %0d cycles (limit %0d)", go_cycles, limit_v);
         end
         $display("throughput rpt=64: %0d cycles", go_cycles);
         cmd = 3'd2; rs_mult = 32'h4000_0000; rs_shift = 8'd35; rs_zp = 8'd0;
@@ -189,9 +192,10 @@ module tb_mat_engine;
         cmd = 3'd0; arg_bank = 4'hF; pulse_go();
         cmd = 3'd1; arg_bank = 4'd0; arg_rpt = 8'd65; pulse_go();
         checks = checks + 1;
-        if (go_cycles > 17 + 6) begin
+        limit_v = ((65 + LANES - 1) / LANES) + 6;
+        if (go_cycles > limit_v) begin
             errors = errors + 1;
-            $display("  FAIL throughput rpt=65: %0d cycles (limit 23)", go_cycles);
+            $display("  FAIL throughput rpt=65: %0d cycles (limit %0d)", go_cycles, limit_v);
         end
         $display("throughput rpt=65: %0d cycles", go_cycles);
         cmd = 3'd2; pulse_go();

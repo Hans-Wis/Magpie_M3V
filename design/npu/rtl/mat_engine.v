@@ -25,7 +25,8 @@
 `default_nettype none
 
 module mat_engine #(
-    parameter integer TCM_AW = 10
+    parameter integer TCM_AW = 10,
+    parameter integer LANES = 4
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -90,31 +91,43 @@ module mat_engine #(
     reg signed [31:0] acc [0:3][0:63];
     integer ci, cj;
 
-    // ---- fused outer products (combinational, 4 lanes x 64 = 256 MACs) ----
-    // Lane j = one k-step; the tail (rpt%4) masks lanes uniformly across all
+    // ---- fused outer products (combinational, LANES x 64 MACs) ----
+    // Lane j = one k-step; the tail (rpt%LANES) masks lanes uniformly across all
     // 64 (r,c) cells. Every operand stays SIGNED end-to-end (int8 x int8 ->
-    // int17 lane product, 4-lane signed sum, int32 wrap into acc).
+    // int17 lane product, LANES-lane signed sum, int32 wrap into acc).
+    localparam [7:0] LANES_8 = LANES[7:0];
+    localparam [8:0] LANES_9 = LANES[8:0];
+    localparam [31:0] LANES_BYTES = LANES * 32'd8;
     wire [8:0] rem = {1'b0, rpt_q} - {1'b0, rep_i};
-    wire [3:0] lane_en = (rem >= 9'd4) ? 4'b1111 :
-                         (rem == 9'd3) ? 4'b0111 :
-                         (rem == 9'd2) ? 4'b0011 : 4'b0001;
-    wire signed [31:0] psum [0:63];
+    wire [LANES-1:0] lane_en;
+    wire signed [16:0] lane_prod [0:63][0:LANES-1];
+    reg signed [31:0] psum_r [0:63];
+    integer pi, pj;
     genvar gj, gr, gc;
     generate
+        for (gj = 0; gj < LANES; gj = gj + 1) begin : g_lane_en
+            assign lane_en[gj] = (rem > gj);
+        end
         for (gr = 0; gr < 8; gr = gr + 1) begin : g_row
             for (gc = 0; gc < 8; gc = gc + 1) begin : g_col
-                wire signed [16:0] lp [0:3];
                 for (gj = 0; gj < 4; gj = gj + 1) begin : g_lane
-                    wire signed [7:0] a8 = t_a_rdata[gj*64 + gr*8 +: 8];
-                    wire signed [7:0] b8 = t_b_rdata[gj*64 + gc*8 +: 8];
-                    assign lp[gj] = lane_en[gj] ? (a8 * b8) : 17'sd0;
+                    if (gj < LANES) begin : g_active_lane
+                        wire signed [7:0] a8 = t_a_rdata[gj*64 + gr*8 +: 8];
+                        wire signed [7:0] b8 = t_b_rdata[gj*64 + gc*8 +: 8];
+                        assign lane_prod[gr*8 + gc][gj] = lane_en[gj] ? (a8 * b8) : 17'sd0;
+                    end
                 end
-                assign psum[gr*8 + gc] =
-                    {{15{lp[0][16]}}, lp[0]} + {{15{lp[1][16]}}, lp[1]} +
-                    {{15{lp[2][16]}}, lp[2]} + {{15{lp[3][16]}}, lp[3]};
             end
         end
     endgenerate
+
+    always @* begin
+        for (pi = 0; pi < 64; pi = pi + 1) begin
+            psum_r[pi] = 32'sd0;
+            for (pj = 0; pj < LANES; pj = pj + 1)
+                psum_r[pi] = psum_r[pi] + {{15{lane_prod[pi][pj][16]}}, lane_prod[pi][pj]};
+        end
+    end
 
     // ---- requant STAGE 1 (combinational from el_iss): the 32x32 multiply and
     //      per-element control capture — the DC-measured critical sub-path lives
@@ -212,15 +225,15 @@ module mat_engine #(
                     end
                 end
 
-                S_RUN: begin        // 4 fused outer products per cycle (256 MACs)
+                S_RUN: begin        // LANES fused outer products per cycle
                     for (ci = 0; ci < 64; ci = ci + 1)
-                        acc[bank_q][ci] <= acc[bank_q][ci] + psum[ci];
-                    a_ptr <= a_ptr + 32'd32;
-                    b_ptr <= b_ptr + 32'd32;
-                    if (rem <= 9'd4) begin
+                        acc[bank_q][ci] <= acc[bank_q][ci] + psum_r[ci];
+                    a_ptr <= a_ptr + LANES_BYTES;
+                    b_ptr <= b_ptr + LANES_BYTES;
+                    if (rem <= LANES_9) begin
                         state <= S_IDLE; done <= 1'b1;
                     end else
-                        rep_i <= rep_i + 8'd4;
+                        rep_i <= rep_i + LANES_8;
                 end
 
                 S_RSC: begin  // ADR-0053: 2-stage requant pipe, inline word write

@@ -13,6 +13,7 @@
 `timescale 1ns/1ps
 
 module tb_npu_cq_mat;
+    parameter integer MAT_LANES = 4;
     reg clk = 1'b0;
     reg resetn = 1'b0;
     always #5 clk = ~clk;
@@ -39,7 +40,7 @@ module tb_npu_cq_mat;
     wire        irq, npu_start;
     wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(8192), .TCM_AW(13)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13), .MAT_LANES(MAT_LANES)) dut (
         .clk(clk), .resetn(resetn),
         .s_awvalid(s_awvalid), .s_awready(s_awready), .s_awaddr(s_awaddr), .s_awprot(3'b0),
         .s_wvalid(s_wvalid), .s_wready(s_wready), .s_wdata(s_wdata), .s_wstrb(s_wstrb),

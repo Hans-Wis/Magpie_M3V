@@ -1,0 +1,30 @@
+ 
+****************************************
+Report : area
+Design : mat_engine_LANES4
+Version: X-2025.06-SP2
+Date   : Tue Jul  7 13:55:12 2026
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp40p140tt0p9v25c (File: /home/edauser/project/PDK/TSMC28/logic/tcbn28hpcplusbwp40p140_180b/AN61001_20180509/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp40p140_180a/tcbn28hpcplusbwp40p140tt0p9v25c.db)
+
+Number of ports:                          759
+Number of nets:                        108384
+Number of cells:                        96481
+Number of combinational cells:          87797
+Number of sequential cells:              8684
+Number of macros/black boxes:               0
+Number of buf/inv:                       6554
+Number of references:                     115
+
+Combinational area:              67420.961927
+Buf/Inv area:                     1784.916016
+Noncombinational area:           16446.653879
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                 83867.615806
+Total area:                 undefined
+1

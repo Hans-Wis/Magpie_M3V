@@ -4,6 +4,8 @@ VERILATOR ?= /home/edauser/miniforge3/envs/magpie_claude/bin/verilator
 GOLDEN = ../../../design/npu/golden/mat_golden.py
 RTL    = ../../../design/npu/rtl/mat_engine.v
 SEED  ?= 20260704
+LANES ?= 4
+LANES_STAMP = obj_dir/.lanes_$(LANES)
 
 .PHONY: all vectors sim clean
 
@@ -13,9 +15,14 @@ vectors:
 	python3 $(GOLDEN) --selftest
 	python3 $(GOLDEN) --emit vectors --seed $(SEED)
 
-obj_dir/Vtb_mat_engine: tb_mat_engine.v $(RTL)
+$(LANES_STAMP):
+	@mkdir -p obj_dir
+	@rm -f obj_dir/.lanes_*
+	@touch $@
+
+obj_dir/Vtb_mat_engine: tb_mat_engine.v $(RTL) $(LANES_STAMP)
 	$(VERILATOR) --binary --timing -j 4 -Wno-fatal --top-module tb_mat_engine \
-	    --timescale 1ns/1ps -Wno-DECLFILENAME -Wno-UNUSEDSIGNAL $(RTL) tb_mat_engine.v
+	    --timescale 1ns/1ps -Wno-DECLFILENAME -Wno-UNUSEDSIGNAL -GLANES=$(LANES) $(RTL) tb_mat_engine.v
 
 sim: vectors obj_dir/Vtb_mat_engine
 	./obj_dir/Vtb_mat_engine | tee sim.log
