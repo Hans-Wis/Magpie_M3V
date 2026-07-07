@@ -61,8 +61,9 @@ module mat_engine #(
     output reg  [31:0]       t_wdata
 );
     localparam [2:0] CMD_CLR = 3'd0, CMD_OP = 3'd1, CMD_RESCALE = 3'd2,
-                     CMD_LOADACC = 3'd3, CMD_RESCALE_PC = 3'd4;   // ADR-0042
-    localparam [3:0] S_LA = 4'd6, S_PRM = 4'd7, S_PRS = 4'd8;
+                     CMD_LOADACC = 3'd3, CMD_RESCALE_PC = 3'd4,   // ADR-0042
+                     CMD_LOADVEC = 3'd5;                          // ADR-0066
+    localparam [3:0] S_LA = 4'd6, S_PRM = 4'd7, S_PRS = 4'd8, S_LV = 4'd9;
     localparam [3:0] S_IDLE = 4'd0, S_RUN = 4'd1,
                      S_RSC = 4'd3, S_FIN = 4'd5;   // S_RSW (4'd4) retired: ADR-0053 inline write
 
@@ -71,6 +72,7 @@ module mat_engine #(
     reg [1:0]  bank_q;
     reg [7:0]  rpt_q, rep_i;
     reg [31:0] a_ptr, b_ptr;
+    reg [2:0]  el_grp;               // LOADVEC 8x 256b windows -> acc[0..63]
     reg [5:0]  el_iss;               // rescale STAGE-1 issue index 0..63 (ADR-0053)
     reg [5:0]  el_pack;              // rescale STAGE-2 pack/write index (= el_iss delayed 1)
     reg        rq_v;                 // STAGE-2 valid (0 on the fill bubble)
@@ -148,7 +150,7 @@ module mat_engine #(
     // ---- TCM wide read addresses (word index of the 8-word window) ----
     assign t_a_addr = a_ptr[TCM_AW+1:2];
     assign t_b_addr = b_ptr[TCM_AW+1:2];
-    assign t_a_re   = (state == S_RUN) || (state == S_LA) ||
+    assign t_a_re   = (state == S_RUN) || (state == S_LA) || (state == S_LV) ||
                       (state == S_PRM) || (state == S_PRS);
     assign t_b_re   = (state == S_RUN);
 
@@ -159,6 +161,7 @@ module mat_engine #(
                                 (rs_shift < 8'd31) || (rs_shift > 8'd62) ||
                                 (out_base[1:0] != 2'b00))) ||
         (cmd == CMD_LOADACC && ((arg_bank >= 4'd4) || (a_addr[4:0] != 5'b0))) ||
+        (cmd == CMD_LOADVEC && ((arg_bank >= 4'd4) || (a_addr[4:0] != 5'b0))) ||
         (cmd == CMD_RESCALE_PC && ((arg_bank >= 4'd4) ||
                                    (rs_mult[4:0] != 5'b0) ||
                                    (out_base[1:0] != 2'b00)));
@@ -167,7 +170,7 @@ module mat_engine #(
         if (!resetn) begin
             state <= S_IDLE; done <= 1'b0; err_param <= 1'b0;
             t_we <= 1'b0; el_iss <= 6'd0; rep_i <= 8'd0; pc_mode <= 1'b0;
-            rq_v <= 1'b0; el_pack <= 6'd0;
+            rq_v <= 1'b0; el_pack <= 6'd0; el_grp <= 3'd0;
         end else if (abort_i) begin
             state <= S_IDLE; done <= 1'b0; err_param <= 1'b0; t_we <= 1'b0;
         end else begin
@@ -184,6 +187,7 @@ module mat_engine #(
                         rep_i  <= 8'd0;
                         a_ptr  <= a_addr;
                         b_ptr  <= b_addr;
+                        el_grp <= 3'd0;
                         el_iss <= 6'd0;
                         rq_v   <= 1'b0;   // ADR-0053: STAGE-2 starts on the fill bubble
                         case (cmd)
@@ -196,6 +200,7 @@ module mat_engine #(
                             end
                             CMD_OP:      state <= S_RUN;
                             CMD_LOADACC: state <= S_LA;
+                            CMD_LOADVEC: state <= S_LV;
                             CMD_RESCALE: begin pc_mode <= 1'b0; state <= S_RSC; end
                             CMD_RESCALE_PC: begin
                                 pc_mode <= 1'b1;
@@ -255,6 +260,16 @@ module mat_engine #(
                         for (cj = 0; cj < 8; cj = cj + 1)
                             acc[bank_q][ci*8 + cj] <= t_a_rdata[cj*32 +: 32];
                     state <= S_IDLE; done <= 1'b1;
+                end
+
+                S_LV: begin     // ADR-0066: 64 distinct int32 words, linear order
+                    for (ci = 0; ci < 8; ci = ci + 1)
+                        acc[bank_q][{el_grp, ci[2:0]}] <= t_a_rdata[ci*32 +: 32];
+                    a_ptr <= a_ptr + 32'd32;
+                    if (el_grp == 3'd7) begin
+                        state <= S_IDLE; done <= 1'b1;
+                    end else
+                        el_grp <= el_grp + 3'd1;
                 end
 
                 S_PRM: begin    // per-channel mults: one 256b window

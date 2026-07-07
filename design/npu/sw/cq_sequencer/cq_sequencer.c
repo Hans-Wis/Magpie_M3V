@@ -26,6 +26,7 @@
 #define CSR_MAT_CLAMP   0x74u
 #define CSR_MAT_OUT     0x78u
 #define CSR_MAT_STATUS  0x7Cu
+#define MAT_OUT_B_DEFAULT 0x800u
 #define CSR_ERR_PC      0x80u
 #define MAT_ST_BUSY     1u
 #define MAT_ST_DONE     2u
@@ -33,6 +34,7 @@
 #define MAT_CMD_CLR     0u
 #define MAT_CMD_LOADACC 3u
 #define MAT_CMD_RESCALE_PC 4u
+#define MAT_CMD_LOADVEC 5u
 #define MAT_CMD_OP      1u
 #define MAT_CMD_RESCALE 2u
 
@@ -404,6 +406,23 @@ void main(void)
             csr_write(CSR_MAT_CLAMP, w3);
             mat_run(rmode ? MAT_CMD_RESCALE_PC : MAT_CMD_RESCALE,
                     cq_w0_acc(w0), 1u);
+            break;
+        }
+        case CQ_OP_MAT_REQUANT_VEC: {
+            uint32_t bank = cq_w0_acc(w0);
+            uint32_t src = (w3 >> 16) & 0xFFFFu;
+            uint32_t dst = w3 & 0xFFFFu;
+            if (bank >= 4u || (src & 31u) != 0u ||
+                src > (TCM_SCRATCH_B - 256u) || dst > (TCM_SCRATCH_B - 64u))
+                cq_halt(CQ_ERR_MAT_PARAM);
+            csr_write(CSR_MAT_A, src);
+            mat_run(MAT_CMD_LOADVEC, bank, 1u);
+            csr_write(CSR_MAT_MULT, w1);
+            csr_write(CSR_MAT_RSP, (w2 >> 16) & 0xFFFFu);
+            csr_write(CSR_MAT_CLAMP, w2 & 0xFFFFu);
+            csr_write(CSR_MAT_OUT, dst);
+            mat_run(MAT_CMD_RESCALE, bank, 1u);
+            csr_write(CSR_MAT_OUT, MAT_OUT_B_DEFAULT);
             break;
         }
         case CQ_OP_MAT_ACT_LUT: {

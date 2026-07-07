@@ -15,6 +15,7 @@ localparam CQ_OP_MAT_RMSNORM = 6'h0A;
 localparam CQ_OP_MAT_EWISE_ADD_REQUANT = 6'h0B;
 localparam CQ_OP_MAT_ROPE = 6'h0C;
 localparam CQ_OP_MAT_SOFTMAX = 6'h0D;
+localparam CQ_OP_MAT_REQUANT_VEC = 6'h0E;
 
 localparam [31:0] CQ_W0_OPCODE_MASK = 32'h0000003F;
 localparam integer CQ_W0_OPCODE_LSB = 0;

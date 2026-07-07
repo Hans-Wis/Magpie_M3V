@@ -225,6 +225,23 @@
         "len"
       ],
       "notes": "ADR-0062 F1.6 S3: one attention row softmax on the sequencer core. W0.RPT=n key positions; valid = causal attend count (<=n). mx = max_{j<valid} src[j]; e[j] = EXP_LUT[mx-src[j]]; sm = sum e[j]; dst[j<valid] = (e[j]*prob_scale + sm/2)/sm; dst[j>=valid] = 0. EXP_LUT[d]=round(exp(-d*s_score)*65535). Nonlinear-in-RTL, pure int (uint32 divide)."
+    },
+    {
+      "name": "MAT_REQUANT_VEC",
+      "value": 14,
+      "w1": "mult_q31",
+      "w2": "(rsp<<16)|clamp where rsp=(out_zp<<8)|shift and clamp=(clamp_max<<8)|clamp_min",
+      "w3": "(src_tcm_byte<<16)|dst_tcm_byte",
+      "fields": [
+        "acc",
+        "mult_q31",
+        "rsp",
+        "clamp",
+        "src",
+        "dst",
+        "len"
+      ],
+      "notes": "ADR-0066 E1a: CQ-driven LOADVEC->RESCALE path for an arbitrary padded-64 int32 vector. W0.ACC selects the accumulator bank; W0.RPT=len (<=64) is the consumed element count, while RTL LOADVEC/RESCALE always processes 64 lanes. src is 32B-aligned 64x int32 in TCM; dst reserves 64 int8 bytes."
     }
   ],
   "err_causes": [

@@ -49,14 +49,31 @@ bias-fold 用)。requant 任意向量需要載 **64 個相異 int32**。加一�
   `param_bad`:bank≥4 或 `a_addr[4:0]≠0`(32B 對齊,同 LOADACC)。
 - 估 ~15–20 行 RTL。**不加寬 acc**(仍 int32;line 124 的乘法已是 64-bit)。
 
+**三方 review 修正(2026-07-07,Grok ACCEPT + Codex,兩方獨立抓到同一 High)——落 RTL 前必修:**
+- **[HIGH · tail 契約] `S_LV` 固定載 64、`S_RSC` 固定出 64 byte——不看 RPT。** `CMD_RESCALE` 一律
+  `el_iss=0..63` 寫 16 word / 64 byte(line 221–246,本 ADR 不動它)。故 **len<64 的尾塊會覆蓋
+  `dst[len..63]`、`S_LV` 也照讀 256 byte**。**裁定 = padded-64 契約**(對齊既有 GEMM tail-padding 紀律,
+  維持 S_RSC 一字不改 = 最 additive):**runtime 把 src 補到 64 個 int32(尾 lane 填 0)、dst 區保證有
+  64 byte,消費端只取前 RPT**。RPT 只是 runtime 拆塊/消費長度,**不進 RTL**。(若日後要真 RPT-early-stop,
+  另需改 S_LV/S_RSC 計數 = 更大改動,本 PoC 不做。)
+- **[MED · param_bad] `CMD_LOADVEC` 要自己的 `param_bad` 分支**(line 158–172):`bank≥4 || a_addr[4:0]≠0`。
+  否則 cmd=5 雖現由 default(line 205)trap,加了 S_LV 後 `arg_bank>=4` 會經 `bank_q<=arg_bank[1:0]`
+  (line 182)靜默 alias 進 bank 0–3。
+- **[MED · t_a_re] `t_a_re` 要含 `state==S_LV`**(line 151):TCM 讀是組合(npu_tcm.v:66),S_RUN 已是
+  「讀當前 a_ptr 同拍 +32」;S_LV 照抄。漏了 `t_a_re` 會繞過 ADR-0044 bank-budget checker(npu_tcm.v:148)、
+  且未來 gated-SRAM 版會壞。
+- **[CLEAN 已確認] 無 transpose**(src[w*8+c]→acc[w*8+c]→dst byte el_iss,線性);**per-tensor bit-exact
+  無殘留態**(RESCALE 強制 `pc_mode<=0` line 199、`el_iss/rq_v` 每次 GO reset line 187–188);
+  **cmd=5 與 opcode 14 皆空位**(mat_engine.v:63 / cq_defs.vh:17)。
+
 ### 2.2 CQ 契約(SSOT `command_descriptor_v0_1.yaml` → .vh/.h/cq_codec)
 
 **新 CQ op `MAT_REQUANT_VEC`(value 14)** — 一個 descriptor 處理 ≤64 個元素(一個 bank):
 
 | word | 欄位 |
 |---|---|
-| W0 | OPCODE=14, RPT=len(≤64) |
-| W1 | src_tcm_byte(int32 向量,32B 對齊) |
+| W0 | OPCODE=14, **ACC=bank**(既有 W0[11:8],handler 需要,原草稿漏), RPT=len(≤64) |
+| W1 | src_tcm_byte(int32 向量,32B 對齊;runtime 已補到 64 lane) |
 | W2 | dst_tcm_byte(int8 輸出) |
 | W3 | param_tcm_byte → blob `[mult_q31(u32), (out_zp<<8)|shift(u32), (clamp_max<<8)|(clamp_min&0xFF)(u32)]` |
 
@@ -116,6 +133,14 @@ Baseline = 實測(post-RVV-Cycle-1,HEAD @9e29d29)。After = **投影**(假設:RV
 | 兩者小計 | **70,044** | **~6,500–10,000** | 省 ~60k |
 | **layer total** | **349,824** | **~290,000–303,000** | **~1.15–1.2× 再加速**(疊 Cycle-1 residual 後,對原始 375,672 = **~1.24–1.30×**) |
 
+**ROI 現實(Grok review 修正,誠實界)**:上表 10–15× 是**樂觀上限**。在 seq=4(~512/320 elem)每 op 要
+~8 個 descriptor,若每 descriptor 的 CSR/CQ/firmware/spin overhead 是 **~1–2k cycle**(與 profile 的 GEMM
+spin-poll 一致),光 orchestration 就 ~8–16k/op → **實際約 2–4×,非 10–15×**。10–15× 只有在 descriptor
+overhead 降到 **~200 cyc**(批次 CQ、免 spin-poll、攤提 param 寫)才成立。故 layer 349k→290–303k 的投影
+**須與 descriptor de-spin 同一里程碑**才達得到;單獨做本 ADR 在小 shape 下加速會 underwhelm。**優先序裁定
+(Grok)**:GEMM orchestration de-spin = **#1**(89% wall 稅、且是本 ADR 卸載的共同稅基)、本 ADR = **#2**,
+**並行做、非序列**。
+
 **誠實界**:此步只解 ewise_mul+RoPE(70k)。**RMSNorm 家族(~134k)不在本 ADR**——它的 requant 是
 per-row y_adj + per-element wq 的寬鏈,要映上 RESCALE 需**重寫 golden 成 per-row M 乘子 + srdhm
 rounding**(另開 ADR);softmax(exp-LUT/divide)也不走 requant 路。整層 ~2–3× 的天花板要 MAT_REQUANT_VEC
@@ -133,7 +158,11 @@ rounding**(另開 ADR);softmax(exp-LUT/divide)也不走 requant 路。整層 ~2�
 
 ## §7 狀態 / 下一步
 
-- **status: proposed** — 待三方 review(Grok 架構判斷 / Codex RTL 外科 / Claude 跑權威驗證)。
+- **status: proposed — review 完成、findings 已納入 §2/§5(2026-07-07)**。Grok(架構)= **ACCEPT**
+  「64-bit seam 是正確切線、無更好結構」;Codex(RTL 實作實況)= 小 additive ~20 行,datapath/timing/order/
+  state 對 full-64 chunk 皆 sound。**兩方獨立收斂於同一 High(tail 契約)+ Codex 兩 Med(W0.ACC / param_bad)
+  已全數落回 §2.1/§2.2**。Gemini full-context 一致性由 Claude 代跑(opcode 14 / cmd 5 空位、golden 同源
+  確認)。**架構確認通過 → 可落 RTL(照修正後 §2)**。
 - **PoC 序**:①SSOT 加 MAT_REQUANT_VEC + CMD_LOADVEC RTL → ②單元 bit-exact(隨機 int32 向量 vs
   mat_golden.requant)→ ③改 ewise_mul 走新路,`gate_gemma3_s0_geglu` 綠 + profiler 量 → ④若達投影,
   再擴 RoPE + `gate_gemma3_s2_rtl`。**先 ewise_mul 一個 op 量到實測再決定擴不擴。**
