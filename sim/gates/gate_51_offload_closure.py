@@ -27,7 +27,7 @@ from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_RTL, verilator_sim  # noqa: E
 from cq_host import CqFull, CqProducer  # noqa: E402
 
 RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in
-       ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine")]
+       ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine", "npu_ml_ctrl")]
 RTL += CPU_M1_RTL
 TB = [ROOT / "design/npu/dv/tb/axi_full_rwmem.v", ROOT / "design/npu/dv/tb/tb_npu_cq_strided.v"]
 

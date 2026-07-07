@@ -27,7 +27,7 @@ import gemma_quant_layer as gl  # noqa: E402
 import gemma_runtime as gr  # noqa: E402
 
 RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in
-       ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine")]
+       ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine", "npu_ml_ctrl")]
 RTL += CPU_M1_RTL
 TB = [ROOT / "design/npu/dv/tb/axi_full_rwmem.v", ROOT / "design/npu/dv/tb/tb_npu_tflm_model.v"]
 CASE = ROOT / "sim/work/tflm_model"

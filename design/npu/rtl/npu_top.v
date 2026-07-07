@@ -20,7 +20,8 @@ module npu_top #(
     parameter integer TCM_AW     = 13,
     parameter integer ITCM_WORDS = 2048,   // ITCM 8KB
     parameter integer ITCM_AW    = 11,
-    parameter integer MAT_LANES  = 4       // K-fusion width of MAC array: 1/2/4 => 64/128/256 MAC
+    parameter integer MAT_LANES  = 4,      // ADR-0067 LANES SKU: 1/2/4 => 64/128/256 MAC
+    parameter integer ML_V2_EN   = 0       // ADR-0067 v2 Phase A: 0 => firmware path (zero regression)
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -330,16 +331,16 @@ module npu_top #(
         .s_axi_rvalid(c_rvalid),.s_axi_rready(c_rready),.s_axi_rdata(c_rdata),.s_axi_rresp(c_rresp),
         .npu_start(npu_start),.npu_config(npu_config),.npu_busy(npu_start & ~done_latch),.npu_done(done_latch),
         .core_csr_en(core_csr_en),.core_csr_we(core_csr_we),.core_csr_addr(core_csr_addr),
-        .core_csr_wdata(dbus_wdata),.core_csr_rdata(core_csr_rdata),
-        .mat_a_addr(mat_a_addr),.mat_b_addr(mat_b_addr),.mat_mult(mat_mult),
-        .mat_rsp(mat_rsp),.mat_clamp(mat_clamp),.mat_out_base(mat_out_base),
-        .mat_go(mat_go),.mat_cmd(mat_cmd),.mat_bank(mat_bank),.mat_rpt(mat_rpt),
+        .core_csr_wdata(dbus_wdata),.core_csr_rdata(core_csr_rdata_axil),
+        .mat_a_addr(mat_a_addr_csr),.mat_b_addr(mat_b_addr_csr),.mat_mult(mat_mult_csr),
+        .mat_rsp(mat_rsp_csr),.mat_clamp(mat_clamp_csr),.mat_out_base(mat_out_base_csr),
+        .mat_go(mat_go_csr),.mat_cmd(mat_cmd_csr),.mat_bank(mat_bank_csr),.mat_rpt(mat_rpt_csr),
         .mat_busy(mat_busy),.mat_done(mat_done),.mat_err(mat_err),
         .abort_req(npu_abort),
         .hard_req(hard_req), .hard_busy(hard_busy),
-        .dma_src(dma_src),.dma_dst(dma_dst),.dma_len(dma_len),.dma_go(dma_go),
+        .dma_src(dma_src_csr),.dma_dst(dma_dst_csr),.dma_len(dma_len_csr),.dma_go(dma_go_csr),
         .dma_busy(dma_busy),.dma_done(dma_done),.dma_err(dma_err),
-        .wb_src(wb_src),.wb_dst(wb_dst),.wb_len(wb_len),.wb_go(wb_go),
+        .wb_src(wb_src_csr),.wb_dst(wb_dst_csr),.wb_len(wb_len_csr),.wb_go(wb_go_csr),
         .wb_busy(wb_busy),.wb_done(wb_done),
         .irq(irq)
     );
@@ -362,6 +363,66 @@ module npu_top #(
     assign wb_busy  = dma_busy_engine &  dma_mode_write_l;
     assign dma_done = dma_done_engine & ~dma_mode_write_l;
     assign wb_done  = dma_done_engine &  dma_mode_write_l;
+
+    // ============ mat_engine v2 Phase A: ML control shell + mux (ADR-0067) ============
+    // npu_ml_ctrl owns its CSRs (off the core-local window) and drives mat/dma/wb
+    // DIRECTLY when ml_active; the mux selects the firmware path (*_csr) otherwise.
+    // ML_V2_EN=0 (default) => ml_active never asserts => transparent, zero regression.
+    wire [31:0] mat_a_addr_csr, mat_b_addr_csr, mat_mult_csr, mat_rsp_csr, mat_clamp_csr, mat_out_base_csr;
+    wire        mat_go_csr;
+    wire [2:0]  mat_cmd_csr;
+    wire [3:0]  mat_bank_csr;
+    wire [7:0]  mat_rpt_csr;
+    wire [31:0] dma_src_csr, dma_dst_csr, wb_src_csr, wb_dst_csr;
+    wire [16:0] dma_len_csr, wb_len_csr;
+    wire        dma_go_csr, wb_go_csr;
+    wire [31:0] core_csr_rdata_axil;
+    wire [31:0] ml_mat_a_addr, ml_mat_b_addr, ml_mat_mult, ml_mat_rsp, ml_mat_clamp, ml_mat_out_base;
+    wire        ml_mat_go;
+    wire [2:0]  ml_mat_cmd;
+    wire [3:0]  ml_mat_bank;
+    wire [7:0]  ml_mat_rpt;
+    wire [31:0] ml_dma_src, ml_dma_dst, ml_wb_src, ml_wb_dst;
+    wire [16:0] ml_dma_len, ml_wb_len;
+    wire        ml_dma_go, ml_wb_go;
+    wire [31:0] ml_csr_rdata;
+    wire        ml_csr_hit, ml_active, ml_irq;
+
+    npu_ml_ctrl #(.ML_V2_EN(ML_V2_EN)) u_ml (
+        .clk(clk), .resetn(domain_rstn), .abort_i(npu_abort),
+        .core_csr_en(core_csr_en), .core_csr_we(core_csr_we),
+        .core_csr_addr(core_csr_addr), .core_csr_wdata(dbus_wdata),
+        .ml_csr_rdata(ml_csr_rdata), .ml_csr_hit(ml_csr_hit),
+        .mat_busy(mat_busy), .mat_done(mat_done), .mat_err(mat_err),
+        .dma_busy(dma_busy), .dma_done(dma_done), .dma_err(dma_err),
+        .wb_busy(wb_busy), .wb_done(wb_done),
+        .ml_mat_a_addr(ml_mat_a_addr), .ml_mat_b_addr(ml_mat_b_addr), .ml_mat_mult(ml_mat_mult),
+        .ml_mat_rsp(ml_mat_rsp), .ml_mat_clamp(ml_mat_clamp), .ml_mat_out_base(ml_mat_out_base),
+        .ml_mat_go(ml_mat_go), .ml_mat_cmd(ml_mat_cmd), .ml_mat_bank(ml_mat_bank), .ml_mat_rpt(ml_mat_rpt),
+        .ml_dma_src(ml_dma_src), .ml_dma_dst(ml_dma_dst), .ml_dma_len(ml_dma_len), .ml_dma_go(ml_dma_go),
+        .ml_wb_src(ml_wb_src), .ml_wb_dst(ml_wb_dst), .ml_wb_len(ml_wb_len), .ml_wb_go(ml_wb_go),
+        .ml_active(ml_active), .ml_irq(ml_irq)
+    );
+
+    assign mat_a_addr   = ml_active ? ml_mat_a_addr   : mat_a_addr_csr;
+    assign mat_b_addr   = ml_active ? ml_mat_b_addr   : mat_b_addr_csr;
+    assign mat_mult     = ml_active ? ml_mat_mult     : mat_mult_csr;
+    assign mat_rsp      = ml_active ? ml_mat_rsp      : mat_rsp_csr;
+    assign mat_clamp    = ml_active ? ml_mat_clamp    : mat_clamp_csr;
+    assign mat_out_base = ml_active ? ml_mat_out_base : mat_out_base_csr;
+    assign mat_go       = ml_active ? ml_mat_go       : mat_go_csr;
+    assign mat_cmd      = ml_active ? ml_mat_cmd      : mat_cmd_csr;
+    assign mat_bank     = ml_active ? ml_mat_bank     : mat_bank_csr;
+    assign mat_rpt      = ml_active ? ml_mat_rpt      : mat_rpt_csr;
+    assign dma_src = ml_active ? ml_dma_src : dma_src_csr;
+    assign dma_dst = ml_active ? ml_dma_dst : dma_dst_csr;
+    assign dma_len = ml_active ? ml_dma_len : dma_len_csr;
+    assign dma_go  = ml_active ? ml_dma_go  : dma_go_csr;
+    assign wb_src  = ml_active ? ml_wb_src  : wb_src_csr;
+    assign wb_dst  = ml_active ? ml_wb_dst  : wb_dst_csr;
+    assign wb_len  = ml_active ? ml_wb_len  : wb_len_csr;
+    assign wb_go   = ml_active ? ml_wb_go   : wb_go_csr;
+    assign core_csr_rdata = ml_csr_hit ? ml_csr_rdata : core_csr_rdata_axil;
 
     always @(posedge clk) begin
         if (!resetn)
