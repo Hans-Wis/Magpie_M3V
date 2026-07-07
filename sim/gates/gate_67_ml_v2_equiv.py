@@ -109,3 +109,24 @@ def test_ml_v2_gemm_b1_activation_stationary(tmp_path):
     assert dma < 3000, f"B1 dma={dma} did not drop vs Phase A ~3,408 (activation not stationary?)"
     print(f"ML_V2_B1_CYCLES={cyc} mat={bd.group(1)} dma={dma} other={bd.group(3)}")
     print(f"ML_V2_B1_BIT_EXACT_PASS n_tiles={n_tiles} bytes={len(exp)}")
+
+
+@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
+def test_ml_v2_gemm_b1_1_header_trim(tmp_path):
+    """ADR-0067 Phase B B1.1: activation-stationary + header-trim (drop A_OFF padding,
+    relocate MAT_OUT to 0x960). Bit-exact vs the same golden; DMA drops further."""
+    _ng, n_tiles = ml_v2_gemm_case.generate(CASE, n=64, stationary=True, tight=True)
+    build_log = _build_firmware(n_tiles, ml_cfg=6)   # ML_JOB_CFG[2:1] = tight+stationary
+    assert (FWDIR / "ml_job_driver.hex").exists(), build_log
+
+    out = _run_verilator(tmp_path)
+    got = _dump_bytes(CASE / "result.dump")
+    exp = (CASE / "ml_v2_golden.bin").read_bytes()
+    assert got == exp, "B1.1 byte mismatch:\n" + _first_mismatch(got, exp)
+
+    cyc = int(re.search(r"ML_V2_CYCLES=(\d+)", out).group(1))
+    bd = re.search(r"ML_V2_BREAKDOWN mat_busy=(\d+) dma_busy=(\d+) other=(\d+)", out)
+    dma = int(bd.group(2))
+    assert dma < 2000, f"B1.1 dma={dma} did not drop below B1 ~2,515 (header not trimmed?)"
+    print(f"ML_V2_B1_1_CYCLES={cyc} mat={bd.group(1)} dma={dma} other={bd.group(3)}")
+    print(f"ML_V2_B1_1_BIT_EXACT_PASS n_tiles={n_tiles} bytes={len(exp)}")

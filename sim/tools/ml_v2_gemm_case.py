@@ -82,23 +82,30 @@ def write_words(path: Path, data: bytes) -> None:
     path.write_text("\n".join(lines) + "\n")
 
 
-def _b1_stationary(segments):
+TIGHT_HDR = 0x60   # B1.1: [fold(0x20)|param(0x20..0x48)|pad] before weights (matches OP_B_T=0x760)
+
+
+def _b1_stationary(segments, tight: bool = False):
     """B1 activation-stationary repack: pull the activation (identical for every tile
     in a q_proj group) out to a single resident blob at SHARED_ACT; per-tile blob
-    becomes [header | weights] (272w, no activation). Golden is unchanged (same GEMM,
+    becomes [header | weights]. B1.1 (tight) drops the A_OFF header padding: per-tile
+    blob = [fold|param|pad->0x60 | weights] (152w). Golden is unchanged (same GEMM,
     same bytes — only the DMA layout differs)."""
     kw = K * 8                      # 512 activation/weight bytes per tile
     act = segments[0][1][rt.A_OFF:rt.A_OFF + kw]
     out = [(SHARED_ACT_B, act)]     # resident activation, loaded once
+    hdr = TIGHT_HDR if tight else rt.A_OFF
+    words = 152 if tight else 272
     for job, (_src, blob) in enumerate(segments):
         assert blob[rt.A_OFF:rt.A_OFF + kw] == act, "activation differs per tile (not stationary)"
-        b1 = blob[0:rt.A_OFF] + blob[rt.A_OFF + kw:rt.A_OFF + 2 * kw]   # [header|weights]
-        assert len(b1) == 272 * 4
+        b1 = blob[0:hdr] + blob[rt.A_OFF + kw:rt.A_OFF + 2 * kw]   # [fold|param(|pad)|weights]
+        assert len(b1) == words * 4
         out.append((rt.SHARED_BLOB_B + job * rt.JOB_STRIDE_B, b1))
     return out
 
 
-def generate(outdir: Path, n: int, stationary: bool = False) -> tuple[int, int]:
+def generate(outdir: Path, n: int, stationary: bool = False,
+             tight: bool = False) -> tuple[int, int]:
     assert n in (16, 64), "gate_67 bring-up/final shapes are N=16 or N=64"
     outdir.mkdir(parents=True, exist_ok=True)
     rows = make_rows()
@@ -114,7 +121,7 @@ def generate(outdir: Path, n: int, stationary: bool = False) -> tuple[int, int]:
 
     # golden is from the ORIGINAL full blobs (activation-stationary changes DMA, not math)
     golden = b"".join(tile_golden_from_blob(blob) for _src, blob in segments)
-    shared = _b1_stationary(segments) if stationary else segments
+    shared = _b1_stationary(segments, tight=tight) if stationary else segments
     write_hex(outdir / "ml_v2_shared.hex", shared)
     write_words(outdir / "ml_v2_golden.hex", golden)
     (outdir / "ml_v2_golden.bin").write_bytes(golden)

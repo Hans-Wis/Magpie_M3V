@@ -107,6 +107,16 @@ module npu_ml_ctrl #(
     localparam [31:0] OP_A_B1     = 32'h0000_0B40;   // resident activation (a)
     localparam [31:0] OP_B_B1     = 32'h0000_0940;   // per-tile weights (b)
 
+    // ===== B1.1 header-trim (ADR-0067 Phase B) — ML_JOB_CFG[2], requires [1] =====
+    //  Drops the A_OFF header padding: per-tile blob = [fold|param|weights] tight.
+    //  The A_OFF pad existed to jump the MAT_OUT(0x800) hole, so B1.1 also RELOCATES
+    //  MAT_OUT above the weights (0x960). TCM map: fold 0x700, param 0x720, weights
+    //  0x760(+512B->0x95F), MAT_OUT 0x960, resident act 0xB40.
+    localparam [16:0] LOAD_LEN_T  = 17'd152;         // [fold|param|pad->0x60|weights 512B]
+    localparam [31:0] OP_B_T      = 32'h0000_0760;   // tight weights (b)
+    localparam [31:0] OUT_BASE_T  = 32'h0000_0960;   // MAT_OUT relocated above weights
+    localparam [31:0] STORE_SRCW_T= 32'h0000_0258;   // 0x960 >> 2
+
     // ===== CSR offsets (core_csr_addr[7:2]); 0x21+ = 0x84+ are free =====
     localparam [5:0] A_NTILES = 6'h21;  // 0x84 RW  job tile count (n_groups*n_tiles)
     localparam [5:0] A_GO     = 6'h22;  // 0x88 WO  pulse [0]=go, [1]=irq_en
@@ -117,6 +127,7 @@ module npu_ml_ctrl #(
     reg [15:0] job_ntiles;
     reg        cfg_bypass;
     reg        stationary;   // ML_JOB_CFG[1]: B1 activation-stationary mode
+    reg        tight;        // ML_JOB_CFG[2]: B1.1 header-trim (requires stationary)
     reg        irq_en;
     reg        job_busy, job_done_l, job_err;
     reg [15:0] tile_i;
@@ -151,7 +162,7 @@ module npu_ml_ctrl #(
         if (!resetn) begin
             state <= S_IDLE; job_busy <= 1'b0; job_done_l <= 1'b0; job_err <= 1'b0;
             tile_i <= 16'b0; job_ntiles <= 16'b0; cfg_bypass <= 1'b0; irq_en <= 1'b0;
-            stationary <= 1'b0;
+            stationary <= 1'b0; tight <= 1'b0;
             busy_seen <= 1'b0; ml_csr_hit <= 1'b0; ml_csr_rdata <= 32'b0;
             ml_mat_go <= 1'b0; ml_dma_go <= 1'b0; ml_wb_go <= 1'b0;
             ml_mat_cmd <= 3'b0; ml_mat_bank <= 4'b0; ml_mat_rpt <= 8'b0;
@@ -175,7 +186,8 @@ module npu_ml_ctrl #(
                 case (csr_a)
                     A_NTILES: job_ntiles <= core_csr_wdata[15:0];
                     A_CFG: begin cfg_bypass <= core_csr_wdata[0];
-                                 stationary <= core_csr_wdata[1]; end   // B1 mode
+                                 stationary <= core_csr_wdata[1];       // B1
+                                 tight      <= core_csr_wdata[2]; end   // B1.1
                     // start only when NOT bypassed (else mux drops ml_*_go -> hang, Codex P1)
                     A_GO: if ((ML_V2_EN != 0) && !job_busy && core_csr_wdata[0]
                               && !abort_i && !cfg_bypass) begin
@@ -214,7 +226,8 @@ module npu_ml_ctrl #(
                     // ISSUE states: latch operands + pulse go, clear busy_seen.
                     S_LDW: begin
                         ml_dma_src <= load_src; ml_dma_dst <= LOAD_DSTW;
-                        ml_dma_len <= stationary ? LOAD_LEN_B1 : LOAD_LEN;   // B1: weights-only
+                        ml_dma_len <= tight ? LOAD_LEN_T
+                                    : stationary ? LOAD_LEN_B1 : LOAD_LEN;   // B1/B1.1
                         ml_dma_go <= 1'b1; busy_seen <= 1'b0; state <= S_LDW_W;
                     end
                     S_LDW_W: begin
@@ -238,7 +251,8 @@ module npu_ml_ctrl #(
                         ml_mat_cmd <= CMD_OP; ml_mat_bank <= 4'd0; ml_mat_rpt <= OP_RPT;
                         // B1: a=resident activation(0xB40), b=per-tile weights(0x940)
                         ml_mat_a_addr <= stationary ? OP_A_B1 : OP_A_ADDR;
-                        ml_mat_b_addr <= stationary ? OP_B_B1 : OP_B_ADDR;
+                        ml_mat_b_addr <= tight ? OP_B_T
+                                       : stationary ? OP_B_B1 : OP_B_ADDR;
                         ml_mat_go <= 1'b1; busy_seen <= 1'b0; state <= S_OP_W;
                     end
                     S_OP_W: begin
@@ -250,7 +264,7 @@ module npu_ml_ctrl #(
                     S_RSC: begin
                         ml_mat_cmd <= CMD_RESCALE_PC; ml_mat_bank <= 4'd0; ml_mat_rpt <= 8'd1;
                         ml_mat_mult <= PARAM_PTR; ml_mat_rsp <= RSP_VAL; ml_mat_clamp <= CLAMP_VAL;
-                        ml_mat_out_base <= OUT_BASE;
+                        ml_mat_out_base <= tight ? OUT_BASE_T : OUT_BASE;   // B1.1 relocates MAT_OUT
                         ml_mat_go <= 1'b1; busy_seen <= 1'b0; state <= S_RSC_W;
                     end
                     S_RSC_W: begin
@@ -260,7 +274,8 @@ module npu_ml_ctrl #(
                     end
 
                     S_STO: begin
-                        ml_wb_src <= STORE_SRCW; ml_wb_dst <= store_dst; ml_wb_len <= STORE_LEN;
+                        ml_wb_src <= tight ? STORE_SRCW_T : STORE_SRCW;
+                        ml_wb_dst <= store_dst; ml_wb_len <= STORE_LEN;
                         ml_wb_go <= 1'b1; busy_seen <= 1'b0; state <= S_STO_W;
                     end
                     S_STO_W: begin
