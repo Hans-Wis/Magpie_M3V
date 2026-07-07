@@ -82,4 +82,7 @@ def test_ml_v2_gemm_matches_firmware_golden(tmp_path):
     m = re.search(r"ML_V2_CYCLES=(\d+)", out)
     assert m, out
     print(f"ML_V2_CYCLES={m.group(1)}")
+    bd = re.search(r"ML_V2_BREAKDOWN mat_busy=(\d+) dma_busy=(\d+) other=(\d+)", out)
+    if bd:
+        print(f"ML_V2_BREAKDOWN mat={bd.group(1)} dma={bd.group(2)} other={bd.group(3)}")
     print(f"ML_V2_BIT_EXACT_PASS n_tiles={n_tiles} bytes={len(exp)}")

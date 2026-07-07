@@ -70,6 +70,7 @@ module tb_ml_v2_gemm;
     integer fdump;
     reg [31:0] meta [0:1];
     integer ml_v2_cycles = 0;
+    integer ml_mat_busy = 0, ml_dma_busy = 0;   // component breakdown vs firmware profile
     reg cycle_on = 1'b0;
 
     initial begin
@@ -77,8 +78,11 @@ module tb_ml_v2_gemm;
     end
 
     always @(posedge clk) begin
-        if (cycle_on)
+        if (cycle_on) begin
             ml_v2_cycles = ml_v2_cycles + 1;
+            if (dut.mat_busy)         ml_mat_busy = ml_mat_busy + 1;
+            if (dut.dma_busy_engine)  ml_dma_busy = ml_dma_busy + 1;
+        end
     end
 
     task chk(input [31:0] got, input [31:0] exp, input [255:0] nm);
@@ -153,6 +157,8 @@ module tb_ml_v2_gemm;
         $fclose(fdump);
 
         $display("ML_V2_CYCLES=%0d", ml_v2_cycles);
+        $display("ML_V2_BREAKDOWN mat_busy=%0d dma_busy=%0d other=%0d",
+                 ml_mat_busy, ml_dma_busy, ml_v2_cycles - ml_mat_busy - ml_dma_busy);
         $display("ML_V2_GEMM: %0d checks, %0d errors", checks, errors);
         if (errors == 0) $display("ML_V2_GEMM_PASS");
         else             $display("ML_V2_GEMM_FAIL");
