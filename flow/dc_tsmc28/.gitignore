@@ -10,3 +10,7 @@ DONE_LANES_PPA
 *.svf
 work_dma_w*/
 work_npu_top/
+work_enum/
+work_fixchk/
+dc_overnight_*.log
+DONE_*
