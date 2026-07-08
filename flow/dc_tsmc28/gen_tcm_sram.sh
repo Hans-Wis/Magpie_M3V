@@ -34,6 +34,7 @@ export LM_LICENSE_FILE="${LM_LICENSE_FILE:-27050@127.0.0.1}"
 #   DTCM 32KB = 8192 x 32  -> bank word-interleaved x8 (each 1024x32) for the
 #              256-bit engine read, e.g. 8 x 1024x32m4f  (verify legal mux/seg).
 cat > tcm_config.txt <<'EOF'
+1024x32m4f
 2048x32m8f
 EOF
 
