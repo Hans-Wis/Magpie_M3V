@@ -332,8 +332,8 @@
 
     <!-- Fetch/Decode/Dispatch -->
     <rect x="58" y="108" width="884" height="66" rx="6" fill="#ECE2C6" stroke="#C2AE7E"/>
-    <text x="500" y="136" fill="#2E2A22" font-size="16" text-anchor="middle" font-weight="600">Fetch / Decode / Issue（單發、依序）</text>
-    <text x="500" y="157" fill="#5B5342" font-size="13" text-anchor="middle">single-issue in-order · 向量於 vexu 執行 · 矩陣經 command queue / HW sequencer</text>
+    <text x="500" y="134" fill="#2E2A22" font-size="16" text-anchor="middle" font-weight="600">Fetch / Decode / Issue（單發、依序）</text>
+    <text x="500" y="154" fill="#5B5342" font-size="12.5" text-anchor="middle">single-issue in-order · 向量 → vexu · 矩陣 → command queue / HW sequencer</text>
 
     <!-- Scalar engine -->
     <rect x="58" y="214" width="281" height="240" rx="8" fill="#E4F1EE" stroke="#1F8A7D" stroke-width="1.6"/>
@@ -379,7 +379,8 @@
     <text x="801" y="372" fill="#2E2A22" font-size="13.5" text-anchor="middle">64 / 128 / 256 MAC (LANES SKU)</text>
     <text x="801" y="388" fill="#5B5342" font-size="11.5" text-anchor="middle">synth-time 可配置 · 見 §7 / §16</text>
     <rect x="679" y="402" width="246" height="34" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
-    <text x="801" y="423" fill="#5B5342" font-size="12.5" text-anchor="middle">int8 MAC + gemmlowp requant + HW tile seq</text>
+    <text x="801" y="421" fill="#5B5342" font-size="11.5" text-anchor="middle">int8 MAC · gemmlowp requant</text>
+    <text x="801" y="433" fill="#8B8168" font-size="11" text-anchor="middle">+ HW tile sequencer（§16）</text>
 
     <!-- connections: dispatch -> engines (length 40) -->
     <line x1="198" y1="174" x2="198" y2="212" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
@@ -421,8 +422,9 @@
 
     <!-- AXI4 fabric bar (shared by NPU domain + host domain) -->
     <rect x="40" y="760" width="920" height="70" rx="8" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.8"/>
-    <text x="60" y="788" fill="#2C6B34" font-size="16" font-weight="700">AXI4 匯流排 fabric（AW / W / B / AR / R）</text>
-    <text x="60" y="810" fill="#5B5342" font-size="13">NPU domain = slave（host 配置 CSR/TCM）+ master（DMA 讀寫 shared mem）· 位址：CSR 0x3000 / TCM 0x3001-2 / SHARED 0x8000</text>
+    <text x="60" y="786" fill="#2C6B34" font-size="16" font-weight="700">AXI4 匯流排 fabric（AW / W / B / AR / R）</text>
+    <text x="60" y="806" fill="#5B5342" font-size="12.5">NPU domain = slave（host 配置 CSR / TCM）+ master（DMA 讀寫 shared mem）</text>
+    <text x="60" y="823" fill="#5B5342" font-size="12.5">位址：CSR 0x3000 · TCM 0x3001-2 · SHARED 0x8000</text>
 
     <!-- connections: NPU memory row -> AXI4 -->
     <line x1="146" y1="706" x2="146" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
@@ -431,7 +433,7 @@
     <line x1="854" y1="706" x2="854" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
 
     <!-- ===== HOST DOMAIN (below AXI4) ===== -->
-    <text x="34" y="872" fill="#8B8168" font-size="13" letter-spacing="1">HOST DOMAIN — cpu_m1 (M1A) 為 AXI master 配置並啟動 NPU · NPU 經 IRQ / mailbox 回報</text>
+    <text x="34" y="864" fill="#8B8168" font-size="13" letter-spacing="1">HOST DOMAIN</text>
 
     <!-- connections: AXI4 -> host domain -->
     <line x1="150" y1="830" x2="150" y2="898" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
@@ -468,8 +470,9 @@
     <text x="837" y="972" fill="#5B5342" font-size="12" text-anchor="middle">GDB debug（JTAG / DMI）</text>
     <text x="837" y="990" fill="#5B5342" font-size="12" text-anchor="middle">external memory controller</text>
 
-    <text x="500" y="1052" fill="#5B5342" font-size="13" text-anchor="middle">卸載流程：host 寫 weights/CQ → 敲 doorbell → NPU DMA + 計算 → DMA writeback → IRQ/mailbox 回 host</text>
-    <text x="500" y="1078" fill="#8B8168" font-size="12.5" text-anchor="middle">（host 與 NPU 為同一參數化 RV32 spine：host = 全開；NPU = stripped run-to-completion sequencer）</text>
+    <text x="500" y="1050" fill="#5B5342" font-size="13" text-anchor="middle">host cpu_m1(M1A) 為 AXI master 配置並啟動 NPU · NPU 經 IRQ / PLIC / mailbox 回報 host</text>
+    <text x="500" y="1072" fill="#5B5342" font-size="12.5" text-anchor="middle">卸載流程：host 寫 weights / CQ → 敲 doorbell → NPU DMA + 計算 → DMA writeback → IRQ / mailbox</text>
+    <text x="500" y="1094" fill="#8B8168" font-size="12" text-anchor="middle">（host 與 NPU 為同一參數化 RV32 spine：host = 全開；NPU = stripped run-to-completion sequencer）</text>
   </svg>
   </div>
   <div class="legend">
@@ -676,11 +679,37 @@
     </tbody>
   </table>
 
+  <h3>Zve32x 支援範圍與未支援指令</h3>
+  <p>
+    <strong>計算面 ~100% 收齊</strong>：整數 Zve32x 全檔位（LMUL mf8..m8）皆已實作並對 Spike lockstep bit-exact——
+    bitwise / shift / add-sub / min-max / compare / 一般 mul / MAC / widening / narrowing / reduction（sum 與
+    非-sum）/ mask 邏輯與掃描（vmsbf/vmsof/vmsif/viota/vid/vcpop/vfirst）/ slides / vrgather.vv/vx/vi /
+    vcompress / segment load-store（nf2-8）/ vdiv-vrem / vsmul。
+  </p>
+  <table>
+    <caption>未支援 / 誠實 trap 的長尾指令（低頻,標準 TFLM 推論鏈不 emit）</caption>
+    <thead><tr><th>類別</th><th>指令</th><th>現況</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">非-unit-stride 記憶體</td><td>strided (vlse/vsse)、indexed (vlxei/vsxei)</td><td>誠實 illegal trap</td></tr>
+      <tr><td class="mono">gather 變體</td><td>vrgatherei16、vrgather 於 m2+</td><td>未實作（vrgather.vv/vx/vi m1 已支援）</td></tr>
+      <tr><td class="mono">fault-only-first</td><td>vleff</td><td>未實作</td></tr>
+      <tr><td class="mono">其他長尾</td><td>masked reduction、vcompress 於 m2+</td><td>未實作</td></tr>
+      <tr><td class="mono">向量浮點</td><td>vfadd/vfmul…（vector FP）</td><td>不在 Zve32x（本為整數向量;純量 F 另計）</td></tr>
+    </tbody>
+  </table>
   <div class="callout claude">
-    <span class="tag">Claude Code 實作原則</span>
-    向量核心與純量核心之間僅透過 command queue 介面耦合（純量前端解碼向量指令後推入佇列，
-    向量引擎非同步消耗）。實作時避免讓向量執行單元直接讀取純量 decode 狀態，以保持兩者可獨立驗證、
-    未來可替換為不同微架構（例如 128-bit → 256-bit 升級）而不影響純量核心。
+    <span class="tag">為何編譯器仍可正常使用</span>
+    <ul class="spec-list" style="margin-bottom:0">
+      <li><strong>標準工具鏈不 emit 這些長尾</strong>：clang / gcc RVV auto-vectorization + TFLM int8 推論鏈只用
+        unit-stride 記憶體與上述已支援運算——實測 MobileNet / MLPerf Tiny / Gemma-3 e2e 皆<strong>零 strided/indexed
+        RVV</strong> 即 bit-exact 跑通。</li>
+      <li><strong>非-unit-stride 由卸載路覆蓋</strong>：strided / indexed 的記憶體樣式（如 depthwise、im2col、
+        stride-2 conv）改由 <strong>mat_engine + 2D / strided DMA</strong> 在 offload 層處理（純硬體 / 純軟體 im2col），
+        RVV datapath 不需要它們。</li>
+      <li><strong>誠實 trap,不假綠</strong>：若程式真的 emit 未支援指令,為 illegal-instruction trap（非 silent 錯誤結果）,
+        host 軟體可 fallback / codegen 繞開。故對「Coral Zve32x 計算程式 drop-in」的可取代性成立;缺口為記憶體
+        定址模式,非計算能力。</li>
+    </ul>
   </div>
 </section>
 
