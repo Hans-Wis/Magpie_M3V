@@ -366,7 +366,10 @@ module npu_top #(
     wire [31:0] dma_desc_addr = dma_start_write ? wb_dst : dma_src;
     wire [TCM_AW-1:0] dma_desc_word = dma_start_write ? wb_src[TCM_AW-1:0] : dma_dst[TCM_AW-1:0];
     wire [16:0] dma_desc_len  = dma_start_write ? wb_len : dma_len;
+    wire csr_narrow;
+    wire dma_narrow;
     reg dma_mode_write_l;
+    reg dma_narrow_l;
     assign dma_waddr = dma_buf_addr;
     assign dma_raddr = dma_buf_raddr;
     assign dma_busy = dma_busy_engine & ~dma_mode_write_l;
@@ -432,18 +435,24 @@ module npu_top #(
     assign wb_dst  = ml_active ? ml_wb_dst  : wb_dst_csr;
     assign wb_len  = ml_active ? ml_wb_len  : wb_len_csr;
     assign wb_go   = ml_active ? ml_wb_go   : wb_go_csr;
+    assign csr_narrow = 1'b1;
+    assign dma_narrow = ml_active ? 1'b0 : csr_narrow;
     assign core_csr_rdata = ml_csr_hit ? ml_csr_rdata : core_csr_rdata_axil;
 
     always @(posedge clk) begin
-        if (!resetn)
+        if (!resetn) begin
             dma_mode_write_l <= 1'b0;
-        else if (!dma_busy_engine && dma_start)
+            dma_narrow_l <= 1'b0;
+        end
+        else if (!dma_busy_engine && dma_start) begin
             dma_mode_write_l <= dma_start_write;
+            dma_narrow_l <= dma_narrow;
+        end
     end
 
     npu_dma #(.BUF_AW(TCM_AW), .DMA_DATA_W(DMA_DATA_W)) dma (
         .clk(clk), .resetn(domain_rstn),
-        .go(dma_start), .abort_i(npu_abort), .write_mode(dma_start_write),
+        .go(dma_start), .abort_i(npu_abort), .write_mode(dma_start_write), .narrow_i(dma_narrow),
         .src_addr(dma_desc_addr), .dst_word(dma_desc_word), .len_beats(dma_desc_len),
         .busy(dma_busy_engine), .done(dma_done_engine),
         .m_arvalid(m_arvalid),.m_arready(m_arready),.m_araddr(m_araddr),.m_arlen(m_arlen),
@@ -466,6 +475,7 @@ module npu_top #(
         .s_axi_bvalid(t_bvalid),.s_axi_bready(t_bready),.s_axi_bresp(t_bresp),
         .s_axi_arvalid(t_arvalid),.s_axi_arready(t_arready),.s_axi_araddr(s_araddr),.s_axi_arprot(s_arprot),
         .s_axi_rvalid(t_rvalid),.s_axi_rready(t_rready),.s_axi_rdata(t_rdata),.s_axi_rresp(t_rresp),
+        .dma_narrow(dma_narrow_l),
         .dma_we(dma_we),.dma_waddr(dma_waddr),.dma_wdata(dma_wdata),
         .dma_re(dma_re),.dma_raddr(dma_raddr),.dma_rdata(dma_rdata),
         .core_d_re(core_d_re),

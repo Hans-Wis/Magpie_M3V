@@ -31,6 +31,7 @@ module npu_tcm #(
     output reg         s_axi_rvalid,  input  wire s_axi_rready,  output reg [31:0] s_axi_rdata, output reg [1:0] s_axi_rresp,
 
     // ---- DMA write port (from npu_dma read-mode ingress) ----
+    input  wire        dma_narrow,
     input  wire        dma_we,
     input  wire [AW-1:0] dma_waddr,
     input  wire [DMA_DATA_W-1:0] dma_wdata,
@@ -123,11 +124,14 @@ module npu_tcm #(
     end
 
     // ---- single memory-write block: dma > core data > host ----
-    // M3a DMA writes are aligned WPB-word groups. npu_dma enforces alignment
-    // before issuing a load burst.
+    // Wide DMA writes are aligned WPB-word groups. Narrow DMA writes exactly
+    // one word from dma_wdata[31:0], matching the CSR/generic-CQ policy.
     integer dma_i;
     always @(posedge clk) begin
-        if (dma_we) begin
+        if (dma_we && dma_narrow) begin
+            mem[dma_waddr] <= dma_wdata[31:0];
+        end
+        else if (dma_we) begin
             for (dma_i = 0; dma_i < WPB; dma_i = dma_i + 1)
                 mem[dma_waddr + dma_i[AW-1:0]] <= dma_wdata[dma_i*32 +: 32];
         end
@@ -171,9 +175,13 @@ module npu_tcm #(
                 if (eng_a_re)                                  rd_cnt = rd_cnt + 4'd1;
                 if (eng_b_re)                                  rd_cnt = rd_cnt + 4'd1;
                 if (dma_re) begin
-                    for (dma_j = 0; dma_j < WPB; dma_j = dma_j + 1) begin
-                        dma_chk_addr = dma_raddr + dma_j[AW-1:0];
-                        if (dma_chk_addr[2:0] == bk[2:0]) rd_cnt = rd_cnt + 4'd1;
+                    if (dma_narrow) begin
+                        if (dma_raddr[2:0] == bk[2:0]) rd_cnt = rd_cnt + 4'd1;
+                    end else begin
+                        for (dma_j = 0; dma_j < WPB; dma_j = dma_j + 1) begin
+                            dma_chk_addr = dma_raddr + dma_j[AW-1:0];
+                            if (dma_chk_addr[2:0] == bk[2:0]) rd_cnt = rd_cnt + 4'd1;
+                        end
                     end
                 end
                 if (core_d_re && (core_d_addr[2:0]  == bk[2:0])) rd_cnt = rd_cnt + 4'd1;

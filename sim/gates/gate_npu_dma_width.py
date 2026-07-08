@@ -7,6 +7,7 @@ Sweeps DMA_DATA_W=64/128/256 and checks:
   * misaligned weight-load descriptors raise ERR_ALIGN without issuing a burst
   * AWSIZE/W beat count and writeback memory image match for wide STORE
   * misaligned writeback descriptors raise ERR_ALIGN without issuing a burst
+  * DMA_DATA_W=256 narrow_i uses 32-bit AR/AW size, one WSTRB lane, no ERR_ALIGN
 """
 
 import re
@@ -69,4 +70,22 @@ def test_npu_dma_width_sweep(tmp_path):
         assert wbeats == ref_words // wpb
         assert aw_count == 1
         assert f"WIDTH_STORE_ERR_ALIGN_PASS width={width}" in out
+        if width == 256:
+            nm = re.search(
+                r"WIDTH_NARROW_PASS width=(\d+) arsize=(\d+) awsize=(\d+) rbeats=(\d+) wbeats=(\d+) wstrb=([0-9a-fA-F]+)",
+                out,
+            )
+            assert nm, out
+            n_width, n_arsize, n_awsize, n_rbeats, n_wbeats, n_wstrb = nm.groups()
+            assert int(n_width) == 256
+            assert int(n_arsize) == 2
+            assert int(n_awsize) == 2
+            assert int(n_rbeats) == ref_words - 1
+            assert int(n_wbeats) == ref_words - 1
+            assert int(n_wstrb, 16) == 0x000000F0
+            print(
+                "NPU_DMA_NARROW width=256 "
+                f"arsize={n_arsize} awsize={n_awsize} rbeats={n_rbeats} "
+                f"wbeats={n_wbeats} wstrb=0x{int(n_wstrb, 16):08x}"
+            )
         print(f"NPU_DMA_WIDTH width={width} arsize={arsize} rbeats={rbeats} awsize={awsize} wbeats={wbeats}")

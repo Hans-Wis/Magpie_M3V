@@ -14,7 +14,8 @@ module tb_dma_err;
     wire buf_we; wire [11:0] buf_addr; wire [31:0] buf_wdata;
 
     npu_dma #(.BUF_AW(12)) dma (
-        .clk(clk),.resetn(resetn),.go(go),.src_addr(src),.dst_word(dst),.len_beats(len),
+        .clk(clk),.resetn(resetn),.go(go),.abort_i(1'b0),.write_mode(1'b0),.narrow_i(1'b0),
+        .src_addr(src),.dst_word(dst),.len_beats(len),
         .busy(busy),.done(done),.err(err),
         .m_arvalid(arvalid),.m_arready(arready),.m_araddr(araddr),.m_arlen(arlen),
         .m_arsize(arsize),.m_arburst(arburst),

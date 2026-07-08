@@ -14,6 +14,7 @@
 
 module tb_npu_cq_mat;
     parameter integer MAT_LANES = 4;
+    parameter integer DMA_DATA_W = 32;
     reg clk = 1'b0;
     reg resetn = 1'b0;
     always #5 clk = ~clk;
@@ -27,20 +28,22 @@ module tb_npu_cq_mat;
     wire [ 1:0] s_bresp, s_rresp;
 
     wire        m_arvalid, m_arready, m_rvalid, m_rready, m_rlast;
-    wire [31:0] m_araddr, m_rdata;
+    wire [31:0] m_araddr;
+    wire [DMA_DATA_W-1:0] m_rdata;
     wire [ 7:0] m_arlen;
     wire [ 2:0] m_arsize;
     wire [ 1:0] m_arburst, m_rresp;
     wire        m_awvalid, m_awready, m_wvalid, m_wready, m_wlast, m_bvalid, m_bready;
-    wire [31:0] m_awaddr, m_wdata;
+    wire [31:0] m_awaddr;
+    wire [DMA_DATA_W-1:0] m_wdata;
     wire [ 7:0] m_awlen;
     wire [ 2:0] m_awsize;
     wire [ 1:0] m_awburst, m_bresp;
-    wire [ 3:0] m_wstrb;
+    wire [DMA_DATA_W/8-1:0] m_wstrb;
     wire        irq, npu_start;
     wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(8192), .TCM_AW(13), .MAT_LANES(MAT_LANES)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13), .MAT_LANES(MAT_LANES), .DMA_DATA_W(DMA_DATA_W)) dut (
         .clk(clk), .resetn(resetn),
         .s_awvalid(s_awvalid), .s_awready(s_awready), .s_awaddr(s_awaddr), .s_awprot(3'b0),
         .s_wvalid(s_wvalid), .s_wready(s_wready), .s_wdata(s_wdata), .s_wstrb(s_wstrb),
@@ -57,7 +60,7 @@ module tb_npu_cq_mat;
         .irq(irq), .npu_start(npu_start), .npu_config(npu_config)
     );
 
-    axi_full_rwmem #(.WORDS(16384)) shared (
+    axi_full_rwmem #(.WORDS(16384), .DMA_DATA_W(DMA_DATA_W)) shared (
         .clk(clk), .resetn(resetn),
         .arvalid(m_arvalid), .arready(m_arready), .araddr(m_araddr),
         .arlen(m_arlen), .arsize(m_arsize), .arburst(m_arburst),
@@ -189,6 +192,8 @@ module tb_npu_cq_mat;
         chk({31'b0, irq}, 32'h1, "IRQ on STORE");
         axil_read(A_CQST, rd);
         chk({31'b0, rd[3]}, 32'h0, "no CQ err");
+        axil_read(A_STATUS, rd);
+        chk({31'b0, rd[5]}, 32'h0, "no dma_err trap");
 
         // dump the requantized tile for the golden compare (gate_46)
         fdump = $fopen("mat_result.dump", "w");

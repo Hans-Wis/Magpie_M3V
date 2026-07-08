@@ -44,10 +44,9 @@ def _golden_tile() -> bytes:
     return outs[0]
 
 
-@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
-def test_cq_matrix_offload_matches_golden(tmp_path):
+def _run_cq_matrix(tmp_path: Path, width: int):
     verilator_sim(tmp_path, "tb_npu_cq_mat", RTL + TB, "NPU_CQ_MAT_PASS",
-                  extra_args=CPU_M1_ARGS)
+                  extra_args=[*CPU_M1_ARGS, f"-GDMA_DATA_W={width}", "-GMAT_LANES=4"])
     dump = (ROOT / "mat_result.dump").read_text().split()
     got = bytearray()
     for w in dump:
@@ -55,4 +54,11 @@ def test_cq_matrix_offload_matches_golden(tmp_path):
         got += bytes([v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF, (v >> 24) & 0xFF])
     exp = _golden_tile()
     assert bytes(got) == exp, (
-        f"matrix tile mismatch:\n got={bytes(got).hex()}\n exp={exp.hex()}")
+        f"matrix tile mismatch width={width}:\n got={bytes(got).hex()}\n exp={exp.hex()}")
+    print(f"NPU_CQ_MAT_BIT_EXACT width={width} bytes={len(exp)}")
+
+
+@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
+@pytest.mark.parametrize("width", [32, 256])
+def test_cq_matrix_offload_matches_golden(tmp_path, width):
+    _run_cq_matrix(tmp_path, width)

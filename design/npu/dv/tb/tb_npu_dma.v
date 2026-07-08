@@ -69,7 +69,8 @@ module tb_npu_dma;
 
     npu_dma #(.BUF_AW(12)) dma (
         .clk(clk),.resetn(resetn),
-        .go(dma_go),.src_addr(dma_src),.dst_word(dma_dst[11:0]),.len_beats(dma_len),
+        .go(dma_go),.abort_i(1'b0),.write_mode(1'b0),.narrow_i(1'b0),
+        .src_addr(dma_src),.dst_word(dma_dst[11:0]),.len_beats(dma_len),
         .busy(dma_busy),.done(dma_done),
         .m_arvalid(d_arvalid),.m_arready(d_arready),.m_araddr(d_araddr),.m_arlen(d_arlen),
         .m_arsize(d_arsize),.m_arburst(d_arburst),

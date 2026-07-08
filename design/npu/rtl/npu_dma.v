@@ -26,6 +26,7 @@ module npu_dma #(
     input  wire        go,                 // 1-cycle pulse: start transfer
     input  wire        abort_i,              // ADR-0038: finish the CURRENT AXI burst, then idle
     input  wire        write_mode,         // 0=AXI read -> TCM, 1=TCM -> AXI write
+    input  wire        narrow_i,           // 1=single 32-bit word per AXI beat on any DMA_DATA_W
     input  wire [31:0] src_addr,           // shared byte addr in read mode; destination byte addr in write mode
     input  wire [BUF_AW-1:0] dst_word,     // local destination in read mode; local source in write mode
     input  wire [16:0] len_beats,          // number of 32-bit words to move (0..65536; 0 = no-op)
@@ -87,13 +88,13 @@ module npu_dma #(
             $fatal(1, "npu_dma: DMA_DATA_W must be one of 32/64/128/256");
     end
 
-    assign m_arsize  = AXI_SIZE[2:0];      // wide weight-load beats
+    assign m_arsize  = narrow_l ? 3'd2 : AXI_SIZE[2:0];
     assign m_arburst = 2'b01;              // INCR
     assign m_rready  = (state == S_R);
     assign buf_we    = (state == S_R) && m_rvalid;
-    assign buf_wdata = m_rdata;
+    assign buf_wdata = narrow_l ? narrow_buf_wdata : m_rdata;
 
-    assign m_awsize  = AXI_SIZE[2:0];      // wide writeback beats
+    assign m_awsize  = narrow_l ? 3'd2 : AXI_SIZE[2:0];
     assign m_awburst = 2'b01;              // INCR
     assign m_bready  = (state == S_B);
     assign buf_re    = (state == S_W);
@@ -106,27 +107,74 @@ module npu_dma #(
     reg [8:0]  beats_done;                 // accepted W beats in the active write burst
     reg        done_ok;                    // suppress writeback done on BRESP error
     reg        mode_write;                 // latched transfer direction
+    reg        narrow_l;                   // latched transfer width policy
 
-    assign m_wdata = buf_rdata;
-    assign m_wstrb = {(DMA_DATA_W/8){1'b1}};
+    function [31:0] lane_word;
+        input [DMA_DATA_W-1:0] data;
+        input [31:0] lane;
+        integer j;
+        begin
+            lane_word = 32'b0;
+            for (j = 0; j < WPB; j = j + 1)
+                if (lane == j[31:0])
+                    lane_word = data[j*32 +: 32];
+        end
+    endfunction
 
-    // Burst caps are in AXI beats. LOAD and STORE both move WPB words per beat.
+    function [DMA_DATA_W-1:0] lane_wdata;
+        input [31:0] lane;
+        input [31:0] word;
+        integer j;
+        begin
+            lane_wdata = {DMA_DATA_W{1'b0}};
+            for (j = 0; j < WPB; j = j + 1)
+                if (lane == j[31:0])
+                    lane_wdata[j*32 +: 32] = word;
+        end
+    endfunction
+
+    function [DMA_DATA_W/8-1:0] lane_wstrb;
+        input [31:0] lane;
+        integer j;
+        begin
+            lane_wstrb = {(DMA_DATA_W/8){1'b0}};
+            for (j = 0; j < WPB; j = j + 1)
+                if (lane == j[31:0])
+                    lane_wstrb[j*4 +: 4] = 4'hf;
+        end
+    endfunction
+
+    wire [31:0] word_lane_w = ({2'b0, cur_addr[31:2]} % WPB);
+    wire [DMA_DATA_W-1:0] narrow_buf_wdata =
+        lane_wdata(32'd0, lane_word(m_rdata, word_lane_w));
+    wire [DMA_DATA_W-1:0] narrow_m_wdata = lane_wdata(word_lane_w, buf_rdata[31:0]);
+    wire [DMA_DATA_W/8-1:0] narrow_m_wstrb = lane_wstrb(word_lane_w);
+
+    assign m_wdata = narrow_l ? narrow_m_wdata : buf_rdata;
+    assign m_wstrb = narrow_l ? narrow_m_wstrb : {(DMA_DATA_W/8){1'b1}};
+
+    // Burst caps are in AXI beats. Wide transfers move WPB words per beat;
+    // narrow transfers intentionally behave like DMA_DATA_W=32.
     wire [31:0] remaining_w = {15'b0, remaining};
-    wire [31:0] remaining_axi_w = remaining_w >> WPB_LG2;
+    wire        narrow_eff = (state == S_IDLE) ? narrow_i : narrow_l;
+    wire [31:0] remaining_axi_w = narrow_eff ? remaining_w : (remaining_w >> WPB_LG2);
     wire [16:0] remaining_axi_beats = remaining_axi_w[16:0];
-    wire [16:0] dist4k = (17'd4096 - {5'b0, cur_addr[11:0]}) >> AXI_SIZE;
+    wire [16:0] dist4k = narrow_eff ? ((17'd4096 - {5'b0, cur_addr[11:0]}) >> 2)
+                                    : ((17'd4096 - {5'b0, cur_addr[11:0]}) >> AXI_SIZE);
     wire [16:0] cap256 = (remaining_axi_beats > 17'd256) ? 17'd256 : remaining_axi_beats;
     wire [16:0] this_burst = (dist4k < cap256) ? dist4k : cap256;
     wire [8:0]  burst_m1   = this_burst[8:0] - 9'd1;   // AXI ARLEN = beats-1
     wire        final_wbeat = (beats_done == (beats_in_burst - 9'd1));
     assign      m_wlast = m_wvalid && (state == S_W) && final_wbeat;
-    wire [16:0] words_in_burst = {8'b0, beats_in_burst} << WPB_LG2;
+    wire [16:0] words_in_burst = narrow_l ? {8'b0, beats_in_burst}
+                                          : ({8'b0, beats_in_burst} << WPB_LG2);
     wire [31:0] bytes_in_burst = {13'b0, words_in_burst, 2'b00};
-    wire        read_align_err = (WPB != 1) &&
+    wire [BUF_AW-1:0] buf_step = narrow_l ? {{(BUF_AW-1){1'b0}}, 1'b1} : WPB_BUF;
+    wire        read_align_err = !narrow_eff && (WPB != 1) &&
                                  ((src_addr % AXI_BYTES) != 0 ||
                                   ({{(32-BUF_AW){1'b0}}, dst_word} % WPB) != 0 ||
                                   ({15'b0, len_beats} % WPB) != 0);
-    wire        write_align_err = (WPB != 1) &&
+    wire        write_align_err = !narrow_eff && (WPB != 1) &&
                                   ((src_addr % AXI_BYTES) != 0 ||
                                    ({{(32-BUF_AW){1'b0}}, dst_word} % WPB) != 0 ||
                                    ({15'b0, len_beats} % WPB) != 0);
@@ -135,16 +183,19 @@ module npu_dma #(
         if (!resetn) begin
             state <= S_IDLE; busy <= 1'b0; done <= 1'b0; err <= 1'b0;
             m_arvalid <= 1'b0; m_awvalid <= 1'b0; m_wvalid <= 1'b0;
+            narrow_l <= 1'b0;
         end else begin
             case (state)
                 S_IDLE: if (abort_i) begin
                             done <= 1'b0; err <= 1'b0;   // clear stickies for soft reset
+                            narrow_l <= 1'b0;
                         end else if (go) begin
                             cur_addr  <= {src_addr[31:2], 2'b00};
                             remaining <= len_beats;
                             buf_addr  <= dst_word;
                             buf_raddr <= dst_word;
                             mode_write <= write_mode;
+                            narrow_l <= narrow_i;
                             done_ok <= 1'b1;
                             busy <= 1'b1; done <= 1'b0; err <= 1'b0;
                             if (len_beats == 17'd0)
@@ -171,7 +222,7 @@ module npu_dma #(
                         end
                 S_R: if (m_rvalid) begin
                             if (m_rresp[1]) err <= 1'b1;          // latch SLVERR/DECERR
-                            buf_addr <= buf_addr + WPB_BUF;       // advance local write ptr
+                            buf_addr <= buf_addr + buf_step;      // advance local write ptr
                             if (m_rlast) begin
                                 remaining <= remaining - words_in_burst;
                                 cur_addr  <= cur_addr + bytes_in_burst;
@@ -205,7 +256,7 @@ module npu_dma #(
                                     state <= S_B;
                                 end
                                 beats_done <= beats_done + 9'd1;
-                                buf_raddr <= buf_raddr + WPB_BUF;
+                                buf_raddr <= buf_raddr + buf_step;
                             end
                         end
                 S_B: if (m_bvalid) begin
@@ -227,6 +278,7 @@ module npu_dma #(
                         end
                 S_DONE: begin
                             busy <= 1'b0; done <= done_ok && !abort_i;
+                            narrow_l <= 1'b0;
                             state <= S_IDLE;
                         end
                 default: state <= S_IDLE;
