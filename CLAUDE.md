@@ -41,7 +41,7 @@
 
 **Roadmap(對 Coral 對等,含缺漏 folded — 見 `docs/reviews/2026-07-03_coral_gap_review.md`)**:
 - **P0 缺漏:全部完成(2026-07-04)** ✅ ①writeback ②command queue ③矩陣 64-MAC+requant ④vector-CSR lockstep(隨 Phase 3)⑤traps/abort(ADR-0038,gate_47)。RING_OVERRUN 偵測 deferred(host-side ABI)。
-- Phase 3 RVV ✅(3A-3D,kernel=240)→ Phase 4 矩陣 64-MAC+requant ✅ → **Phase 6 首戰 ✅(ADR-0039:TFLM int8 FC 六 corner bit-exact e2e,gate_48)** → **256 MAC/cycle ✅(ADR-0040,throughput gate 實測)** → **TFLM runtime AOT ✅(ADR-0041:真 .tflite 2 層 MLP 多 op 鏈接 bit-exact,gate_49)** → **CNN ✅(ADR-0042:Conv2D per-channel + K-chunking,gate_50)+ 卸載收尾 ✅(ADR-0043:2D/strided DMA + host producer ABI,gate_51)** → **列 4 記憶體 ✅(ADR-0044:ITCM 8K/DTCM 32K Harvard + banked DTCM,gate_52)** → **列 8 RVFI/RVVI-lite ✅(ADR-0045:lockstep 換源自 trace port 全符,gate_53;PARTIAL,v1=insn/mem/mtval)** → **功能補齊中(User 裁示:功能→架構優化→簽核)**:列 6 hard-reset ✅(ADR-0047,gate_54)→ 列 8 trace v1 ✅(ADR-0048:insn/mem/mtval/mstatus,列 8 GREEN-leaning)→ **RVV Phase-A 收齊 S1-S4 ✅(ADR-0049;POOL 對 TFLM bit-exact 含 half-away 引理,gate_56-59;列 2 GREEN-leaning)** → **scalar F 全套 ✅(ADR-0050 F1-F4:fexu softfloat-3 忠實轉寫 + fcsr/FS 契約 + F-reg lockstep;directed 135+269 + random ~5.5K commits vs Spike rv32imf;gate_60/61;列 1 GREEN,F4 組合邏輯=Phase 7 多拍化偏離已記)** → **功能補齊完成** → **架構優化(ADR-0051 DC 量測 / 0052 CQ batch / 0053 requant pipe:mat_engine ~730MHz→~1.0GHz)** → **完整 Zve32x 產品規格中(ADR-0054 roadmap;Phase-B B1✅ B2✅、B3 進行中)** → 續:npu_top 全 DC / VCS/Spyglass/coverage 簽核。**詳見 §7 重啟指南。**
+- Phase 3 RVV ✅(3A-3D,kernel=240)→ Phase 4 矩陣 64-MAC+requant ✅ → **Phase 6 首戰 ✅(ADR-0039:TFLM int8 FC 六 corner bit-exact e2e,gate_48)** → **256 MAC/cycle ✅(ADR-0040,throughput gate 實測)** → **TFLM runtime AOT ✅(ADR-0041:真 .tflite 2 層 MLP 多 op 鏈接 bit-exact,gate_49)** → **CNN ✅(ADR-0042:Conv2D per-channel + K-chunking,gate_50)+ 卸載收尾 ✅(ADR-0043:2D/strided DMA + host producer ABI,gate_51)** → **列 4 記憶體 ✅(ADR-0044:ITCM 8K/DTCM 32K Harvard + banked DTCM,gate_52)** → **列 8 RVFI/RVVI-lite ✅(ADR-0045:lockstep 換源自 trace port 全符,gate_53;PARTIAL,v1=insn/mem/mtval)** → **功能補齊中(User 裁示:功能→架構優化→簽核)**:列 6 hard-reset ✅(ADR-0047,gate_54)→ 列 8 trace v1 ✅(ADR-0048:insn/mem/mtval/mstatus,列 8 GREEN-leaning)→ **RVV Phase-A 收齊 S1-S4 ✅(ADR-0049;POOL 對 TFLM bit-exact 含 half-away 引理,gate_56-59;列 2 GREEN-leaning)** → **scalar F 全套 ✅(ADR-0050 F1-F4:fexu softfloat-3 忠實轉寫 + fcsr/FS 契約 + F-reg lockstep;directed 135+269 + random ~5.5K commits vs Spike rv32imf;gate_60/61;列 1 GREEN,F4 組合邏輯=Phase 7 多拍化偏離已記)** → **功能補齊完成** → **架構優化 ✅(ADR-0051/52/53:mat_engine ~730MHz→~1.0GHz)** → **完整 Zve32x 產品規格 ✅(Phase-B~F 全收齊,ADR-0055-0060,gate_62-81)** → **MobileNet + Gemma-3 270M 層 e2e ✅** → **SoC 兩核系統 ✅(ADR-0068:soc_m3v_top M1 minimal→M2 PLIC/IRQ→M3a/b/c npu_dma 寬度隨 LANES;q_proj 11.8×)** → **RMSNorm→RVV ✅(層 -42k cyc)** → **全設計 DC-synthesizable ✅(@8b783a0;npu_top PPA 隔夜 job)** → 續:npu_top 隔夜 PPA / soc DC / VCS/Spyglass/coverage 簽核。**詳見 §7 重啟指南(SSOT=memory `m3v-progress.md`)。**
 - **P1**:NPU traps/ERR_CAUSE、cache flush-before-doorbell、ITCM/DTCM sizing(8K/32K)、strided/2D DMA、RVVI/RVFI trace。
 - **scope-cut(已記錄):** L0 I-cache、clock/power gating、double-buffer。(scalar F 已於 ADR-0050 回收完成。)
 
@@ -110,34 +110,45 @@
 
 ## §7 現況 / 下一步
 
-> ⭐ **重啟指南(2026-07-05,session 極長後 checkpoint)**:詳細進度看 memory `m3v-progress.md`
-> (每步都記);逐項 ADR 在 `docs/adr/`;三方 review 全文在 `docs/reviews/2026-07-05_*`。
+> ⭐ **重啟指南(2026-07-08,@fc06ae5;session 極長後 checkpoint)**:**逐步進度 SSOT = memory `m3v-progress.md`**
+> (每步都記,含 gotcha);逐項 ADR 在 `docs/adr/`;各 phase 設計確認在 `design/npu/docs/*_design.md`(§6/§8=review resolutions);
+> 三方 review 全文在 `docs/reviews/`;PPA/perf 報告在 `docs/reports/`(含 `gemma_opt_ledger.md` 優化台帳)。
 
-**A. 功能面 = 完成(§3 對 Coral 8 列全 GREEN-leaning,紅燈 0)**。scalar F 全套(RV32IMF,ADR-0050)、
-RVV Phase-A(S1-S4)、矩陣 256-MAC+requant、TFLM FC/MLP/CNN e2e bit-exact、卸載/記憶體/trap/trace 皆綠。
-**功能補齊完成**。可替代性報告 `docs/reports/2026-07-03_replaceability_status.md`(row 1 GREEN)。
+**A. 功能面 + 完整 Zve32x = 完成**。§3 對 Coral 8 列全 GREEN-leaning。scalar F 全套(RV32IMF,ADR-0050)、
+RVV **Zve32x 整數+LMUL(mf8..m8)全檔位 Phase-B~F 收齊**(ADR-0055-0060,gate_62-81;唯缺=非-unit-stride 記憶體,
+誠實 trap)、矩陣 256-MAC+requant、TFLM FC/MLP/CNN + **MobileNet + Gemma-3 270M decoder 層** e2e bit-exact。
 
-**B. 架構優化(進行中,User 裁示序:功能→優化→簽核)**:
-- **step 0 mat_engine DC 量測 ✅(ADR-0051)**:真 Synopsys DC + TSMC28(`flow/dc_tsmc28/`,in-sandbox
-  可跑,`common_shell_ex` 進程)。**推翻假設**:critical path 是 requant(非 MAC)。
-- **step 2 CQ autonomous MAT_OP ✅(ADR-0052 @ec3ac1e)**:批次預取 descriptor(消軟體序列化稅);
-  含 User 核准的 weight region 0x680→0x700 memory-map bump(footprint 撞牆)。
-- **step 3 requant 流水化 ✅(ADR-0053 @f8403d4)**:2-stage pipe cut 在 32×32 乘後;**DC 證
-  mat_engine ~730MHz→~1.0 GHz**,新 critical path = MAC(step 4 候選,standby)。
-- 未做:step 1 npu_top 全 DC(需 TCM SRAM macro);step 4 S_RUN pipe(standby)。
+**B. SoC 兩核系統 + 架構優化 = 完成(M1→M3c 全綠)**:cpu_m1(host)`--AXI-->` npu_top(NPU)。
+- **soc_m3v_top**(ADR-0068):M1 minimal(真 host 驅動卸載 bit-exact)→ M2 PLIC/IRQ(真中斷,meip 解法=直接 cpu_m1_top+axil_bridge)
+  → **M3a/b/c npu_dma AXI 寬度隨 LANES SKU**(DMA_DATA_W=64×LANES hard-bind;讀+寫路寬化+narrow two-tier 通用 CQ 安全;
+  DC PPA 寬 DMA ~free)→ **q_proj 軌 13,350→1,129 cyc(11.8×)**。
+- **mat_engine v2**:PA tile sequencer(npu_ml_ctrl)+ activation-stationary + header-trim(ADR-0067,gate_67);
+  DC step0-3(ADR-0051/52/53:mat_engine ~730MHz→~1.0GHz)。
+- **軟體軌**:**RMSNorm→RVV Zve32x**(ADR/design `rmsnorm_rvv_design.md`;層 349,824→307,458,flip 0/256;golden=獨立
+  Spike-validated rvv_bitmodel,非湊 RTL)。
 
-**C. 完整 Zve32x(產品規格,User 裁示;roadmap ADR-0054)**:目標=可宣稱「任何 Coral Zve32x 程式
-drop-in」(**不做 full RVV 1.0**——Coral 也只 Zve32x)。Phase-B(整數核心)→C(乘法/reduction)→
-D(mask-scan/slides)→E(gather/compress/indexed/segment/vdiv)→F(m8)。
-- **B1 ✅(bitwise/shift/vrsub,@6659e9d + fix @b7505ab)**、**B2 ✅(narrowing+extension,@568ff3b,三方 review)**。
-- **B3(carry vadc/vsbc/vmadc/vmsbc)= 進行中**:Grok spec 已存 `docs/reviews/2026-07-05_phase_b3_carry_spec_grok.md`;
-  vadc/vsbc 出 vector(carry-in=v0,強制 active)、vmadc/vmsbc 出 mask(照 compare res_cmp 路徑)。**下一步:照 spec 實作 → Spike lockstep `--isa=zve32x_zvl128b` → 三方 review → commit。**
-- B4 whole-reg move(vmv1r/2r/4r/8r)待做。
+**C. 全設計 DC-synthesizable = 完成(@8b783a0);npu_top 全 compile PPA = 隔夜 job(@fc06ae5)**:
+- 核心 RTL 的 Verilator-style forward-ref(decl-after-use)DC/Presto 拒 → **純宣告重排(byte-for-byte RHS,零邏輯改)**:
+  idu/core/vexu/npu_top/npu_axil_regs。npu_top 旗艦(MAT_LANES=4/DMA_DATA_W=256/ML_V2_EN=1)elaborate+link **Presto-clean**
+  (TCM black-box `flow/dc_tsmc28/npu_tcm_bb.v`;**npu core = RV32IMF EN_F=1**)。零回歸驗:RVV+F gate_56-81+60/61 = **76 passed**。
+- **npu_top 全 compile_ultra ~40-60 分(vexu RVV 組合 vdiv + fexu float divider 多),延後隔夜跑**:
+  `nohup bash flow/dc_tsmc28/run_overnight_dc.sh > /tmp/dc_overnight.out 2>&1 &`
+  → 產出 `reports/dc_npu_top/ppa_summary.txt` + `flow/dc_tsmc28/DONE_NPU_TOP_PPA` marker → **下次 session 看 marker 補 PPA 報告**。
+- **既有 per-block PPA**:mat_engine 83,868µm²(256-MAC)· npu_dma 1,143µm²(256b,ADR/M3c)· cpu_m1_top-host 26,298µm²/699MHz。
 
-**D. 待查 latent(誠實界)**:`vle32.v @ e32/mf2`(vlmax=2)DUT trap illegal——Grok/Gemini 判與 B2 無關的
-vsetvli/vmem fractional-LMUL 議題,**可能真 bug,需與 Spike 並跑確認**。
+**D. 下一步序(User 裁示)**:npu_top 隔夜 PPA 收尾 + soc_m3v_top DC / RMSNorm 全模型 H=640(descriptor 加寬/chunk)/
+其他非線性 RVV 化(RoPE/Softmax/ewise-mul,同 RMSNorm pattern)/ HW region guard(M3b-3-full)/ v2 Phase A.2(K>64 多 chunk)/
+VCS/Spyglass/coverage 簽核。
 
-**測試/工具重點**:vector lockstep = `flow/v2_pipeline/phase_22_vector_csr_lockstep`(`make b1/b2/grid/s1/vrand`;
-firmware 用 **`-mno-relax`** 讓 DUT/Spike la 位址編碼一致;m2+ group-EMUL memory ops out-of-scope,用
-vmv.v.x splat 建群組源、vmv.x.s 觀察)。**recurring bug:signed `>>>` 在 unsigned ternary context 變邏輯移**
-——用自決定 signed 中間 wire。**masked body op 寫 v0 = illegal**(每新 op 都要加進 q_illegal 該檢查——B1/B2 各被 review 抓過)。
+**測試/工具重點 + recurring gotcha**:
+- vector lockstep = `flow/v2_pipeline/phase_22_vector_csr_lockstep`(`make b1/grid/s1/vrand/c2/…`);host lockstep=`phase_03_*`;
+  NPU core=`phase_20_npu_core_lockstep`。firmware **`-mno-relax`**(DUT/Spike la 位址編碼一致)。
+- **filelist 三處同步(CLAUDE.md §4.3):加/改 RTL 要同步 `phase_20`+`phase_22` Makefile 的 NPU_SRCS/CPU_SRCS**——曾漏
+  npu_ml_ctrl/fexu 致 RVV/F lockstep gate 靜默壞掉(gate 8 秒快速失敗=build MODMISSING 非 lockstep 發散)。
+- **DC/Presto 要 declaration-before-use**(Verilator 2-pass 容忍 forward-ref);修法=純宣告重排(RHS byte-for-byte)。
+  DC `-parameters` 改設計名 → `current_design [lindex [get_designs npu_top*] 0]`。lib=`flow/dc_tsmc28/lib_setup.tcl`。
+- **`pkill -f <pat>` 會殺自身 shell**(命令列含 pat)→ 改 `kill <pid>` 或 `pgrep -x`;判活看 `ps -o etimes,time`。
+- signed `>>>` 在 unsigned ternary context 變邏輯移 → 用自決定 signed 中間 wire;signed*unsigned 用 `$signed({1'b0,b})`。
+- masked body op 寫 v0 = illegal(每新 RVV op 加進 q_illegal 檢查);Spike 實跑 > 第三方 spec flag(legality 必 probe)。
+- **co-work(§5):Grok 架構 review(`grok -p`,加「Do NOT use tools」)+ Codex 外科實作/RTL-reality review(`codex exec -s workspace-write`,
+  需 `</dev/null`;其 sandbox DC license 常壞→DC 我自跑)。Claude 跑權威 lockstep/gate + green-wash 守衛。每 phase 走 §2 鐵律。**
