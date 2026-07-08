@@ -1,0 +1,30 @@
+ 
+****************************************
+Report : area
+Design : npu_dma_DMA_DATA_W256
+Version: X-2025.06-SP2
+Date   : Wed Jul  8 16:01:38 2026
+****************************************
+
+Library(s) Used:
+
+    tcbn28hpcplusbwp40p140tt0p9v25c (File: /home/edauser/project/PDK/TSMC28/logic/tcbn28hpcplusbwp40p140_180b/AN61001_20180509/TSMCHOME/digital/Front_End/timing_power_noise/NLDM/tcbn28hpcplusbwp40p140_180a/tcbn28hpcplusbwp40p140tt0p9v25c.db)
+
+Number of ports:                         1258
+Number of nets:                          2159
+Number of cells:                         1562
+Number of combinational cells:           1386
+Number of sequential cells:               176
+Number of macros/black boxes:               0
+Number of buf/inv:                        126
+Number of references:                      55
+
+Combinational area:                808.163994
+Buf/Inv area:                       32.256000
+Noncombinational area:             334.655998
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (Wire load has zero net area)
+
+Total cell area:                  1142.819992
+Total area:                 undefined
+1

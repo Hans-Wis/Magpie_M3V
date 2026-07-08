@@ -88,16 +88,9 @@ module npu_dma #(
             $fatal(1, "npu_dma: DMA_DATA_W must be one of 32/64/128/256");
     end
 
-    assign m_arsize  = narrow_l ? 3'd2 : AXI_SIZE[2:0];
-    assign m_arburst = 2'b01;              // INCR
-    assign m_rready  = (state == S_R);
-    assign buf_we    = (state == S_R) && m_rvalid;
-    assign buf_wdata = narrow_l ? narrow_buf_wdata : m_rdata;
-
-    assign m_awsize  = narrow_l ? 3'd2 : AXI_SIZE[2:0];
-    assign m_awburst = 2'b01;              // INCR
-    assign m_bready  = (state == S_B);
-    assign buf_re    = (state == S_W);
+    // (control assigns moved below the state/narrow_l/narrow_buf_wdata
+    //  declarations so Presto/DC compiles without forward references — pure
+    //  reorder, no logic change; Verilator 2-pass tolerated the original order.)
 
     localparam [2:0] S_IDLE=3'd0, S_AR=3'd1, S_R=3'd2, S_AW=3'd3, S_W=3'd4, S_B=3'd5, S_DONE=3'd6;
     reg [2:0]  state;
@@ -152,6 +145,19 @@ module npu_dma #(
 
     assign m_wdata = narrow_l ? narrow_m_wdata : buf_rdata;
     assign m_wstrb = narrow_l ? narrow_m_wstrb : {(DMA_DATA_W/8){1'b1}};
+
+    // control assigns (moved here from above so all referenced symbols —
+    // state/S_*, narrow_l, narrow_buf_wdata — are declared first; DC/Presto).
+    assign m_arsize  = narrow_l ? 3'd2 : AXI_SIZE[2:0];
+    assign m_arburst = 2'b01;              // INCR
+    assign m_rready  = (state == S_R);
+    assign buf_we    = (state == S_R) && m_rvalid;
+    assign buf_wdata = narrow_l ? narrow_buf_wdata : m_rdata;
+
+    assign m_awsize  = narrow_l ? 3'd2 : AXI_SIZE[2:0];
+    assign m_awburst = 2'b01;              // INCR
+    assign m_bready  = (state == S_B);
+    assign buf_re    = (state == S_W);
 
     // Burst caps are in AXI beats. Wide transfers move WPB words per beat;
     // narrow transfers intentionally behave like DMA_DATA_W=32.

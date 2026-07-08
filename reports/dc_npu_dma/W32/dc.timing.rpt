@@ -1,0 +1,312 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -nworst 4
+        -max_paths 8
+Design : npu_dma_DMA_DATA_W32
+Version: X-2025.06-SP2
+Date   : Wed Jul  8 16:00:54 2026
+****************************************
+
+Operating Conditions: tt0p9v25c   Library: tcbn28hpcplusbwp40p140tt0p9v25c
+Wire Load Model Mode: segmented
+
+  Startpoint: abort_i (input port clocked by clk)
+  Endpoint: beats_in_burst_reg[8]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  npu_dma_DMA_DATA_W32
+                     ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.36       0.36 r
+  abort_i (in)                                            0.00       0.36 r
+  U463/ZN (INVD1BWP40P140)                                0.01       0.37 f
+  U451/Z (OA211D0BWP40P140)                               0.24       0.61 f
+  U928/ZN (NR2D1BWP40P140)                                0.13       0.74 r
+  U938/ZN (INVD1BWP40P140)                                0.05       0.78 f
+  U939/ZN (OAI32D0BWP40P140)                              0.04       0.82 r
+  beats_in_burst_reg[8]/D (DFQD1BWP40P140)                0.00       0.82 r
+  data arrival time                                                  0.82
+
+  clock clk (rise edge)                                   1.20       1.20
+  clock network delay (ideal)                             0.00       1.20
+  beats_in_burst_reg[8]/CP (DFQD1BWP40P140)               0.00       1.20 r
+  library setup time                                     -0.02       1.18
+  data required time                                                 1.18
+  --------------------------------------------------------------------------
+  data required time                                                 1.18
+  data arrival time                                                 -0.82
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.36
+
+
+  Startpoint: abort_i (input port clocked by clk)
+  Endpoint: beats_in_burst_reg[8]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  npu_dma_DMA_DATA_W32
+                     ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.36       0.36 r
+  abort_i (in)                                            0.00       0.36 r
+  U463/ZN (INVD1BWP40P140)                                0.01       0.37 f
+  U451/Z (OA211D0BWP40P140)                               0.24       0.61 f
+  U928/ZN (NR2D1BWP40P140)                                0.13       0.74 r
+  U938/ZN (INVD1BWP40P140)                                0.05       0.78 f
+  U939/ZN (OAI32D0BWP40P140)                              0.03       0.82 r
+  beats_in_burst_reg[8]/D (DFQD1BWP40P140)                0.00       0.82 r
+  data arrival time                                                  0.82
+
+  clock clk (rise edge)                                   1.20       1.20
+  clock network delay (ideal)                             0.00       1.20
+  beats_in_burst_reg[8]/CP (DFQD1BWP40P140)               0.00       1.20 r
+  library setup time                                     -0.02       1.18
+  data required time                                                 1.18
+  --------------------------------------------------------------------------
+  data required time                                                 1.18
+  data arrival time                                                 -0.82
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.36
+
+
+  Startpoint: abort_i (input port clocked by clk)
+  Endpoint: beats_in_burst_reg[8]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  npu_dma_DMA_DATA_W32
+                     ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.36       0.36 r
+  abort_i (in)                                            0.00       0.36 r
+  U463/ZN (INVD1BWP40P140)                                0.01       0.37 f
+  U451/Z (OA211D0BWP40P140)                               0.24       0.61 f
+  U928/ZN (NR2D1BWP40P140)                                0.13       0.74 r
+  U938/ZN (INVD1BWP40P140)                                0.05       0.78 f
+  U939/ZN (OAI32D0BWP40P140)                              0.03       0.82 r
+  beats_in_burst_reg[8]/D (DFQD1BWP40P140)                0.00       0.82 r
+  data arrival time                                                  0.82
+
+  clock clk (rise edge)                                   1.20       1.20
+  clock network delay (ideal)                             0.00       1.20
+  beats_in_burst_reg[8]/CP (DFQD1BWP40P140)               0.00       1.20 r
+  library setup time                                     -0.02       1.18
+  data required time                                                 1.18
+  --------------------------------------------------------------------------
+  data required time                                                 1.18
+  data arrival time                                                 -0.82
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.36
+
+
+  Startpoint: abort_i (input port clocked by clk)
+  Endpoint: beats_in_burst_reg[8]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  npu_dma_DMA_DATA_W32
+                     ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.36       0.36 r
+  abort_i (in)                                            0.00       0.36 r
+  U463/ZN (INVD1BWP40P140)                                0.01       0.37 f
+  U451/Z (OA211D0BWP40P140)                               0.24       0.61 f
+  U928/ZN (NR2D1BWP40P140)                                0.13       0.74 r
+  U938/ZN (INVD1BWP40P140)                                0.05       0.78 f
+  U939/ZN (OAI32D0BWP40P140)                              0.03       0.82 r
+  beats_in_burst_reg[8]/D (DFQD1BWP40P140)                0.00       0.82 r
+  data arrival time                                                  0.82
+
+  clock clk (rise edge)                                   1.20       1.20
+  clock network delay (ideal)                             0.00       1.20
+  beats_in_burst_reg[8]/CP (DFQD1BWP40P140)               0.00       1.20 r
+  library setup time                                     -0.02       1.18
+  data required time                                                 1.18
+  --------------------------------------------------------------------------
+  data required time                                                 1.18
+  data arrival time                                                 -0.82
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.36
+
+
+  Startpoint: abort_i (input port clocked by clk)
+  Endpoint: beats_in_burst_reg[0]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  npu_dma_DMA_DATA_W32
+                     ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.36       0.36 r
+  abort_i (in)                                            0.00       0.36 r
+  U463/ZN (INVD1BWP40P140)                                0.01       0.37 f
+  U451/Z (OA211D0BWP40P140)                               0.24       0.61 f
+  U928/ZN (NR2D1BWP40P140)                                0.13       0.74 r
+  U938/ZN (INVD1BWP40P140)                                0.05       0.78 f
+  U980/ZN (AOI22D1BWP40P140)                              0.03       0.82 r
+  beats_in_burst_reg[0]/D (DFQD1BWP40P140)                0.00       0.82 r
+  data arrival time                                                  0.82
+
+  clock clk (rise edge)                                   1.20       1.20
+  clock network delay (ideal)                             0.00       1.20
+  beats_in_burst_reg[0]/CP (DFQD1BWP40P140)               0.00       1.20 r
+  library setup time                                     -0.02       1.18
+  data required time                                                 1.18
+  --------------------------------------------------------------------------
+  data required time                                                 1.18
+  data arrival time                                                 -0.82
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.36
+
+
+  Startpoint: abort_i (input port clocked by clk)
+  Endpoint: beats_in_burst_reg[1]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  npu_dma_DMA_DATA_W32
+                     ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.36       0.36 r
+  abort_i (in)                                            0.00       0.36 r
+  U463/ZN (INVD1BWP40P140)                                0.01       0.37 f
+  U451/Z (OA211D0BWP40P140)                               0.24       0.61 f
+  U928/ZN (NR2D1BWP40P140)                                0.13       0.74 r
+  U938/ZN (INVD1BWP40P140)                                0.05       0.78 f
+  U983/ZN (AOI22D1BWP40P140)                              0.03       0.82 r
+  beats_in_burst_reg[1]/D (DFQD1BWP40P140)                0.00       0.82 r
+  data arrival time                                                  0.82
+
+  clock clk (rise edge)                                   1.20       1.20
+  clock network delay (ideal)                             0.00       1.20
+  beats_in_burst_reg[1]/CP (DFQD1BWP40P140)               0.00       1.20 r
+  library setup time                                     -0.02       1.18
+  data required time                                                 1.18
+  --------------------------------------------------------------------------
+  data required time                                                 1.18
+  data arrival time                                                 -0.82
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.36
+
+
+  Startpoint: abort_i (input port clocked by clk)
+  Endpoint: beats_in_burst_reg[3]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  npu_dma_DMA_DATA_W32
+                     ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.36       0.36 r
+  abort_i (in)                                            0.00       0.36 r
+  U463/ZN (INVD1BWP40P140)                                0.01       0.37 f
+  U451/Z (OA211D0BWP40P140)                               0.24       0.61 f
+  U928/ZN (NR2D1BWP40P140)                                0.13       0.74 r
+  U938/ZN (INVD1BWP40P140)                                0.05       0.78 f
+  U987/ZN (AOI22D1BWP40P140)                              0.03       0.82 r
+  beats_in_burst_reg[3]/D (DFQD1BWP40P140)                0.00       0.82 r
+  data arrival time                                                  0.82
+
+  clock clk (rise edge)                                   1.20       1.20
+  clock network delay (ideal)                             0.00       1.20
+  beats_in_burst_reg[3]/CP (DFQD1BWP40P140)               0.00       1.20 r
+  library setup time                                     -0.02       1.18
+  data required time                                                 1.18
+  --------------------------------------------------------------------------
+  data required time                                                 1.18
+  data arrival time                                                 -0.82
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.36
+
+
+  Startpoint: abort_i (input port clocked by clk)
+  Endpoint: beats_in_burst_reg[2]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  npu_dma_DMA_DATA_W32
+                     ZeroWireload          tcbn28hpcplusbwp40p140tt0p9v25c
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  input external delay                                    0.36       0.36 r
+  abort_i (in)                                            0.00       0.36 r
+  U463/ZN (INVD1BWP40P140)                                0.01       0.37 f
+  U451/Z (OA211D0BWP40P140)                               0.24       0.61 f
+  U928/ZN (NR2D1BWP40P140)                                0.13       0.74 r
+  U938/ZN (INVD1BWP40P140)                                0.05       0.78 f
+  U985/ZN (AOI22D1BWP40P140)                              0.03       0.82 r
+  beats_in_burst_reg[2]/D (DFQD1BWP40P140)                0.00       0.82 r
+  data arrival time                                                  0.82
+
+  clock clk (rise edge)                                   1.20       1.20
+  clock network delay (ideal)                             0.00       1.20
+  beats_in_burst_reg[2]/CP (DFQD1BWP40P140)               0.00       1.20 r
+  library setup time                                     -0.02       1.18
+  data required time                                                 1.18
+  --------------------------------------------------------------------------
+  data required time                                                 1.18
+  data arrival time                                                 -0.82
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.36
+
+
+1
