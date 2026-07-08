@@ -126,6 +126,8 @@ module idu #(
     wire is_fence  = (opcode == `OPC_FENCE);
     wire is_amo_opcode = (opcode == `OPC_AMO);
     wire is_op_v   = (opcode == `OPC_OP_V);
+    wire is_fmem_ld = (EN_F != 0) && (opcode == 7'b0000111) && (funct3 == 3'b010);
+    wire is_fmem_st = (EN_F != 0) && (opcode == 7'b0100111) && (funct3 == 3'b010);
 
     assign is_jal    = (opcode == `OPC_JAL);
     assign is_jalr   = (opcode == `OPC_JALR) && (funct3 == 3'b000);
@@ -193,8 +195,6 @@ module idu #(
     // Spike raises without F).
     // ADR-0050: with scalar F, f3=010 in the FP mem spaces is FLW/FSW (a real
     // scalar word load/store); without F it stays routed to vexu (illegal).
-    wire is_fmem_ld = (EN_F != 0) && (opcode == 7'b0000111) && (funct3 == 3'b010);
-    wire is_fmem_st = (EN_F != 0) && (opcode == 7'b0100111) && (funct3 == 3'b010);
     wire is_vmem_opc = ((opcode == 7'b0000111) || (opcode == 7'b0100111)) &&
                        !(is_fmem_ld || is_fmem_st);
     wire is_fexec_w = (EN_F != 0) &&

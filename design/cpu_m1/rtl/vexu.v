@@ -249,6 +249,9 @@ module vexu #(
     wire op_nsrl  = (f6 == 6'b101100) && (is_opivv || is_opivx || is_opivi);
     wire op_nsra  = (f6 == 6'b101101) && (is_opivv || is_opivx || is_opivi);
     wire op_nsr   = op_nsrl || op_nsra;
+    wire        vill  = q_vtype[31];
+    wire [2:0]  vlmul = q_vtype[2:0];
+    wire [2:0]  vsew  = q_vtype[5:3];
 
     // ---------------- Phase-B B2b (ADR-0055): vzext/vsext.vf2/vf4 ----------------
     // OPMVV f6=010010 (gated by f3 -> disjoint from OPIVV vsbc, which shares f6).
@@ -348,9 +351,6 @@ module vexu #(
     wire op_vsmul = (f6 == 6'b100111) && (is_opivv || is_opivx);
 
     // ---------------- config legality ----------------
-    wire        vill  = q_vtype[31];
-    wire [2:0]  vlmul = q_vtype[2:0];
-    wire [2:0]  vsew  = q_vtype[5:3];
     // S3 (ADR-0049): m2/m4 register groups execute as internal multi-beat with
     // an atomic group commit at WB; m8 stays deferred-illegal.
     wire lmul_m2   = (vlmul == 3'b001);
@@ -360,17 +360,21 @@ module vexu #(
     // for the same-width beats_op ops via the VM_GRP 8-beat path; widening/reductions/
     // mask-scan stay m8-illegal (below). vmv<nr>r ignores LMUL (nr from simm).
     wire [3:0] grp_parts = lmul_m8 ? 4'd8 : lmul_m4 ? 4'd4 : lmul_m2 ? 4'd2 : 4'd1;
+    wire is_vload  = (q_instr[6:0] == 7'b0000111);   // LOAD-FP opcode space
+    wire is_vstore = (q_instr[6:0] == 7'b0100111);   // STORE-FP opcode space
+    wire is_vmem   = (EN_RVV != 0) && (is_vload || is_vstore);
+    wire beats_op  = op_add || op_sub || op_mv || op_merge || op_mm ||
+                     op_s2same || op_cmp || op_b1 || op_adcsbc || op_madcb ||
+                     op_muls || op_mac || op_vsmul || op_vdivr;
     // m8 legal ONLY for non-memory beats_op (the VM_GRP 8-beat arith path) + vmvr.
     // Memory opcodes alias beats_op via f6/f3 (vle8 f3=000 => op_add), and m8 group-
     // EMUL memory is out-of-scope (int_sh omits m8 => mem_illegal would see an m1 span
     // and silently execute a truncated load). Gate with (beats_op && !is_vmem) so m8
     // memory stays illegal (DUT stricter, honest scope-cut) — Codex Phase-F review.
     wire cfg_illegal = vill || (lmul_m8 && !op_vmvr && !(beats_op && !is_vmem));
+    wire is_grp    = (grp_parts != 4'd1) && beats_op && !is_vmem;
 
     // ---------------- 3C unit-stride vector load/store decode ----------------
-    wire is_vload  = (q_instr[6:0] == 7'b0000111);   // LOAD-FP opcode space
-    wire is_vstore = (q_instr[6:0] == 7'b0100111);   // STORE-FP opcode space
-    wire is_vmem   = (EN_RVV != 0) && (is_vload || is_vstore);
     assign q_is_mem = q_valid && is_vmem;
     assign q_is_grp = q_valid && (is_grp || op_vmvr) && !q_illegal; // hold/beats (incl. cmp, vmvr copy loop)
     // WB group WRITE excludes mask-dest ops (compares + vmadc/vmsbc: single-reg dest)
@@ -458,12 +462,8 @@ module vexu #(
     // ops that iterate register-group parts (compares read groups, write ONE
     // mask register); widening/narrowing/reductions stay <= m1 (their own
     // LMUL rules) and vmv.x.s/vmv.s.x touch element 0 only.
-    wire beats_op  = op_add || op_sub || op_mv || op_merge || op_mm ||
-                     op_s2same || op_cmp || op_b1 || op_adcsbc || op_madcb ||
-                     op_muls || op_mac || op_vsmul || op_vdivr;
     // NOTE: memory opcodes alias the f6-based arith decodes (every other use
     // site is guarded by an is_vmem priority mux) — exclude them here too.
-    wire is_grp    = (grp_parts != 4'd1) && beats_op && !is_vmem;
     wire grp_only_illegal = (grp_parts != 4'd1) && !op_vmvr &&
         (op_widen || op_red || op_wred || op_nc || op_nsr || op_vext ||
          !beats_op && !op_mvxs && !op_mvsx && !op_mlog && !is_vmem);
@@ -532,6 +532,31 @@ module vexu #(
     reg [127:0] grp_stage [0:7];    // Phase-F: up to 8 parts (m8)
     reg [127:0] grp_mask_acc;      // compare-to-mask accumulation across parts
     reg         grp_sat_q;
+    localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
+                     VM_VMVR = 3'd4, VM_SEGWR = 3'd5;    // B4 copy loop / E2 segment drain
+    reg [2:0]   vm_state;
+    reg [5:0]   vm_idx;          // element (up to 63 for segment e8 m4)
+    reg [2:0]   vmvr_p;          // B4: register index within the nr-register group
+    reg [127:0] vm_buf;          // assemble buffer (loads); seeded with vd_old
+    reg         vm_done_r;
+    // E2 segment (stub): per-field assemble buffers + field counter + byte-offset accum.
+    reg [127:0] seg_buf [0:7];
+    reg [2:0]   seg_fld;
+    reg [8:0]   seg_off;         // running byte offset from rs1
+    wire [127:0] seg_drain;
+    wire [15:0] cmp_bits8;
+    wire [7:0]  cmp_bits16;
+    wire [3:0]  cmp_bits32;
+    wire [15:0] madc_bits8;
+    wire [7:0]  madc_bits16;
+    wire [3:0]  madc_bits32;
+    wire [15:0] seg8;
+    wire [7:0]  seg16;
+    wire [3:0]  seg32;
+    wire        part_sat_or;
+    wire [127:0] part_res;
+    wire [15:0] cmp_seg;
+    wire [127:0] mask_nl;
 
     always @(posedge clk) begin
         if (w_en) begin
@@ -1141,17 +1166,6 @@ module vexu #(
     end
 
     // ---------------- 3C memory FSM (2 cycles/element: ISSUE -> CAP) ----------------
-    localparam [2:0] VM_IDLE = 3'd0, VM_ISSUE = 3'd1, VM_CAP = 3'd2, VM_GRP = 3'd3,
-                     VM_VMVR = 3'd4, VM_SEGWR = 3'd5;    // B4 copy loop / E2 segment drain
-    reg [2:0]   vm_state;
-    reg [5:0]   vm_idx;          // element (up to 63 for segment e8 m4)
-    reg [2:0]   vmvr_p;          // B4: register index within the nr-register group
-    reg [127:0] vm_buf;          // assemble buffer (loads); seeded with vd_old
-    reg         vm_done_r;
-    // E2 segment (stub): per-field assemble buffers + field counter + byte-offset accum.
-    reg [127:0] seg_buf [0:7];
-    reg [2:0]   seg_fld;
-    reg [8:0]   seg_off;         // running byte offset from rs1
     wire        seg_last = (seg_fld + 3'd1 == seg_nf[2:0]);
     // physical register offset from vd for element vm_idx, field seg_fld: f*L + (i/epr).
     wire [5:0]  seg_regsh = vm_idx >> (3'd4 - {1'b0, vsew[1:0]});   // i / epr (reg-in-group)
@@ -1168,7 +1182,6 @@ module vexu #(
     wire [4:0]  seg_actc  = (seg_actel > {2'b0, seg_epr}) ? seg_epr : seg_actel[4:0];
     wire [5:0]  seg_act_bytes = {1'b0, seg_actc} << eew_sel;
     wire [127:0] seg_old_p = vrf[vd_i + {2'b0, vmvr_p}];            // old (vd+p) for the tail
-    wire [127:0] seg_drain;
     genvar sgb;
     generate
         for (sgb = 0; sgb < 16; sgb = sgb + 1) begin : g_segdrain
@@ -1695,28 +1708,28 @@ module vexu #(
     wire [127:0] res_s2 = (vsew == 3'b000) ? res_s2_8 :
                           (vsew == 3'b001) ? res_s2_16 : res_s2_32;
     wire [127:0] res_nc = (vsew == 3'b000) ? res_nc8 : res_nc16;
-    wire part_sat_or = (op_s2same && ((vsew == 3'b000) ? (|s2_sat8) :
-                                      (vsew == 3'b001) ? (|s2_sat16_x[7:0]) :
-                                                         (|s2_sat32))) ||
-                       (op_nc && ((vsew == 3'b000) ? (|nc_sat8) : (|nc_sat16))) ||
-                       (op_vsmul && ((vsew == 3'b000) ? (|smul_sat8) :
-                                     (vsew == 3'b001) ? (|smul_sat16) : (|smul_sat32)));
+    assign part_sat_or = (op_s2same && ((vsew == 3'b000) ? (|s2_sat8) :
+                                        (vsew == 3'b001) ? (|s2_sat16_x[7:0]) :
+                                                           (|s2_sat32))) ||
+                         (op_nc && ((vsew == 3'b000) ? (|nc_sat8) : (|nc_sat16))) ||
+                         (op_vsmul && ((vsew == 3'b000) ? (|smul_sat8) :
+                                       (vsew == 3'b001) ? (|smul_sat16) : (|smul_sat32)));
     assign q_vxsat = q_valid && !q_illegal && (q_vstart < q_vl) &&
                      (is_grp ? grp_sat_q : part_sat_or);
 
     // per-part combinational result for the group beats (arith class)
-    wire [127:0] part_res = op_muls ? res_mul :
-                            op_vdivr ? res_vdiv :
-                            op_mac ? res_mac :
-                            op_vsmul ? res_smul :
-                            op_s2same ? res_s2 :
-                            (vsew == 3'b000) ? res8 :
-                            (vsew == 3'b001) ? res16 : res32;
-    wire [15:0] cmp_seg  = (vsew == 3'b000) ? seg8 :
-                           (vsew == 3'b001) ? {8'b0, seg16} :
-                                              {12'b0, seg32};
-    wire [127:0] mask_nl = (vsew == 3'b000) ? 128'hFFFF :
-                           (vsew == 3'b001) ? 128'hFF : 128'hF;
+    assign part_res = op_muls ? res_mul :
+                      op_vdivr ? res_vdiv :
+                      op_mac ? res_mac :
+                      op_vsmul ? res_smul :
+                      op_s2same ? res_s2 :
+                      (vsew == 3'b000) ? res8 :
+                      (vsew == 3'b001) ? res16 : res32;
+    assign cmp_seg  = (vsew == 3'b000) ? seg8 :
+                      (vsew == 3'b001) ? {8'b0, seg16} :
+                                         {12'b0, seg32};
+    assign mask_nl = (vsew == 3'b000) ? 128'hFFFF :
+                     (vsew == 3'b001) ? 128'hFF : 128'hF;
     // group compare: bits < vl from the accumulator, tail from the dest reg
     // Phase-F: q_vl reaches 128 (m8 e8); use [7:0] so vl==128 shifts by 128
     // (>= width => 0) and the -1 fills all 128 mask bits. [6:0] would alias 128->0.
@@ -1724,17 +1737,11 @@ module vexu #(
     wire [127:0] grp_cmp_res = (cmpd_old & ~vl_ones) | (grp_mask_acc & vl_ones);
 
     // ---- S1 result assembly: compares + mask logicals ----
-    wire [15:0] cmp_bits8;
-    wire [7:0]  cmp_bits16;
-    wire [3:0]  cmp_bits32;
-    wire [15:0] madc_bits8;
-    wire [7:0]  madc_bits16;
-    wire [3:0]  madc_bits32;
     // B3: vmadc/vmsbc reuse the compare mask-write path (res_cmp / cmp_seg /
     // grp_mask_acc) — pick the carry/borrow bits when op_madcb.
-    wire [15:0] seg8  = op_vms ? vms_bits       : op_madcb ? madc_bits8  : cmp_bits8;
-    wire [7:0]  seg16 = op_vms ? vms_bits[7:0]  : op_madcb ? madc_bits16 : cmp_bits16;
-    wire [3:0]  seg32 = op_vms ? vms_bits[3:0]  : op_madcb ? madc_bits32 : cmp_bits32;
+    assign seg8  = op_vms ? vms_bits       : op_madcb ? madc_bits8  : cmp_bits8;
+    assign seg16 = op_vms ? vms_bits[7:0]  : op_madcb ? madc_bits16 : cmp_bits16;
+    assign seg32 = op_vms ? vms_bits[3:0]  : op_madcb ? madc_bits32 : cmp_bits32;
     wire [127:0] res_cmp = (vsew == 3'b000) ? {cmpd_old[127:16], seg8}  :
                            (vsew == 3'b001) ? {cmpd_old[127:8],  seg16} :
                                               {cmpd_old[127:4],  seg32};

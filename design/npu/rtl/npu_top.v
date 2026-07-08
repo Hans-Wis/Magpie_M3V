@@ -160,6 +160,15 @@ module npu_top #(
     wire [31:0] dma_src, dma_dst, wb_src, wb_dst;
     wire [16:0] dma_len, wb_len;
     wire dma_go, wb_go, dma_busy, dma_done, wb_busy, wb_done, dma_err;
+    wire [31:0] mat_a_addr_csr, mat_b_addr_csr, mat_mult_csr, mat_rsp_csr, mat_clamp_csr, mat_out_base_csr;
+    wire        mat_go_csr;
+    wire [2:0]  mat_cmd_csr;
+    wire [3:0]  mat_bank_csr;
+    wire [7:0]  mat_rpt_csr;
+    wire [31:0] dma_src_csr, dma_dst_csr, wb_src_csr, wb_dst_csr;
+    wire [16:0] dma_len_csr, wb_len_csr;
+    wire        dma_go_csr, wb_go_csr;
+    wire [31:0] core_csr_rdata_axil;
     // ================= NPU scalar core =================
     wire        core_resetn = resetn & npu_start;
     wire        ibus_req, ibus_ready;
@@ -381,15 +390,6 @@ module npu_top #(
     // npu_ml_ctrl owns its CSRs (off the core-local window) and drives mat/dma/wb
     // DIRECTLY when ml_active; the mux selects the firmware path (*_csr) otherwise.
     // ML_V2_EN=0 (default) => ml_active never asserts => transparent, zero regression.
-    wire [31:0] mat_a_addr_csr, mat_b_addr_csr, mat_mult_csr, mat_rsp_csr, mat_clamp_csr, mat_out_base_csr;
-    wire        mat_go_csr;
-    wire [2:0]  mat_cmd_csr;
-    wire [3:0]  mat_bank_csr;
-    wire [7:0]  mat_rpt_csr;
-    wire [31:0] dma_src_csr, dma_dst_csr, wb_src_csr, wb_dst_csr;
-    wire [16:0] dma_len_csr, wb_len_csr;
-    wire        dma_go_csr, wb_go_csr;
-    wire [31:0] core_csr_rdata_axil;
     wire [31:0] ml_mat_a_addr, ml_mat_b_addr, ml_mat_mult, ml_mat_rsp, ml_mat_clamp, ml_mat_out_base;
     wire        ml_mat_go;
     wire [2:0]  ml_mat_cmd;

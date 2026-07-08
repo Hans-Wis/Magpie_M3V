@@ -756,6 +756,65 @@ endgenerate
 
     wire        id_is_vsetivli = id_is_vset && (if_ex_instr[31:30] == 2'b11);
     wire        id_is_vsetvl   = id_is_vset && (if_ex_instr[31:25] == 7'b1000000);
+    wire [ 1:0] csr_mstatus_vs;
+    wire [ 1:0] csr_mstatus_fs;
+    wire [31:0] csr_vl;
+    wire [31:0] csr_vtype;
+    reg         ex_wb_valid_r;
+    /* verilator lint_off UNUSEDSIGNAL */  // 留作 debug; trap_pc 走 pc_plus_4 路徑
+    reg [31:0] ex_wb_pc_r;
+    /* verilator lint_on UNUSEDSIGNAL */
+    reg [31:0] ex_wb_alu_result_r;
+    reg [31:0] ex_wb_md_result_r;
+    reg [31:0] ex_wb_pc_plus_4_r;
+    reg [31:0] ex_wb_pc_plus_imm_r;
+    reg [31:0] ex_wb_csr_rdata_r;
+    reg [ 4:0] ex_wb_rd_idx_r;
+    reg        ex_wb_rd_we_r;
+    reg [ 2:0] ex_wb_wb_sel_r;
+    reg        ex_wb_is_load_r;
+    reg        ex_wb_is_amo_r;
+    reg        ex_wb_amo_is_sc_r;
+    /* verilator lint_off UNUSEDSIGNAL */
+    reg        ex_wb_is_store_r;   // store 在 MEM 已 commit 到 d-port，WB 不用
+    /* verilator lint_on UNUSEDSIGNAL */
+    reg        ex_wb_is_misaligned_r;
+    reg        ex_wb_is_misaligned_store_r;
+    reg [ 2:0] ex_wb_ls_funct3_r;
+    reg [ 1:0] ex_wb_addr_lo_r;
+    reg        ex_wb_is_mret_r;
+    reg        ex_wb_is_dret_r;
+    reg        ex_wb_csr_we_r;
+    reg [11:0] ex_wb_csr_addr_r;
+    reg [ 1:0] ex_wb_csr_op_r;
+    reg [31:0] ex_wb_csr_wdata_r;
+    reg        ex_wb_vcfg_we_r;
+    reg [31:0] ex_wb_vcfg_vl_r;
+    reg [31:0] ex_wb_vcfg_vtype_r;
+    reg         ex_wb_vex_we_r;
+    reg         ex_wb_vex_flag_r;
+    reg         ex_wb_vex_mem_r;
+    reg [4:0]   ex_wb_vex_vd_r;
+    reg [127:0] ex_wb_vex_wdata_r;
+    reg        ex_wb_is_branch_taken_r;
+    reg        ex_wb_is_jal_r;
+    reg        ex_wb_is_jalr_r;
+    reg        ex_wb_illegal_r;
+    reg        ex_wb_is_ecall_r;
+    reg        ex_wb_is_ebreak_r;
+    reg [31:0] ex_wb_instr_r;
+    reg        ex_wb_mem_re_r, ex_wb_mem_we_r;       // ADR-0048 mem trace
+    reg [31:0] ex_wb_mem_addr_r, ex_wb_mem_wdata_r;
+    reg [ 3:0] ex_wb_mem_wstrb_r;
+    reg        ex_wb_trigger_hit_r;
+    reg [ 1:0] ex_wb_trigger_idx_r;
+    reg        ex_wb_trigger_exec_r;
+    reg        ex_wb_trigger_load_r;
+    reg        ex_wb_trigger_store_r;
+    reg        ex_wb_pmp_if_fault_r;
+    reg [31:0] ex_wb_pmp_if_mtval_r;
+    reg        ex_wb_pmp_data_fault_r;
+    reg        ex_wb_pmp_data_store_r;
     // 3B fix (latent in 3A): a vset in EX must also see a vset committing from
     // EX/WB this same cycle (csr regs update at the clock edge) — WB window leg.
     wire [31:0] rvv_cur_vl     = (ex_mem_valid_r && ex_mem_vcfg_we_r) ? ex_mem_vcfg_vl_r :
@@ -857,6 +916,7 @@ endgenerate
     wire [31:0]  fexu_q_fdata, fexu_q_xdata, fexu_q_fsw_data;
     wire [4:0]   fexu_q_flags;
     wire         wb_f_we;
+    wire [31:0]  lsu_ld_result_wb;       // 計算在 MEM/WB stage
     reg          ex_mem_f_we_r, ex_wb_f_we_r;
     reg          ex_mem_f_flw_r, ex_wb_f_flw_r;
     reg          ex_mem_f_exec_r, ex_wb_f_exec_r;
@@ -898,6 +958,8 @@ endgenerate
     wire [31:0]  vexu_vm_addr, vexu_vm_wdata;
     wire [3:0]   vexu_vm_wstrb;
     wire         vexu_query = (EN_RVV != 0) && if_ex_valid && id_is_vexec;
+    wire         vexu_m_start;
+    wire         wb_vex_grp_w;
 
     vexu #(.EN_RVV(EN_RVV)) u_vexu (
         .clk        (clk),
@@ -961,9 +1023,9 @@ endgenerate
                         !vexu_q_illegal &&
                         (csr_mstatus_vs_eff != 2'b00) &&
                         !vexu_vm_result_valid;
-    wire vexu_m_start = vex_mem_hold &&
-                        !ex_mem_valid_r && !ex_wb_valid_r &&
-                        !pc_redirect && !warmup && !redirect_warmup && !debug_mode;
+    assign vexu_m_start = vex_mem_hold &&
+                          !ex_mem_valid_r && !ex_wb_valid_r &&
+                          !pc_redirect && !warmup && !redirect_warmup && !debug_mode;
     // Codex 3C review finding #3: a vmem op could complete its D-port beats and
     // then be killed by an IRQ at ITS OWN WB slot — the handler would observe
     // store data Spike has not written (interrupt mepc points AT the op). Gate
@@ -977,6 +1039,36 @@ endgenerate
                             (vex_mem_hold || vexu_vm_active || vexu_vm_result_valid ||
                              (ex_mem_valid_r && ex_mem_vex_mem_r) ||
                              (ex_wb_valid_r  && ex_wb_vex_mem_r));
+
+    wire [31:0] id_csr_wdata = id_csr_uses_imm ? id_csr_zimm : rs1_val;
+    wire        id_csr_we_logic = id_is_csr &&
+                                  ((id_csr_op == `CSR_OP_W) || (id_csr_wdata != 32'h0));
+
+    function is_vector_csr_addr;
+        input [11:0] addr;
+        begin
+            is_vector_csr_addr = (addr == `CSR_VSTART) ||
+                                 (addr == `CSR_VXSAT)  ||
+                                 (addr == `CSR_VXRM)   ||
+                                 (addr == `CSR_VCSR)   ||
+                                 (addr == `CSR_VL)     ||
+                                 (addr == `CSR_VTYPE)  ||
+                                 (addr == `CSR_VLENB);
+        end
+    endfunction
+
+    function is_vector_ro_csr_addr;
+        input [11:0] addr;
+        begin
+            is_vector_ro_csr_addr = (addr == `CSR_VL) ||
+                                    (addr == `CSR_VTYPE) ||
+                                    (addr == `CSR_VLENB);
+        end
+    endfunction
+
+    wire        id_is_op_v = (if_ex_instr[6:0] == `OPC_OP_V);
+    wire        id_is_vector_csr = id_is_csr && is_vector_csr_addr(id_csr_addr);
+    wire        id_is_vector_ro_csr = id_is_vector_csr && is_vector_ro_csr_addr(id_csr_addr);
 
     wire        id_vset_can_commit = (EN_RVV != 0) && id_is_vset && (csr_mstatus_vs_eff != 2'b00);
     wire        id_opv_vs_illegal = (EN_RVV != 0) && (id_is_op_v || id_is_vexec) &&
@@ -1107,7 +1199,6 @@ endgenerate
     // =========================================================================
     wire [31:0] lsu_mem_wdata_id;
     wire [ 3:0] lsu_mem_wstrb_id;
-    wire [31:0] lsu_ld_result_wb;       // 計算在 MEM/WB stage
     reg  [31:0] amo_result_r;
     reg  [31:0] amo_wdata_r;
     reg         amo_res_valid;
@@ -1236,44 +1327,10 @@ endgenerate
     // =========================================================================
     // CSR (lab05 同款，但 instr_retired 改成「EX/WB stage commits a valid instr」)
     // =========================================================================
-    wire [31:0] id_csr_wdata = id_csr_uses_imm ? id_csr_zimm : rs1_val;
-    wire        id_csr_we_logic = id_is_csr &&
-                                  ((id_csr_op == `CSR_OP_W) || (id_csr_wdata != 32'h0));
-
-    function is_vector_csr_addr;
-        input [11:0] addr;
-        begin
-            is_vector_csr_addr = (addr == `CSR_VSTART) ||
-                                 (addr == `CSR_VXSAT)  ||
-                                 (addr == `CSR_VXRM)   ||
-                                 (addr == `CSR_VCSR)   ||
-                                 (addr == `CSR_VL)     ||
-                                 (addr == `CSR_VTYPE)  ||
-                                 (addr == `CSR_VLENB);
-        end
-    endfunction
-
-    function is_vector_ro_csr_addr;
-        input [11:0] addr;
-        begin
-            is_vector_ro_csr_addr = (addr == `CSR_VL) ||
-                                    (addr == `CSR_VTYPE) ||
-                                    (addr == `CSR_VLENB);
-        end
-    endfunction
-
-    wire        id_is_op_v = (if_ex_instr[6:0] == `OPC_OP_V);
-    wire        id_is_vector_csr = id_is_csr && is_vector_csr_addr(id_csr_addr);
-    wire        id_is_vector_ro_csr = id_is_vector_csr && is_vector_ro_csr_addr(id_csr_addr);
-
     wire [31:0] csr_rdata;
     wire [31:0] dbg_csr_rdata;
     reg  [31:0] id_csr_rdata;
     wire [31:0] mtvec_o, mepc_o;
-    wire [ 1:0] csr_mstatus_vs;
-    wire [ 1:0] csr_mstatus_fs;
-    wire [31:0] csr_vl;
-    wire [31:0] csr_vtype;
     wire        irq_pending_raw;
     wire        irq_pending;
     wire [31:0] wb_irq_cause;       // priority-encoded interrupt mcause from csr (ADR-0019)
@@ -1287,61 +1344,6 @@ endgenerate
     wire        wb_trap_enter, wb_trap_exit;
     wire [31:0] wb_trap_pc_for_mepc;
     wire        wb_instr_retired;
-    reg        ex_wb_valid_r;
-    /* verilator lint_off UNUSEDSIGNAL */  // 留作 debug; trap_pc 走 pc_plus_4 路徑
-    reg [31:0] ex_wb_pc_r;
-    /* verilator lint_on UNUSEDSIGNAL */
-    reg [31:0] ex_wb_alu_result_r;
-    reg [31:0] ex_wb_md_result_r;
-    reg [31:0] ex_wb_pc_plus_4_r;
-    reg [31:0] ex_wb_pc_plus_imm_r;
-    reg [31:0] ex_wb_csr_rdata_r;
-    reg [ 4:0] ex_wb_rd_idx_r;
-    reg        ex_wb_rd_we_r;
-    reg [ 2:0] ex_wb_wb_sel_r;
-    reg        ex_wb_is_load_r;
-    reg        ex_wb_is_amo_r;
-    reg        ex_wb_amo_is_sc_r;
-    /* verilator lint_off UNUSEDSIGNAL */
-    reg        ex_wb_is_store_r;   // store 在 MEM 已 commit 到 d-port，WB 不用
-    /* verilator lint_on UNUSEDSIGNAL */
-    reg        ex_wb_is_misaligned_r;
-    reg        ex_wb_is_misaligned_store_r;
-    reg [ 2:0] ex_wb_ls_funct3_r;
-    reg [ 1:0] ex_wb_addr_lo_r;
-    reg        ex_wb_is_mret_r;
-    reg        ex_wb_is_dret_r;
-    reg        ex_wb_csr_we_r;
-    reg [11:0] ex_wb_csr_addr_r;
-    reg [ 1:0] ex_wb_csr_op_r;
-    reg [31:0] ex_wb_csr_wdata_r;
-    reg        ex_wb_vcfg_we_r;
-    reg [31:0] ex_wb_vcfg_vl_r;
-    reg [31:0] ex_wb_vcfg_vtype_r;
-    reg         ex_wb_vex_we_r;
-    reg         ex_wb_vex_flag_r;
-    reg         ex_wb_vex_mem_r;
-    reg [4:0]   ex_wb_vex_vd_r;
-    reg [127:0] ex_wb_vex_wdata_r;
-    reg        ex_wb_is_branch_taken_r;
-    reg        ex_wb_is_jal_r;
-    reg        ex_wb_is_jalr_r;
-    reg        ex_wb_illegal_r;
-    reg        ex_wb_is_ecall_r;
-    reg        ex_wb_is_ebreak_r;
-    reg [31:0] ex_wb_instr_r;
-    reg        ex_wb_mem_re_r, ex_wb_mem_we_r;       // ADR-0048 mem trace
-    reg [31:0] ex_wb_mem_addr_r, ex_wb_mem_wdata_r;
-    reg [ 3:0] ex_wb_mem_wstrb_r;
-    reg        ex_wb_trigger_hit_r;
-    reg [ 1:0] ex_wb_trigger_idx_r;
-    reg        ex_wb_trigger_exec_r;
-    reg        ex_wb_trigger_load_r;
-    reg        ex_wb_trigger_store_r;
-    reg        ex_wb_pmp_if_fault_r;
-    reg [31:0] ex_wb_pmp_if_mtval_r;
-    reg        ex_wb_pmp_data_fault_r;
-    reg        ex_wb_pmp_data_store_r;
     wire       wb_take_irq;
     wire       wb_trigger_pending;
     wire       wb_take_trigger;
@@ -2177,7 +2179,7 @@ endgenerate
                              !wb_take_sync_trap && !wb_take_data_trap &&
                              !wb_take_trigger && !core_mem_stall;
     assign wb_vxsat_set   = wb_vex_we && ex_wb_vex_sat_r;
-    wire   wb_vex_grp_w   = wb_vex_we && ex_wb_vex_grp_w_r;
+    assign wb_vex_grp_w   = wb_vex_we && ex_wb_vex_grp_w_r;
     assign wb_f_we        = (EN_F != 0) && ex_wb_f_we_r && ex_wb_valid_r &&
                             !wb_take_irq && !wb_take_sync_trap &&
                             !wb_take_data_trap && !wb_take_trigger && !core_mem_stall;

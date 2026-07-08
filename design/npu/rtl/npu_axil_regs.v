@@ -130,6 +130,7 @@ module npu_axil_regs #(
         merge = { strb[3] ? wd[31:24] : old[31:24], strb[2] ? wd[23:16] : old[23:16],
                   strb[1] ? wd[15:8]  : old[15:8],  strb[0] ? wd[7:0]   : old[7:0] };
     end endfunction
+    wire [31:0] cq_ctrl_next_w = merge(cq_ctrl_q, wd_q, wstrb_q);
 
     assign s_axi_awready = !aw_seen && !s_axi_bvalid;
     assign s_axi_wready  = !w_seen  && !s_axi_bvalid;
@@ -202,12 +203,12 @@ module npu_axil_regs #(
                     6'h11: cq_ring_size_q <= merge(cq_ring_size_q, wd_q, wstrb_q); // 0x44 CQ_RING_SIZE
                     6'h13: cq_tail_q <= merge(cq_tail_q, wd_q, wstrb_q);         // 0x4C CQ_TAIL
                     6'h14: begin                                                // 0x50 CQ_CTRL
-                        if (!cq_ctrl_q[0] && merge(cq_ctrl_q, wd_q, wstrb_q)[0]) begin
+                        if (!cq_ctrl_q[0] && cq_ctrl_next_w[0]) begin
                             err_cause_q <= 32'b0;
                             err_pc_q    <= 32'b0;   // evidence pair clears together
                             cq_err_q <= 1'b0;
                         end
-                        cq_ctrl_q <= merge(cq_ctrl_q, wd_q, wstrb_q);
+                        cq_ctrl_q <= cq_ctrl_next_w;
                     end
                     default: ;                            // RO/unmapped (ID/STATUS): ignore
                 endcase

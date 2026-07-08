@@ -22,7 +22,7 @@ set_app_var hdlin_enable_vpp true
 define_design_lib WORK -path "$here/work_npu_top"
 
 # cpu_m1 stripped+RVV sequencer core (no fexu; bp/ras compiled but param-disabled)
-set cpu_m1 {rfu alu bmu idu ifu lsu csr trigger pmp mul div forward hazard bp ras cdec vexu core cpu_m1_top}
+set cpu_m1 {rfu alu bmu idu ifu lsu csr trigger pmp mul div forward hazard bp ras cdec vexu fexu core cpu_m1_top}
 foreach m $cpu_m1 { analyze -format sverilog -define SYNTHESIS "$root_dir/design/cpu_m1/rtl/$m.v" }
 # npu domain logic
 foreach m {npu_axil_regs npu_dma npu_ml_ctrl mat_engine axil_decerr} {
