@@ -1,0 +1,85 @@
+Information: Updating design information... (UID-85)
+Warning: Design 'npu_top_MAT_LANES4_DMA_DATA_W256_ML_V2_EN1' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+ 
+****************************************
+Report : qor
+Design : npu_top_MAT_LANES4_DMA_DATA_W256_ML_V2_EN1
+Version: X-2025.06-SP2
+Date   : Thu Jul  9 02:18:05 2026
+****************************************
+
+
+  Timing Path Group 'clk'
+  -----------------------------------
+  Levels of Logic:             333.00
+  Critical Path Length:          5.93
+  Critical Path Slack:           0.00
+  Critical Path Clk Period:      6.00
+  Total Negative Slack:          0.00
+  No. of Violating Paths:        0.00
+  Worst Hold Violation:         -0.08
+  Total Hold Violation:        -19.01
+  No. of Hold Violations:      762.00
+  -----------------------------------
+
+
+  Cell Count
+  -----------------------------------
+  Hierarchical Cell Count:       3870
+  Hierarchical Port Count:     295106
+  Leaf Cell Count:             739826
+  Buf/Inv Cell Count:          155440
+  Buf Cell Count:                3688
+  Inv Cell Count:              151752
+  CT Buf/Inv Cell Count:            0
+  Combinational Cell Count:    718442
+  Sequential Cell Count:        21384
+  Macro Count:                      9
+  -----------------------------------
+
+
+  Area
+  -----------------------------------
+  Combinational Area:   483960.204031
+  Noncombinational Area: 40422.563694
+  Buf/Inv Area:          42497.658534
+  Total Buffer Area:          2006.80
+  Total Inverter Area:       40490.86
+  Macro/Black Box Area: 296217.445312
+  Net Area:                  0.000000
+  -----------------------------------
+  Cell Area:            820600.213038
+  Design Area:          820600.213038
+
+
+  Design Rules
+  -----------------------------------
+  Total Number of Nets:        792858
+  Nets With Violations:             0
+  Max Trans Violations:             0
+  Max Cap Violations:               0
+  -----------------------------------
+
+
+  Hostname: eda
+
+  Compile CPU Statistics
+  -----------------------------------------
+  Resource Sharing:                  562.03
+  Logic Optimization:               3523.22
+  Mapping Optimization:             8341.17
+  -----------------------------------------
+  Overall Compile Time:            12573.12
+  Overall Compile Wall Clock Time: 12583.26
+
+  --------------------------------------------------------------------
+
+  Design  WNS: 0.00  TNS: 0.00  Number of Violating Paths: 0
+
+
+  Design (Hold)  WNS: 0.08  TNS: 19.01  Number of Violating Paths: 762
+
+  --------------------------------------------------------------------
+
+
+1

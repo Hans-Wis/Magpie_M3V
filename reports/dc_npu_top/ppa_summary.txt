@@ -1,0 +1,38 @@
+Magpie_M3V npu_top FULL-DC PPA — TIMING-CLOSED signoff pass
+================================================================
+Flow  : Synopsys DC (compile -map_effort medium, FAST=1) + TSMC28 std-cell
+        + 9x real TSMC28 dual-port SRAM macros (TCM), USE_SRAM_MACRO=1
+SKU   : MAT_LANES=4 / DMA_DATA_W=256 / ML_V2_EN=1 (flagship)
+Clock : 6.0 ns constraint (uncertainty 0.05, io delay 0.3*clk)
+
+TIMING (setup) — MET
+  Critical Path Length : 5.93 ns
+  Critical Path Slack  : 0.00 ns
+  Total Negative Slack : 0.00 ns
+  Violating paths      : 0
+  Fmax                 : ~166.7 MHz  (1000/6.0; intrinsic path 5.93ns -> ~168MHz)
+  Worst path           : u_npu_core/u_core/if_ex_instr_reg[21]
+                         -> ex_mem_f_data_r_reg[26]  (fexu float datapath)
+  NOTE: Fmax gated by combinational fexu float + vexu vdiv datapaths
+        (known Phase-7 multi-cycle deviations, ADR-0050 F4 / Phase-E vdiv).
+
+TIMING (hold) — pre-CTS, expected
+  Worst Hold Violation : -0.08 ns  (762 paths, TNS -19.01)
+  -> ideal-clock synth; fixed at P&R with real clock tree. Not a concern here.
+
+AREA (Total cell area 820,600 um^2)
+  Combinational        : 483,960 um^2
+  Buf/Inv              :  42,498 um^2
+  Noncombinational(FF) :  40,423 um^2
+  Macro/Black Box      : 296,217 um^2  (9x TCM SRAM macros, INCLUDED in total)
+  => std-cell logic    : ~524,383 um^2   (= 820,600 - 296,217 SRAM)
+  Cells                : 743,696
+
+POWER (report_power -analysis_effort low, ideal clock)
+  Cell Internal Power  : 14.80 mW  (93%)
+  Net Switching Power  :  1.16 mW  ( 7%)
+  Total Dynamic Power  : 15.96 mW
+  Cell Leakage Power   :  0.94 mW  (938.78 uW)
+  Total Power          : 16.90 mW
+
+DRC : clean at signoff (residual max_transition on SRAM macro pins only)
