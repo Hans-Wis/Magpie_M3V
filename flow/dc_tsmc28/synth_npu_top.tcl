@@ -65,7 +65,14 @@ set_input_delay  [expr {$clkp*0.3}] -clock clk [remove_from_collection [all_inpu
 set_output_delay [expr {$clkp*0.3}] -clock clk [all_outputs]
 set_max_area 0
 
-compile_ultra
+# FAST=1 -> `compile` (medium effort) for a quick timing/power pass (compile_ultra's
+# aggressive DesignWare vdiv/float-div datapath restructuring is pathologically slow here).
+set fast [expr {[info exists ::env(FAST)] ? $::env(FAST) : 0}]
+if {$fast} {
+    compile -map_effort medium -area_effort low
+} else {
+    compile_ultra
+}
 
 report_qor                            > "$rpt_dir/dc.qor.rpt"
 report_area -hierarchy                > "$rpt_dir/dc.area.rpt"
