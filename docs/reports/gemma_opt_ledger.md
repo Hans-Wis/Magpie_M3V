@@ -84,3 +84,20 @@ RMSNorm(×4 各 ~23.8-24.1k) · gate/up_proj 各 18,002。**單步之冠 = ewise
   - **結論:GEMM 是「小 ROI + 高風險」,不宜當 E1。** 逐-step 看,**ewise_mul 單步 36,966 = 全層最大單體**,
     ADR-0066 已三方 review=ACCEPT、bit-exact by construction、攻最大熱點 → **ROI/風險雙勝,選為 E1**。
     (GEMM 每-op 韌體瘦身 + activation-stationary 留作後續實驗,待 E1 建立迴圈信心後再碰共享韌體。)
+
+- **2026-07-08 · soc M3a = npu_dma AXI 寬度隨 LANES(DMA 瓶頸 bus-層攻)**:v2 Phase B 後 q_proj 殘餘 ~80%
+  = DMA。`DMA_DATA_W∈{32,64,128,256}` hard-bind 64×MAT_LANES,拓寬權重載入路(寬 AXI 讀 + 寬 SRAM 讀 +
+  WPB bank-parallel TCM 寫),writeback 保持窄。**ml_v2 q_proj B1.1 全 SKU bit-exact 實測**:
+
+  | SKU | DMA_DATA_W | total cyc | mat | **dma** | other |
+  |---|---|---|---|---|---|
+  | LANES=4 | 32(regression) | 2425 | 680 | **1539** | 206 |
+  | LANES=1 | 64 | 2137 | 1064 | **867** | 206 |
+  | LANES=2 | 128 | 1546 | 808 | **531** | 207 |
+  | LANES=4 | 256 | 1243 | 680 | **363** | 200 |
+
+  **dma 1539→363(/4.2)** 單調降(純載入 beats /WPB;殘餘=窄 writeback 16 字 + AR floor→M3b 再推)。
+  **balanced-design 兌現**:LANES1/64b(2137)快過 LANES4/32b(2425)=DMA 是瓶頸,寬 bus 即使少 MAC 仍勝;
+  LANES4/256b(1243)=MAC+bus 齊寬最快。q_proj 軌:韌體 13,350→PA 4,282→B1.1 2,425→**M3a/256b 1,243(10.7×)**。
+  零回歸 default-32 位元同。green-wash:SRAM 真一拍供 WPB 字(dma 單調降即證)。ADR-0068 §2.5/M3;
+  SSOT `design/npu/docs/npu_dma_m3_width_design.md`。**下一步 M3b writeback 寬化 + CQ 對齊泛化。**
