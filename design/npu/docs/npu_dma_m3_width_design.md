@@ -81,4 +81,21 @@ Coral(Kelvin)記憶體埠 **128-bit**。我們做 **64/128/256 可選（隨 LANE
 
 **M3a 驗收**:①`DMA_DATA_W=32` 全既有 gate 零回歸 ②`128/256` 於 gate_67 ml_v2 bit-exact（bytes 不變) ③gate_67 breakdown dma 分項 128→~/4、256→~/8 ④新 `gate_npu_dma_width` 掃 + ERR_ALIGN 負測 ⑤ARSIZE 真變寬斷言。
 
-**下一步:實作 M3a（Codex 外科,照 §8;default-32 零回歸先,寬路 opt-in via LANES/DMA_DATA_W）→ 各寬度 bit-exact + cycle 實測 → commit。M3b=writeback 寬化 + CQ 泛化對齊;M3c=全 SKU + DC PPA。**
+## §9 M3a 實測結果（2026-07-08,Claude 獨立驗證）
+
+Codex 外科實作（照 §8）+ Claude 權威驗證。ml_v2 q_proj GEMM（B1.1 firmware,n_tiles=8）全 SKU 掃描,**全 bit-exact**:
+
+| SKU（hard-bind）| DMA_DATA_W | bit-exact | total cyc | mat | **dma** | other |
+|---|---|---|---|---|---|---|
+| LANES=4（regression）| 32 | ✓ | 2425 | 680 | **1539** | 206 |
+| LANES=1 | 64 | ✓ | 2137 | 1064 | **867** | 206 |
+| LANES=2 | 128 | ✓ | 1546 | 808 | **531** | 207 |
+| LANES=4 | 256 | ✓ | 1243 | 680 | **363** | 200 |
+
+- **dma 單調降 1539→867→531→363**（256 = **/4.2** vs 32-bit baseline)。非乾淨 /8:writeback 保持窄（16 字,M3a scope)+ AR handshake floor;純權重-載入 beats 真 /WPB（isolated gate:rbeats 64→32→16→8）。
+- **零回歸**:`DMA_DATA_W=32` = 2425（= B1.1 baseline,位元同);15-gate batch（45/46/67/52/soc_smoke/soc_irq）綠。gate_51 失敗 = **workspace stale `firmware.elf`(9592B,7/7 Gemma build,gitignored 未追蹤)**,乾淨 commit 該測 skip → **非 M3a 回歸**。
+- **balanced-design 兌現**:LANES=1/64b(2137) 快過 LANES=4/32b(2425)——證 DMA 是瓶頸,寬 bus 即使少 MAC 仍勝;LANES=4/256b(1243)=MAC+bus 齊寬最快。
+- **green-wash 守衛過**:SRAM 內部序列讀則 dma 不降;單調降 = SRAM 真一拍供 WPB 字（isolated gate 亦驗 arsize 3/4/5 + beat 減 + ERR_ALIGN 觸發)。
+- **hard-bind assert 生效**:錯配（DMA_DATA_W≠64×LANES）elaboration $fatal 擋下（驗證中反證正確)。
+
+**下一步:M3b=writeback 寬化（推 dma floor 更低）+ CQ sequencer 泛化對齊;M3c=全 SKU DC PPA（寬 SRAM/DMA 面積增量 vs cycle 收益,補 ADR-0051 系列)。soc 兩-bus 實體分域可併 M3b。**

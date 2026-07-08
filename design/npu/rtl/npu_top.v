@@ -21,6 +21,7 @@ module npu_top #(
     parameter integer ITCM_WORDS = 2048,   // ITCM 8KB
     parameter integer ITCM_AW    = 11,
     parameter integer MAT_LANES  = 4,      // ADR-0067 LANES SKU: 1/2/4 => 64/128/256 MAC
+    parameter integer DMA_DATA_W = 32,      // M3a: 32 regression, or 64*MAT_LANES
     parameter integer ML_V2_EN   = 0       // ADR-0067 v2 Phase A: 0 => firmware path (zero regression)
 ) (
     input  wire        clk,
@@ -36,12 +37,12 @@ module npu_top #(
     // ---- AXI4-full read master (to shared weight memory) ----
     output wire        m_arvalid, input wire m_arready, output wire [31:0] m_araddr,
     output wire [7:0]  m_arlen,   output wire [2:0] m_arsize, output wire [1:0] m_arburst,
-    input  wire        m_rvalid,  output wire m_rready, input wire [31:0] m_rdata, input wire m_rlast, input wire [1:0] m_rresp,
+    input  wire        m_rvalid,  output wire m_rready, input wire [DMA_DATA_W-1:0] m_rdata, input wire m_rlast, input wire [1:0] m_rresp,
 
     // ---- AXI4-full write master (to shared result memory) ----
     output wire        m_awvalid, input wire m_awready, output wire [31:0] m_awaddr,
     output wire [7:0]  m_awlen,   output wire [2:0] m_awsize, output wire [1:0] m_awburst,
-    output wire        m_wvalid,  input wire m_wready, output wire [31:0] m_wdata, output wire [3:0] m_wstrb, output wire m_wlast,
+    output wire        m_wvalid,  input wire m_wready, output wire [DMA_DATA_W-1:0] m_wdata, output wire [DMA_DATA_W/8-1:0] m_wstrb, output wire m_wlast,
     input  wire        m_bvalid,  output wire m_bready, input wire [1:0] m_bresp,
 
     // ---- to host / future core ----
@@ -76,6 +77,14 @@ module npu_top #(
     output wire [31:0] rvfi_f_wdata
 );
     localparam [31:0] CORE_RESET_PC = 32'h0000_0000;
+    initial begin
+        if (MAT_LANES != 1 && MAT_LANES != 2 && MAT_LANES != 4)
+            $fatal(1, "npu_top: MAT_LANES must be one of 1/2/4");
+        if (DMA_DATA_W != 32 && DMA_DATA_W != 64 && DMA_DATA_W != 128 && DMA_DATA_W != 256)
+            $fatal(1, "npu_top: DMA_DATA_W must be one of 32/64/128/256");
+        if (DMA_DATA_W != 32 && DMA_DATA_W != (64 * MAT_LANES))
+            $fatal(1, "npu_top: DMA_DATA_W must be 32 for regression or 64*MAT_LANES");
+    end
 
     // ================= internal 1->N AXI4-Lite decode (ADR-0044) =================
     // route: 0=CSR (0x3000_xxxx), 1=DTCM (0x3001_xxxx), 3=ITCM (0x3002_xxxx),
@@ -348,7 +357,8 @@ module npu_top #(
     // ================= DMA (AXI4-full master) <-> TCM =================
     wire dma_we, dma_re;
     wire [TCM_AW-1:0] dma_waddr, dma_raddr;
-    wire [31:0] dma_wdata, dma_rdata;
+    wire [DMA_DATA_W-1:0] dma_wdata;
+    wire [31:0] dma_rdata;
     wire [TCM_AW-1:0] dma_buf_addr, dma_buf_raddr;
     wire dma_busy_engine, dma_done_engine;
     wire dma_start_write = wb_go & ~dma_go;     // preserve read GO if both pulses collide
@@ -431,7 +441,7 @@ module npu_top #(
             dma_mode_write_l <= dma_start_write;
     end
 
-    npu_dma #(.BUF_AW(TCM_AW)) dma (
+    npu_dma #(.BUF_AW(TCM_AW), .DMA_DATA_W(DMA_DATA_W)) dma (
         .clk(clk), .resetn(domain_rstn),
         .go(dma_start), .abort_i(npu_abort), .write_mode(dma_start_write),
         .src_addr(dma_desc_addr), .dst_word(dma_desc_word), .len_beats(dma_desc_len),
@@ -449,7 +459,7 @@ module npu_top #(
     );
 
     // ================= TCM =================
-    npu_tcm #(.WORDS(TCM_WORDS), .AW(TCM_AW)) tcm (
+    npu_tcm #(.WORDS(TCM_WORDS), .AW(TCM_AW), .DMA_DATA_W(DMA_DATA_W)) tcm (
         .clk(clk), .resetn(resetn),
         .s_axi_awvalid(t_awvalid),.s_axi_awready(t_awready),.s_axi_awaddr(s_awaddr),.s_axi_awprot(s_awprot),
         .s_axi_wvalid(t_wvalid),.s_axi_wready(t_wready),.s_axi_wdata(s_wdata),.s_axi_wstrb(s_wstrb),

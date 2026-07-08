@@ -13,6 +13,7 @@ module soc_m3v_top #(
     parameter integer HOST_IMEM_AW    = 13,
     parameter integer SHARED_WORDS    = 16384,
     parameter integer SHARED_AW       = 14,
+    parameter integer DMA_DATA_W      = 32,
     parameter [1023:0] HOST_INIT_HEX  = "",
     parameter [1023:0] SHARED_INIT_HEX = ""
 ) (
@@ -25,6 +26,11 @@ module soc_m3v_top #(
     output wire [ 2:0] host_dbg_state,
     output wire npu_irq
 );
+    initial begin
+        if (DMA_DATA_W != 32 && DMA_DATA_W != 64 && DMA_DATA_W != 128 && DMA_DATA_W != 256)
+            $fatal(1, "soc_m3v_top: DMA_DATA_W must be one of 32/64/128/256");
+    end
+
     wire        hi_arvalid, hi_arready, hi_rvalid, hi_rready;
     wire [31:0] hi_araddr, hi_rdata;
     wire [ 2:0] hi_arprot;
@@ -216,18 +222,20 @@ module soc_m3v_top #(
     );
 
     wire        h_arvalid, h_arready, h_rvalid, h_rready, h_rlast;
-    wire [31:0] h_araddr, h_rdata;
+    wire [31:0] h_araddr;
+    wire [DMA_DATA_W-1:0] h_rdata;
     wire [ 7:0] h_arlen;
     wire [ 2:0] h_arsize;
     wire [ 1:0] h_arburst, h_rresp;
     wire        h_awvalid, h_awready, h_wvalid, h_wready, h_wlast, h_bvalid, h_bready;
-    wire [31:0] h_awaddr, h_wdata;
+    wire [31:0] h_awaddr;
+    wire [DMA_DATA_W-1:0] h_wdata;
     wire [ 7:0] h_awlen;
     wire [ 2:0] h_awsize;
     wire [ 1:0] h_awburst, h_bresp;
-    wire [ 3:0] h_wstrb;
+    wire [DMA_DATA_W/8-1:0] h_wstrb;
 
-    axil_to_full u_host_shared_bridge (
+    axil_to_full #(.DMA_DATA_W(DMA_DATA_W)) u_host_shared_bridge (
         .clk(clk), .resetn(resetn),
         .s_awvalid(hm_awvalid), .s_awready(hm_awready), .s_awaddr(hm_awaddr), .s_awprot(hm_awprot),
         .s_wvalid(hm_wvalid), .s_wready(hm_wready), .s_wdata(hm_wdata), .s_wstrb(hm_wstrb),
@@ -244,16 +252,18 @@ module soc_m3v_top #(
     );
 
     wire        n_m_arvalid, n_m_arready, n_m_rvalid, n_m_rready, n_m_rlast;
-    wire [31:0] n_m_araddr, n_m_rdata;
+    wire [31:0] n_m_araddr;
+    wire [DMA_DATA_W-1:0] n_m_rdata;
     wire [ 7:0] n_m_arlen;
     wire [ 2:0] n_m_arsize;
     wire [ 1:0] n_m_arburst, n_m_rresp;
     wire        n_m_awvalid, n_m_awready, n_m_wvalid, n_m_wready, n_m_wlast, n_m_bvalid, n_m_bready;
-    wire [31:0] n_m_awaddr, n_m_wdata;
+    wire [31:0] n_m_awaddr;
+    wire [DMA_DATA_W-1:0] n_m_wdata;
     wire [ 7:0] n_m_awlen;
     wire [ 2:0] n_m_awsize;
     wire [ 1:0] n_m_awburst, n_m_bresp;
-    wire [ 3:0] n_m_wstrb;
+    wire [DMA_DATA_W/8-1:0] n_m_wstrb;
     wire        npu_start;
     wire [31:0] npu_config;
 
@@ -263,6 +273,7 @@ module soc_m3v_top #(
         .ITCM_WORDS(2048),
         .ITCM_AW(11),
         .MAT_LANES(4),
+        .DMA_DATA_W(DMA_DATA_W),
         .ML_V2_EN(0)
     ) u_npu (
         .clk(clk),
@@ -293,18 +304,20 @@ module soc_m3v_top #(
     );
 
     wire        s_arvalid, s_arready, s_rvalid, s_rready, s_rlast;
-    wire [31:0] s_araddr, s_rdata;
+    wire [31:0] s_araddr;
+    wire [DMA_DATA_W-1:0] s_rdata;
     wire [ 7:0] s_arlen;
     wire [ 2:0] s_arsize;
     wire [ 1:0] s_arburst, s_rresp;
     wire        s_awvalid, s_awready, s_wvalid, s_wready, s_wlast, s_bvalid, s_bready;
-    wire [31:0] s_awaddr, s_wdata;
+    wire [31:0] s_awaddr;
+    wire [DMA_DATA_W-1:0] s_wdata;
     wire [ 7:0] s_awlen;
     wire [ 2:0] s_awsize;
     wire [ 1:0] s_awburst, s_bresp;
-    wire [ 3:0] s_wstrb;
+    wire [DMA_DATA_W/8-1:0] s_wstrb;
 
-    axi_full_arbiter_2x1 u_shared_arb (
+    axi_full_arbiter_2x1 #(.DMA_DATA_W(DMA_DATA_W)) u_shared_arb (
         .clk(clk), .resetn(resetn),
         .m0_arvalid(h_arvalid), .m0_arready(h_arready), .m0_araddr(h_araddr), .m0_arlen(h_arlen),
         .m0_arsize(h_arsize), .m0_arburst(h_arburst),
@@ -332,6 +345,7 @@ module soc_m3v_top #(
     axi_full_sram #(
         .WORDS(SHARED_WORDS),
         .AW(SHARED_AW),
+        .DMA_DATA_W(DMA_DATA_W),
         .INIT_HEX(SHARED_INIT_HEX)
     ) u_shared_sram (
         .clk(clk), .resetn(resetn),

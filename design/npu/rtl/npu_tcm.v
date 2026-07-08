@@ -17,7 +17,8 @@
 
 module npu_tcm #(
     parameter integer WORDS = 1024,       // sim size; real ITCM 8KB + DTCM 32KB
-    parameter integer AW    = 10          // word-address width (log2 WORDS)
+    parameter integer AW    = 10,         // word-address width (log2 WORDS)
+    parameter integer DMA_DATA_W = 32
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -32,7 +33,7 @@ module npu_tcm #(
     // ---- DMA write port (from npu_dma read-mode ingress) ----
     input  wire        dma_we,
     input  wire [AW-1:0] dma_waddr,
-    input  wire [31:0] dma_wdata,
+    input  wire [DMA_DATA_W-1:0] dma_wdata,
 
     // ---- DMA read port (to npu_dma writeback-mode egress) ----
     input  wire        dma_re,
@@ -59,6 +60,12 @@ module npu_tcm #(
     input  wire [ 3:0]     core_d_wstrb,
     output wire            core_d_wgrant
 );
+    localparam integer WPB = DMA_DATA_W / 32;
+    initial begin
+        if (DMA_DATA_W != 32 && DMA_DATA_W != 64 && DMA_DATA_W != 128 && DMA_DATA_W != 256)
+            $fatal(1, "npu_tcm: DMA_DATA_W must be one of 32/64/128/256");
+    end
+
     localparam [1:0] OKAY = 2'b00, SLVERR = 2'b10;
     reg [31:0] mem [0:WORDS-1];
     assign dma_rdata     = mem[dma_raddr];
@@ -110,8 +117,14 @@ module npu_tcm #(
     end
 
     // ---- single memory-write block: dma > core data > host ----
+    // M3a DMA writes are aligned WPB-word groups. npu_dma enforces alignment
+    // before issuing a load burst.
+    integer dma_i;
     always @(posedge clk) begin
-        if (dma_we)                    mem[dma_waddr]   <= dma_wdata;
+        if (dma_we) begin
+            for (dma_i = 0; dma_i < WPB; dma_i = dma_i + 1)
+                mem[dma_waddr + dma_i[AW-1:0]] <= dma_wdata[dma_i*32 +: 32];
+        end
         else if (eng_we)               mem[eng_waddr]   <= eng_wdata;
         else if (core_d_we)            mem[core_d_addr] <= merge(mem[core_d_addr], core_d_wdata, core_d_wstrb);
         else if (host_we && wa_ok)     mem[wa_q]        <= merge(mem[wa_q], wd_q, wstrb_q);
@@ -135,6 +148,8 @@ module npu_tcm #(
     // aligned engine windows charge one read per bank per strobe. Budget:
     // <= 2 reads per bank per cycle (2R1W banks). `bank_violations` is read
     // hierarchically by gates; e2e workloads must show 0.
+    // TODO(P1): extend this read checker into a full per-bank 2R1W read/write
+    // checker; M3a serializes DMA vs engine/core writes at the controller level.
     integer bank_violations;
     initial bank_violations = 0;
     /* verilator lint_off BLKSEQ */
