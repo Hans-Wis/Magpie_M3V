@@ -65,4 +65,31 @@ M2 soc_m3v_top 已:控制 AXI-lite（host→soc_axil_decode→CSR/TCM/PLIC）+ �
 
 **觸及**（Codex）:npu_dma/npu_tcm/npu_top（M3b-1）· cq_sequencer.c + CQ emitter + tb_npu_cq_mat + gate_46（M3b-2）· soc_m3v_top/soc_axil_decode region-guard（M3b-3）。
 
-**下一步:實作 M3b-1（Codex 外科,照 §6;writeback 寬化 + 寫側 ERR_ALIGN + TCM 讀埠寬 + checker）→ ml_v2 floor 實測 + bit-exact + 零回歸 → commit。再序 M3b-2（CQ prefetch 對齊,gate_46 wide）→ M3b-3（region-guard + 兩-bus 命名)。**
+## §7 M3b-3 輕量收尾（兩-bus 形式化 + region 保護層級,User 裁示 2026-07-08）
+
+M3b-1/M3b-2 已交付實質價值。M3b-3 經評估**實質內容偏薄**(M2 已邏輯分兩-bus、無新 coherency hazard、region guard 與既有守衛重疊),User 裁示**輕量收尾**(命名/文件 + 確認現有 guard,無新 HW)。
+
+### 兩-bus 已實現(M2 + 命名形式化)
+| Bus | 實體 | 職責 | 寬度 |
+|---|---|---|---|
+| **控制 AXI** | host M_AXI_D → `soc_axil_decode` → {NPU CSR/TCM 0x3000 · PLIC 0x0c00 · SRAM bridge 0x8000} | CSR/doorbell/PLIC/TCM 載入 | 32-bit(恆) |
+| **資料 AXI** | `npu_dma`(master)+ host bridge(`axil_to_full`)→ `axi_full_arbiter_2x1` → `axi_full_sram` @0x8000 | 權重/結果 DMA 串流 | DMA_DATA_W(64×LANES) |
+| **Bridge** | `axil_to_full`(host lite→資料 full,窄 beat on 寬 bus) | host 偶發設定寫入跨域 | 窄→寬 |
+
+同-clock 下兩-bus = 邏輯 + 命名分域;獨立 clock domain(async bridge)留未來。
+
+### Region 保護層級(誠實,已測)
+| 層 | 機制 | 證據 |
+|---|---|---|
+| NPU CSR out-of-window | `npu_top` DECERR → SLVERR(no CSR alias) | gate_28 ✅ |
+| TCM out-of-range offset | `npu_tcm` SLVERR(**no wrap**) | gate_28 ✅ |
+| DMA read/write SLVERR | `npu_dma` latch → STATUS.dma_err(非 silent OK) | gate_28/29 ✅ |
+| 韌體 region 邊界 | `cq_sequencer` bound-check(rows*cols > region → cq_halt CQ_ERR_MAT_PARAM);weight 0x700 / scratch 0xF00 | gate_51 footprint + cq consume gates |
+| burst 邊界 | npu_dma 每 burst ≤256 beats + 不跨 4KB | M3a/M3b-1 gate |
+
+**誠實限制(記於此,非隱藏)**:`axi_full_sram`(shared SRAM @0x8000)綁 `rresp/bresp=OKAY` 且 addr 截斷到 AW → **out-of-range 靜默 alias(不 SLVERR)**。故 shared SRAM 內 intra-region(ring vs weight vs result)保護目前**靠韌體 bound-check + 4KB burst bound**,非 HW。寬 burst 增大 buggy descriptor 的 blast radius——**HW region guard(axi_full_sram out-of-range SLVERR + region-boundary CSRs)= M3b-3-full,deferred**(defense-in-depth,與韌體檢查重疊,ROI 中等)。
+
+**M3b-3 輕量收尾 = 上述形式化 + 確認 gate_28/29 現有守衛運作(4 passed 獨立)。M3b 完成(M3b-1 writeback perf + M3b-2 generic-CQ-safe + M3b-3 兩-bus 形式化)。**
+
+---
+**M3b 實作史**:M3b-1 writeback(@4e52b3a,dma 363→251)· M3b-2 narrow two-tier(@a067fd9,generic CQ @256 安全)· M3b-3 輕量收尾(本 §7)。**下一步:M3c(全 SKU DC PPA)/ v2 Phase A.2(K>64 多 chunk)/ RMSNorm→RVV(134k)。**

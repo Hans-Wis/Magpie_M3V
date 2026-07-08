@@ -4,6 +4,18 @@
 // M2 integration: the real cpu_m1 host boots from instruction memory, writes
 // NPU TCM/CSR and PLIC through control AXI-Lite, and shares SRAM with npu_top
 // DMA through a named AXI4-full bridge/arbiter data path.
+// -----------------------------------------------------------------------------
+// M3b-3 two-bus formalization (ADR-0068 §2.5):
+//   CONTROL AXI (32-bit, always): host M_AXI_D -> soc_axil_decode ->
+//       {NPU CSR/TCM 0x3000, PLIC 0x0c00, SRAM host-bridge 0x8000}. DECERR off-map.
+//   DATA AXI (DMA_DATA_W = 64*MAT_LANES): npu_dma master + host bridge (axil_to_full,
+//       narrow-beat-on-wide-bus) -> axi_full_arbiter_2x1 -> axi_full_sram @0x8000.
+//   BRIDGE: axil_to_full crosses control->data for host weight/CQ writes.
+//   Region protection (see npu_dma_m3b_design §7): npu_top DECERR + npu_tcm SLVERR
+//       (no-wrap) + npu_dma dma_err + cq_sequencer firmware bounds + 4KB burst cap
+//       (all tested, gate_28/29). Limitation: axi_full_sram aliases out-of-range
+//       (no SLVERR) -> intra-SRAM region guard is firmware-level; HW SLVERR +
+//       region-boundary CSRs deferred to M3b-3-full.
 // =============================================================================
 `default_nettype none
 

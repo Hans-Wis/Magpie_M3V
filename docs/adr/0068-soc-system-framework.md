@@ -69,6 +69,8 @@ run-to-completion,ADR-0034 已進 socket)。offload 契約 = command-queue ring 
 - **M2**:重構成**兩-AXI + bridge** 結構(host 32 控制 / NPU 資料域 + bridge),仍 32-bit 先驗結構正確。
 - **M3**:**拓寬 NPU AXI 到 128/256 並隨 LANES 縮放** + SRAM 埠加寬 + `npu_dma` 資料路加寬。此步才兌現頻寬(DMA cycle /4~/8),是 Phase B 之後 DMA 瓶頸的下一個大槓桿。屬實在 RTL 工(`npu_dma` datapath + SRAM 埠 + DMA↔TCM 寬度),非參數翻轉。
 
+**進度(2026-07-08,全綠)**:M1 單-fabric 功能 bring-up ✅(@eba4046)· M2 PLIC/IRQ 真中斷路 ✅(@b8f0fbc)· **M3a `DMA_DATA_W=64×LANES` 載入路寬化 ✅**(@62a4e59,ml_v2 q_proj dma 1539→363@256b,bit-exact)· **M3b-1 writeback 寬化 ✅**(@4e52b3a,dma 363→251)· **M3b-2 narrow two-tier(通用 CQ 路寬-SKU 安全)✅**(@a067fd9)· **M3b-3 兩-bus 形式化 ✅**(輕量:命名 + region 保護層級文件,詳 `design/npu/docs/npu_dma_m3b_design.md` §7)。**兩-AXI 目標架構已實現**(control 32 / data 64/128/256 隨 LANES / bridge);q_proj 軌 13,350→**1,129 cyc(11.8×)**。剩 M3c(全 SKU DC PPA)+ HW region guard(M3b-3-full,deferred)。
+
 ## §3 位址圖(實作真值)
 
 | 區 | 位址 | 大小 | 存取 |
