@@ -697,19 +697,45 @@
       <tr><td class="mono">向量浮點</td><td>vfadd/vfmul…（vector FP）</td><td>不在 Zve32x（本為整數向量;純量 F 另計）</td></tr>
     </tbody>
   </table>
+  <h3>未支援指令會被編出來卡住嗎？（客戶關切）</h3>
+  <p>
+    <strong>誠實面對</strong>：若以完整 <code class="inline">-march=…zve32x</code> 編譯而硬體只實作子集，編譯器
+    <strong>確實可能 emit 未支援指令</strong>（尤其 gather / scatter 存取樣式或手寫 intrinsic）——Zve32x 無標準
+    「排除 strided」子 profile，故無法僅靠 <code class="inline">-march</code> 讓編譯器只用子集。<strong>保證不是
+    「編譯器不會 emit」，而是下列三層防護讓它「絕不會卡死、且可攔在部署前」</strong>：
+  </p>
+  <table>
+    <caption>子集 ISA 的三層防護</caption>
+    <thead><tr><th>層</th><th>機制</th><th>效果</th><th>現況</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="mono">1 · Build-time 攔截<br><span style="font-weight:600">（主要保證）</span></td>
+        <td>編譯後對 binary 做 <strong>opcode 白名單掃描</strong>（objdump / disasm ingester），任何子集外指令 build 即 fail</td>
+        <td>客戶<strong>部署前就知道</strong>；絕不會出貨會 trap 的 binary（把 runtime 風險變成 build error）</td>
+        <td>本線已有 <code class="inline">isa_cov</code> opcode ingester，可直接做成 build gate（推薦入交付 flow）</td>
+      </tr>
+      <tr>
+        <td class="mono">2 · 乾淨 trap<br><span style="font-weight:600">（不是 hang）</span></td>
+        <td>NPU sequencer 有 trap handler（crt 設 mtvec）→ 非法指令 mcause=2 → latch <code class="inline">ERR_PC / ERR_CAUSE</code> → IRQ 回 host</td>
+        <td>萬一漏網也是<strong>可觀測的錯誤回報</strong>，不是無窮迴圈卡死；host 收到 ERR_CAUSE 可 abort / 換手</td>
+        <td>✅ 已實作（ADR-0038 trap-to-host）</td>
+      </tr>
+      <tr>
+        <td class="mono">3 · Trap-and-emulate<br><span style="font-weight:600">（可選,100% 相容）</span></td>
+        <td>trap handler 以純量軟體模擬該指令（同 FPU 模擬慣例），resume 續跑</td>
+        <td>程式<strong>正確跑完</strong>（較慢）而非失敗——若客戶要求任意 Zve32x binary 皆可跑</td>
+        <td>可選,未實作（架構上支援）</td>
+      </tr>
+    </tbody>
+  </table>
   <div class="callout claude">
-    <span class="tag">為何編譯器仍可正常使用</span>
-    <ul class="spec-list" style="margin-bottom:0">
-      <li><strong>標準工具鏈不 emit 這些長尾</strong>：clang / gcc RVV auto-vectorization + TFLM int8 推論鏈只用
-        unit-stride 記憶體與上述已支援運算——實測 MobileNet / MLPerf Tiny / Gemma-3 e2e 皆<strong>零 strided/indexed
-        RVV</strong> 即 bit-exact 跑通。</li>
-      <li><strong>非-unit-stride 由卸載路覆蓋</strong>：strided / indexed 的記憶體樣式（如 depthwise、im2col、
-        stride-2 conv）改由 <strong>mat_engine + 2D / strided DMA</strong> 在 offload 層處理（純硬體 / 純軟體 im2col），
-        RVV datapath 不需要它們。</li>
-      <li><strong>誠實 trap,不假綠</strong>：若程式真的 emit 未支援指令,為 illegal-instruction trap（非 silent 錯誤結果）,
-        host 軟體可 fallback / codegen 繞開。故對「Coral Zve32x 計算程式 drop-in」的可取代性成立;缺口為記憶體
-        定址模式,非計算能力。</li>
-    </ul>
+    <span class="tag">實務背書</span>
+    目標 workload（TFLM int8 推論,對標 Coral）<strong>實測不觸及缺口</strong>：clang/gcc auto-vectorization 對標準
+    kernel 只 emit unit-stride + 已支援運算；strided/indexed 樣式（depthwise、im2col、stride-2 conv）由
+    <strong>mat_engine + 2D/strided DMA</strong> 在 offload 層處理，不進 RVV datapath。實測 MobileNet / MLPerf Tiny /
+    Gemma-3 e2e 皆<strong>零 strided/indexed RVV</strong> 即 bit-exact。<br>
+    → 故「Coral Zve32x <strong>計算</strong>程式 drop-in」可取代性成立；缺口為記憶體定址模式（非計算能力），且由三層防護
+    保證「build 攔 + 乾淨 trap + 可選 emulate」，客戶<strong>不會遇到硬體卡死</strong>。
   </div>
 </section>
 
