@@ -107,3 +107,8 @@ RMSNorm(×4 各 ~23.8-24.1k) · gate/up_proj 各 18,002。**單步之冠 = ewise
   (-112cyc)**、total 1,243→**1,129**;per-tile STORE 16 字×8=128 窄 beats→16 寬 beats,如預測。全 bit-exact
   + 零回歸 12 passed。**q_proj 軌:韌體 13,350→PA 4,282→B1.1 2,425→M3a 1,243→M3b-1 1,129(11.8×)**。
   剩 M3b-2(CQ prefetch 對齊)+ M3b-3(region guard)。SSOT `design/npu/docs/npu_dma_m3b_design.md`。
+
+- **2026-07-08 · soc M3b-2 = narrow two-tier DMA(通用 CQ 路寬 SKU 安全,非 perf)**:寬 DMA SKU 下通用
+  cq_sequencer 路(gate_46/gemma)會 ERR_ALIGN-trap(descriptor prefetch ring 幾何無法對齊)。Option C:
+  npu_ml_ctrl 快路維持寬(dma=251 不變)+ CSR/通用路 hard-tie 窄(不 trap,cq_sequencer 零改)。gate_46
+  @256 bit-exact 零 trap。兩層共存一 npu_dma。誠實 two-tier(不宣稱 full 256b everywhere)。
