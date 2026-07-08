@@ -119,3 +119,11 @@ RMSNorm(×4 各 ~23.8-24.1k) · gate/up_proj 各 18,002。**單步之冠 = ewise
   256-MAC=83,868µm² → 寬 DMA 資料路 ~1.4% 引擎面積 → **付 +453µm² 換 dma cycle ~6×(1539→251)= 明確
   PPA win**;balanced-design SKU 成立。caveat:SRAM/TCM macro 埠寬另計。報告 2026-07-08_dma_width_ppa.md。
   **soc M3 全弧完成(M1→M2→M3a→M3b→M3c)= 兩-AXI 架構 + PPA 驗證;q_proj 13,350→1,129(11.8×)。**
+
+- **2026-07-08 · RMSNorm→RVV(最大單筆非線性軟體省,零 RTL)**:向量化 scalar MAT_RMSNORM 每元素 64-bit
+  SRDHM scale loop → in-core Zve32x(sum_sq=vwmul+vredsum 精確;scale=vwmul→vsmul.vx(M)→vssra.vx(S)→
+  vmax/vmin→vncvt→i8,vxrm=rnu csrw)。**rounding 重定義(Gemma-private)+ 獨立 Spike-validated golden**
+  (rvv_bitmodel.py 純 spec;gate_rvv_bitmodel_spike vs Spike → 非湊 RTL)。**cycle RMSNorm ~24k→~13k/op
+  (-11k×4≈-44k/層);全層 349,824→307,458**。**flip 0/256 max delta 0**(RVV rounding 對 real tensor 輸出
+  完全相同=重定義實質 no-op)。gate_gemma3_s1(hidden=64)+ layer 全鏈 bit-exact(我獨立 5 passed);disasm
+  無 __muldi3/__divdi3/__ashrdi3。誠實:hidden=64 驗;H=640 全模型 descriptor 加寬 follow-up。
