@@ -112,3 +112,10 @@ RMSNorm(×4 各 ~23.8-24.1k) · gate/up_proj 各 18,002。**單步之冠 = ewise
   cq_sequencer 路(gate_46/gemma)會 ERR_ALIGN-trap(descriptor prefetch ring 幾何無法對齊)。Option C:
   npu_ml_ctrl 快路維持寬(dma=251 不變)+ CSR/通用路 hard-tie 窄(不 trap,cq_sequencer 零改)。gate_46
   @256 bit-exact 零 trap。兩層共存一 npu_dma。誠實 two-tier(不宣稱 full 256b everywhere)。
+
+- **2026-07-08 · soc M3c = npu_dma 寬度 PPA(DC TSMC28,寬 DMA 相對計算近乎免費)**:真 Synopsys DC 綜合
+  npu_dma(std-cell)掃 DMA_DATA_W 32/64/128/256 @1.2ns:面積 689→809→919→1143µm²(+66%,8×寬只
+  1.66×面積 sub-linear,增長全 combinational 資料路,flops 持平)。npu_dma@256=1143µm² vs mat_engine
+  256-MAC=83,868µm² → 寬 DMA 資料路 ~1.4% 引擎面積 → **付 +453µm² 換 dma cycle ~6×(1539→251)= 明確
+  PPA win**;balanced-design SKU 成立。caveat:SRAM/TCM macro 埠寬另計。報告 2026-07-08_dma_width_ppa.md。
+  **soc M3 全弧完成(M1→M2→M3a→M3b→M3c)= 兩-AXI 架構 + PPA 驗證;q_proj 13,350→1,129(11.8×)。**
