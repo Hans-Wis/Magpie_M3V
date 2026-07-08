@@ -101,3 +101,9 @@ RMSNorm(×4 各 ~23.8-24.1k) · gate/up_proj 各 18,002。**單步之冠 = ewise
   LANES4/256b(1243)=MAC+bus 齊寬最快。q_proj 軌:韌體 13,350→PA 4,282→B1.1 2,425→**M3a/256b 1,243(10.7×)**。
   零回歸 default-32 位元同。green-wash:SRAM 真一拍供 WPB 字(dma 單調降即證)。ADR-0068 §2.5/M3;
   SSOT `design/npu/docs/npu_dma_m3_width_design.md`。**下一步 M3b writeback 寬化 + CQ 對齊泛化。**
+
+- **2026-07-08 · soc M3b-1 = DMA writeback 寬化(dma floor 再降)**:M3a 讀路寬化的鏡像上寫路(npu_dma STORE
+  發寬 AW/W beat + 寫側 ERR_ALIGN + npu_tcm DMA 讀埠 WPB parallel)。ml_v2 q_proj B1.1 @256b:**dma 363→251
+  (-112cyc)**、total 1,243→**1,129**;per-tile STORE 16 字×8=128 窄 beats→16 寬 beats,如預測。全 bit-exact
+  + 零回歸 12 passed。**q_proj 軌:韌體 13,350→PA 4,282→B1.1 2,425→M3a 1,243→M3b-1 1,129(11.8×)**。
+  剩 M3b-2(CQ prefetch 對齊)+ M3b-3(region guard)。SSOT `design/npu/docs/npu_dma_m3b_design.md`。
