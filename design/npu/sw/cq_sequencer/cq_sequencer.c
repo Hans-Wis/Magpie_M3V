@@ -474,41 +474,63 @@ void main(void)
              *   [0]=SA2_Q [1]=OUT_NUM [2]=EPS_Q [3..6]=rsqrt coeffs [7]=INV_SQRT2_Q16,
              *   then H int16 (1+w) Q2.14 weights. W0.RPT = H. */
             uint32_t H = cq_w0_rpt(w0);
-            volatile int8_t *src = (volatile int8_t *)w1;
-            volatile int8_t *dst = (volatile int8_t *)w2;
+            const signed char *psrc = (const signed char *)w1;
+            signed char *pdst = (signed char *)w2;
             volatile int32_t *ph = (volatile int32_t *)w3;
-            volatile int16_t *wq = (volatile int16_t *)(w3 + 32u);
+            const int16_t *wq = (const int16_t *)(w3 + 32u);
             uint32_t i;
-            int64_t sum_sq;
+            int32_t sum_sq;
             uint32_t mean_sq;
             uint64_t arg_q;
-            int32_t coeff[4], y_adj, sh, rsh;
-            int64_t rbias;
+            int32_t coeff[4], y_adj, sh, M, S;
+            uint32_t out_num, k;
+            uint64_t P, Mu;
+            size_t vl;
             if (H == 0u)
                 break;
             if (w1 > (TCM_SCRATCH_B - H) || w2 > (TCM_SCRATCH_B - H) ||
                 (w3 & 31u) != 0u || w3 > (TCM_SCRATCH_B - 32u - 2u * H))
                 cq_halt(CQ_ERR_MAT_PARAM);
             coeff[0] = ph[3]; coeff[1] = ph[4]; coeff[2] = ph[5]; coeff[3] = ph[6];
-            sum_sq = 0;
-            for (i = 0u; i < H; i++) {
-                int32_t v = src[i];
-                sum_sq += (int64_t)v * v;
+            vint32m1_t vsum = __riscv_vmv_v_x_i32m1(0, __riscv_vsetvlmax_e32m1());
+            for (i = 0u; i < H; i += vl) {
+                vl = __riscv_vsetvl_e8mf4(H - i);
+                vint8mf4_t x8 = __riscv_vle8_v_i8mf4(psrc + i, vl);
+                vint16mf2_t sq16 = __riscv_vwmul_vv_i16mf2(x8, x8, vl);
+                vsum = __riscv_vwadd_wv_i32m1(vsum, sq16, vl);
             }
+            vint32m1_t z = __riscv_vmv_v_x_i32m1(0, 1);
+            vsum = __riscv_vredsum_vs_i32m1_i32m1(vsum, z, __riscv_vsetvlmax_e32m1());
+            sum_sq = __riscv_vmv_x_s_i32m1_i32(vsum);
             /* sum_sq <= H*127^2 <= 255*16129 < 2^22, so the row-mean divide is 32-bit
              * (hardware divu) — avoids a 64-bit __divdi3 and is exact (sum_sq >= 0). */
             mean_sq = (uint32_t)sum_sq / H;                     /* floor (sum_sq >= 0) */
             arg_q = (uint64_t)mean_sq * (uint32_t)ph[0] + (uint32_t)ph[2];  /* *SA2_Q + EPS_Q */
             y_adj = rsqrt_q31(arg_q, coeff, (uint32_t)ph[7], &sh);
-            rsh = 47 + sh;                                      /* (61+sh) - 14 */
-            rbias = (int64_t)1 << (rsh - 1);
-            for (i = 0u; i < H; i++) {
-                int64_t t = (int64_t)src[i] * (int64_t)y_adj;
-                int64_t acc = (t * (int64_t)wq[i]) >> 14;       /* *(1+w) Q2.14, arith >> */
-                int64_t vv = (acc * (int64_t)(uint32_t)ph[1] + rbias) >> rsh;  /* *OUT_NUM */
-                if (vv < -128) vv = -128;
-                if (vv > 127)  vv = 127;
-                dst[i] = (int8_t)vv;
+            out_num = (uint32_t)ph[1];
+            P = (uint64_t)(uint32_t)y_adj * (uint64_t)out_num;
+            for (k = 0u; k < 64u; k++) {
+                Mu = (k == 0u) ? P : ((P + (1ull << (k - 1u))) >> k);
+                S = 30 + sh - (int32_t)k;
+                if (Mu <= 0x7FFFFFFFull && S >= 0 && S <= 31)
+                    break;
+            }
+            if (k == 64u)
+                cq_halt(CQ_ERR_MAT_PARAM);
+            M = (int32_t)Mu;
+            __asm__ volatile ("csrw vxrm, zero" ::: "memory");   /* rnu for vsmul/vssra */
+            for (i = 0u; i < H; i += vl) {
+                vl = __riscv_vsetvl_e8mf4(H - i);
+                vint16mf2_t x16 = __riscv_vwcvt_x_x_v_i16mf2(
+                    __riscv_vle8_v_i8mf4(psrc + i, vl), vl);
+                vint16mf2_t w16 = __riscv_vle16_v_i16mf2(wq + i, vl);
+                vint32m1_t q = __riscv_vwmul_vv_i32m1(x16, w16, vl);
+                q = __riscv_vsmul_vx_i32m1(q, M, vl);
+                q = __riscv_vssra_vx_i32m1(q, (uint32_t)S, vl);
+                q = __riscv_vmax_vx_i32m1(q, -128, vl);
+                q = __riscv_vmin_vx_i32m1(q, 127, vl);
+                __riscv_vse8_v_i8mf4(pdst + i,
+                    __riscv_vncvt_x_x_w_i8mf4(__riscv_vncvt_x_x_w_i16mf2(q, vl), vl), vl);
             }
             break;
         }

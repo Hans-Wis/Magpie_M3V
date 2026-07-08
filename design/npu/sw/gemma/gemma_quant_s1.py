@@ -10,7 +10,8 @@ Fixed-point contract (Grok S1 review, 2026-07-06_gemma_s1_rmsnorm_rsqrt_grok.md)
 - rsqrt = degree-3 polynomial on the normalized mantissa (NO scalar-F, NO float). arg is
   UQ*.16; output UQ0.31 with an exponent correction (1/sqrt(2) for odd exponents).
 - arg_q = mean_sq*SA2_Q + EPS_Q folds s_a^2 and eps (eps kept: EPS_Q=round(eps*2^16)=66).
-- (1+w) is int16 Q2.14; final requant OUT_NUM/2^16 = s_a/s_x carries the leftover s_a.
+- (1+w) is int16 Q2.14; final requant is RVV-native:
+  prod=src*w_q16; q=vsmul(prod,M,rnu); q=vssra(q,S,rnu); sat8(q).
 - residual: acc = r*R_NUM + a_normed*X_NUM; sat8((acc+2^(SHIFT-1))>>SHIFT).
 INT ONLY: no np.sqrt / **-0.5 / float in the quant path (green-wash guard).
 """
@@ -23,7 +24,9 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE.parent / "golden"))
 import gemma_ref as ref  # noqa: E402
+import rvv_bitmodel as rvv  # noqa: E402
 
 # rsqrt cubic on the mantissa m=1+f, f in [0,1) (UQ0.16). Coeffs Q0.31; Horner in the
 # f-integer domain. Fit once, frozen here (SSOT); the .h/.rodata for firmware share these.
@@ -69,6 +72,18 @@ def q_pertensor(x):
     return q, s
 
 
+def rmsnorm_rvv_ms(y_adj: int, out_num: int, sh: int) -> tuple[int, int, int, int]:
+    """Normalize P=y_adj*OUT_NUM into RVV vsmul multiplier M and vssra shift S."""
+    P = int(y_adj) * int(out_num)
+    assert P > 0
+    for k in range(0, 64):
+        M = (P + (1 << (k - 1))) >> k if k > 0 else P
+        S = 30 + int(sh) - k
+        if M <= rvv.INT32_MAX and 0 <= S <= 31:
+            return int(M), int(S), int(k), int(P)
+    raise AssertionError(f"RMSNorm RVV M/S normalization failed: P={P} sh={sh}")
+
+
 def rmsnorm_int8(a_q, s_a, w, eps, s_x):
     """a_q [seq][H] int8 -> a_normed int8 @ s_x. Pure int fixed-point per Grok's contract."""
     seq, H = a_q.shape
@@ -82,15 +97,14 @@ def rmsnorm_int8(a_q, s_a, w, eps, s_x):
         mean_sq = sum_sq // H
         arg_q = mean_sq * SA2_Q + EPS_Q
         y_adj, sh = rsqrt_q31(arg_q)
-        # out_i = a_q_i * (y_adj/2^(31+sh)) * (w_q16/2^14) * (OUT_NUM/2^16)
-        #       = a_q_i*y_adj * w_q16 * OUT_NUM / 2^(61+sh); staged to stay in int64.
-        fsh = 61 + sh                                       # final shift (positive over the range)
+        M, S, k, P = rmsnorm_rvv_ms(y_adj, OUT_NUM, sh)
         for i in range(H):
-            t = int(a_q[r, i]) * int(y_adj)                # int64, signed
-            acc = (t * int(w_q16[i])) >> 14                # a_q*rsqrt*(1+w), still Q(31+sh)
-            v = (acc * OUT_NUM + (1 << (fsh - 14 - 1))) >> (fsh - 14)
-            out[r, i] = max(-128, min(127, int(v)))
-        dbg.append(dict(sum_sq=sum_sq, mean_sq=mean_sq, arg_q=arg_q, y_adj=y_adj, sh=sh))
+            prod = int(a_q[r, i]) * int(w_q16[i])          # exact src*(1+w) Q2.14
+            q = rvv.vsmul(prod, M, 0)
+            q = rvv.vssra(q, S, 0)
+            out[r, i] = rvv.sat8(q)
+        dbg.append(dict(sum_sq=sum_sq, mean_sq=mean_sq, arg_q=arg_q, y_adj=y_adj, sh=sh,
+                        M=M, S=S, k=k, P=P))
     return out, dict(SA2_Q=SA2_Q, OUT_NUM=OUT_NUM, w_q16=w_q16.tolist(), rows=dbg)
 
 

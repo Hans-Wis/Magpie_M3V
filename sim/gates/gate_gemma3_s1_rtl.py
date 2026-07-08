@@ -63,6 +63,14 @@ def test_s1_ssot_and_nonlinear_in_rtl():
         text = disasm.read_text()
         for banned in (r"\bfsqrt", r"\bfdiv", r"\bfmul\.", r"\bfadd\.", r"\bfcvt"):
             assert not re.search(banned, text), f"scalar-F {banned!r} leaked into rsqrt firmware"
+        for required in (r"\bvwmul\.vv\b", r"\bvsmul\.vx\b", r"\bvssra\.vx\b",
+                         r"\bvle8\.v\b", r"\bvle16\.v\b", r"\bvse8\.v\b",
+                         r"\bvncvt\.x\.x\.w\b"):
+            assert re.search(required, text), f"RMSNorm RVV disasm missing {required!r}"
+        m = re.search(r"vsmul\.vx(?P<loop>[\s\S]{0,700}?vse8\.v)", text)
+        assert m, "RMSNorm scale loop not found in disasm"
+        for banned in ("__ashrdi3", "__muldi3", "__divdi3"):
+            assert banned not in m.group("loop"), f"{banned} leaked into RMSNorm scale loop"
 
 
 @pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
