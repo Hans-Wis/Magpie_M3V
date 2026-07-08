@@ -27,7 +27,9 @@ echo "[overnight-dc] start $(date 2>/dev/null); DC=$DC" | tee "$LOG"
 rm -rf "$HERE/work_npu_top"
 
 # --- npu_top flagship full compile ---
-CLK_PERIOD="${CLK_PERIOD:-2.0}" MAT_LANES="${MAT_LANES:-4}" DMA_DATA_W="${DMA_DATA_W:-256}" ML_V2_EN="${ML_V2_EN:-1}" \
+# real TCM SRAM macro (Option B): build .db then synth with USE_SRAM_MACRO=1 (default in tcl)
+"$DC" -f "$HERE/lib2db.tcl" >> "$LOG" 2>&1
+CLK_PERIOD="${CLK_PERIOD:-2.0}" MAT_LANES="${MAT_LANES:-4}" DMA_DATA_W="${DMA_DATA_W:-256}" ML_V2_EN="${ML_V2_EN:-1}" USE_SRAM_MACRO="${USE_SRAM_MACRO:-1}" \
   "$DC" -f "$HERE/synth_npu_top.tcl" >> "$LOG" 2>&1
 RC=$?
 echo "[overnight-dc] npu_top dc_shell rc=$RC" | tee -a "$LOG"

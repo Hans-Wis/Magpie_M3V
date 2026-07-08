@@ -18,7 +18,8 @@
 module npu_tcm #(
     parameter integer WORDS = 1024,       // sim size; real ITCM 8KB + DTCM 32KB
     parameter integer AW    = 10,         // word-address width (log2 WORDS)
-    parameter integer DMA_DATA_W = 32
+    parameter integer DMA_DATA_W = 32,
+    parameter integer LANES = 4
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -61,10 +62,37 @@ module npu_tcm #(
     input  wire [ 3:0]     core_d_wstrb,
     output wire            core_d_wgrant
 );
+`ifdef USE_SRAM_MACRO
+    npu_tcm_sram_dp #(
+        .WORDS(WORDS),
+        .AW(AW),
+        .DMA_DATA_W(DMA_DATA_W),
+        .LANES(LANES)
+    ) u_sram_dp (
+        .clk(clk),
+        .resetn(resetn),
+        .s_axi_awvalid(s_axi_awvalid), .s_axi_awready(s_axi_awready), .s_axi_awaddr(s_axi_awaddr), .s_axi_awprot(s_axi_awprot),
+        .s_axi_wvalid(s_axi_wvalid), .s_axi_wready(s_axi_wready), .s_axi_wdata(s_axi_wdata), .s_axi_wstrb(s_axi_wstrb),
+        .s_axi_bvalid(s_axi_bvalid), .s_axi_bready(s_axi_bready), .s_axi_bresp(s_axi_bresp),
+        .s_axi_arvalid(s_axi_arvalid), .s_axi_arready(s_axi_arready), .s_axi_araddr(s_axi_araddr), .s_axi_arprot(s_axi_arprot),
+        .s_axi_rvalid(s_axi_rvalid), .s_axi_rready(s_axi_rready), .s_axi_rdata(s_axi_rdata), .s_axi_rresp(s_axi_rresp),
+        .dma_narrow(dma_narrow),
+        .dma_we(dma_we), .dma_waddr(dma_waddr), .dma_wdata(dma_wdata),
+        .dma_re(dma_re), .dma_raddr(dma_raddr), .dma_rdata(dma_rdata),
+        .eng_a_re(eng_a_re), .eng_b_re(eng_b_re),
+        .eng_a_addr(eng_a_addr), .eng_a_rdata(eng_a_rdata),
+        .eng_b_addr(eng_b_addr), .eng_b_rdata(eng_b_rdata),
+        .eng_we(eng_we), .eng_waddr(eng_waddr), .eng_wdata(eng_wdata),
+        .core_d_re(core_d_re), .core_d_addr(core_d_addr), .core_d_rdata(core_d_rdata),
+        .core_d_we(core_d_we), .core_d_wdata(core_d_wdata), .core_d_wstrb(core_d_wstrb), .core_d_wgrant(core_d_wgrant)
+    );
+`else
     localparam integer WPB = DMA_DATA_W / 32;
     initial begin
         if (DMA_DATA_W != 32 && DMA_DATA_W != 64 && DMA_DATA_W != 128 && DMA_DATA_W != 256)
             $fatal(1, "npu_tcm: DMA_DATA_W must be one of 32/64/128/256");
+        if (LANES < 0)
+            $fatal(1, "npu_tcm: LANES must be non-negative");
     end
 
     localparam [1:0] OKAY = 2'b00, SLVERR = 2'b10;
@@ -196,6 +224,7 @@ module npu_tcm #(
         end
     end
     /* verilator lint_on BLKSEQ */
+`endif
 endmodule
 
 // =============================================================================
@@ -218,6 +247,21 @@ module npu_itcm #(
     input  wire [AW-1:0]   core_i_addr,
     output wire [31:0]     core_i_rdata
 );
+`ifdef USE_SRAM_MACRO
+    npu_itcm_sram_dp #(
+        .WORDS(WORDS),
+        .AW(AW)
+    ) u_sram_dp (
+        .clk(clk),
+        .resetn(resetn),
+        .s_axi_awvalid(s_axi_awvalid), .s_axi_awready(s_axi_awready), .s_axi_awaddr(s_axi_awaddr), .s_axi_awprot(s_axi_awprot),
+        .s_axi_wvalid(s_axi_wvalid), .s_axi_wready(s_axi_wready), .s_axi_wdata(s_axi_wdata), .s_axi_wstrb(s_axi_wstrb),
+        .s_axi_bvalid(s_axi_bvalid), .s_axi_bready(s_axi_bready), .s_axi_bresp(s_axi_bresp),
+        .s_axi_arvalid(s_axi_arvalid), .s_axi_arready(s_axi_arready), .s_axi_araddr(s_axi_araddr), .s_axi_arprot(s_axi_arprot),
+        .s_axi_rvalid(s_axi_rvalid), .s_axi_rready(s_axi_rready), .s_axi_rdata(s_axi_rdata), .s_axi_rresp(s_axi_rresp),
+        .core_i_en(core_i_en), .core_i_addr(core_i_addr), .core_i_rdata(core_i_rdata)
+    );
+`else
     localparam [1:0] OKAY = 2'b00, SLVERR = 2'b10;
     reg [31:0] mem [0:WORDS-1];
     assign core_i_rdata = mem[core_i_addr];
@@ -260,5 +304,6 @@ module npu_itcm #(
         end
     end
     assign s_axi_arready = !s_axi_rvalid;
+`endif
 endmodule
 `default_nettype wire

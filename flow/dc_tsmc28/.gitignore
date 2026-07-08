@@ -19,3 +19,5 @@ sram_macros/*.cfg
 sram_macros/gen_*.log
 sram_macros/t.txt
 sram_macros/config*.txt
+sram_macros/db/
+sram_db/
