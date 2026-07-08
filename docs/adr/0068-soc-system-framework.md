@@ -48,6 +48,27 @@ run-to-completion,ADR-0034 已進 socket)。offload 契約 = command-queue ring 
 
 **關鍵:M3V 同時是 slave**(被 M1A 配置 CSR/TCM)**+ master**(自己 DMA 讀寫 SRAM)——雙角色。
 
+## §2.5 目標匯流排架構:兩-AXI + bridge(頻寬隨 SKU 縮放)· User 裁示 2026-07-08
+
+單一 fabric 只是**功能 bring-up 的最小結構**。目標產品架構**切成兩條 AXI**,按頻寬職責分域:
+
+| 匯流排 | 寬度 | 掛載 | 職責 |
+|---|---|---|---|
+| **Host / 控制 AXI** | **32(或 64)** | M1A → NPU CSR/TCM slave(0x3000-3002)· PLIC · UART/周邊 | 控制流:CSR 配置、doorbell、TCM 載入、輪詢/IRQ。低頻寬,窄即可,省面積功耗 |
+| **NPU / 資料 AXI** | **64 → 128 → 256(隨 LANES SKU)** | NPU `npu_dma` master ↔ 大 SRAM(0x8000) | 高頻寬權重串流。攻我們實測的 **DMA 瓶頸**(Phase B 後殘餘 ~80% 是 DMA) |
+| **Bridge** | 窄→寬(+ 可選 CDC) | host 控制 AXI → 資料 AXI 之 SRAM | host 偶發設定寫入(weights/CQ 初始化)跨域到資料側 |
+
+**設計理由**:
+1. **頻寬匹配 = bus 層攻對瓶頸**。`npu_dma` 現為 32-bit;拓寬到 128/256-bit → 權重串流吞吐 ×4/×8 → **DMA cycle 直接 /4、/8**。與 Phase B 的 activation-stationary(減冗餘 bytes)互補:B 減 bytes 數,寬 bus 減每-byte 時間。
+2. **寬度隨 LANES SKU 縮放 = balanced design**。256-MAC 吃權重比 64-MAC 快,NPU AXI 寬度跟 LANES 走(64→64/128b · 128→128b · 256→256b)。**SKU 參數同時定 MAC 數 + bus/記憶體埠寬**——一致產品故事,避免寬 MAC 餓死於窄 bus 或窄 MAC 配過寬 bus。
+3. **Host 保持窄 = 便宜**。host 只做控制,不為它付寬匯流排面積。
+4. **標準 SoC 樣式**(高速資料匯流排 + 低速控制匯流排 + bridge),關注點分離:NPU 有專屬寬路直達 SRAM,不與 host 在關鍵路徑搶。
+
+**里程碑路線(誠實界:效能只在真拓寬 `npu_dma` 時兌現)**:
+- **M1(進行中)**:單-fabric 32-bit 功能 bring-up。證「真 cpu_m1 host 驅動 NPU bit-exact」。任何 bus 架構下都要先過,不浪費。
+- **M2**:重構成**兩-AXI + bridge** 結構(host 32 控制 / NPU 資料域 + bridge),仍 32-bit 先驗結構正確。
+- **M3**:**拓寬 NPU AXI 到 128/256 並隨 LANES 縮放** + SRAM 埠加寬 + `npu_dma` 資料路加寬。此步才兌現頻寬(DMA cycle /4~/8),是 Phase B 之後 DMA 瓶頸的下一個大槓桿。屬實在 RTL 工(`npu_dma` datapath + SRAM 埠 + DMA↔TCM 寬度),非參數翻轉。
+
 ## §3 位址圖(實作真值)
 
 | 區 | 位址 | 大小 | 存取 |

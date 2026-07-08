@@ -1,0 +1,3 @@
+host_producer.elf
+host_producer.hex
+npu_fw_load.inc
