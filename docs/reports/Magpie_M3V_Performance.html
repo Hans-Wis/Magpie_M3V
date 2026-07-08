@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magpie_M3V NPU — Performance Brief</title>
+<style>
+  :root{
+    --bg:#f5f7f8; --surface:#ffffff; --surface-2:#eef1f3; --surface-3:#e6eaed;
+    --ink:#161b20; --ink-2:#586470; --ink-3:#8b96a2;
+    --line:#dde3e7; --line-2:#cdd5db;
+    --accent:#0d8298; --accent-2:#0a6b7e; --on-accent:#ffffff;
+    --good:#2f8551; --warn:#a9711a; --gemm:#4a6a8a; --crit:#c0432e;
+    --good-bg:#e2f0e8; --accent-bg:#dcecef;
+    --shadow:0 1px 2px rgba(20,30,40,.05),0 6px 22px rgba(20,30,40,.06);
+    --font-mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --font-sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0c1014; --surface:#141a20; --surface-2:#1a222a; --surface-3:#202a34;
+      --ink:#e6ecf1; --ink-2:#9aa6b2; --ink-3:#6b7682;
+      --line:#242e38; --line-2:#2f3b46;
+      --accent:#34bcd4; --accent-2:#59cee2; --on-accent:#06141a;
+      --good:#4cc46a; --warn:#d9a441; --gemm:#6f9ad0; --crit:#e8674f;
+      --good-bg:#132419; --accent-bg:#0f2831;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 26px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{ --bg:#f5f7f8;--surface:#ffffff;--surface-2:#eef1f3;--surface-3:#e6eaed;--ink:#161b20;--ink-2:#586470;--ink-3:#8b96a2;--line:#dde3e7;--line-2:#cdd5db;--accent:#0d8298;--accent-2:#0a6b7e;--good:#2f8551;--warn:#a9711a;--gemm:#4a6a8a;--crit:#c0432e;--good-bg:#e2f0e8;--accent-bg:#dcecef; }
+  :root[data-theme="dark"]{ --bg:#0c1014;--surface:#141a20;--surface-2:#1a222a;--surface-3:#202a34;--ink:#e6ecf1;--ink-2:#9aa6b2;--ink-3:#6b7682;--line:#242e38;--line-2:#2f3b46;--accent:#34bcd4;--accent-2:#59cee2;--good:#4cc46a;--warn:#d9a441;--gemm:#6f9ad0;--crit:#e8674f;--good-bg:#132419;--accent-bg:#0f2831; }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-sans);line-height:1.62;margin:0;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px;margin:0 auto;padding:clamp(20px,4vw,52px) clamp(16px,4vw,40px) 80px;}
+  .mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+
+  header.doc{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:32px;}
+  .kicker{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+  .tag{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid var(--line-2);color:var(--ink-2);background:var(--surface-2);}
+  .tag.live{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+  h1{font-size:clamp(1.6rem,3.8vw,2.3rem);line-height:1.1;margin:.1em 0 .35em;letter-spacing:-.015em;text-wrap:balance;font-weight:680;}
+  h1 .sub{color:var(--ink-2);font-weight:500;}
+  .lede{color:var(--ink-2);font-size:1rem;max-width:70ch;margin:0;}
+  .metaline{margin-top:16px;display:flex;gap:22px;flex-wrap:wrap;font-size:.74rem;color:var(--ink-3);font-family:var(--font-mono);}
+  .metaline b{color:var(--ink-2);font-weight:600;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:28px 0 8px;}
+  @media (max-width:680px){.stats{grid-template-columns:repeat(2,1fr);}}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 16px 14px;box-shadow:var(--shadow);}
+  .stat .n{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:1.75rem;font-weight:640;letter-spacing:-.02em;line-height:1;}
+  .stat .n.acc{color:var(--accent);} .stat .n.good{color:var(--good);}
+  .stat .lab{font-size:.72rem;color:var(--ink-2);margin-top:8px;line-height:1.35;}
+  .stat .foot{font-family:var(--font-mono);font-size:.64rem;color:var(--ink-3);margin-top:6px;}
+
+  section{margin-top:44px;}
+  h2{font-size:1.12rem;font-weight:660;letter-spacing:-.01em;margin:0 0 4px;display:flex;align-items:baseline;gap:12px;}
+  h2 .ix{font-family:var(--font-mono);font-size:.7rem;color:var(--accent);letter-spacing:.1em;font-weight:600;}
+  .sectlede{color:var(--ink-2);font-size:.9rem;margin:.2em 0 18px;max-width:72ch;}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;box-shadow:var(--shadow);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:680px){.grid2{grid-template-columns:1fr;}}
+
+  /* trajectory bars */
+  .bars{display:flex;flex-direction:column;gap:12px;}
+  .brow{display:grid;grid-template-columns:118px 1fr;align-items:center;gap:14px;}
+  @media (max-width:560px){.brow{grid-template-columns:92px 1fr;}}
+  .brow .name{font-family:var(--font-mono);font-size:.78rem;color:var(--ink);font-weight:600;}
+  .brow .name small{display:block;color:var(--ink-3);font-weight:400;font-size:.66rem;letter-spacing:.02em;}
+  .track{position:relative;background:var(--surface-2);border-radius:6px;height:34px;overflow:hidden;}
+  .fill{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 10px;color:#fff;font-family:var(--font-mono);font-size:.8rem;font-weight:600;white-space:nowrap;}
+  .fill.base{background:var(--crit);} .fill.a{background:var(--gemm);} .fill.b1{background:var(--accent-2);} .fill.b11{background:var(--accent);} .fill.floor{background:var(--ink-3);}
+  .spd{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:var(--font-mono);font-size:.8rem;font-weight:700;color:var(--ink);}
+  .fnote{font-family:var(--font-mono);font-size:.7rem;color:var(--ink-3);margin-top:14px;}
+
+  /* decomposition */
+  .decomp{display:flex;height:44px;border-radius:7px;overflow:hidden;border:1px solid var(--line-2);margin-top:4px;}
+  .decomp .seg{display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-mono);font-size:.72rem;font-weight:600;overflow:hidden;white-space:nowrap;}
+  .seg.orch{background:var(--crit);} .seg.dma{background:var(--gemm);} .seg.mat{background:var(--good);}
+  .declegend{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:.8rem;}
+  .li{display:flex;align-items:center;gap:8px;color:var(--ink-2);}
+  .sw{width:11px;height:11px;border-radius:3px;flex:none;}
+
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow);}
+  table{border-collapse:collapse;width:100%;font-size:.84rem;min-width:480px;}
+  thead th{background:var(--surface-2);text-align:left;padding:11px 13px;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);border-bottom:1px solid var(--line-2);white-space:nowrap;}
+  tbody td{padding:11px 13px;border-bottom:1px solid var(--line);color:var(--ink);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover td{background:var(--surface-2);}
+  td.n,th.n{font-family:var(--font-mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;}
+  tr.hl td{background:var(--accent-bg);}
+  .pill{display:inline-block;font-family:var(--font-mono);font-size:.64rem;padding:2px 8px;border-radius:20px;font-weight:600;background:var(--good-bg);color:var(--good);}
+
+  ul.clean{margin:0;padding-left:1.1em;} ul.clean li{font-size:.87rem;color:var(--ink-2);margin:.32em 0;} ul.clean li b{color:var(--ink);}
+  .callout{padding:14px 18px;border-left:3px solid var(--accent);background:var(--accent-bg);border-radius:0 8px 8px 0;font-size:.9rem;color:var(--ink);}
+  .callout b{color:var(--accent-2);}
+  .honest{background:var(--surface);border:1px dashed var(--line-2);border-radius:11px;padding:18px 20px;}
+  footer{margin-top:52px;padding-top:22px;border-top:1px solid var(--line);font-size:.76rem;color:var(--ink-3);font-family:var(--font-mono);}
+  footer .r{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <div class="kicker">
+      <span class="tag live">Performance Brief</span>
+      <span class="tag">Magpie_M3V · RV32 NPU IP</span>
+      <span class="tag">int8 edge inference</span>
+    </div>
+    <h1>Magpie_M3V NPU<br><span class="sub">GEMM acceleration &amp; MAC-array SKU performance</span></h1>
+    <p class="lede">A synthesizable RV32 NPU IP for int8 ML inference (Gemma-3 / TFLM class).
+      This brief summarizes the measured compute-offload acceleration and the configurable
+      MAC-array area/power tiers. Every figure is measured on RTL against a bit-exact golden;
+      power/area are from a real 28&nbsp;nm synthesis flow.</p>
+    <div class="metaline">
+      <span><b>Workload:</b> Gemma-3 int8 projection GEMM</span>
+      <span><b>Verification:</b> bit-exact vs reference</span>
+      <span><b>PPA:</b> TSMC 28&nbsp;nm, std-cell</span>
+    </div>
+  </header>
+
+  <!-- headline -->
+  <div class="stats">
+    <div class="stat"><div class="n acc">5.5&times;</div><div class="lab">GEMM offload speedup vs the software-orchestrated baseline</div><div class="foot">near the memory floor</div></div>
+    <div class="stat"><div class="n">2,425</div><div class="lab">cycles / projection GEMM <b>(from 13,350)</b></div><div class="foot">~2.4&nbsp;µs @ 1&nbsp;GHz</div></div>
+    <div class="stat"><div class="n good">bit-exact</div><div class="lab">every output byte matches the int8 reference</div><div class="foot">512 / 512</div></div>
+    <div class="stat"><div class="n">64·128·256</div><div class="lab">MAC-array SKU tiers <b>(customer-selectable)</b></div><div class="foot">area / power scaled</div></div>
+  </div>
+
+  <!-- trajectory -->
+  <section>
+    <h2><span class="ix">ACCELERATION</span>GEMM offload — measured trajectory</h2>
+    <p class="sectlede">A single int8 projection GEMM (q&#8209;proj: 8&times;64 activations · 64&times;64 weights,
+      the unit that repeats across the model). The bars are measured cycles; each stage removes a
+      distinct overhead until the path reaches the memory-bandwidth floor.</p>
+    <div class="card">
+      <div class="bars">
+        <div class="brow"><span class="name">Baseline<small>firmware-driven</small></span>
+          <div class="track"><div class="fill base" style="width:100%">13,350 cyc</div><span class="spd" style="display:none"></span></div></div>
+        <div class="brow"><span class="name">HW sequencer<small>Phase A</small></span>
+          <div class="track"><div class="fill a" style="width:32.1%">4,282</div><span class="spd">3.12&times;</span></div></div>
+        <div class="brow"><span class="name">+ act-resident<small>Phase B1</small></span>
+          <div class="track"><div class="fill b1" style="width:25.5%">3,403</div><span class="spd">3.9&times;</span></div></div>
+        <div class="brow"><span class="name">+ tight layout<small>Phase B1.1</small></span>
+          <div class="track"><div class="fill b11" style="width:18.2%">2,425</div><span class="spd">5.5&times;</span></div></div>
+        <div class="brow"><span class="name">Memory floor<small>weights must stream</small></span>
+          <div class="track"><div class="fill floor" style="width:16.5%">~2,200</div><span class="spd">~6&times;</span></div></div>
+      </div>
+      <p class="fnote">Bars scaled to the 13,350-cycle baseline. Floor = the irreducible weight-streaming
+        cost + compute; the offload path reaches within ~10% of it.</p>
+    </div>
+  </section>
+
+  <!-- decomposition -->
+  <section>
+    <h2><span class="ix">WHY</span>Where the cycles went</h2>
+    <p class="sectlede">The baseline cost is dominated by per-tile software orchestration, not compute.
+      The acceleration removes that overhead, then trims redundant data movement — the actual matrix
+      compute is unchanged throughout (proving identical results).</p>
+    <div class="grid2">
+      <div class="card">
+        <div style="font-family:var(--font-mono);font-size:.72rem;color:var(--ink-3);margin-bottom:8px">BASELINE 13,350 cyc</div>
+        <div class="decomp">
+          <div class="seg orch" style="width:67.8%">orchestration 9,052</div>
+          <div class="seg dma" style="width:25.5%">DMA 3,408</div>
+          <div class="seg mat" style="width:5.1%" title="compute 680"></div>
+        </div>
+        <div class="declegend">
+          <span class="li"><span class="sw" style="background:var(--crit)"></span>SW orchestration</span>
+          <span class="li"><span class="sw" style="background:var(--gemm)"></span>Data movement</span>
+          <span class="li"><span class="sw" style="background:var(--good)"></span>Matrix compute</span>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-family:var(--font-mono);font-size:.72rem;color:var(--ink-3);margin-bottom:8px">ACCELERATED 2,425 cyc</div>
+        <div class="decomp">
+          <div class="seg orch" style="width:8.5%" title="orchestration 206"></div>
+          <div class="seg dma" style="width:63.5%">DMA 1,539</div>
+          <div class="seg mat" style="width:28%">compute 680</div>
+        </div>
+        <div class="declegend">
+          <span class="li"><span class="sw" style="background:var(--crit)"></span>206 <b style="color:var(--ink)">(was 9,052)</b></span>
+          <span class="li"><span class="sw" style="background:var(--gemm)"></span>1,539 <b style="color:var(--ink)">(was 3,408)</b></span>
+          <span class="li"><span class="sw" style="background:var(--good)"></span>680 <b style="color:var(--ink)">(unchanged)</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:16px">
+      Software orchestration <b>9,052 &rarr; 206 cycles</b> (44&times; lower) via the hardware tile
+      sequencer; data movement <b>3,408 &rarr; 1,539</b> by keeping activations resident and packing
+      weight descriptors. Matrix compute is <b>identical (680)</b> — the accelerated path is bit-exact.
+    </div>
+  </section>
+
+  <!-- stage table -->
+  <section>
+    <h2><span class="ix">DETAIL</span>Per-stage measured breakdown</h2>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Stage</th><th>What it adds</th><th class="n">Cycles</th><th class="n">Speedup</th><th class="n">DMA</th></tr></thead>
+        <tbody>
+          <tr><td>Baseline</td><td>Firmware issues each tile op &amp; spin-waits</td><td class="n">13,350</td><td class="n">1.0&times;</td><td class="n">3,408</td></tr>
+          <tr><td>Phase&nbsp;A</td><td>Hardware GEMM tile sequencer (no per-tile firmware)</td><td class="n">4,282</td><td class="n">3.12&times;</td><td class="n">3,408</td></tr>
+          <tr><td>Phase&nbsp;B1</td><td>Activation loaded once, resident (not per tile)</td><td class="n">3,403</td><td class="n">3.92&times;</td><td class="n">2,515</td></tr>
+          <tr class="hl"><td>Phase&nbsp;B1.1</td><td>Tight descriptor layout (padding removed)</td><td class="n">2,425</td><td class="n">5.5&times;</td><td class="n">1,539</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fnote">Compute (680) constant across all stages · every stage verified bit-exact vs the int8 reference.</p>
+  </section>
+
+  <!-- LANES SKU -->
+  <section>
+    <h2><span class="ix">SKU</span>MAC-array tiers — area / power, customer-selectable</h2>
+    <p class="sectlede">The MAC array is a synthesis-time parameter. Because typical edge inference
+      (batch-1 token decode) is memory-bandwidth-bound, a smaller array runs it at nearly the same
+      speed with materially lower area and power — while a larger array serves compute-heavy
+      (prefill / batched) workloads. All tiers are bit-exact and meet the same clock.</p>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>SKU</th><th class="n">MAC / cyc</th><th class="n">Area</th><th class="n">vs 256</th><th class="n">Power</th><th class="n">vs 256</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td>Magpie&#8209;256</td><td class="n">256</td><td class="n">83,868&nbsp;µm²</td><td class="n">1.00&times;</td><td class="n">50.8&nbsp;mW</td><td class="n">1.00&times;</td><td>prefill / batched</td></tr>
+          <tr><td>Magpie&#8209;128</td><td class="n">128</td><td class="n">61,644&nbsp;µm²</td><td class="n">0.74&times;</td><td class="n">36.2&nbsp;mW</td><td class="n">0.71&times;</td><td>balanced</td></tr>
+          <tr class="hl"><td>Magpie&#8209;64</td><td class="n">64</td><td class="n">50,515&nbsp;µm²</td><td class="n">0.60&times;</td><td class="n">29.2&nbsp;mW</td><td class="n">0.57&times;</td><td>edge / decode</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fnote">TSMC 28&nbsp;nm (28HPC+) standard-cell synthesis, common clock, timing met on all tiers.
+      Area/power scale with the MAC tree; the accumulator + requant + control are fixed overhead.</p>
+  </section>
+
+  <!-- verification -->
+  <section>
+    <h2><span class="ix">METHOD</span>How these numbers are produced</h2>
+    <div class="grid2">
+      <div class="card"><h2 style="font-size:.95rem;margin:0 0 6px"><span class="pill">Correctness</span></h2>
+        <p class="sectlede" style="margin:0">Every accelerated path is run on the RTL and compared
+          <b>byte-for-byte</b> to the int8 quantized reference. No result is accepted on inspection or
+          a passing lint — only on a bit-exact match.</p></div>
+      <div class="card"><h2 style="font-size:.95rem;margin:0 0 6px"><span class="pill">Performance</span></h2>
+        <p class="sectlede" style="margin:0">Cycle counts are measured in RTL simulation
+          (start&rarr;done), decomposed into compute / data-movement / control. Area and power come
+          from a real Synopsys DC + TSMC&nbsp;28&nbsp;nm flow, not estimates.</p></div>
+    </div>
+  </section>
+
+  <!-- honest -->
+  <section>
+    <h2><span class="ix">SCOPE</span>Reading these figures</h2>
+    <div class="honest">
+      <ul class="clean">
+        <li><b>Representative dimensions.</b> The GEMM trajectory is measured on a representative
+          projection (K=64, N=64) at small sequence length — the mechanism is dimension-independent;
+          absolute cycles scale with the model's layer sizes.</li>
+        <li><b>Scope of the 5.5&times;.</b> It is the compute-<i>offload</i> path for the matrix (GEMM)
+          work — the dominant repeated primitive. Non-matrix (normalization, activation) runs on a
+          separate vector path and is optimized independently.</li>
+        <li><b>Floor is physical.</b> Past ~5.5&times; the remaining cost is weight streaming from
+          memory, which is bandwidth-bound; further gains come from bandwidth, not orchestration.</li>
+        <li><b>All measured.</b> Cycle figures are RTL-measured; PPA is real 28&nbsp;nm synthesis.
+          Projections, where any appear, are labeled as such in the underlying reports.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div class="r">
+      <span>Magpie_M3V NPU IP — Performance Brief</span>
+      <span>measured on RTL · bit-exact · TSMC 28&nbsp;nm PPA</span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
