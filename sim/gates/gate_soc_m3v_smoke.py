@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_RTL  # noqa: E402
+from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_DIR, CPU_M1_RTL  # noqa: E402
 from gate_46_cq_matrix_e2e import _golden_tile  # noqa: E402
 
 NPU_RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in (
@@ -16,8 +16,12 @@ NPU_RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in (
     "mat_engine", "npu_ml_ctrl", "axi_full_sram", "axil_to_full",
     "axi_full_arbiter_2x1",
 )]
+HOST_RTL = [
+    CPU_M1_DIR / "axil_bridge.v",
+    ROOT / "design/cpu_m1/soc/plic.v",
+]
 SOC_RTL = [ROOT / f"design/soc/{m}.v" for m in (
-    "axil_imem", "soc_axil_decode", "soc_m3v_top",
+    "axil_imem", "plic_axil_shim", "soc_axil_decode", "soc_m3v_top",
 )]
 TB = [ROOT / "design/npu/dv/tb/tb_soc_m3v.v"]
 FWDIR = ROOT / "design/npu/sw/host_producer"
@@ -33,7 +37,7 @@ def _build_host():
 
 def _run_verilator(tmp_path: Path) -> str:
     mdir = tmp_path / "obj"
-    files = CPU_M1_RTL + NPU_RTL + SOC_RTL + TB
+    files = CPU_M1_RTL + HOST_RTL + NPU_RTL + SOC_RTL + TB
     b = subprocess.run([
         "verilator", "--binary", "--timing", "-Wno-fatal",
         "--top-module", "tb_soc_m3v", "-Mdir", str(mdir),

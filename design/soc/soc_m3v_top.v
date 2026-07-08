@@ -1,9 +1,9 @@
 // =============================================================================
 // soc_m3v_top.v — ADR-0068 minimal-first M1 host + M3V NPU SoC
 // -----------------------------------------------------------------------------
-// Polling-only integration: no PLIC/IRQ path in M1. The real cpu_m1_axil_top
-// boots from host instruction memory, writes NPU TCM/CSR through AXI-Lite, and
-// shares SRAM with npu_top DMA through a non-preemptive AXI4-full arbiter.
+// M2 integration: the real cpu_m1 host boots from instruction memory, writes
+// NPU TCM/CSR and PLIC through control AXI-Lite, and shares SRAM with npu_top
+// DMA through a named AXI4-full bridge/arbiter data path.
 // =============================================================================
 `default_nettype none
 
@@ -40,46 +40,74 @@ module soc_m3v_top #(
     wire [ 3:0] hd_wstrb;
     wire [ 1:0] hd_bresp;
 
-    cpu_m1_axil_top #(
+    wire        host_ibus_req, host_ibus_ready;
+    wire [31:0] host_ibus_addr, host_ibus_rdata;
+    wire        host_dbus_req, host_dbus_we, host_dbus_ready;
+    wire [31:0] host_dbus_addr, host_dbus_wdata, host_dbus_rdata;
+    wire [ 3:0] host_dbus_wstrb;
+    wire        dbg_dummy_halted;
+    wire        dbg_dummy_mode;
+    wire [31:0] dbg_dummy_acc_rdata;
+    wire        dbg_dummy_acc_err;
+    wire        plic_meip;
+
+    cpu_m1_top #(
         .RESET_PC(HOST_RESET_PC),
         .RV32A(0),
         .PMP_ENTRIES(0)
-    ) u_host (
-        .clk(clk),
-        .resetn(resetn),
-        .trap(host_trap),
+    ) u_host_core (
+        .clk(clk), .resetn(resetn), .trap(host_trap),
+        .ibus_req(host_ibus_req), .ibus_addr(host_ibus_addr),
+        .ibus_ready(host_ibus_ready), .ibus_rdata(host_ibus_rdata),
+        .dbus_req(host_dbus_req), .dbus_addr(host_dbus_addr), .dbus_we(host_dbus_we),
+        .dbus_wstrb(host_dbus_wstrb), .dbus_wdata(host_dbus_wdata),
+        .dbus_ready(host_dbus_ready), .dbus_rdata(host_dbus_rdata),
         .irq_external_pulse(1'b0),
-        .m_axi_i_arvalid(hi_arvalid),
-        .m_axi_i_arready(hi_arready),
-        .m_axi_i_araddr(hi_araddr),
-        .m_axi_i_arprot(hi_arprot),
-        .m_axi_i_rvalid(hi_rvalid),
-        .m_axi_i_rready(hi_rready),
-        .m_axi_i_rdata(hi_rdata),
-        .m_axi_i_rresp(hi_rresp),
-        .m_axi_d_arvalid(hd_arvalid),
-        .m_axi_d_arready(hd_arready),
-        .m_axi_d_araddr(hd_araddr),
-        .m_axi_d_arprot(hd_arprot),
-        .m_axi_d_rvalid(hd_rvalid),
-        .m_axi_d_rready(hd_rready),
-        .m_axi_d_rdata(hd_rdata),
-        .m_axi_d_rresp(hd_rresp),
-        .m_axi_d_awvalid(hd_awvalid),
-        .m_axi_d_awready(hd_awready),
-        .m_axi_d_awaddr(hd_awaddr),
-        .m_axi_d_awprot(hd_awprot),
-        .m_axi_d_wvalid(hd_wvalid),
-        .m_axi_d_wready(hd_wready),
-        .m_axi_d_wdata(hd_wdata),
-        .m_axi_d_wstrb(hd_wstrb),
-        .m_axi_d_bvalid(hd_bvalid),
-        .m_axi_d_bready(hd_bready),
+        .mtip(1'b0), .msip(1'b0),
+        .meip(plic_meip),
+        .dm_halt_req(1'b0),
+        .dm_resume_req(1'b0),
+        .dm_hart_halted(dbg_dummy_halted),
+        .debug_mode(dbg_dummy_mode),
+        .dm_acc_en(1'b0),
+        .dm_acc_write(1'b0),
+        .dm_acc_regno(16'h0),
+        .dm_acc_wdata(32'h0),
+        .dm_acc_rdata(dbg_dummy_acc_rdata),
+        .dm_acc_err(dbg_dummy_acc_err),
+        .dbg_pc(host_dbg_pc), .dbg_instr(host_dbg_instr), .dbg_state(host_dbg_state),
+        /* verilator lint_off PINCONNECTEMPTY */
+        .rvfi_valid(), .rvfi_pc(), .rvfi_trap(), .rvfi_trap_cause(), .rvfi_intr(),
+        .rvfi_rd_addr(), .rvfi_rd_wdata(),
+        .rvvi_v_valid(), .rvvi_v_vd(), .rvvi_v_wdata(), .rvvi_vl(), .rvvi_vtype(),
+        .rvfi_insn(), .rvfi_trap_mtval(), .rvfi_mstatus(),
+        .rvfi_mem_re(), .rvfi_mem_we(), .rvfi_mem_addr(), .rvfi_mem_wdata(), .rvfi_mem_wstrb(),
+        .rvfi_f_valid(), .rvfi_f_rd(), .rvfi_f_wdata()
+        /* verilator lint_on PINCONNECTEMPTY */
+    );
+
+    axil_bridge u_host_axil (
+        .clk(clk), .resetn(resetn),
+        .ibus_req(host_ibus_req), .ibus_addr(host_ibus_addr),
+        .ibus_ready(host_ibus_ready), .ibus_rdata(host_ibus_rdata),
+        .dbus_req(host_dbus_req), .dbus_addr(host_dbus_addr), .dbus_we(host_dbus_we),
+        .dbus_wstrb(host_dbus_wstrb), .dbus_wdata(host_dbus_wdata),
+        .dbus_ready(host_dbus_ready), .dbus_rdata(host_dbus_rdata),
+        .m_axi_i_arvalid(hi_arvalid), .m_axi_i_arready(hi_arready),
+        .m_axi_i_araddr(hi_araddr), .m_axi_i_arprot(hi_arprot),
+        .m_axi_i_rvalid(hi_rvalid), .m_axi_i_rready(hi_rready),
+        .m_axi_i_rdata(hi_rdata), .m_axi_i_rresp(hi_rresp),
+        .m_axi_d_arvalid(hd_arvalid), .m_axi_d_arready(hd_arready),
+        .m_axi_d_araddr(hd_araddr), .m_axi_d_arprot(hd_arprot),
+        .m_axi_d_rvalid(hd_rvalid), .m_axi_d_rready(hd_rready),
+        .m_axi_d_rdata(hd_rdata), .m_axi_d_rresp(hd_rresp),
+        .m_axi_d_awvalid(hd_awvalid), .m_axi_d_awready(hd_awready),
+        .m_axi_d_awaddr(hd_awaddr), .m_axi_d_awprot(hd_awprot),
+        .m_axi_d_wvalid(hd_wvalid), .m_axi_d_wready(hd_wready),
+        .m_axi_d_wdata(hd_wdata), .m_axi_d_wstrb(hd_wstrb),
+        .m_axi_d_bvalid(hd_bvalid), .m_axi_d_bready(hd_bready),
         .m_axi_d_bresp(hd_bresp),
-        .dbg_axi_err(host_axi_err),
-        .dbg_pc(host_dbg_pc),
-        .dbg_instr(host_dbg_instr),
-        .dbg_state(host_dbg_state)
+        .dbg_axi_err(host_axi_err)
     );
 
     axil_imem #(
@@ -119,6 +147,22 @@ module soc_m3v_top #(
     wire [ 2:0] hm_arprot;
     wire [ 1:0] hm_rresp;
 
+    wire        p_s_awvalid, p_s_awready, p_s_wvalid, p_s_wready, p_s_bvalid, p_s_bready;
+    wire [31:0] p_s_awaddr, p_s_wdata;
+    wire [ 2:0] p_s_awprot;
+    wire [ 3:0] p_s_wstrb;
+    wire [ 1:0] p_s_bresp;
+    wire        p_s_arvalid, p_s_arready, p_s_rvalid, p_s_rready;
+    wire [31:0] p_s_araddr, p_s_rdata;
+    wire [ 2:0] p_s_arprot;
+    wire [ 1:0] p_s_rresp;
+
+    wire        plic_en;
+    wire [31:0] plic_addr;
+    wire [31:0] plic_wdata;
+    wire [ 3:0] plic_wstrb;
+    wire [31:0] plic_rdata;
+
     soc_axil_decode u_d_decode (
         .clk(clk),
         .resetn(resetn),
@@ -132,11 +176,43 @@ module soc_m3v_top #(
         .n_bvalid(n_s_bvalid), .n_bready(n_s_bready), .n_bresp(n_s_bresp),
         .n_arvalid(n_s_arvalid), .n_arready(n_s_arready), .n_araddr(n_s_araddr), .n_arprot(n_s_arprot),
         .n_rvalid(n_s_rvalid), .n_rready(n_s_rready), .n_rdata(n_s_rdata), .n_rresp(n_s_rresp),
+        .p_awvalid(p_s_awvalid), .p_awready(p_s_awready), .p_awaddr(p_s_awaddr), .p_awprot(p_s_awprot),
+        .p_wvalid(p_s_wvalid), .p_wready(p_s_wready), .p_wdata(p_s_wdata), .p_wstrb(p_s_wstrb),
+        .p_bvalid(p_s_bvalid), .p_bready(p_s_bready), .p_bresp(p_s_bresp),
+        .p_arvalid(p_s_arvalid), .p_arready(p_s_arready), .p_araddr(p_s_araddr), .p_arprot(p_s_arprot),
+        .p_rvalid(p_s_rvalid), .p_rready(p_s_rready), .p_rdata(p_s_rdata), .p_rresp(p_s_rresp),
         .m_awvalid(hm_awvalid), .m_awready(hm_awready), .m_awaddr(hm_awaddr), .m_awprot(hm_awprot),
         .m_wvalid(hm_wvalid), .m_wready(hm_wready), .m_wdata(hm_wdata), .m_wstrb(hm_wstrb),
         .m_bvalid(hm_bvalid), .m_bready(hm_bready), .m_bresp(hm_bresp),
         .m_arvalid(hm_arvalid), .m_arready(hm_arready), .m_araddr(hm_araddr), .m_arprot(hm_arprot),
         .m_rvalid(hm_rvalid), .m_rready(hm_rready), .m_rdata(hm_rdata), .m_rresp(hm_rresp)
+    );
+
+    plic_axil_shim u_plic_axil (
+        .clk(clk),
+        .resetn(resetn),
+        .s_awvalid(p_s_awvalid), .s_awready(p_s_awready), .s_awaddr(p_s_awaddr), .s_awprot(p_s_awprot),
+        .s_wvalid(p_s_wvalid), .s_wready(p_s_wready), .s_wdata(p_s_wdata), .s_wstrb(p_s_wstrb),
+        .s_bvalid(p_s_bvalid), .s_bready(p_s_bready), .s_bresp(p_s_bresp),
+        .s_arvalid(p_s_arvalid), .s_arready(p_s_arready), .s_araddr(p_s_araddr), .s_arprot(p_s_arprot),
+        .s_rvalid(p_s_rvalid), .s_rready(p_s_rready), .s_rdata(p_s_rdata), .s_rresp(p_s_rresp),
+        .plic_en(plic_en),
+        .plic_addr(plic_addr),
+        .plic_wdata(plic_wdata),
+        .plic_wstrb(plic_wstrb),
+        .plic_rdata(plic_rdata)
+    );
+
+    plic u_plic (
+        .clk(clk),
+        .rst(~resetn),
+        .sources({6'b0, npu_irq}),
+        .en(plic_en),
+        .addr(plic_addr),
+        .wdata(plic_wdata),
+        .wstrb(plic_wstrb),
+        .rdata(plic_rdata),
+        .meip_o(plic_meip)
     );
 
     wire        h_arvalid, h_arready, h_rvalid, h_rready, h_rlast;
@@ -268,6 +344,7 @@ module soc_m3v_top #(
         .bvalid(s_bvalid), .bready(s_bready), .bresp(s_bresp)
     );
 
-    wire unused_npu_status = |{npu_start, npu_config};
+    wire unused_npu_status = |{npu_start, npu_config, dbg_dummy_halted, dbg_dummy_mode,
+                               dbg_dummy_acc_rdata, dbg_dummy_acc_err};
 endmodule
 `default_nettype wire

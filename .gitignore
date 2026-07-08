@@ -68,3 +68,4 @@ flow/v2_pipeline/phase_20_npu_core_lockstep/ann_cov/
 mat_result.dump
 sim/work/
 soc_m3v_result.dump
+soc_m3v_irq_result.dump
