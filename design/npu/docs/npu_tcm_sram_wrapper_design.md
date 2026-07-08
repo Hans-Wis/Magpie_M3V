@@ -72,4 +72,19 @@ TSMC28 memory compiler(mc2-eu,`~/EDA/13`)產出 **dual-port SRAM**(.v sim + .lib
 5. **DTCM 剩餘埠**(host s_axi、core_d、dma-rw)在 registered-read synth 路怎麼對齊(暫存 strobe)——只為 synth-timing,不需 cycle-accurate。
 6. **.lib→.db**:read_lib/write_lib 產 SRAM .db 進 link_library 的實作點(synth_npu_top.tcl)。
 
-**下一步:review(Grok:banking/仲裁/A-vs-B/registered-read 決策;Codex RTL 實況:npu_tcm 埠映射、SRAM 埠接法、ifdef 雙路、mat FSM 相位無衝突、eng 對齊、synth tcl .db link)→ 定 §6 → 實作(選定 A/B)→ sim 零回歸 + synth 真 macro PPA → commit + ADR。**
+## §7 Review resolutions(Grok APPROVE-WITH-CHANGES + Codex needs-changes,2026-07-08)
+
+兩份收斂 = **Option B(synth-only macro PPA),needs-changes,P0 明確**。定案(file:line by Codex）:
+
+1. **選 B（macro-PPA,sim 不變),A 記為流片 follow-on**。**誠實界(P0)**:USE_SRAM_MACRO PPA = **真 SRAM macro 面積/timing/power**,但 **netlist 非 cycle-equivalent 到 sim RTL**(真 SRAM 插 1 拍,sim 不 model)。**允許宣稱**:macro 面積/leakage/port timing arc;**禁宣稱**:cycle 數/throughput/tape-out-ready/NPU 最終頻率。文件明記。
+2. **eng 讀同拍(Codex#1 CONFIRM)**:mat_engine 組合建 MAC operand(mat_engine.v:115-128,S_RUN 同沿採 psum)→ A 需 read pipeline(256→128 MAC 除非 double-buffer);B sim 保組合(flat mem)。
+3. **P0 對齊 guard(Grok#2/Codex#2)**:LANES=4 恆 8-字(32B)對齊(mat_engine param_bad 擋 byte[4:0]≠0,mat_engine.v:170-180;a_ptr/b_ptr +32B)。**macro 路加 `LANES==4` elaboration guard**(1/2 時 8/16B 不對齊 → 需 per-bank `(addr+i)>>3`+rotate,不做)。8 bank 同 row `addr>>3`。
+4. **P0 port 爭用(Grok#3 最關鍵/Codex#3)**:ML 序列化 refute B1 eng-vs-dma contention(npu_ml_ctrl.v:227-284 waits),**但全域未證**——**gate_30-34 證 DMA-vs-core TRUE OVERLAP**,core LSU/host/CSR 可在 OP 外/期存取 DTCM;npu_tcm 只 prioritize 寫。**macro 路加 per-bank read/write conflict assertion**(OP 期同 bank 第 3 存取 = 2-port 不夠)。B 的 synth 仲裁用**優先 mux**(eng_a→PortA、eng_b→PortB;其餘 time-mux Port A,dma>eng>core>host),**不回饋 stall 給未改的 master**(stall=A 領域)——assertion 抓真衝突,synth timing 誠實。
+5. **P0 synth flow(Codex#5)**:`.lib→.db`(read_lib/write_lib)+ DTCM/ITCM `.db` 進 link_library + `synth_npu_top.tcl` analyze **真 npu_tcm.v `-define {SYNTHESIS USE_SRAM_MACRO}`**(棄 npu_tcm_bb.v)。
+6. **結構(Grok#6)**:**分離模組**——`npu_tcm.v` 保 flat mem(ifndef,sim 不變)+ `ifdef USE_SRAM_MACRO` 委派給**新 `npu_tcm_sram_dp.v`**(8 DTCM bank + ITCM + 仲裁 + registered-read + guard/assert)。埠完全不變 → npu_top 不動。isolate macro 複雜度。
+7. **ITCM(Grok#5/Codex#4)**:1× 2048×32 dual-port(Port A fetch 讀 / Port B host 寫)夠——**halt-gated load**(ADR-0044:ITCM 於 core reset 期載,start 後 fetch-only)。A 時 +1 fetch latency 記。B 可選是否也 macro ITCM(先做 DTCM,ITCM 可跟)。
+8. **P1**:bank-budget checker 從 read-only 擴 full 2-port R/W(npu_tcm.v:156-162 TODO);macro-path lint/elab target;macro power 需 phase-accurate SA/FSDB。
+
+**Option B 驗收**:①sim 零回歸(default 無 USE_SRAM_MACRO → flat mem → 全 gate bit-exact)②synth `-define USE_SRAM_MACRO` + SRAM .db → npu_top elaborate+compile 含真 TCM macro → **含 TCM 真 PPA**(隔夜)③macro-path Verilator lint clean + LANES==4 guard + conflict assert。
+
+**下一步:實作 Option B(Codex:新 npu_tcm_sram_dp.v 8-bank + ifdef 委派 + synth tcl .db link + LANES==4 guard + conflict assert;sim 路零改)→ sim 零回歸 + synth 真 macro PPA(隔夜)→ commit + ADR（含 A migration plan + B PPA 誠實界）。**
