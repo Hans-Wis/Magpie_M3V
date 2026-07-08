@@ -294,8 +294,9 @@
   </div>
 
   <p class="callout">
-    支援之資料型別：<strong>int8、int16</strong>（int32 累加）；浮點資料型別支援規劃於未來版本。
-    向量與矩陣的自訂運算功能，將隨未來 RISC-V 標準底定而逐步遷移對齊。
+    純量 ISA 為 <strong>RV32IMF</strong>（scalar F 全套已上線，ADR-0050）；向量資料型別 int8 / int16 / int32
+    （int32 累加）。<strong>向量走標準 RVV Zve32x（完整，非自訂指令）</strong>——刻意與開源 clang-RVV + TFLM
+    對齊，讓標準工具鏈可 drop-in；矩陣卸載經 command queue / 硬體 tile sequencer（見 §16），非自訂 ISA。
   </p>
 </section>
 
@@ -303,13 +304,15 @@
 <section id="toplevel">
   <div class="sec-head"><span class="sec-num">03</span><h2>頂層架構圖</h2></div>
   <p class="sec-intro">
-    核心由三個協同運作的處理器子元件構成：<strong style="color:var(--scalar)">純量核心</strong>、
-    <strong style="color:var(--vector)">向量（SIMD）核心</strong>、<strong style="color:var(--matrix)">矩陣核心</strong>，
-    透過共享的 Load/Store Unit 與 tightly-coupled 記憶體存取資料，並以 AXI4 對外連接 SoC。
+    Magpie-M3V 為<strong>兩核 SoC</strong>：<strong>host cpu_m1（M1A 級,全開）</strong>經 AXI4 配置並啟動
+    <strong>NPU domain</strong>;NPU domain 內含單發依序 RV32 sequencer 與三個功能單元——
+    <strong style="color:var(--scalar)">純量核心</strong>、
+    <strong style="color:var(--vector)">向量引擎（RVV/vexu）</strong>、<strong style="color:var(--matrix)">矩陣引擎（64/128/256 MAC 可配置）</strong>，
+    透過共享 LSU 與 TCM 存取資料。下方 host domain（cpu_m1 / PLIC / shared mem / 周邊）與 NPU domain 共用 AXI4 fabric。
   </p>
 
   <div class="diagram-wrap">
-  <svg viewBox="0 0 1000 900" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 1000 1140" width="100%" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto">
         <path d="M0,0 L9,4.5 L0,9 Z" fill="#8B8168"/>
@@ -320,17 +323,17 @@
     </defs>
 
     <!-- outer SoC boundary -->
-    <rect x="16" y="16" width="968" height="860" rx="10" fill="none" stroke="#C2AE7E" stroke-width="1.5" stroke-dasharray="5 5"/>
-    <text x="34" y="42" fill="#8B8168" font-size="13" letter-spacing="1">SOC BOUNDARY</text>
+    <rect x="16" y="16" width="968" height="1108" rx="10" fill="none" stroke="#C2AE7E" stroke-width="1.5" stroke-dasharray="5 5"/>
+    <text x="34" y="42" fill="#8B8168" font-size="13" letter-spacing="1">MAGPIE-M3V SOC — 兩核（host cpu_m1 + NPU domain）</text>
 
-    <!-- Coral-style core container -->
+    <!-- NPU domain container -->
     <rect x="40" y="60" width="920" height="520" rx="10" fill="#FAF6EA" stroke="#C2AE7E" stroke-width="1.5"/>
-    <text x="58" y="88" fill="#2E2A22" font-size="17" font-weight="700">RV32 + RVV CORE</text>
+    <text x="58" y="88" fill="#2E2A22" font-size="17" font-weight="700">NPU DOMAIN — RV32 sequencer + RVV(vexu) + 矩陣引擎</text>
 
     <!-- Fetch/Decode/Dispatch -->
     <rect x="58" y="108" width="884" height="66" rx="6" fill="#ECE2C6" stroke="#C2AE7E"/>
-    <text x="500" y="136" fill="#2E2A22" font-size="16" text-anchor="middle" font-weight="600">Fetch / Decode / Scoreboard / Dispatch</text>
-    <text x="500" y="157" fill="#5B5342" font-size="13" text-anchor="middle">4-way scalar dispatch · 2-way vector dispatch</text>
+    <text x="500" y="136" fill="#2E2A22" font-size="16" text-anchor="middle" font-weight="600">Fetch / Decode / Issue（單發、依序）</text>
+    <text x="500" y="157" fill="#5B5342" font-size="13" text-anchor="middle">single-issue in-order · 向量於 vexu 執行 · 矩陣經 command queue / HW sequencer</text>
 
     <!-- Scalar engine -->
     <rect x="58" y="214" width="281" height="240" rx="8" fill="#E4F1EE" stroke="#1F8A7D" stroke-width="1.6"/>
@@ -373,9 +376,10 @@
     <text x="801" y="319" fill="#2E2A22" font-size="13" text-anchor="middle">4× 8-bit multiplies →</text>
     <text x="801" y="337" fill="#5B5342" font-size="13" text-anchor="middle">32-bit acc</text>
     <rect x="679" y="354" width="246" height="40" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
-    <text x="801" y="379" fill="#2E2A22" font-size="14" text-anchor="middle">256 MACs / cycle</text>
+    <text x="801" y="372" fill="#2E2A22" font-size="13.5" text-anchor="middle">64 / 128 / 256 MAC (LANES SKU)</text>
+    <text x="801" y="388" fill="#5B5342" font-size="11.5" text-anchor="middle">synth-time 可配置 · 見 §7 / §16</text>
     <rect x="679" y="402" width="246" height="34" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
-    <text x="801" y="423" fill="#5B5342" font-size="12.5" text-anchor="middle">quantized int8 MAC engine</text>
+    <text x="801" y="423" fill="#5B5342" font-size="12.5" text-anchor="middle">int8 MAC + gemmlowp requant + HW tile seq</text>
 
     <!-- connections: dispatch -> engines (length 40) -->
     <line x1="198" y1="174" x2="198" y2="212" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
@@ -415,30 +419,68 @@
     <line x1="618" y1="554" x2="618" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
     <line x1="854" y1="554" x2="854" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
 
-    <!-- AXI4 bus bar -->
-    <rect x="40" y="760" width="920" height="74" rx="8" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.8"/>
-    <text x="60" y="790" fill="#2C6B34" font-size="16" font-weight="700">AXI4 BUS INTERFACE</text>
-    <text x="60" y="810" fill="#5B5342" font-size="13">master (config external mem) + slave (host configures/debugs core)</text>
-    <text x="60" y="826" fill="#5B5342" font-size="13">AW / W / B / AR / R channels</text>
+    <!-- AXI4 fabric bar (shared by NPU domain + host domain) -->
+    <rect x="40" y="760" width="920" height="70" rx="8" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.8"/>
+    <text x="60" y="788" fill="#2C6B34" font-size="16" font-weight="700">AXI4 匯流排 fabric（AW / W / B / AR / R）</text>
+    <text x="60" y="810" fill="#5B5342" font-size="13">NPU domain = slave（host 配置 CSR/TCM）+ master（DMA 讀寫 shared mem）· 位址：CSR 0x3000 / TCM 0x3001-2 / SHARED 0x8000</text>
 
-    <!-- connections: memory row -> AXI4 (length 54) -->
+    <!-- connections: NPU memory row -> AXI4 -->
     <line x1="146" y1="706" x2="146" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
     <line x1="382" y1="706" x2="382" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
     <line x1="618" y1="706" x2="618" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
     <line x1="854" y1="706" x2="854" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
 
-    <!-- Host SoC label -->
-    <text x="500" y="860" fill="#5B5342" font-size="13" text-anchor="middle">↕ Host SoC（application processor、GDB debug、external memory）</text>
+    <!-- ===== HOST DOMAIN (below AXI4) ===== -->
+    <text x="34" y="872" fill="#8B8168" font-size="13" letter-spacing="1">HOST DOMAIN — cpu_m1 (M1A) 為 AXI master 配置並啟動 NPU · NPU 經 IRQ / mailbox 回報</text>
+
+    <!-- connections: AXI4 -> host domain -->
+    <line x1="150" y1="830" x2="150" y2="898" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="386" y1="830" x2="386" y2="898" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="612" y1="830" x2="612" y2="898" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="840" y1="830" x2="840" y2="898" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+
+    <!-- host cpu_m1 (M1A) -->
+    <rect x="41" y="900" width="218" height="118" rx="8" fill="#E4F1EE" stroke="#1F8A7D" stroke-width="1.6"/>
+    <text x="150" y="928" fill="#1F8A7D" font-size="15" text-anchor="middle" font-weight="700">cpu_m1 · HOST (M1A)</text>
+    <text x="150" y="952" fill="#5B5342" font-size="12.5" text-anchor="middle">RV32IMC + F + Zba/Zbb/Zbs</text>
+    <text x="150" y="970" fill="#5B5342" font-size="12.5" text-anchor="middle">+ Zicond · 4-stage in-order</text>
+    <text x="150" y="990" fill="#5B5342" font-size="12" text-anchor="middle">BP(2-way) + RAS · AXI master</text>
+    <text x="150" y="1008" fill="#8B8168" font-size="11.5" text-anchor="middle">同一參數化 spine（NPU = stripped 版）</text>
+
+    <!-- PLIC -->
+    <rect x="275" y="900" width="190" height="118" rx="8" fill="#ECE2C6" stroke="#C2AE7E" stroke-width="1.6"/>
+    <text x="370" y="928" fill="#2E2A22" font-size="15" text-anchor="middle" font-weight="700">PLIC</text>
+    <text x="370" y="952" fill="#5B5342" font-size="12.5" text-anchor="middle">平台級中斷控制器</text>
+    <text x="370" y="972" fill="#5B5342" font-size="12" text-anchor="middle">彙整 NPU done / err</text>
+    <text x="370" y="990" fill="#5B5342" font-size="12" text-anchor="middle">level IRQ → host</text>
+
+    <!-- shared mem -->
+    <rect x="481" y="900" width="218" height="118" rx="8" fill="#F1E8F5" stroke="#8A4FA0" stroke-width="1.6"/>
+    <text x="590" y="928" fill="#8A4FA0" font-size="15" text-anchor="middle" font-weight="700">SHARED_MEM · 0x8000</text>
+    <text x="590" y="952" fill="#5B5342" font-size="12.5" text-anchor="middle">weights + command-queue ring</text>
+    <text x="590" y="972" fill="#5B5342" font-size="12" text-anchor="middle">host producer / NPU consumer</text>
+    <text x="590" y="990" fill="#5B5342" font-size="12" text-anchor="middle">NPU DMA burst 讀寫</text>
+
+    <!-- peripherals -->
+    <rect x="715" y="900" width="244" height="118" rx="8" fill="#ECE2C6" stroke="#C2AE7E" stroke-width="1.6"/>
+    <text x="837" y="928" fill="#2E2A22" font-size="15" text-anchor="middle" font-weight="700">SoC 周邊</text>
+    <text x="837" y="952" fill="#5B5342" font-size="12.5" text-anchor="middle">UART / Timer / GPIO</text>
+    <text x="837" y="972" fill="#5B5342" font-size="12" text-anchor="middle">GDB debug（JTAG / DMI）</text>
+    <text x="837" y="990" fill="#5B5342" font-size="12" text-anchor="middle">external memory controller</text>
+
+    <text x="500" y="1052" fill="#5B5342" font-size="13" text-anchor="middle">卸載流程：host 寫 weights/CQ → 敲 doorbell → NPU DMA + 計算 → DMA writeback → IRQ/mailbox 回 host</text>
+    <text x="500" y="1078" fill="#8B8168" font-size="12.5" text-anchor="middle">（host 與 NPU 為同一參數化 RV32 spine：host = 全開；NPU = stripped run-to-completion sequencer）</text>
   </svg>
   </div>
   <div class="legend">
-    <span><i style="background:#1F8A7D"></i>純量核心</span>
-    <span><i style="background:#3A5BA8"></i>向量核心 (RVV)</span>
-    <span><i style="background:#B9791E"></i>矩陣核心</span>
-    <span><i style="background:#8A4FA0"></i>TCM 記憶體</span>
-    <span><i style="background:#3E8F49"></i>AXI4 匯流排</span>
+    <span><i style="background:#1F8A7D"></i>純量核心 / host cpu_m1</span>
+    <span><i style="background:#3A5BA8"></i>向量引擎 (RVV/vexu)</span>
+    <span><i style="background:#B9791E"></i>矩陣引擎 (64/128/256 MAC)</span>
+    <span><i style="background:#8A4FA0"></i>TCM / shared mem</span>
+    <span><i style="background:#3E8F49"></i>AXI4 fabric</span>
+    <span><i style="background:#C2AE7E"></i>PLIC / 周邊</span>
   </div>
-  <p class="diagram-cap">圖 3.1 — 頂層區塊架構圖（依 Coral NPU 元件劃分重繪）</p>
+  <p class="diagram-cap">圖 3.1 — Magpie-M3V 兩核 SoC 頂層架構：NPU domain（上）+ host cpu_m1(M1A) / PLIC / shared mem / 周邊（下），共用 AXI4 fabric</p>
 
   <table>
     <caption>子元件對照表</caption>
@@ -459,8 +501,10 @@
 <section id="pipeline">
   <div class="sec-head"><span class="sec-num">04</span><h2>管線微架構</h2></div>
   <p class="sec-intro">
-    四級管線，<strong>指令依序分派（in-order dispatch）、允許非依序完成（out-of-order retire）</strong>。
-    純量指令支援四路分派，向量指令支援兩路分派。
+    四級管線（Fetch / Decode / Execute / Writeback），<strong>單發、依序（single-issue, in-order）</strong>。
+    多週期單元（Mul-Div / FPU / 除法）以 stall 保持依序完成；<strong>向量指令於 in-core 向量單元
+    <code class="inline">vexu</code> 執行</strong>（非獨立分派流），<strong>矩陣運算經 command queue / 硬體
+    tile sequencer 卸載</strong>（見 §16）。NPU sequencer 為此 spine 的 stripped run-to-completion 版本。
   </p>
 
   <div class="diagram-wrap">
@@ -481,9 +525,9 @@
 
     <!-- DECODE/DISPATCH -->
     <rect x="288" y="79" width="232" height="110" rx="8" fill="#E7ECF6" stroke="#3A5BA8" stroke-width="1.6"/>
-    <text x="404" y="109" fill="#3A5BA8" font-size="16" text-anchor="middle" font-weight="700">DECODE / DISPATCH</text>
-    <text x="404" y="133" fill="#5B5342" font-size="13" text-anchor="middle">Scoreboard 相依性檢查</text>
-    <text x="404" y="153" fill="#5B5342" font-size="13" text-anchor="middle">4-way 純量 / 2-way 向量</text>
+    <text x="404" y="109" fill="#3A5BA8" font-size="16" text-anchor="middle" font-weight="700">DECODE / ISSUE</text>
+    <text x="404" y="133" fill="#5B5342" font-size="13" text-anchor="middle">hazard 偵測 + forwarding</text>
+    <text x="404" y="153" fill="#5B5342" font-size="13" text-anchor="middle">single-issue · in-order</text>
 
     <line x1="520" y1="134" x2="568" y2="134" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow2)"/>
 
@@ -507,22 +551,22 @@
 
     <!-- RETIRE -->
     <rect x="850" y="84" width="190" height="110" rx="8" fill="#F7EFDD" stroke="#B9791E" stroke-width="1.6"/>
-    <text x="945" y="118" fill="#B9791E" font-size="16" text-anchor="middle" font-weight="700">RETIRE</text>
-    <text x="945" y="142" fill="#5B5342" font-size="13" text-anchor="middle">非依序完成</text>
+    <text x="945" y="118" fill="#B9791E" font-size="16" text-anchor="middle" font-weight="700">WRITEBACK</text>
+    <text x="945" y="142" fill="#5B5342" font-size="13" text-anchor="middle">依序寫回暫存器</text>
     <text x="945" y="163" fill="#5B5342" font-size="13" text-anchor="middle">依序 commit</text>
-    <text x="945" y="181" fill="#5B5342" font-size="13" text-anchor="middle">例外檢查</text>
+    <text x="945" y="181" fill="#5B5342" font-size="13" text-anchor="middle">例外 / 中斷檢查</text>
 
-    <text x="530" y="288" fill="#8B8168" font-size="13.75" text-anchor="middle">Hazard 偵測（RAW / WAR / WAW）</text>
-    <text x="530" y="308" fill="#8B8168" font-size="13.75" text-anchor="middle">Stall / Flush 機制皆位於 Decode / Dispatch 之 Scoreboard</text>
+    <text x="530" y="288" fill="#8B8168" font-size="13.75" text-anchor="middle">Hazard：RAW 由 forwarding 解 · load-use / 多週期單元以 stall</text>
+    <text x="530" y="308" fill="#8B8168" font-size="13.75" text-anchor="middle">單發依序：同一時間一條指令進 EXECUTE（三為功能單元,非並行分派）</text>
   </svg>
   </div>
-  <p class="diagram-cap">圖 4.1 — 四級管線示意圖（依序分派、非依序完成，多執行單元並行）</p>
+  <p class="diagram-cap">圖 4.1 — 四級管線示意圖（單發、依序;純量 / 向量(vexu) / 訪存為功能單元）</p>
 
   <h3>Hazard 與流程控制</h3>
   <ul class="spec-list">
-    <li>Hazard 偵測涵蓋 RAW（Read-After-Write）、WAR（Write-After-Read）、WAW（Write-After-Write）。</li>
-    <li>Pipeline stall / flush 機制需支援分支誤判、例外進入時的管線清空。</li>
-    <li>Instruction scoreboard 需同時追蹤純量與向量指令的完成狀態，因為 LSU 為共用資源。</li>
+    <li>單發依序管線主要 hazard 為 RAW（以 forwarding 解）、load-use 與多週期單元（Mul/Div/FPU）以 stall 保持依序。</li>
+    <li>Pipeline stall / flush 機制需支援分支誤判、例外 / 中斷進入時的管線清空。</li>
+    <li>多週期單元（div / FP）與 LSU（純量 / 向量共用資源）完成需回饋管線;向量（vexu）與純量共用同一 issue 前端。</li>
   </ul>
 
   <div class="callout claude">
@@ -573,53 +617,49 @@
 
   <div class="diagram-wrap">
   <svg viewBox="0 0 940 320" width="100%" xmlns="http://www.w3.org/2000/svg">
-    <text x="20" y="30" fill="#2E2A22" font-size="15" font-weight="700">v0 — 256-bit 向量暫存器切分範例</text>
+    <text x="20" y="30" fill="#2E2A22" font-size="15" font-weight="700">v0 — 128-bit 向量暫存器切分範例（VLEN=128 · Zve32x zvl128b）</text>
 
     <rect x="20" y="48" width="900" height="44" fill="#ECE2C6" stroke="#C2AE7E"/>
-    <text x="470" y="75" fill="#3A5BA8" font-size="13" text-anchor="middle">256 bits</text>
+    <text x="470" y="75" fill="#3A5BA8" font-size="13" text-anchor="middle">128 bits（VLEN）</text>
 
-    <!-- int32 x 8 -->
-    <text x="20" y="120" fill="#5B5342" font-size="13.75">SEW=32 (int32 × 8 lanes)</text>
+    <!-- int32 x 4 -->
+    <text x="20" y="120" fill="#5B5342" font-size="13.75">SEW=32 (int32 × 4 lanes)</text>
     <g fill="#E7ECF6" stroke="#3A5BA8">
-      <rect x="20" y="128" width="112" height="38"/>
-      <rect x="132" y="128" width="112" height="38"/>
-      <rect x="244" y="128" width="112" height="38"/>
-      <rect x="356" y="128" width="112" height="38"/>
-      <rect x="468" y="128" width="112" height="38"/>
-      <rect x="580" y="128" width="112" height="38"/>
-      <rect x="692" y="128" width="112" height="38"/>
-      <rect x="804" y="128" width="112" height="38"/>
+      <rect x="20" y="128" width="225" height="38"/>
+      <rect x="245" y="128" width="225" height="38"/>
+      <rect x="470" y="128" width="225" height="38"/>
+      <rect x="695" y="128" width="225" height="38"/>
     </g>
     <g fill="#2E2A22" font-size="12.5">
-      <text x="76" y="152" text-anchor="middle">e7</text>
-      <text x="188" y="152" text-anchor="middle">e6</text>
-      <text x="300" y="152" text-anchor="middle">e5</text>
-      <text x="412" y="152" text-anchor="middle">e4</text>
-      <text x="524" y="152" text-anchor="middle">e3</text>
-      <text x="636" y="152" text-anchor="middle">e2</text>
-      <text x="748" y="152" text-anchor="middle">e1</text>
-      <text x="860" y="152" text-anchor="middle">e0</text>
+      <text x="132" y="152" text-anchor="middle">e3</text>
+      <text x="357" y="152" text-anchor="middle">e2</text>
+      <text x="582" y="152" text-anchor="middle">e1</text>
+      <text x="807" y="152" text-anchor="middle">e0</text>
     </g>
 
-    <!-- int16 x 16 -->
-    <text x="20" y="196" fill="#5B5342" font-size="13.75">SEW=16 (int16 × 16 lanes)</text>
+    <!-- int16 x 8 -->
+    <text x="20" y="196" fill="#5B5342" font-size="13.75">SEW=16 (int16 × 8 lanes)</text>
     <g fill="#F7EFDD" stroke="#B9791E">
-      <rect x="20"  y="204" width="56" height="30"/><rect x="76"  y="204" width="56" height="30"/>
-      <rect x="132" y="204" width="56" height="30"/><rect x="188" y="204" width="56" height="30"/>
-      <rect x="244" y="204" width="56" height="30"/><rect x="300" y="204" width="56" height="30"/>
-      <rect x="356" y="204" width="56" height="30"/><rect x="412" y="204" width="56" height="30"/>
-      <rect x="468" y="204" width="56" height="30"/><rect x="524" y="204" width="56" height="30"/>
-      <rect x="580" y="204" width="56" height="30"/><rect x="636" y="204" width="56" height="30"/>
-      <rect x="692" y="204" width="56" height="30"/><rect x="748" y="204" width="56" height="30"/>
-      <rect x="804" y="204" width="56" height="30"/><rect x="860" y="204" width="56" height="30"/>
+      <rect x="20"  y="204" width="112" height="30"/><rect x="132" y="204" width="112" height="30"/>
+      <rect x="244" y="204" width="112" height="30"/><rect x="356" y="204" width="112" height="30"/>
+      <rect x="468" y="204" width="112" height="30"/><rect x="580" y="204" width="112" height="30"/>
+      <rect x="692" y="204" width="112" height="30"/><rect x="804" y="204" width="112" height="30"/>
     </g>
 
-    <!-- int8 x 32 -->
-    <text x="20" y="266" fill="#5B5342" font-size="13.75">SEW=8 (int8 × 32 lanes)</text>
-    <rect x="20" y="274" width="896" height="26" fill="#E4F1EE" stroke="#1F8A7D"/>
-    <text x="468" y="292" fill="#5B5342" font-size="12" text-anchor="middle">32 個 byte lane（分隔線省略）</text>
+    <!-- int8 x 16 -->
+    <text x="20" y="266" fill="#5B5342" font-size="13.75">SEW=8 (int8 × 16 lanes)</text>
+    <g fill="#E4F1EE" stroke="#1F8A7D">
+      <rect x="20" y="274" width="56" height="26"/><rect x="76" y="274" width="56" height="26"/>
+      <rect x="132" y="274" width="56" height="26"/><rect x="188" y="274" width="56" height="26"/>
+      <rect x="244" y="274" width="56" height="26"/><rect x="300" y="274" width="56" height="26"/>
+      <rect x="356" y="274" width="56" height="26"/><rect x="412" y="274" width="56" height="26"/>
+      <rect x="468" y="274" width="56" height="26"/><rect x="524" y="274" width="56" height="26"/>
+      <rect x="580" y="274" width="56" height="26"/><rect x="636" y="274" width="56" height="26"/>
+      <rect x="692" y="274" width="56" height="26"/><rect x="748" y="274" width="56" height="26"/>
+      <rect x="804" y="274" width="56" height="26"/><rect x="860" y="274" width="56" height="26"/>
+    </g>
 
-    <text x="20" y="316" fill="#8B8168" font-size="13">SEW = Selected Element Width；實際 lane 數受 vl / vtype 設定影響</text>
+    <text x="20" y="316" fill="#8B8168" font-size="13">SEW = Selected Element Width；vl=VLEN/SEW（LMUL=1）→ 4 / 8 / 16 lanes；LMUL mf8..m8 可縮放群組寬度</text>
   </svg>
   </div>
   <p class="diagram-cap">圖 6.1 — 向量暫存器依 SEW 切分示意圖</p>
@@ -627,12 +667,12 @@
   <table>
     <caption>向量執行引擎特性</caption>
     <tbody>
-      <tr><td class="mono">向量暫存器</td><td>v0–v31，共 32 個，每個 256-bit</td></tr>
-      <tr><td class="mono">資料寬度</td><td>8 / 16 / 32-bit（SEW 可設定）</td></tr>
-      <tr><td class="mono">運算資料路徑</td><td>128-bit SIMD pipeline（256-bit 為未來規劃）</td></tr>
-      <tr><td class="mono">累加器</td><td>8×8×32-bit accumulator，記為 <code class="inline">acc&lt;8&gt;&lt;8&gt;</code></td></tr>
-      <tr><td class="mono">分派頻寬</td><td>2-way vector dispatch</td></tr>
-      <tr><td class="mono">資料型別</td><td>int8、int16（int32 累加），浮點規劃中</td></tr>
+      <tr><td class="mono">向量暫存器 (VRF)</td><td>v0–v31，共 32 個，每個 <strong>128-bit</strong>（VLEN=128,Zve32x zvl128b）</td></tr>
+      <tr><td class="mono">資料寬度 (SEW)</td><td>8 / 16 / 32-bit · LMUL mf8..m8（整數全檔位收齊）</td></tr>
+      <tr><td class="mono">運算資料路徑</td><td>vexu · in-core 執行（非獨立分派流）;LMUL m2+ 於引擎內 multi-beat</td></tr>
+      <tr><td class="mono">發射</td><td><strong>單發、依序</strong>（與純量共用 issue 前端;非 2-way 超純量）</td></tr>
+      <tr><td class="mono">ISA</td><td>標準 RVV <strong>Zve32x（完整）</strong>——bitwise/shift/mul/MAC/widening/reduction/mask-scan/permutation/gather/segment/vdiv</td></tr>
+      <tr><td class="mono">資料型別</td><td>int8 / int16 / int32（Zve32x 為整數向量;純量 F 另計）</td></tr>
     </tbody>
   </table>
 
@@ -646,21 +686,38 @@
 
 <!-- 07 -->
 <section id="matrix">
-  <div class="sec-head"><span class="sec-num">07</span><h2>矩陣執行引擎（選配）</h2></div>
+  <div class="sec-head"><span class="sec-num">07</span><h2>矩陣執行引擎（mat-engine）</h2></div>
   <p class="sec-intro">
-    量化外積乘加（outer-product MAC）引擎，用於加速矩陣乘法密集之 ML 運算（如卷積、全連接層）。
+    量化外積乘加（outer-product MAC）引擎，加速 GEMM 密集之 ML 運算（卷積、全連接、attention）。
+    <strong>MAC 陣列寬度為 synth-time 參數 <code class="inline">LANES∈{1,2,4}</code> → 64 / 128 / 256 MAC</strong>，
+    讓客戶按 workload 選面積/功耗檔位（PPA 見下表）。其硬體 tile sequencer 加速見 §16。
   </p>
   <table>
     <tbody>
-      <tr><td class="mono">運算模式</td><td>Quantized outer-product multiply-accumulate</td></tr>
-      <tr><td class="mono">乘法單元</td><td>4 × 8-bit 乘法，歸約至 32-bit 累加器</td></tr>
-      <tr><td class="mono">吞吐量</td><td>256 MACs / cycle</td></tr>
-      <tr><td class="mono">資料型別</td><td>int8（量化）</td></tr>
+      <tr><td class="mono">運算模式</td><td>Quantized outer-product MAC（8×8 tile,一拍一 outer product）</td></tr>
+      <tr><td class="mono">MAC 陣列</td><td><strong>64 / 128 / 256 MAC/cyc</strong>（LANES=1/2/4;K-fusion 寬度可配置）</td></tr>
+      <tr><td class="mono">累加 / requant</td><td>4 banks × 8×8 × int32 acc · TFLite/gemmlowp 兩步 requant（bit-exact）</td></tr>
+      <tr><td class="mono">卸載控制</td><td>command queue + 硬體 tile sequencer（npu_ml_ctrl,§16）</td></tr>
+      <tr><td class="mono">資料型別</td><td>int8 乘 · int32 累加</td></tr>
     </tbody>
   </table>
-  <p class="callout">
-    矩陣引擎為架構上的選配子系統：若目標應用（如純姿態估測、輕量分類）不需要矩陣乘法加速，
-    可先以純量 + 向量核心完成 MVP，再視效能需求決定是否導入矩陣引擎。
+
+  <h3>MAC 陣列 SKU — PPA（真 TSMC 28nm 合成,同時脈皆達 timing）</h3>
+  <table>
+    <caption>Synopsys DC + TSMC 28HPC+，clock 1.2ns · mat_engine standalone</caption>
+    <thead><tr><th>SKU</th><th class="mono n">MAC/cyc</th><th class="mono n">面積 (µm²)</th><th class="mono n">vs 256</th><th class="mono n">功耗 (mW)</th><th class="mono n">vs 256</th><th>定位</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">256</td><td class="mono n">256</td><td class="mono n">83,868</td><td class="mono n">1.00×</td><td class="mono n">50.8</td><td class="mono n">1.00×</td><td>prefill / batch / compute-bound</td></tr>
+      <tr><td class="mono">128</td><td class="mono n">128</td><td class="mono n">61,644</td><td class="mono n">0.74×</td><td class="mono n">36.2</td><td class="mono n">0.71×</td><td>平衡</td></tr>
+      <tr><td class="mono">64</td><td class="mono n">64</td><td class="mono n">50,515</td><td class="mono n">0.60×</td><td class="mono n">29.2</td><td class="mono n">0.57×</td><td>edge / decode（對標 Coral）</td></tr>
+    </tbody>
+  </table>
+  <p class="callout claude">
+    <span class="tag">Measured · design decision</span>
+    面積/功耗<strong>不隨 MAC 數線性下降</strong>（256→64 為 4× 少 MAC 但面積僅 −40%）——因 acc-bank + requant
+    datapath + FSM 為 LANES-independent 固定成本,只有 MAC 乘法樹隨 LANES 縮。邊緣推論（batch-1 decode）多
+    <strong>頻寬綁定</strong>,64-MAC 幾乎不掉速卻省 −40% 面積 / −43% 功耗,故對標 Coral 有<strong>面積/功耗優勢</strong>;
+    prefill / batch 大則選 256。三檔皆 bit-exact（整數累加可結合,同一 golden 驗證）。
   </p>
 </section>
 
