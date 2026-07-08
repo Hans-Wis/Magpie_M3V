@@ -14,3 +14,8 @@ work_enum/
 work_fixchk/
 dc_overnight_*.log
 DONE_*
+sram_macros/*_130a/
+sram_macros/*.cfg
+sram_macros/gen_*.log
+sram_macros/t.txt
+sram_macros/config*.txt
