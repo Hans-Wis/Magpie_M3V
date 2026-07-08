@@ -12,6 +12,7 @@ module tb_npu_dma_width;
     always #5 clk = ~clk;
 
     reg go = 1'b0;
+    reg write_mode = 1'b0;
     reg [31:0] src_addr = 32'h0;
     reg [7:0] dst_word = 8'h0;
     reg [16:0] len_beats = LEN_WORDS[16:0];
@@ -23,25 +24,33 @@ module tb_npu_dma_width;
     wire [2:0] m_arsize;
     wire [1:0] m_arburst, m_rresp;
     wire [DMA_DATA_W-1:0] m_rdata;
+    wire m_awvalid, m_awready, m_wvalid, m_wready, m_wlast, m_bvalid, m_bready;
+    wire [31:0] m_awaddr;
+    wire [7:0] m_awlen;
+    wire [2:0] m_awsize;
+    wire [1:0] m_awburst, m_bresp;
+    wire [DMA_DATA_W-1:0] m_wdata;
+    wire [DMA_DATA_W/8-1:0] m_wstrb;
 
     wire dma_we;
     wire [7:0] dma_waddr;
     wire [DMA_DATA_W-1:0] dma_wdata;
     wire dma_re;
     wire [7:0] dma_raddr;
-    wire [31:0] dma_rdata;
+    wire [DMA_DATA_W-1:0] dma_rdata;
 
     npu_dma #(.BUF_AW(8), .DMA_DATA_W(DMA_DATA_W)) dut (
         .clk(clk), .resetn(resetn),
-        .go(go), .abort_i(1'b0), .write_mode(1'b0),
+        .go(go), .abort_i(1'b0), .write_mode(write_mode),
         .src_addr(src_addr), .dst_word(dst_word), .len_beats(len_beats),
         .busy(busy), .done(done), .err(err),
         .m_arvalid(m_arvalid), .m_arready(m_arready), .m_araddr(m_araddr), .m_arlen(m_arlen),
         .m_arsize(m_arsize), .m_arburst(m_arburst),
         .m_rvalid(m_rvalid), .m_rready(m_rready), .m_rdata(m_rdata), .m_rlast(m_rlast), .m_rresp(m_rresp),
-        .m_awvalid(), .m_awready(1'b0), .m_awaddr(), .m_awlen(), .m_awsize(), .m_awburst(),
-        .m_wvalid(), .m_wready(1'b0), .m_wdata(), .m_wstrb(), .m_wlast(),
-        .m_bvalid(1'b0), .m_bready(), .m_bresp(2'b0),
+        .m_awvalid(m_awvalid), .m_awready(m_awready), .m_awaddr(m_awaddr), .m_awlen(m_awlen),
+        .m_awsize(m_awsize), .m_awburst(m_awburst),
+        .m_wvalid(m_wvalid), .m_wready(m_wready), .m_wdata(m_wdata), .m_wstrb(m_wstrb), .m_wlast(m_wlast),
+        .m_bvalid(m_bvalid), .m_bready(m_bready), .m_bresp(m_bresp),
         .buf_we(dma_we), .buf_addr(dma_waddr), .buf_wdata(dma_wdata),
         .buf_re(dma_re), .buf_raddr(dma_raddr), .buf_rdata(dma_rdata)
     );
@@ -51,6 +60,13 @@ module tb_npu_dma_width;
         .arvalid(m_arvalid), .arready(m_arready), .araddr(m_araddr),
         .arlen(m_arlen), .arsize(m_arsize), .arburst(m_arburst),
         .rvalid(m_rvalid), .rready(m_rready), .rdata(m_rdata), .rlast(m_rlast), .rresp(m_rresp)
+    );
+    axi_full_wmem #(.WORDS(1024), .AW(10), .DMA_DATA_W(DMA_DATA_W), .ERR_MODE(0)) dst_mem (
+        .clk(clk), .resetn(resetn),
+        .awvalid(m_awvalid), .awready(m_awready), .awaddr(m_awaddr),
+        .awlen(m_awlen), .awsize(m_awsize), .awburst(m_awburst),
+        .wvalid(m_wvalid), .wready(m_wready), .wdata(m_wdata), .wstrb(m_wstrb), .wlast(m_wlast),
+        .bvalid(m_bvalid), .bready(m_bready), .bresp(m_bresp)
     );
 
     npu_tcm #(.WORDS(256), .AW(8), .DMA_DATA_W(DMA_DATA_W)) tcm (
@@ -76,6 +92,12 @@ module tb_npu_dma_width;
     integer ar_count = 0;
     integer rbeat_count = 0;
     reg [2:0] arsize_seen = 3'b0;
+    integer aw_count = 0;
+    integer wbeat_count = 0;
+    reg [2:0] awsize_seen = 3'b0;
+    localparam [31:0] STORE_DST = 32'h0000_0100;
+    localparam integer STORE_DST_W = 32'h0000_0100 >> 2;
+    wire [DMA_DATA_W/8-1:0] full_wstrb = {(DMA_DATA_W/8){1'b1}};
 
     always @(posedge clk) begin
         if (m_arvalid && m_arready) begin
@@ -84,6 +106,17 @@ module tb_npu_dma_width;
         end
         if (m_rvalid && m_rready)
             rbeat_count = rbeat_count + 1;
+        if (m_awvalid && m_awready) begin
+            aw_count = aw_count + 1;
+            awsize_seen = m_awsize;
+        end
+        if (m_wvalid && m_wready) begin
+            wbeat_count = wbeat_count + 1;
+            if (m_wstrb !== full_wstrb) begin
+                errors = errors + 1;
+                $display("WIDTH_FAIL wstrb got=%0h exp=%0h", m_wstrb, full_wstrb);
+            end
+        end
     end
 
     task pulse_go;
@@ -100,6 +133,7 @@ module tb_npu_dma_width;
         resetn = 1'b1;
         @(posedge clk);
 
+        write_mode = 1'b0;
         src_addr = 32'h0;
         dst_word = 8'h0;
         len_beats = LEN_WORDS[16:0];
@@ -130,6 +164,7 @@ module tb_npu_dma_width;
             $display("WIDTH_ALIGNED_PASS width=%0d arsize=%0d rbeats=%0d ar_count=%0d",
                      DMA_DATA_W, arsize_seen, rbeat_count, ar_count);
 
+        write_mode = 1'b0;
         src_addr = 32'h0;
         dst_word = 8'h0;
         len_beats = (LEN_WORDS - 1);
@@ -143,6 +178,60 @@ module tb_npu_dma_width;
                      done, err, ar_count, rbeat_count);
         end else begin
             $display("WIDTH_ERR_ALIGN_PASS width=%0d", DMA_DATA_W);
+        end
+
+        write_mode = 1'b1;
+        src_addr = STORE_DST;
+        dst_word = 8'h0;
+        len_beats = LEN_WORDS[16:0];
+        aw_count = 0;
+        wbeat_count = 0;
+        pulse_go();
+
+        guard = 0;
+        while (!done && guard < 2000) begin
+            @(posedge clk);
+            guard = guard + 1;
+        end
+        if (!done) begin errors = errors + 1; $display("WIDTH_FAIL store timeout"); end
+        if (err) begin errors = errors + 1; $display("WIDTH_FAIL unexpected store err"); end
+        if (awsize_seen !== EXP_SIZE[2:0]) begin
+            errors = errors + 1;
+            $display("WIDTH_FAIL awsize got=%0d exp=%0d", awsize_seen, EXP_SIZE);
+        end
+        if (wbeat_count !== (LEN_WORDS / WPB)) begin
+            errors = errors + 1;
+            $display("WIDTH_FAIL wbeats got=%0d exp=%0d", wbeat_count, (LEN_WORDS / WPB));
+        end
+        if (aw_count !== 1) begin
+            errors = errors + 1;
+            $display("WIDTH_FAIL aw_count got=%0d exp=1", aw_count);
+        end
+        for (i = 0; i < LEN_WORDS; i = i + 1) begin
+            if (dst_mem.mem[STORE_DST_W + i] !== (32'hC0DE0000 | {16'b0, i[15:0]})) begin
+                errors = errors + 1;
+                if (errors < 8) $display("WIDTH_FAIL store mem[%0d]=%08x",
+                                          STORE_DST_W + i, dst_mem.mem[STORE_DST_W + i]);
+            end
+        end
+        if (errors == 0)
+            $display("WIDTH_STORE_PASS width=%0d awsize=%0d wbeats=%0d aw_count=%0d",
+                     DMA_DATA_W, awsize_seen, wbeat_count, aw_count);
+
+        write_mode = 1'b1;
+        src_addr = STORE_DST + 32'd4;
+        dst_word = 8'h0;
+        len_beats = LEN_WORDS[16:0];
+        aw_count = 0;
+        wbeat_count = 0;
+        pulse_go();
+        repeat (8) @(posedge clk);
+        if (WPB != 1 && (!done || !err || aw_count != 0 || wbeat_count != 0)) begin
+            errors = errors + 1;
+            $display("WIDTH_FAIL store_align_err done=%0b err=%0b aw=%0d w=%0d",
+                     done, err, aw_count, wbeat_count);
+        end else if (WPB != 1) begin
+            $display("WIDTH_STORE_ERR_ALIGN_PASS width=%0d", DMA_DATA_W);
         end
 
         if (errors == 0) $display("NPU_DMA_WIDTH_PASS width=%0d", DMA_DATA_W);

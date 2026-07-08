@@ -38,7 +38,7 @@ module npu_tcm #(
     // ---- DMA read port (to npu_dma writeback-mode egress) ----
     input  wire        dma_re,
     input  wire [AW-1:0] dma_raddr,
-    output wire [31:0] dma_rdata,
+    output wire [DMA_DATA_W-1:0] dma_rdata,
 
     // ---- matrix engine ports (ADR-0037): combinational read + granted write ----
     input  wire            eng_a_re,     // ADR-0044: window-consume strobes
@@ -68,8 +68,14 @@ module npu_tcm #(
 
     localparam [1:0] OKAY = 2'b00, SLVERR = 2'b10;
     reg [31:0] mem [0:WORDS-1];
-    assign dma_rdata     = mem[dma_raddr];
     assign core_d_rdata  = mem[core_d_addr];
+    genvar gdw;
+    generate
+        for (gdw = 0; gdw < WPB; gdw = gdw + 1) begin : g_dma_rwide
+            wire [AW-1:0] id = dma_raddr + gdw[AW-1:0];
+            assign dma_rdata[gdw*32 +: 32] = mem[id];
+        end
+    endgenerate
     // ADR-0040: two 256-bit windows (8 consecutive words, index wraps in AW)
     genvar gw;
     generate
@@ -155,6 +161,8 @@ module npu_tcm #(
     /* verilator lint_off BLKSEQ */
     reg [3:0] rd_cnt;
     integer bk;
+    integer dma_j;
+    reg [AW-1:0] dma_chk_addr;
     always @(posedge clk) begin
         if (!resetn) bank_violations <= bank_violations;  // keep across soft events
         else begin
@@ -162,7 +170,12 @@ module npu_tcm #(
                 rd_cnt = 4'd0;
                 if (eng_a_re)                                  rd_cnt = rd_cnt + 4'd1;
                 if (eng_b_re)                                  rd_cnt = rd_cnt + 4'd1;
-                if (dma_re    && (dma_raddr[2:0]    == bk[2:0])) rd_cnt = rd_cnt + 4'd1;
+                if (dma_re) begin
+                    for (dma_j = 0; dma_j < WPB; dma_j = dma_j + 1) begin
+                        dma_chk_addr = dma_raddr + dma_j[AW-1:0];
+                        if (dma_chk_addr[2:0] == bk[2:0]) rd_cnt = rd_cnt + 4'd1;
+                    end
+                end
                 if (core_d_re && (core_d_addr[2:0]  == bk[2:0])) rd_cnt = rd_cnt + 4'd1;
                 if (s_axi_arvalid && s_axi_arready
                               && (s_axi_araddr[4:2] == bk[2:0])) rd_cnt = rd_cnt + 4'd1;

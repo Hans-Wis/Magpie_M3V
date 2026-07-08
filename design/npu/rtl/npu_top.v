@@ -358,7 +358,7 @@ module npu_top #(
     wire dma_we, dma_re;
     wire [TCM_AW-1:0] dma_waddr, dma_raddr;
     wire [DMA_DATA_W-1:0] dma_wdata;
-    wire [31:0] dma_rdata;
+    wire [DMA_DATA_W-1:0] dma_rdata;
     wire [TCM_AW-1:0] dma_buf_addr, dma_buf_raddr;
     wire dma_busy_engine, dma_done_engine;
     wire dma_start_write = wb_go & ~dma_go;     // preserve read GO if both pulses collide

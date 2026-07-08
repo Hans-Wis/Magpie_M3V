@@ -1,10 +1,12 @@
-"""gate_npu_dma_width — M3a DMA weight-load AXI width scaling.
+"""gate_npu_dma_width — DMA read/write AXI width scaling.
 
 Sweeps DMA_DATA_W=64/128/256 and checks:
   * ARSIZE on the real wire matches clog2(width bytes)
   * AXI read beat count drops by WPB versus the 32-bit reference length
   * TCM receives the same word image as the 32-bit reference pattern
   * misaligned weight-load descriptors raise ERR_ALIGN without issuing a burst
+  * AWSIZE/W beat count and writeback memory image match for wide STORE
+  * misaligned writeback descriptors raise ERR_ALIGN without issuing a burst
 """
 
 import re
@@ -21,6 +23,7 @@ RTL = [
 ]
 TB = [
     ROOT / "design/npu/dv/tb/axi_full_mem.v",
+    ROOT / "design/npu/dv/tb/axi_full_wmem.v",
     ROOT / "design/npu/dv/tb/tb_npu_dma_width.v",
 ]
 
@@ -58,4 +61,12 @@ def test_npu_dma_width_sweep(tmp_path):
         assert rbeats == ref_words // wpb
         assert ar_count == 1
         assert f"WIDTH_ERR_ALIGN_PASS width={width}" in out
-        print(f"NPU_DMA_WIDTH width={width} arsize={arsize} rbeats={rbeats}")
+        wm = re.search(r"WIDTH_STORE_PASS width=(\d+) awsize=(\d+) wbeats=(\d+) aw_count=(\d+)", out)
+        assert wm, out
+        got_width, awsize, wbeats, aw_count = map(int, wm.groups())
+        assert got_width == width
+        assert awsize == {64: 3, 128: 4, 256: 5}[width]
+        assert wbeats == ref_words // wpb
+        assert aw_count == 1
+        assert f"WIDTH_STORE_ERR_ALIGN_PASS width={width}" in out
+        print(f"NPU_DMA_WIDTH width={width} arsize={arsize} rbeats={rbeats} awsize={awsize} wbeats={wbeats}")
