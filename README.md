@@ -13,7 +13,7 @@ bit-exact results, verified against the Spike ISS by per-commit lockstep.
 **Two-core SoC** — host `cpu_m1` (M1A) `--AXI-->` the NPU domain (scalar / vector / matrix engines,
 TCM, DMA, command-queue), plus PLIC / shared memory / peripherals over a shared AXI4 fabric:
 
-![Magpie-M3V two-core SoC top-level architecture — NPU domain (scalar RV32IMF core, RVV vector engine, 256-MAC matrix engine, ITCM/DTCM, DMA) and host cpu_m1 / PLIC / shared memory / peripherals on a shared AXI4 fabric](docs/img/soc_toplevel.svg)
+![Magpie-M3V two-core SoC top-level architecture — NPU domain (scalar RV32IMF core, RVV vector engine, 256-MAC matrix engine, ITCM/DTCM, DMA) and host cpu_m1 / PLIC / shared memory / peripherals on a shared AXI4 fabric](docs/img/soc_arch_v3.svg)
 
 **Target bus architecture — two-AXI + bridge (bandwidth scales with the SKU).** A narrow control
 AXI (32/64-bit: config CSR, doorbell, TCM load) plus a wide data AXI (64/128/256-bit) whose width
