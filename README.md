@@ -22,13 +22,11 @@ a bridge — attacking the DMA bottleneck (ADR-0068 §2.5):
 
 ![Target two-AXI architecture — narrow control AXI (32/64-bit) + wide data AXI (64/128/256-bit, width = LANES SKU) + bridge; the data-domain width scales with the MAC array to match bandwidth](docs/img/two_axi_bridge.svg)
 
-<details><summary>Pipeline &amp; memory hierarchy</summary>
+**Pipeline & memory hierarchy**
 
 ![Four-stage single-issue in-order pipeline — FETCH (ITCM read, branch predict) / DECODE-ISSUE (hazard detect + forwarding) / EX (scalar · vector vexu · load-store units) / WB](docs/img/pipeline.svg)
 
 ![Memory hierarchy — ITCM 8KB / DTCM 32KB single-cycle SRAM; out-of-TCM accesses go EBUS → AXI4 external memory](docs/img/memory.svg)
-
-</details>
 
 *Diagrams from [`docs/Magpie-M3V-RV_NPU_Design_Spec.html`](docs/Magpie-M3V-RV_NPU_Design_Spec.html) (§3 top-level & bus topology, §4 pipeline, §8 memory).*
 
@@ -50,8 +48,39 @@ the contraction axis, and "accumulate along it" is exactly MAC (multiply-accumul
 never cleared) → it needs the **matrix engine's accumulator array**. Element-wise ops (e.g. ReLU:
 input shape = output shape, nothing vanishes) need no accumulator → the **vector engine**. This
 "does it converge onto one accumulator?" test is what draws the scalar/vector/matrix boundary.
-Full walk-through (instruction-vs-command identity, fence/memory hand-off between engines, and a
-worked CNN example): [`docs/rv-npu_operation.html`](docs/rv-npu_operation.html).
+### Worked example — running a CNN front-end
+
+`image → conv → +bias → ReLU → maxpool`. Which engine each stage lands on is decided by the
+contraction-axis test above — only the convolution accumulates along an axis.
+
+![CNN front-end dataflow — input image H×W×C int8 → Conv 3×3 (Σ over c·kh·kw → int32) on the Matrix engine → bias/rescale/ReLU on the Vector engine → pooling, with Scalar driving the loops and sync](docs/img/cnn_dataflow.svg)
+
+Walking one output pixel with real int8 numbers:
+
+1. **Conv 3×3 → Matrix.** A 3×3 image patch `⊙` a 3×3 vertical-edge kernel, summed over the whole
+   window into one int32: `Σ = (5−1) + (6−0) + (2−0) = 12`. That "Σ over the kernel window" *is* the
+   contraction → it runs on the MAC array (accumulator never cleared).
+2. **+bias · rescale · ReLU → Vector.** Fixed-point post-processing pulling the int32 back to int8:
+   `12 + bias 4 = 16 → rescale ×½ = 8 → ReLU max(8,0) = 8`. (A patch giving `Σ=−10`:
+   `−10+4=−6 → −3 → ReLU = 0`.) Pure element-wise, no accumulator → standard RVV.
+3. **MaxPool 2×2 → Vector.** Max over a 2×2 window: `max(8,0,5,3) = 8`. An axis vanishes (4→1) but
+   there's no multiply-reuse → a Vector *reduction*, not the MAC array.
+
+| Stage | Op | Contraction axis? | Engine |
+|---|---|---|---|
+| Conv 3×3 | Σ over c·kh·kw multiply-add | yes (+ multiply reuse) | **Matrix** · command |
+| +bias | element-wise add | no | **Vector** · RVV |
+| rescale | element-wise fixed-point mul-shift | no | **Vector** · RVV |
+| ReLU | element-wise `max(x,0)` | no | **Vector** · RVV |
+| MaxPool | window reduction (max) | yes (no multiply reuse) | **Vector** · reduction |
+| loop / addr / sync | control flow | doesn't touch data | **Scalar** · RV32IM |
+
+**The rhythm of a whole layer:** Scalar loops over each output position → issues `MAT.OP` so the
+Matrix engine accumulates the conv Σ into ACC (this is where the compute concentrates) → the result
+lands in DTCM → Vector does bias / rescale / ReLU / pool in standard RVV → writeback → next tile.
+Only the convolution actually burns compute; everything else is a lightweight element-wise tail.
+Full walk-through (instruction-vs-command identity, fence/memory hand-off between engines):
+[`docs/rv-npu_operation.html`](docs/rv-npu_operation.html).
 
 ## What's inside
 
