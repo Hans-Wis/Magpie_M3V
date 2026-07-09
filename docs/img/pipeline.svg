@@ -16,9 +16,9 @@
 
     <!-- DECODE/DISPATCH -->
     <rect x="288" y="79" width="232" height="110" rx="8" fill="#E7ECF6" stroke="#3A5BA8" stroke-width="1.6"/>
-    <text x="404" y="109" fill="#3A5BA8" font-size="16" text-anchor="middle" font-weight="700">DECODE / DISPATCH</text>
-    <text x="404" y="133" fill="#5B5342" font-size="13" text-anchor="middle">Scoreboard 相依性檢查</text>
-    <text x="404" y="153" fill="#5B5342" font-size="13" text-anchor="middle">4-way 純量 / 2-way 向量</text>
+    <text x="404" y="109" fill="#3A5BA8" font-size="16" text-anchor="middle" font-weight="700">DECODE / ISSUE</text>
+    <text x="404" y="133" fill="#5B5342" font-size="13" text-anchor="middle">hazard 偵測 + forwarding</text>
+    <text x="404" y="153" fill="#5B5342" font-size="13" text-anchor="middle">single-issue · in-order</text>
 
     <line x1="520" y1="134" x2="568" y2="134" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow2)"/>
 
@@ -42,11 +42,11 @@
 
     <!-- RETIRE -->
     <rect x="850" y="84" width="190" height="110" rx="8" fill="#F7EFDD" stroke="#B9791E" stroke-width="1.6"/>
-    <text x="945" y="118" fill="#B9791E" font-size="16" text-anchor="middle" font-weight="700">RETIRE</text>
-    <text x="945" y="142" fill="#5B5342" font-size="13" text-anchor="middle">非依序完成</text>
+    <text x="945" y="118" fill="#B9791E" font-size="16" text-anchor="middle" font-weight="700">WRITEBACK</text>
+    <text x="945" y="142" fill="#5B5342" font-size="13" text-anchor="middle">依序寫回暫存器</text>
     <text x="945" y="163" fill="#5B5342" font-size="13" text-anchor="middle">依序 commit</text>
-    <text x="945" y="181" fill="#5B5342" font-size="13" text-anchor="middle">例外檢查</text>
+    <text x="945" y="181" fill="#5B5342" font-size="13" text-anchor="middle">例外 / 中斷檢查</text>
 
-    <text x="530" y="288" fill="#8B8168" font-size="13.75" text-anchor="middle">Hazard 偵測（RAW / WAR / WAW）</text>
-    <text x="530" y="308" fill="#8B8168" font-size="13.75" text-anchor="middle">Stall / Flush 機制皆位於 Decode / Dispatch 之 Scoreboard</text>
+    <text x="530" y="288" fill="#8B8168" font-size="13.75" text-anchor="middle">Hazard：RAW 由 forwarding 解 · load-use / 多週期單元以 stall</text>
+    <text x="530" y="308" fill="#8B8168" font-size="13.75" text-anchor="middle">單發依序：同一時間一條指令進 EXECUTE（三為功能單元,非並行分派）</text>
   </svg>

@@ -10,13 +10,27 @@ bit-exact results, verified against the Spike ISS by per-commit lockstep.
 
 ## Architecture
 
-![Magpie_M3V top-level block architecture — RV32+RVV core with scalar / vector / matrix engines, shared LSU, ITCM/DTCM, custom CSRs and the AXI4 bus, inside the SoC boundary](docs/img/top_arch.svg)
+**Two-core SoC** — host `cpu_m1` (M1A) `--AXI-->` the NPU domain (scalar / vector / matrix engines,
+TCM, DMA, command-queue), plus PLIC / shared memory / peripherals over a shared AXI4 fabric:
 
-*Top-level block architecture (partitioned by Coral-NPU component). Below: the 4-stage pipeline and the memory hierarchy.*
+![Magpie-M3V two-core SoC top-level architecture — NPU domain (scalar RV32IMF core, RVV vector engine, 256-MAC matrix engine, ITCM/DTCM, DMA) and host cpu_m1 / PLIC / shared memory / peripherals on a shared AXI4 fabric](docs/img/soc_toplevel.svg)
 
-![Four-stage pipeline — in-order dispatch, out-of-order completion, parallel execution units (ALU / Mul-Div / FPU / vector / matrix)](docs/img/pipeline.svg)
+**Target bus architecture — two-AXI + bridge (bandwidth scales with the SKU).** A narrow control
+AXI (32/64-bit: config CSR, doorbell, TCM load) plus a wide data AXI (64/128/256-bit) whose width
+tracks the MAC-array `LANES` SKU (256 MAC → 256-bit, matched to the MAC consumption rate), joined by
+a bridge — attacking the DMA bottleneck (ADR-0068 §2.5):
 
-![Memory hierarchy — ITCM 8KB / DTCM 32KB single-cycle SRAM, shared LSU (IBUS/DBUS), EBUS to external memory via AXI4](docs/img/memory.svg)
+![Target two-AXI architecture — narrow control AXI (32/64-bit) + wide data AXI (64/128/256-bit, width = LANES SKU) + bridge; the data-domain width scales with the MAC array to match bandwidth](docs/img/two_axi_bridge.svg)
+
+<details><summary>Pipeline &amp; memory hierarchy</summary>
+
+![Four-stage single-issue in-order pipeline — FETCH (ITCM read, branch predict) / DECODE-ISSUE (hazard detect + forwarding) / EX (scalar · vector vexu · load-store units) / WB](docs/img/pipeline.svg)
+
+![Memory hierarchy — ITCM 8KB / DTCM 32KB single-cycle SRAM; out-of-TCM accesses go EBUS → AXI4 external memory](docs/img/memory.svg)
+
+</details>
+
+*Diagrams from [`docs/Magpie-M3V-RV_NPU_Design_Spec.html`](docs/Magpie-M3V-RV_NPU_Design_Spec.html) (§3 top-level & bus topology, §4 pipeline, §8 memory).*
 
 ### How the three engines divide the work
 

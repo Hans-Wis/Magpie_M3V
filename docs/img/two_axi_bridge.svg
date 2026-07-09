@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1000 620" width="100%" xmlns="http://www.w3.org/2000/svg"><style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}</style>
+    <defs>
+      <marker id="tbg" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#3E8F49"/></marker>
+      <marker id="tbk" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#8B8168"/></marker>
+    </defs>
+
+    <!-- host -->
+    <rect x="40" y="30" width="300" height="95" rx="8" fill="#E4F1EE" stroke="#1F8A7D" stroke-width="1.6"/>
+    <text x="190" y="60" fill="#1F8A7D" font-size="15.5" text-anchor="middle" font-weight="700">cpu_m1 · HOST (M1A)</text>
+    <text x="190" y="83" fill="#5B5342" font-size="12.5" text-anchor="middle">控制 master · 窄 32/64-bit</text>
+    <text x="190" y="104" fill="#8B8168" font-size="11.5" text-anchor="middle">配置 CSR · doorbell · 載 TCM</text>
+
+    <!-- width scaling legend -->
+    <rect x="620" y="30" width="340" height="95" rx="8" fill="#ECE2C6" stroke="#C2AE7E" stroke-width="1.4"/>
+    <text x="790" y="56" fill="#8A5A00" font-size="13.5" text-anchor="middle" font-weight="700">NPU 資料 AXI 寬度 = LANES SKU</text>
+    <text x="790" y="79" fill="#5B5342" font-size="12" text-anchor="middle">64 MAC → 64 / 128-bit　·　128 MAC → 128-bit</text>
+    <text x="790" y="98" fill="#5B5342" font-size="12" text-anchor="middle">256 MAC → 256-bit（頻寬匹配 MAC 消耗率）</text>
+    <text x="790" y="116" fill="#8B8168" font-size="11" text-anchor="middle">SKU 同時定 MAC 數 + bus/記憶體埠寬</text>
+
+    <line x1="190" y1="125" x2="190" y2="150" stroke="#8B8168" stroke-width="1.6" marker-end="url(#tbk)"/>
+
+    <!-- control AXI bar (narrow) -->
+    <rect x="40" y="150" width="920" height="42" rx="6" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.6"/>
+    <text x="500" y="176" fill="#2C6B34" font-size="14.5" text-anchor="middle" font-weight="700">控制 AXI · 窄 32/64-bit · CSR / doorbell / TCM 載入</text>
+
+    <!-- control slaves -->
+    <line x1="130" y1="192" x2="130" y2="222" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#tbg)"/>
+    <line x1="395" y1="192" x2="395" y2="222" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#tbg)"/>
+    <line x1="545" y1="192" x2="545" y2="222" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#tbg)"/>
+    <line x1="820" y1="192" x2="820" y2="212" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#tbg)"/>
+
+    <rect x="40" y="222" width="270" height="86" rx="8" fill="#F7EFDD" stroke="#B9791E" stroke-width="1.6"/>
+    <text x="175" y="250" fill="#B9791E" font-size="14.5" text-anchor="middle" font-weight="700">M3V NPU slave 埠</text>
+    <text x="175" y="272" fill="#2E2A22" font-size="12" text-anchor="middle">CSR 0x3000 · DTCM 0x3001</text>
+    <text x="175" y="290" fill="#2E2A22" font-size="12" text-anchor="middle">ITCM 0x3002（程式）</text>
+
+    <rect x="330" y="222" width="130" height="86" rx="8" fill="#ECE2C6" stroke="#C2AE7E" stroke-width="1.6"/>
+    <text x="395" y="252" fill="#2E2A22" font-size="14.5" text-anchor="middle" font-weight="700">PLIC</text>
+    <text x="395" y="278" fill="#5B5342" font-size="11.5" text-anchor="middle">done/err → M1A</text>
+
+    <rect x="480" y="222" width="130" height="86" rx="8" fill="#ECE2C6" stroke="#C2AE7E" stroke-width="1.6"/>
+    <text x="545" y="252" fill="#2E2A22" font-size="14.5" text-anchor="middle" font-weight="700">周邊</text>
+    <text x="545" y="278" fill="#5B5342" font-size="11.5" text-anchor="middle">UART/Timer/GPIO</text>
+
+    <!-- bridge -->
+    <rect x="680" y="212" width="280" height="106" rx="8" fill="#E6ECF1" stroke="#5A7089" stroke-width="1.8"/>
+    <text x="820" y="244" fill="#3F5570" font-size="15" text-anchor="middle" font-weight="700">控制 ↔ 資料 BRIDGE</text>
+    <text x="820" y="267" fill="#5B5342" font-size="12" text-anchor="middle">窄 → 寬（+ 可選 CDC）</text>
+    <text x="820" y="287" fill="#5B5342" font-size="12" text-anchor="middle">host 寫 weights/CQ 跨域</text>
+    <text x="820" y="306" fill="#8B8168" font-size="11" text-anchor="middle">host 偶發設定寫入</text>
+
+    <line x1="820" y1="318" x2="820" y2="382" stroke="#5A7089" stroke-width="1.8" marker-end="url(#tbg)"/>
+
+    <!-- data AXI bar (WIDE — drawn thicker) -->
+    <rect x="40" y="382" width="920" height="66" rx="6" fill="#D6EBD9" stroke="#2C6B34" stroke-width="2.4"/>
+    <text x="500" y="410" fill="#1F5227" font-size="15.5" text-anchor="middle" font-weight="700">資料 AXI · 寬 64 → 128 → 256-bit（隨 LANES SKU）</text>
+    <text x="500" y="432" fill="#2C6B34" font-size="12.5" text-anchor="middle">AXI4-full burst · 權重串流 · 攻 DMA 瓶頸</text>
+
+    <!-- data masters/slaves -->
+    <line x1="185" y1="486" x2="185" y2="448" stroke="#2C6B34" stroke-width="2.2" marker-end="url(#tbg)"/>
+    <line x1="815" y1="448" x2="815" y2="486" stroke="#2C6B34" stroke-width="2.2" marker-end="url(#tbg)"/>
+
+    <rect x="40" y="486" width="290" height="80" rx="8" fill="#F7EFDD" stroke="#B9791E" stroke-width="1.6"/>
+    <text x="185" y="516" fill="#B9791E" font-size="14.5" text-anchor="middle" font-weight="700">M3V · npu_dma master</text>
+    <text x="185" y="538" fill="#5B5342" font-size="12" text-anchor="middle">AXI4-full burst · 讀 SRAM / 寫回</text>
+    <text x="185" y="556" fill="#8B8168" font-size="11" text-anchor="middle">M3 拓寬:埠寬隨 LANES</text>
+
+    <rect x="670" y="486" width="290" height="80" rx="8" fill="#F1E8F5" stroke="#8A4FA0" stroke-width="1.6"/>
+    <text x="815" y="516" fill="#8A4FA0" font-size="14.5" text-anchor="middle" font-weight="700">SRAM（代 DDR）@ 0x8000</text>
+    <text x="815" y="538" fill="#5B5342" font-size="12" text-anchor="middle">weights + CQ ring + 結果</text>
+    <text x="815" y="556" fill="#8B8168" font-size="11" text-anchor="middle">埠寬隨資料 AXI 縮放</text>
+
+    <text x="500" y="596" fill="#8B8168" font-size="12" text-anchor="middle">里程碑：M1 單-fabric 32-bit 功能 bring-up → M2 兩-bus 結構 → M3 拓寬 NPU AXI 128/256（兌現頻寬）</text>
+  </svg>

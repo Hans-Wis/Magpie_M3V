@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 1000 900" width="100%" xmlns="http://www.w3.org/2000/svg"><style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}</style>
+<svg viewBox="0 0 1000 1140" width="100%" xmlns="http://www.w3.org/2000/svg"><style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}</style>
     <defs>
       <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto">
         <path d="M0,0 L9,4.5 L0,9 Z" fill="#8B8168"/>
@@ -10,17 +10,17 @@
     </defs>
 
     <!-- outer SoC boundary -->
-    <rect x="16" y="16" width="968" height="860" rx="10" fill="none" stroke="#C2AE7E" stroke-width="1.5" stroke-dasharray="5 5"/>
-    <text x="34" y="42" fill="#8B8168" font-size="13" letter-spacing="1">SOC BOUNDARY</text>
+    <rect x="16" y="16" width="968" height="1108" rx="10" fill="none" stroke="#C2AE7E" stroke-width="1.5" stroke-dasharray="5 5"/>
+    <text x="34" y="42" fill="#8B8168" font-size="13" letter-spacing="1">MAGPIE-M3V SOC — 兩核（host cpu_m1 + NPU domain）</text>
 
-    <!-- Coral-style core container -->
+    <!-- NPU domain container -->
     <rect x="40" y="60" width="920" height="520" rx="10" fill="#FAF6EA" stroke="#C2AE7E" stroke-width="1.5"/>
-    <text x="58" y="88" fill="#2E2A22" font-size="17" font-weight="700">RV32 + RVV CORE</text>
+    <text x="58" y="88" fill="#2E2A22" font-size="17" font-weight="700">NPU DOMAIN — RV32 sequencer + RVV(vexu) + 矩陣引擎</text>
 
     <!-- Fetch/Decode/Dispatch -->
     <rect x="58" y="108" width="884" height="66" rx="6" fill="#ECE2C6" stroke="#C2AE7E"/>
-    <text x="500" y="136" fill="#2E2A22" font-size="16" text-anchor="middle" font-weight="600">Fetch / Decode / Scoreboard / Dispatch</text>
-    <text x="500" y="157" fill="#5B5342" font-size="13" text-anchor="middle">4-way scalar dispatch · 2-way vector dispatch</text>
+    <text x="500" y="134" fill="#2E2A22" font-size="16" text-anchor="middle" font-weight="600">Fetch / Decode / Issue（單發、依序）</text>
+    <text x="500" y="154" fill="#5B5342" font-size="12.5" text-anchor="middle">single-issue in-order · 向量 → vexu · 矩陣 → command queue / HW sequencer</text>
 
     <!-- Scalar engine -->
     <rect x="58" y="214" width="281" height="240" rx="8" fill="#E4F1EE" stroke="#1F8A7D" stroke-width="1.6"/>
@@ -63,9 +63,11 @@
     <text x="801" y="319" fill="#2E2A22" font-size="13" text-anchor="middle">4× 8-bit multiplies →</text>
     <text x="801" y="337" fill="#5B5342" font-size="13" text-anchor="middle">32-bit acc</text>
     <rect x="679" y="354" width="246" height="40" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
-    <text x="801" y="379" fill="#2E2A22" font-size="14" text-anchor="middle">256 MACs / cycle</text>
+    <text x="801" y="372" fill="#2E2A22" font-size="13.5" text-anchor="middle">64 / 128 / 256 MAC (LANES SKU)</text>
+    <text x="801" y="388" fill="#5B5342" font-size="11.5" text-anchor="middle">synth-time 可配置 · 見 §7 / §16</text>
     <rect x="679" y="402" width="246" height="34" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
-    <text x="801" y="423" fill="#5B5342" font-size="12.5" text-anchor="middle">quantized int8 MAC engine</text>
+    <text x="801" y="421" fill="#5B5342" font-size="11.5" text-anchor="middle">int8 MAC · gemmlowp requant</text>
+    <text x="801" y="433" fill="#8B8168" font-size="11" text-anchor="middle">+ HW tile sequencer（§16）</text>
 
     <!-- connections: dispatch -> engines (length 40) -->
     <line x1="198" y1="174" x2="198" y2="212" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
@@ -105,18 +107,57 @@
     <line x1="618" y1="554" x2="618" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
     <line x1="854" y1="554" x2="854" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
 
-    <!-- AXI4 bus bar -->
-    <rect x="40" y="760" width="920" height="74" rx="8" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.8"/>
-    <text x="60" y="790" fill="#2C6B34" font-size="16" font-weight="700">AXI4 BUS INTERFACE</text>
-    <text x="60" y="810" fill="#5B5342" font-size="13">master (config external mem) + slave (host configures/debugs core)</text>
-    <text x="60" y="826" fill="#5B5342" font-size="13">AW / W / B / AR / R channels</text>
+    <!-- AXI4 fabric bar (shared by NPU domain + host domain) -->
+    <rect x="40" y="760" width="920" height="70" rx="8" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.8"/>
+    <text x="60" y="786" fill="#2C6B34" font-size="16" font-weight="700">AXI4 匯流排 fabric（AW / W / B / AR / R）</text>
+    <text x="60" y="806" fill="#5B5342" font-size="12.5">NPU domain = slave（host 配置 CSR / TCM）+ master（DMA 讀寫 shared mem）</text>
+    <text x="60" y="823" fill="#5B5342" font-size="12.5">位址：CSR 0x3000 · TCM 0x3001-2 · SHARED 0x8000</text>
 
-    <!-- connections: memory row -> AXI4 (length 54) -->
+    <!-- connections: NPU memory row -> AXI4 -->
     <line x1="146" y1="706" x2="146" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
     <line x1="382" y1="706" x2="382" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
     <line x1="618" y1="706" x2="618" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
     <line x1="854" y1="706" x2="854" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
 
-    <!-- Host SoC label -->
-    <text x="500" y="860" fill="#5B5342" font-size="13" text-anchor="middle">↕ Host SoC（application processor、GDB debug、external memory）</text>
+    <!-- ===== HOST DOMAIN (below AXI4) ===== -->
+    <text x="34" y="864" fill="#8B8168" font-size="13" letter-spacing="1">HOST DOMAIN</text>
+
+    <!-- connections: AXI4 -> host domain -->
+    <line x1="150" y1="830" x2="150" y2="898" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="386" y1="830" x2="386" y2="898" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="612" y1="830" x2="612" y2="898" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="840" y1="830" x2="840" y2="898" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+
+    <!-- host cpu_m1 (M1A) -->
+    <rect x="41" y="900" width="218" height="118" rx="8" fill="#E4F1EE" stroke="#1F8A7D" stroke-width="1.6"/>
+    <text x="150" y="928" fill="#1F8A7D" font-size="15" text-anchor="middle" font-weight="700">cpu_m1 · HOST (M1A)</text>
+    <text x="150" y="952" fill="#5B5342" font-size="12.5" text-anchor="middle">RV32IMC + F + Zba/Zbb/Zbs</text>
+    <text x="150" y="970" fill="#5B5342" font-size="12.5" text-anchor="middle">+ Zicond · 4-stage in-order</text>
+    <text x="150" y="990" fill="#5B5342" font-size="12" text-anchor="middle">BP(2-way) + RAS · AXI master</text>
+    <text x="150" y="1008" fill="#8B8168" font-size="11.5" text-anchor="middle">同一參數化 spine（NPU = stripped 版）</text>
+
+    <!-- PLIC -->
+    <rect x="275" y="900" width="190" height="118" rx="8" fill="#ECE2C6" stroke="#C2AE7E" stroke-width="1.6"/>
+    <text x="370" y="928" fill="#2E2A22" font-size="15" text-anchor="middle" font-weight="700">PLIC</text>
+    <text x="370" y="952" fill="#5B5342" font-size="12.5" text-anchor="middle">平台級中斷控制器</text>
+    <text x="370" y="972" fill="#5B5342" font-size="12" text-anchor="middle">彙整 NPU done / err</text>
+    <text x="370" y="990" fill="#5B5342" font-size="12" text-anchor="middle">level IRQ → host</text>
+
+    <!-- shared mem -->
+    <rect x="481" y="900" width="218" height="118" rx="8" fill="#F1E8F5" stroke="#8A4FA0" stroke-width="1.6"/>
+    <text x="590" y="928" fill="#8A4FA0" font-size="15" text-anchor="middle" font-weight="700">SHARED_MEM · 0x8000</text>
+    <text x="590" y="952" fill="#5B5342" font-size="12.5" text-anchor="middle">weights + command-queue ring</text>
+    <text x="590" y="972" fill="#5B5342" font-size="12" text-anchor="middle">host producer / NPU consumer</text>
+    <text x="590" y="990" fill="#5B5342" font-size="12" text-anchor="middle">NPU DMA burst 讀寫</text>
+
+    <!-- peripherals -->
+    <rect x="715" y="900" width="244" height="118" rx="8" fill="#ECE2C6" stroke="#C2AE7E" stroke-width="1.6"/>
+    <text x="837" y="928" fill="#2E2A22" font-size="15" text-anchor="middle" font-weight="700">SoC 周邊</text>
+    <text x="837" y="952" fill="#5B5342" font-size="12.5" text-anchor="middle">UART / Timer / GPIO</text>
+    <text x="837" y="972" fill="#5B5342" font-size="12" text-anchor="middle">GDB debug（JTAG / DMI）</text>
+    <text x="837" y="990" fill="#5B5342" font-size="12" text-anchor="middle">external memory controller</text>
+
+    <text x="500" y="1050" fill="#5B5342" font-size="13" text-anchor="middle">host cpu_m1(M1A) 為 AXI master 配置並啟動 NPU · NPU 經 IRQ / PLIC / mailbox 回報 host</text>
+    <text x="500" y="1072" fill="#5B5342" font-size="12.5" text-anchor="middle">卸載流程：host 寫 weights / CQ → 敲 doorbell → NPU DMA + 計算 → DMA writeback → IRQ / mailbox</text>
+    <text x="500" y="1094" fill="#8B8168" font-size="12" text-anchor="middle">（host 與 NPU 為同一參數化 RV32 spine：host = 全開；NPU = stripped run-to-completion sequencer）</text>
   </svg>
