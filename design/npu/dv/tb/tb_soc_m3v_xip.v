@@ -23,7 +23,8 @@ module tb_soc_m3v_xip;
     wire [2:0] host_dbg_state;
     wire uart_tx_strobe;
     wire [7:0] uart_tx_byte;
-    wire qspi_sclk, qspi_cs_n, qspi_si, qspi_so;
+    wire qspi_sclk, qspi_cs_n;
+    wire [3:0] qspi_io_o, qspi_io_oe, qspi_io_i;
 
     soc_m3v_top #(
         .HOST_RESET_PC(32'h4000_0000),
@@ -45,16 +46,14 @@ module tb_soc_m3v_xip;
         .uart_tx_byte(uart_tx_byte),
         .qspi_sclk(qspi_sclk),
         .qspi_cs_n(qspi_cs_n),
-        .qspi_si(qspi_si),
-        .qspi_so(qspi_so)
+        .qspi_io_o(qspi_io_o), .qspi_io_oe(qspi_io_oe), .qspi_io_i(qspi_io_i)
     );
 
     // 1MB image window: host_producer text+rodata (~30KB) fits with margin.
     spi_nor_model #(.IMG_BYTES(1048576)) u_flash (
         .sclk(qspi_sclk),
         .cs_n(qspi_cs_n),
-        .si(qspi_si),
-        .so(qspi_so)
+        .io_i(qspi_io_o), .io_o(qspi_io_i), .io_oe_i(qspi_io_oe)
     );
 
     localparam integer DONE_WORD = 32'h0000FF00 >> 2;

@@ -28,6 +28,8 @@ VERILATOR = Path("/home/edauser/miniforge3/envs/magpie_claude/bin/verilator")
 FILES = [
     ROOT / "design/soc/qspi/qspi_master_p0.sv",
     ROOT / "design/soc/qspi/qspi_xip.sv",
+    ROOT / "design/soc/qspi/qspi_master_p2.sv",
+    ROOT / "design/soc/qspi/qspi_xip_quad.sv",
     ROOT / "design/soc/qspi/qspi_axil_front.v",
     ROOT / "design/npu/dv/tb/spi_nor_model.v",
     ROOT / "design/npu/dv/tb/tb_qspi_xip_readback.v",

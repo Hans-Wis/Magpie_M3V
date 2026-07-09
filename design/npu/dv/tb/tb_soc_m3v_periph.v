@@ -19,8 +19,7 @@ module tb_soc_m3v_periph;
     wire [ 2:0] host_dbg_state;
     wire qspi_sclk;
     wire qspi_cs_n;
-    wire qspi_si;
-    wire qspi_so;
+    wire [3:0] qspi_io_o, qspi_io_oe, qspi_io_i;
 
     soc_m3v_top #(
         .HOST_IMEM_WORDS(32768),
@@ -41,8 +40,7 @@ module tb_soc_m3v_periph;
         .uart_tx_byte(uart_tx_byte),
         .qspi_sclk(qspi_sclk),
         .qspi_cs_n(qspi_cs_n),
-        .qspi_si(qspi_si),
-        .qspi_so(qspi_so)
+        .qspi_io_o(qspi_io_o), .qspi_io_oe(qspi_io_oe), .qspi_io_i(qspi_io_i)
     );
 
     spi_nor_model #(
@@ -50,8 +48,7 @@ module tb_soc_m3v_periph;
     ) flash (
         .sclk(qspi_sclk),
         .cs_n(qspi_cs_n),
-        .si(qspi_si),
-        .so(qspi_so)
+        .io_i(qspi_io_o), .io_o(qspi_io_i), .io_oe_i(qspi_io_oe)
     );
 
     localparam integer DONE_WORD = 32'h0000FF00 >> 2;

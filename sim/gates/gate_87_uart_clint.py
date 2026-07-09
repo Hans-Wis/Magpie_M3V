@@ -42,9 +42,9 @@ NPU_RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in (
 SOC_RTL = [ROOT / f"design/soc/{m}.v" for m in (
     "axil_imem", "plic_axil_shim", "periph_axil_shim", "soc_axil_decode",
     "soc_m3v_top", "gpio")]
-SOC_RTL += [ROOT / "design/soc/qspi/qspi_master_p0.sv",
-            ROOT / "design/soc/qspi/qspi_xip.sv",
-            ROOT / "design/soc/qspi/qspi_axil_front.v"]
+SOC_RTL += [ROOT / f"design/soc/qspi/{m}" for m in (
+    "qspi_master_p0.sv", "qspi_xip.sv", "qspi_master_p2.sv", "qspi_xip_quad.sv",
+    "qspi_axil_front.v")]
 TB = ROOT / "design/npu/dv/tb/tb_soc_m3v_periph.v"
 NOR_MODEL = ROOT / "design/npu/dv/tb/spi_nor_model.v"
 FWDIR = ROOT / "design/npu/sw/host_uart_clint"

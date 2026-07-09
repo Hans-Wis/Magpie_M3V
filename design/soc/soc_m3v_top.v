@@ -43,8 +43,9 @@ module soc_m3v_top #(
     output wire [ 7:0] uart_tx_byte,
     output wire qspi_sclk,
     output wire qspi_cs_n,
-    output wire qspi_si,
-    input  wire qspi_so,
+    output wire [3:0] qspi_io_o,
+    output wire [3:0] qspi_io_oe,
+    input  wire [3:0] qspi_io_i,
     output wire [15:0] gpio_out,
     output wire [15:0] gpio_oe,
     input  wire [15:0] gpio_in,
@@ -301,6 +302,10 @@ module soc_m3v_top #(
     wire [ 1:0] x_s_rresp;
     wire [31:0] qspi_cold_reads;
     wire [31:0] qspi_warm_reads;
+    wire [31:0] qspi_quad_cold_reads;
+    wire [31:0] qspi_quad_warm_reads;
+    // mode_quad tied single-lane until the D2 QSPI CSR block lands (ADR-0071 §2)
+    wire        qspi_mode_quad = 1'b0;
 
     wire        plic_en;
     wire [31:0] plic_addr;
@@ -513,12 +518,16 @@ module soc_m3v_top #(
         .d_rready(x_s_rready),
         .d_rdata(x_s_rdata),
         .d_rresp(x_s_rresp),
+        .mode_quad_i(qspi_mode_quad),
         .o_sclk(qspi_sclk),
         .o_cs_n(qspi_cs_n),
-        .o_si(qspi_si),
-        .i_so(qspi_so),
+        .io_o(qspi_io_o),
+        .io_oe(qspi_io_oe),
+        .io_i(qspi_io_i),
         .cold_reads(qspi_cold_reads),
-        .warm_reads(qspi_warm_reads)
+        .warm_reads(qspi_warm_reads),
+        .quad_cold_reads(qspi_quad_cold_reads),
+        .quad_warm_reads(qspi_quad_warm_reads)
     );
 
     wire        h_arvalid, h_arready, h_rvalid, h_rready, h_rlast;
@@ -659,6 +668,7 @@ module soc_m3v_top #(
     );
 
     wire unused_npu_status = |{npu_start, npu_config, dbg_dmi_reads, dbg_dmi_writes,
-                               qspi_cold_reads, qspi_warm_reads};
+                               qspi_cold_reads, qspi_warm_reads,
+                               qspi_quad_cold_reads, qspi_quad_warm_reads};
 endmodule
 `default_nettype wire
