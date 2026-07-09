@@ -41,9 +41,9 @@ module fexu #(
     output wire [31:0] q_xdata,
     output wire [4:0]  q_flags,     // fflags accrual {NV,DZ,OF,UF,NX}
 
-    // ---- F4 multi-cycle (fdiv iterative divider) ----
-    output wire        q_fdiv_busy, // fdiv is iterating: hold the pipe (like md_busy)
-    input  wire        q_flush,     // redirect/debug: kill in-flight fdiv (ERRATA-0002)
+    // ---- F4 multi-cycle (fdiv/fsqrt iterative engines) ----
+    output wire        q_fmc_busy,  // fdiv or fsqrt iterating: hold the pipe (like md_busy)
+    input  wire        q_flush,     // redirect/debug: kill in-flight fdiv/fsqrt (ERRATA-0002)
     input  wire        q_advance,   // instr leaves EX this cycle (consume held result)
 
     // ---- WB commit ----
@@ -720,7 +720,7 @@ module fexu #(
     reg  [31:0] fdiv_iter_res;
     reg  [4:0]  fdiv_iter_fl;
 
-    assign q_fdiv_busy = (EN_F != 0) && q_valid && fdiv_needs_iter && !fdiv_result_valid;
+    wire fdiv_busy_i = (EN_F != 0) && q_valid && fdiv_needs_iter && !fdiv_result_valid;
     wire fd_start = (EN_F != 0) && q_valid && fdiv_needs_iter &&
                     (fd_state == FD_IDLE) && !fdiv_result_valid && !q_flush;
 
@@ -780,50 +780,104 @@ module fexu #(
     wire [4:0]  fdiv_fl  = fdiv_special ? fdiv_sp_fl  : fdiv_iter_fl;
 
     // ---------------- fsqrt (integer sqrt + square-check sticky) --------------
-    reg  [31:0] fsq_res;
-    reg  [4:0]  fsq_fl;
-    always @* begin : f_sqrt
-        reg signed [9:0] expZ;
-        reg [63:0] rad, rem;
-        reg [31:0] q;
-        reg [36:0] rp;
-        integer k;
-        fsq_res = 32'h0; fsq_fl = 5'b0;
-        expZ = 10'sd0; rad = 64'b0; rem = 64'b0; q = 32'b0; rp = 37'b0;
+    // F4 multi-cycle: NaN/zero/neg/inf resolve in one combinational cycle; the
+    // normal-case restoring integer sqrt (was a 31-iteration unrolled loop, a
+    // top EX cone) is rolled into an iterative FSM — 31 cycles, 2 radicand bits
+    // per step, bit-exact to the unrolled version. Same handshake as fdiv.
+    wire fsqrt_op_here   = op_fsqrt && q_hit && !q_illegal;
+    wire fsqrt_special   = a_nan || a_zeroe || sA || a_inf;
+    wire fsqrt_needs_iter = fsqrt_op_here && !fsqrt_special;
+
+    // --- special-case result (combinational, 1 cycle) ---
+    reg  [31:0] fsq_sp_res;
+    reg  [4:0]  fsq_sp_fl;
+    always @* begin : f_sqrt_special
+        fsq_sp_res = 32'h0; fsq_sp_fl = 5'b0;
         if (a_nan) begin
-            fsq_res = a_snan ? QNAN : fa;                              // qNaN passes? softfloat: canonical
-            fsq_res = QNAN;
-            fsq_fl = a_snan ? 5'b10000 : 5'b0;
+            fsq_sp_res = QNAN; fsq_sp_fl = a_snan ? 5'b10000 : 5'b0;
         end else if (a_zeroe) begin
-            fsq_res = fa;                                              // ±0
+            fsq_sp_res = fa;                                           // ±0
         end else if (sA) begin
-            fsq_res = QNAN; fsq_fl = 5'b10000;                         // sqrt(neg)
+            fsq_sp_res = QNAN; fsq_sp_fl = 5'b10000;                   // sqrt(neg)
         end else if (a_inf) begin
-            fsq_res = fa;
-        end else begin
-            // E = enA-127; odd E folds a x2 into the radicand:
-            //   q = sqrt(1.m * 2^(E&1)) * 2^30  ->  q^2 = sgA << (37 + (E&1))
-            //   expZ - 126 = (E - (E&1)) / 2
-            expZ = ((enA - 10'sd127 - (enA[0] ? 10'sd0 : 10'sd1)) >>> 1) + 10'sd126;
-            rad = {40'b0, sgA} << (enA[0] ? 6'd37 : 6'd38);
-            // integer sqrt (restoring, 2 bits/step over the 62-bit radicand)
-            q = 32'b0; rem = 64'b0;
-            for (k = 30; k >= 0; k = k - 1) begin
-                rem = (rem << 2) | ((rad >> (2 * k)) & 64'h3);
-                if (rem >= ({30'b0, q, 2'b01})) begin
-                    rem = rem - {30'b0, q, 2'b01};
-                    q = (q << 1) | 32'h1;
-                end else
-                    q = q << 1;
-            end
-            // sticky: same trick as f32_div — only low-6-zero cases can be
-            // affected by an extra sticky bit
-            if (q[5:0] == 6'b0)
-                q = q | {31'b0, (rem != 64'b0)};
-            rp = rp32(1'b0, expZ, q[30:0]);
-            fsq_fl = rp[36:32]; fsq_res = rp[31:0];
+            fsq_sp_res = fa;
         end
     end
+
+    // --- iterative restoring integer sqrt (normal case) ---
+    localparam [1:0] FS_IDLE = 2'd0, FS_WORK = 2'd1, FS_DONE = 2'd2;
+    reg  [1:0]  fs_state;
+    reg  [4:0]  fs_iter;               // 0..30 (31 steps)
+    reg  [61:0] fs_rad;               // radicand, top 2 bits consumed per step
+    reg  [63:0] fs_rem;               // partial remainder
+    reg  [31:0] fs_q;                 // running root
+    reg  signed [9:0] fs_expZ;
+    reg         fsqrt_result_valid;
+    reg  [31:0] fsqrt_iter_res;
+    reg  [4:0]  fsqrt_iter_fl;
+
+    wire fsqrt_busy_i = (EN_F != 0) && q_valid && fsqrt_needs_iter && !fsqrt_result_valid;
+    wire fs_start = (EN_F != 0) && q_valid && fsqrt_needs_iter &&
+                    (fs_state == FS_IDLE) && !fsqrt_result_valid && !q_flush;
+
+    // one restoring step (2 bits/cycle, combinational next-values)
+    wire [63:0] fs_rem_sh = (fs_rem << 2) | {62'b0, fs_rad[61:60]};
+    wire [63:0] fs_cmp    = {30'b0, fs_q, 2'b01};
+    wire        fs_ge     = (fs_rem_sh >= fs_cmp);
+    wire [63:0] fs_rem_nx = fs_ge ? (fs_rem_sh - fs_cmp) : fs_rem_sh;
+    wire [31:0] fs_q_nx   = fs_ge ? ((fs_q << 1) | 32'h1) : (fs_q << 1);
+
+    // sticky + round-pack of the finished root (combinational, used in FS_DONE)
+    reg  [31:0] fs_q_final;
+    reg  [36:0] fs_rp;
+    always @* begin : f_sqrt_pack
+        fs_q_final = fs_q;
+        if (fs_q[5:0] == 6'b0)
+            fs_q_final = fs_q | {31'b0, (fs_rem != 64'b0)};
+        fs_rp = rp32(1'b0, fs_expZ, fs_q_final[30:0]);
+    end
+
+    always @(posedge clk) begin
+        if (!resetn) begin
+            fs_state <= FS_IDLE; fsqrt_result_valid <= 1'b0;
+        end else if (q_flush) begin
+            fs_state <= FS_IDLE; fsqrt_result_valid <= 1'b0;   // ERRATA-0002
+        end else begin
+            case (fs_state)
+                FS_IDLE: if (fs_start) begin
+                    // E = enA-127; odd E folds a x2 into the radicand.
+                    fs_expZ <= ((enA - 10'sd127 - (enA[0] ? 10'sd0 : 10'sd1)) >>> 1)
+                               + 10'sd126;
+                    fs_rad  <= ({38'b0, sgA} << (enA[0] ? 6'd37 : 6'd38)); // 62-bit radicand
+                    fs_rem  <= 64'b0;
+                    fs_q    <= 32'b0;
+                    fs_iter <= 5'd0;
+                    fs_state <= FS_WORK;
+                end
+                FS_WORK: begin
+                    fs_rem  <= fs_rem_nx;
+                    fs_q    <= fs_q_nx;
+                    fs_rad  <= {fs_rad[59:0], 2'b0};
+                    fs_iter <= fs_iter + 5'd1;
+                    if (fs_iter == 5'd30) fs_state <= FS_DONE;
+                end
+                FS_DONE: begin
+                    fsqrt_iter_res     <= fs_rp[31:0];
+                    fsqrt_iter_fl      <= fs_rp[36:32];
+                    fsqrt_result_valid <= 1'b1;
+                    fs_state           <= FS_IDLE;
+                end
+                default: fs_state <= FS_IDLE;
+            endcase
+            if (q_advance && fsqrt_result_valid) fsqrt_result_valid <= 1'b0;
+        end
+    end
+
+    wire [31:0] fsq_res = fsqrt_special ? fsq_sp_res : fsqrt_iter_res;
+    wire [4:0]  fsq_fl  = fsqrt_special ? fsq_sp_fl  : fsqrt_iter_fl;
+
+    // combined float multi-cycle busy (fdiv or fsqrt) -> pipe stall
+    assign q_fmc_busy = fdiv_busy_i || fsqrt_busy_i;
 
     // ---------------- result muxes ----------------
     assign q_fwe = q_hit && !q_illegal &&
