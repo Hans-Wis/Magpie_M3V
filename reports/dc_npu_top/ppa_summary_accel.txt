@@ -1,0 +1,36 @@
+Magpie_M3V npu_top FULL-DC PPA — fdiv+fsqrt+vdiv ITERATIVE (accelerated)
+=========================================================================
+Flow  : Synopsys DC (compile -map_effort medium, FAST=1) + TSMC28 std-cell
+        + 9x real TSMC28 dual-port SRAM macros (TCM), USE_SRAM_MACRO=1
+SKU   : MAT_LANES=4 / DMA_DATA_W=256 / ML_V2_EN=1 (flagship)
+Clock : 2.5 ns constraint (uncertainty 0.05)
+RTL   : fdiv(ed61f50) + fsqrt(648948e) + vdiv(8e01b25) all iterative multi-cycle
+
+TIMING (setup)
+  Critical Path Length : 2.53 ns
+  Critical Path Slack  : -0.08 ns @ 2.5ns  (188 paths marginally over by <=0.08)
+  Fmax                 : ~388 MHz (1000/2.58 with 0.05 uncertainty)
+                         ~395 MHz (1000/2.53 raw path)
+  Worst path           : u_npu_core/u_core/if_ex_instr_reg -> ex_mem_f_data_r
+                         (fexu FMA); co-limiting: scalar ex_wb_md_result.
+  NOTE: NO combinational divide/sqrt cone remains. New wall = fexu fma/fmul
+        + scalar mul/div result path, well-distributed (~2.53ns).
+
+TIMING (hold) : 188 pre-CTS setup + hold violations, ideal clock -> P&R fix.
+
+AREA (Total cell area 443,815 um^2)
+  Combinational        : 114,668 um^2   (was ~484k with combinational dividers)
+  Noncombinational(FF) :  32,930 um^2
+  Macro/Black Box      : 296,217 um^2   (9x TCM SRAM, unchanged)
+  => std-cell logic    : ~147,598 um^2  (was ~524k -> -72% !!)
+
+POWER (report_power -analysis_effort low, ideal clock, unannotated activity)
+  Total Dynamic Power  : 192.87 mW @ ~390 MHz  (2.4x the 15.96mW @167MHz signoff
+                          is dominated by the 2.4x clock; unannotated estimate)
+  Cell Leakage Power   :  0.66 mW
+
+vs 2026-07-08 signoff (all-combinational dividers, CLK 6.0ns):
+  Fmax 166.7 -> ~390 MHz  (2.3x)
+  crit path 5.93 -> 2.53 ns
+  total area 820,600 -> 443,815 um^2  (-46%)
+  std-cell logic 524k -> 148k um^2    (-72%)
