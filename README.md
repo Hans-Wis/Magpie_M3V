@@ -8,6 +8,35 @@ bit-exact results, verified against the Spike ISS by per-commit lockstep.
 > This line is **clean-room / self-built** (not an import). Correctness authority is the project's
 > own **Spike lockstep + bit-accurate golden + scoreboards** — not "looks right" or a passing lint.
 
+## Architecture
+
+<p align="center">
+  <img src="docs/img/top_arch.svg" alt="Magpie_M3V top-level block architecture — RV32+RVV core with scalar / vector / matrix engines inside the NPU domain" width="760">
+</p>
+
+<p align="center"><em>Top-level block architecture (drawn by Coral-NPU component partition). Full spec: <a href="docs/rv32_rvv_design_spec.html">rv32_rvv_design_spec.html</a> — also has pipeline, RVV register-slicing, and memory-hierarchy diagrams.</em></p>
+
+### How the three engines divide the work
+
+The NPU runs one inference across **three engines**, and the split is decided by a single
+mechanical criterion — *does the op accumulate along a **contraction axis** (a dimension that is
+summed away and vanishes from the output)?* The compiler backend (MLIR `linalg` parallel-vs-reduction
+dims) assigns each op at lowering time; the developer never hand-partitions.
+
+| Engine | Role | Work | ISA / interface |
+|---|---|---|---|
+| **Scalar** (control) | only touches **addresses** | loops · addr-gen · branches · issue commands · sync | standard **RV32IM(F)** |
+| **Vector** (element-wise) | touches **data**, no axis vanishes | activation · bias · requantize · pooling (relu/add/rescale/pool) | standard **RVV Zve32x** |
+| **Matrix** (accumulate along axis) | a **contraction axis** is summed away | matmul · conv · QKᵀ | custom **command** (not ISA) |
+
+`C[i,j] = Σₖ A[i,k]·B[k,j]` — the `k` dimension exists in the inputs but disappears in `C`; that is
+the contraction axis, and "accumulate along it" is exactly MAC (multiply-accumulate, accumulator
+never cleared) → it needs the **matrix engine's accumulator array**. Element-wise ops (e.g. ReLU:
+input shape = output shape, nothing vanishes) need no accumulator → the **vector engine**. This
+"does it converge onto one accumulator?" test is what draws the scalar/vector/matrix boundary.
+Full walk-through (instruction-vs-command identity, fence/memory hand-off between engines, and a
+worked CNN example): [`docs/rv-npu_operation.html`](docs/rv-npu_operation.html).
+
 ## What's inside
 
 | Area | Highlights |

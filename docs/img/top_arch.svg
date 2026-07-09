@@ -1,0 +1,121 @@
+<svg viewBox="0 0 1000 900" width="100%" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#8B8168"/>
+      </marker>
+      <marker id="arrowAccent" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#3E8F49"/>
+      </marker>
+    </defs>
+
+    <!-- outer SoC boundary -->
+    <rect x="16" y="16" width="968" height="860" rx="10" fill="none" stroke="#C2AE7E" stroke-width="1.5" stroke-dasharray="5 5"/>
+    <text x="34" y="42" fill="#8B8168" font-size="13" letter-spacing="1">SOC BOUNDARY</text>
+
+    <!-- Coral-style core container -->
+    <rect x="40" y="60" width="920" height="520" rx="10" fill="#FAF6EA" stroke="#C2AE7E" stroke-width="1.5"/>
+    <text x="58" y="88" fill="#2E2A22" font-size="17" font-weight="700">RV32 + RVV CORE</text>
+
+    <!-- Fetch/Decode/Dispatch -->
+    <rect x="58" y="108" width="884" height="66" rx="6" fill="#ECE2C6" stroke="#C2AE7E"/>
+    <text x="500" y="136" fill="#2E2A22" font-size="16" text-anchor="middle" font-weight="600">Fetch / Decode / Scoreboard / Dispatch</text>
+    <text x="500" y="157" fill="#5B5342" font-size="13" text-anchor="middle">4-way scalar dispatch · 2-way vector dispatch</text>
+
+    <!-- Scalar engine -->
+    <rect x="58" y="214" width="281" height="240" rx="8" fill="#E4F1EE" stroke="#1F8A7D" stroke-width="1.6"/>
+    <text x="198" y="240" fill="#1F8A7D" font-size="16" text-anchor="middle" font-weight="700">SCALAR CORE</text>
+    <rect x="76" y="252" width="115" height="40" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="133" y="277" fill="#2E2A22" font-size="14" text-anchor="middle">ALU</text>
+    <rect x="205" y="252" width="116" height="40" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="263" y="277" fill="#2E2A22" font-size="14" text-anchor="middle">BRU (branch)</text>
+    <rect x="76" y="300" width="115" height="40" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="133" y="325" fill="#2E2A22" font-size="14" text-anchor="middle">Mul / Div</text>
+    <rect x="205" y="300" width="116" height="40" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="263" y="325" fill="#2E2A22" font-size="14" text-anchor="middle">FPU (F)</text>
+    <rect x="76" y="348" width="245" height="40" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="198" y="366" fill="#2E2A22" font-size="13" text-anchor="middle">x0–x31 register file</text>
+    <text x="198" y="382" fill="#5B5342" font-size="13" text-anchor="middle">(32-bit ×31)</text>
+    <rect x="76" y="396" width="245" height="30" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="198" y="416" fill="#2E2A22" font-size="13" text-anchor="middle">CSR file (Zicsr)</text>
+
+    <!-- Vector engine -->
+    <rect x="359" y="214" width="282" height="240" rx="8" fill="#E7ECF6" stroke="#3A5BA8" stroke-width="1.6"/>
+    <text x="500" y="240" fill="#3A5BA8" font-size="16" text-anchor="middle" font-weight="700">VECTOR ENGINE (RVV)</text>
+    <rect x="377" y="252" width="246" height="40" rx="4" fill="#FAF6EA" stroke="#AEBEE0"/>
+    <text x="500" y="277" fill="#2E2A22" font-size="14" text-anchor="middle">v0–v31, 256-bit × 32</text>
+    <rect x="377" y="300" width="246" height="46" rx="4" fill="#FAF6EA" stroke="#AEBEE0"/>
+    <text x="500" y="319" fill="#2E2A22" font-size="13" text-anchor="middle">SIMD ALU · 128-bit datapath</text>
+    <text x="500" y="337" fill="#5B5342" font-size="13" text-anchor="middle">(256-bit future)</text>
+    <rect x="377" y="354" width="246" height="46" rx="4" fill="#FAF6EA" stroke="#AEBEE0"/>
+    <text x="500" y="373" fill="#2E2A22" font-size="13" text-anchor="middle">8×8×32-bit accumulator</text>
+    <text x="500" y="390" fill="#5B5342" font-size="12" text-anchor="middle">acc&lt;8&gt;&lt;8&gt;</text>
+    <rect x="377" y="408" width="246" height="38" rx="4" fill="#FAF6EA" stroke="#AEBEE0"/>
+    <text x="500" y="424" fill="#2E2A22" font-size="12.5" text-anchor="middle">data widths:</text>
+    <text x="500" y="440" fill="#5B5342" font-size="12.5" text-anchor="middle">int8 / int16 / int32</text>
+
+    <!-- Matrix engine -->
+    <rect x="661" y="214" width="281" height="240" rx="8" fill="#F7EFDD" stroke="#B9791E" stroke-width="1.6"/>
+    <text x="801" y="240" fill="#B9791E" font-size="16" text-anchor="middle" font-weight="700">MATRIX ENGINE</text>
+    <rect x="679" y="252" width="246" height="40" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
+    <text x="801" y="277" fill="#2E2A22" font-size="14" text-anchor="middle">Outer-product MAC array</text>
+    <rect x="679" y="300" width="246" height="46" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
+    <text x="801" y="319" fill="#2E2A22" font-size="13" text-anchor="middle">4× 8-bit multiplies →</text>
+    <text x="801" y="337" fill="#5B5342" font-size="13" text-anchor="middle">32-bit acc</text>
+    <rect x="679" y="354" width="246" height="40" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
+    <text x="801" y="379" fill="#2E2A22" font-size="14" text-anchor="middle">256 MACs / cycle</text>
+    <rect x="679" y="402" width="246" height="34" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
+    <text x="801" y="423" fill="#5B5342" font-size="12.5" text-anchor="middle">quantized int8 MAC engine</text>
+
+    <!-- connections: dispatch -> engines (length 40) -->
+    <line x1="198" y1="174" x2="198" y2="212" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="500" y1="174" x2="500" y2="212" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="801" y1="174" x2="801" y2="212" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+    <!-- shared LSU -->
+    <rect x="58" y="498" width="884" height="56" rx="6" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.6"/>
+    <text x="500" y="531" fill="#2C6B34" font-size="16" text-anchor="middle" font-weight="600">Shared Load / Store Unit (LSU) · IBUS / DBUS</text>
+
+    <!-- connections: engines -> LSU (length 44) -->
+    <line x1="198" y1="454" x2="198" y2="496" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="500" y1="454" x2="500" y2="496" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="801" y1="454" x2="801" y2="496" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+    <!-- memory / csr / ebus row -->
+    <rect x="41" y="634" width="210" height="72" rx="6" fill="#F1E8F5" stroke="#8A4FA0" stroke-width="1.6"/>
+    <text x="146" y="662" fill="#8A4FA0" font-size="14.5" text-anchor="middle" font-weight="700">ITCM · 8 KB</text>
+    <text x="146" y="684" fill="#5B5342" font-size="12.5" text-anchor="middle">single-cycle SRAM</text>
+
+    <rect x="277" y="634" width="210" height="72" rx="6" fill="#F1E8F5" stroke="#8A4FA0" stroke-width="1.6"/>
+    <text x="382" y="662" fill="#8A4FA0" font-size="14.5" text-anchor="middle" font-weight="700">DTCM · 32 KB</text>
+    <text x="382" y="684" fill="#5B5342" font-size="12.5" text-anchor="middle">single-cycle SRAM</text>
+
+    <rect x="513" y="634" width="210" height="72" rx="6" fill="#ECE2C6" stroke="#C2AE7E" stroke-width="1.6"/>
+    <text x="618" y="660" fill="#2E2A22" font-size="14.5" text-anchor="middle" font-weight="700">Custom CSRs</text>
+    <text x="618" y="680" fill="#5B5342" font-size="12" text-anchor="middle">RESET_CONTROL</text>
+    <text x="618" y="696" fill="#5B5342" font-size="12" text-anchor="middle">PC_START · STATUS</text>
+
+    <rect x="749" y="634" width="210" height="72" rx="6" fill="#ECE2C6" stroke="#C2AE7E" stroke-width="1.6"/>
+    <text x="854" y="662" fill="#2E2A22" font-size="14.5" text-anchor="middle" font-weight="700">EBUS (external mem)</text>
+    <text x="854" y="684" fill="#5B5342" font-size="12.5" text-anchor="middle">via LSU</text>
+
+    <!-- connections: LSU -> memory row (length 80) -->
+    <line x1="146" y1="554" x2="146" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="382" y1="554" x2="382" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="618" y1="554" x2="618" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="854" y1="554" x2="854" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+    <!-- AXI4 bus bar -->
+    <rect x="40" y="760" width="920" height="74" rx="8" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.8"/>
+    <text x="60" y="790" fill="#2C6B34" font-size="16" font-weight="700">AXI4 BUS INTERFACE</text>
+    <text x="60" y="810" fill="#5B5342" font-size="13">master (config external mem) + slave (host configures/debugs core)</text>
+    <text x="60" y="826" fill="#5B5342" font-size="13">AW / W / B / AR / R channels</text>
+
+    <!-- connections: memory row -> AXI4 (length 54) -->
+    <line x1="146" y1="706" x2="146" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="382" y1="706" x2="382" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="618" y1="706" x2="618" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="854" y1="706" x2="854" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+
+    <!-- Host SoC label -->
+    <text x="500" y="860" fill="#5B5342" font-size="13" text-anchor="middle">↕ Host SoC（application processor、GDB debug、external memory）</text>
+  </svg>
