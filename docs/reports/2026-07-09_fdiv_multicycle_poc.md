@@ -2,19 +2,20 @@
 
 - **Date:** 2026-07-09 · **Author:** Claude · **Commits:** `ed61f50` (fdiv), `648948e` (fsqrt), `8e01b25` (vdiv) · **Scope:** PoC → full three-wall removal per User (「先做 fdiv 單點 PoC 實證 Fmax 上升」→「續做 fsqrt」→「續做 vexu vdiv 迭代化」)
 
-## ★ RESULT — Fmax rises 2.3×, area drops 46%
+## ★ RESULT — Fmax 166.7 → ~460 MHz (2.8×), area −50%, wall left the CPU core
 
-| metric | signoff (all-combinational dividers, 6.0ns) | **all iterative (2.5ns)** | Δ |
-|---|---|---|---|
-| **Fmax** | 166.7 MHz | **~390 MHz** | **2.3×** |
-| critical path | 5.93 ns | **2.53 ns** | −57% |
-| worst endpoint | fexu fdiv / vexu vdiv (co-walls) | **fexu fma + scalar mul/div** (distributed) | wall moved |
-| total cell area | 820,600 µm² | **443,815 µm²** | **−46%** |
-| std-cell logic | ~524k µm² | **~148k µm²** | **−72%** |
-| dynamic power | 15.96 mW @167MHz | 192.9 mW @390MHz | (∝ 2.4× freq) |
-| leakage | 0.94 mW | 0.66 mW | |
+| stage | Fmax | crit path | worst wall | area |
+|---|---|---|---|---|
+| signoff (all-combinational dividers, 6.0ns) | 166.7 MHz | 5.93 ns | fexu fdiv / vexu vdiv | 820,600 µm² |
+| **+ fdiv+fsqrt+vdiv iterative** (2.5ns) | **~390 MHz** | 2.53 ns | fexu **FMA** + scalar mul | 443,815 µm² |
+| **+ FMA 2-stage** (2.2ns) | **~460–470 MHz** | **2.13 ns** | **mat_engine 256-MAC acc** | **413,858 µm²** |
 
-The three combinational divide/sqrt cones were **both the Fmax wall and the dominant logic area** (~376k µm² of std-cell logic). Replacing them with tiny iterative FSMs raised Fmax 2.3× AND cut logic area 72%. The new critical path is the fexu FMA / scalar mul-div result path (~2.53 ns), well-distributed — no single dominant wall. `reports/dc_npu_top/ppa_summary_accel.txt`.
+**Total: Fmax 166.7 → ~460 MHz (2.8×), area 820k → 414k µm² (−50%).** After the FMA
+2-stage the critical path **left the CPU sequencer core entirely** and now sits on
+the **mat_engine 256-MAC accumulator** (`u_mat/acc_reg`) — a separate compute-engine
+domain. fexu (fdiv/fsqrt/fmul/**fma**), vexu (vdiv/RVV), and scalar mul/div are all
+below 2.13 ns. Dynamic power 276.9 mW @470MHz / 192.9 mW @390MHz / 15.96 mW @167MHz
+(scales with clock; unannotated). `ppa_summary_accel.txt` (390) + `ppa_summary_fma2s.txt` (470).
 - **Goal:** prove the multi-cycle-divider mechanism (a) integrates bit-exactly and (b) removes the fdiv combinational cone from the EX critical path — the first step toward raising npu_top Fmax (166.7 MHz, gated by fexu float + vexu vdiv).
 
 ---
@@ -96,8 +97,32 @@ changed, values identical.
   scaled cleanly from a self-contained fexu op to the intricate vexu multi-beat.
 - ✅ **Fmax 166.7 → ~390 MHz (2.3×)**, **logic area −72%**, new wall = fexu fma
   + scalar mul/div (distributed ~2.53 ns). Proof delivered.
-- **Further headroom (optional, if >400 MHz wanted):** 2-stage-pipeline fexu
-  fma/fmul + the scalar mul/div result path through their round/normalize.
+## 9. fexu FMA 2-stage (`03570dc`) — wall leaves the CPU core
 
-**Artifacts:** RTL `ed61f50`/`648948e`/`8e01b25`; DC `reports/dc_npu_top/ppa_summary_accel.txt`;
+The fused multiply-add (mult → align-add → round) was the #1 EX path after the
+dividers (all top-12 worst paths, 2.53 ns). Split it: **stage 1 registers the
+24×24 mantissa product** (`fma_sigProd_r`/`fma_expProd_r`); **stage 2** (the
+`f_fma` block) does align/add/normalize/round from the register. Normal FMA takes
+1 extra cycle via the existing `q_fmc_busy` stall; specials stay 1-cycle. Because
+the op is held in EX, operands stay valid — **only the product needs registering**
+(bit-exact). fmul/fadd (<2.5 ns) untouched.
+
+**Verify:** gate_61 (incl fmadd/fnmsub corners) f2 301 + frand 1097 = 4 passed;
+gate_60 3; phase_20 NPU 1164; RVV LMUL/vdiv + mat 10 passed — all bit-exact.
+
+**DC (CLK 2.2ns):** timing MET, 0 violating, critical path **2.13 ns → ~460–470 MHz**.
+Endpoint moved to **`u_mat/acc_reg`** — the mat_engine 256-MAC accumulator. The
+whole CPU sequencer core is now off the critical path.
+
+## 10. Conclusion
+
+Four multi-cycle/pipeline changes (fdiv, fsqrt, vdiv, FMA), each bit-exact and
+zero-regression, took npu_top from **166.7 → ~460 MHz (2.8×)** while **cutting
+area 50%**. The Fmax wall walked out of the CPU core (dividers → FMA → gone) and
+now rests on the **mat_engine 256-MAC accumulate** — the actual compute engine.
+Further headroom would require pipelining the MAC accumulator itself (a separate
+compute-engine optimization, ~470 MHz is already strong for a 256-MAC).
+
+**Artifacts:** RTL `ed61f50`/`648948e`/`8e01b25`/`03570dc`; DC summaries
+`reports/dc_npu_top/ppa_summary_accel.txt` (390) + `ppa_summary_fma2s.txt` (470);
 `flow/dc_tsmc28/synth_fexu.tcl`. Production sign-off → full ADR + VCS/coverage per §2.

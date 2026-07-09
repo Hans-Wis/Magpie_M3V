@@ -1,0 +1,31 @@
+Magpie_M3V npu_top FULL-DC PPA — fdiv+fsqrt+vdiv iterative + FMA 2-stage
+=========================================================================
+Flow  : Synopsys DC (compile -map_effort medium, FAST=1) + TSMC28 std-cell
+        + 9x real TSMC28 dual-port SRAM macros (TCM), USE_SRAM_MACRO=1
+SKU   : MAT_LANES=4 / DMA_DATA_W=256 / ML_V2_EN=1 (flagship)
+Clock : 2.2 ns constraint (uncertainty 0.05)
+RTL   : fdiv(ed61f50)+fsqrt(648948e)+vdiv(8e01b25) iterative + FMA 2-stage(03570dc)
+
+TIMING (setup) -- MET
+  Critical Path Length : 2.13 ns
+  Critical Path Slack  : 0.00 ns @ 2.2ns   (0 violating paths)
+  Fmax                 : ~460 MHz (meets 2.2ns w/ 0.05 uncertainty)
+                         ~470 MHz (1000/2.13 raw path)
+  Worst endpoint       : u_mat/acc_reg[*]  (mat_engine 256-MAC ACCUMULATOR)
+  ** The sequencer core (fexu FMA/fmul, vexu, scalar mul/div) is now ENTIRELY
+     BELOW the critical path. The wall has moved out of the CPU core into the
+     mat_engine 256-MAC accumulate tree (a separate compute-engine domain). **
+
+AREA (Total cell area 413,858 um^2)
+  = ~118k std-cell logic + 296k SRAM macro (9x TCM)
+  vs 820,600 signoff -> -50%
+
+POWER (report_power -analysis_effort low, unannotated)
+  Total Dynamic Power  : 276.93 mW @ ~470 MHz  (scales with the 2.7x clock vs signoff)
+  Cell Leakage Power   :  0.63 mW
+
+FULL TRAJECTORY (all-combinational-dividers signoff -> here):
+  Fmax  166.7 -> ~460-470 MHz   (2.8x)
+  crit  5.93  -> 2.13 ns
+  area  820,600 -> 413,858 um^2 (-50%)
+  wall  fexu fdiv/vexu vdiv (167) -> fexu FMA (390) -> mat_engine MAC (470)
