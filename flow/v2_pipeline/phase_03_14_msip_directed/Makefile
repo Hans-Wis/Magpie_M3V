@@ -13,7 +13,7 @@ RTL_SRCS = $(RTL_DIR)/rfu.v $(RTL_DIR)/alu.v $(RTL_DIR)/idu.v \
            $(RTL_DIR)/cdec.v $(RTL_DIR)/core.v
 VFLAGS = --binary -j 4 --trace --trace-depth 2 --trace-structs --coverage \
          --top-module tb_msip_directed --timescale 1ns/1ns \
-         -I$(RTL_DIR) -Wall -Wno-PROCASSINIT -Wno-DECLFILENAME \
+         -I$(RTL_DIR) -Wall -Wno-PINMISSING -Wno-PROCASSINIT -Wno-DECLFILENAME \
          -Wno-TIMESCALEMOD -Wno-UNUSEDSIGNAL -Wno-SYNCASYNCNET
 SIM_BIN = obj_dir/Vtb_msip_directed
 

@@ -25,7 +25,7 @@ VFLAGS = --binary -j 4 \
          --top-module tb_directed_lockstep \
          --timescale 1ns/1ns \
          -I$(RTL_DIR) \
-         -Wall -Wno-PROCASSINIT -Wno-DECLFILENAME -Wno-TIMESCALEMOD \
+         -Wall -Wno-PINMISSING -Wno-PROCASSINIT -Wno-DECLFILENAME -Wno-TIMESCALEMOD \
          -Wno-UNUSEDSIGNAL -Wno-SYNCASYNCNET
 
 SIM_BIN = obj_dir/Vtb_directed_lockstep
