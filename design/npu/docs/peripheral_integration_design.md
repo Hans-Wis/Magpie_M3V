@@ -1,6 +1,6 @@
 # soc_m3v_top 周邊整合 — 架構設計確認(§2)
 
-Status: **ACCEPTED — User 裁示 P0 三項先行(2026-07-09);契約凍結於 ADR-0069;P1/P2 待後續裁示**
+Status: **P0 DONE(2026-07-09)— Step A @1215d1d、B @5dd79c8、C @ca40c83;gate_85-88 全綠;P1(dm/dtm、GPIO)/P2(quad、prog)待裁示**
 Date: 2026-07-09
 Sources: M6 周邊盤點 / M3V 缺口盤點 / M1V1 Coral 整合契約盤點(本檔 §6 evidence)
 
