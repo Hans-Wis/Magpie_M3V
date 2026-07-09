@@ -1,1 +1,0 @@
-PASS: pre-trap prefix lockstep matched 7 commits; through-trap handler CSRs match spec (mepc/mcause=11/mstatus=0x1800) x2, mret resumes correctly

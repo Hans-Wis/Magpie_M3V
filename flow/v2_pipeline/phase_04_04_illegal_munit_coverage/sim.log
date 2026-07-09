@@ -1,7 +1,0 @@
-[3335 ns] mmio[00000024] <= 00000a0a pc=0000007e instr=0000006f
-[3455 ns] start illegal compressed case 1 word0=00016005
-[6745 ns] mmio[00000024] <= 00000a0a pc=0000007e instr=0000006f
-FAIL: watchdog timeout
-[24015] %Fatal: tb_illegal_munit_coverage.v:122: Assertion failed in tb_illegal_munit_coverage
-%Error: tb_illegal_munit_coverage.v:122: Verilog $stop
-Aborting...

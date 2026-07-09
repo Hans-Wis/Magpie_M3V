@@ -1,3 +1,0 @@
-	mstatus_mpie
-	mstatus_mie
-

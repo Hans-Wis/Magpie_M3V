@@ -1,3 +1,0 @@
-design/cpu_m1/dv/formal/alu_assert_bind.sv
-design/cpu_m1/rtl/alu.v
-design/cpu_m1/rtl/def.vh

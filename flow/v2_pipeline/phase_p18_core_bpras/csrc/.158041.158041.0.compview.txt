@@ -1,9 +1,0 @@
-{"vcs1":{"timestamp_begin":1781008761.370969886, "rt":0.52, "ut":0.34, "st":0.08}}
-{"vcselab":{"timestamp_begin":1781008761.943523841, "rt":0.20, "ut":0.09, "st":0.03}}
-{"link":{"timestamp_begin":1781008762.192141311, "rt":0.17, "ut":0.03, "st":0.03}}
-{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1781008761.030715714}
-{"VCS_COMP_START_TIME": 1781008761.030715714}
-{"VCS_COMP_END_TIME": 1781008762.414965737}
-{"VCS_USER_OPTIONS": "-full64 -sverilog -timescale=1ns/1ns -cm line+cond+branch+fsm+tgl -cm_dir vcs/simv.vdb +incdir+../../../design/cpu_m1/rtl ../../../design/cpu_m1/rtl/alu.v ../../../design/cpu_m1/rtl/bp.v ../../../design/cpu_m1/rtl/cdec.v ../../../design/cpu_m1/rtl/core.v ../../../design/cpu_m1/rtl/cpu_m1_top.v ../../../design/cpu_m1/rtl/csr.v ../../../design/cpu_m1/rtl/div.v ../../../design/cpu_m1/rtl/forward.v ../../../design/cpu_m1/rtl/hazard.v ../../../design/cpu_m1/rtl/idu.v ../../../design/cpu_m1/rtl/ifu.v ../../../design/cpu_m1/rtl/lsu.v ../../../design/cpu_m1/rtl/mul.v ../../../design/cpu_m1/rtl/ras.v ../../../design/cpu_m1/rtl/rfu.v tb_directed_lockstep.v -top tb_directed_lockstep -o vcs/simv"}
-{"vcs1": {"peak_mem": 413260}}
-{"vcselab": {"peak_mem": 261552}}

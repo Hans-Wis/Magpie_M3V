@@ -1,9 +1,0 @@
-
-  Summary Results
-   Property Summary: FPV
-   -----------------
-   > Assertion
-     - # found        : 1
-     - # proven       : 1
-
-

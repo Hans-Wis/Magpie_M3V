@@ -1,7 +1,0 @@
-M is representing peak till the message
-Malloc-M represents malloc memory at the message
-Available-M represents available memory in the system
-STATS:: before RegisterApps : M=840.078mb, Malloc-M=7mb, Available-M=93524mb, T=0s CPU=0s W=(2026-06-10 00:05:51)
-STATS:: |   before LicenseMgr Init : M=1263.16mb, Malloc-M=430mb, Available-M=93101mb, T=0s CPU=0s W=(2026-06-10 00:05:52)
-STATS:: |   after  LicenseMgr Init : M=1268.43mb, Malloc-M=431mb, Available-M=93096mb, T=1s CPU=0.34s W=(2026-06-10 00:05:53)
-STATS:: after  RegisterApps : M=1339.15mb, Malloc-M=432mb, Available-M=93095mb, T=2s CPU=0.89s W=(2026-06-10 00:05:53)

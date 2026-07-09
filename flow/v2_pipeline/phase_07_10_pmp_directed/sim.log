@@ -1,5 +1,0 @@
-PASS: PMP directed X/R/W/TOR/NA4/NAPOT priority AMO
-- tb_pmp_directed.v:103: Verilog $finish
-- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 3us; walltime 0.001 s; speed 2.699 ms/s
-- Verilator: cpu 0.001 s on 1 threads; allocated 17 MB

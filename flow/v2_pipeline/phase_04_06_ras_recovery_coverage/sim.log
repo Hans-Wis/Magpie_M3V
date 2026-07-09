@@ -1,9 +1,0 @@
-[125 ns] RAS unit pointer-edge checks passed
-[185 ns] saw mem_ras_mispredict pred=00000010 actual=00000020
-[185 ns] saw RAS recovery redirect target=00000020
-[235 ns] mmio[00000000] <= 00000406
-PASS: directed RAS recovery and pointer-edge coverage completed
-- tb_ras_recovery_coverage.v:237: Verilog $finish
-- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 3us; walltime 0.228 s; speed 11.660 us/s
-- Verilator: cpu 0.228 s on 1 threads; allocated 35 MB

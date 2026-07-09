@@ -1,1 +1,0 @@
-/home/edauser/.local/opt/riscv/xpack-riscv-none-elf-gcc-13.2.0-2/bin/../lib/gcc/riscv-none-elf/13.2.0/../../../../riscv-none-elf/bin/ld: warning: firmware.elf has a LOAD segment with RWX permissions

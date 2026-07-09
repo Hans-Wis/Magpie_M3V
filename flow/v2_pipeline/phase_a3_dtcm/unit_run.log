@@ -1,6 +1,0 @@
-KPI: wide port 512 bytes in 64 cycles = 8 B/c
-PASS: dtcm unit — byte-lanes, wide 8 B/c sustained (64/64 grants), arbitration, coherence
-- tb_dtcm_unit.v:102: Verilog $finish
-- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 2us; walltime 0.000 s; speed 26.463 ms/s
-- Verilator: cpu 0.000 s on 1 threads; allocated 17 MB

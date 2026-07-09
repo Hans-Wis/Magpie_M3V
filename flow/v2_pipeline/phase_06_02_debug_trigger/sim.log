@@ -1,5 +1,0 @@
-PASS: trigger cross_dpc=00000002 aligned_dpc=00000004 store_dpc=00000008 entries=3 x5=00000055 x3=00000007 dmem20=000000aa
-- tb_debug_trigger.v:394: Verilog $finish
-- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 3us; walltime 0.000 s; speed 12.056 ms/s
-- Verilator: cpu 0.000 s on 1 threads; allocated 17 MB

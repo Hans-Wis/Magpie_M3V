@@ -1,6 +1,0 @@
-[2785 ns] stop on illegal/ebreak pc=00300254 commits=162
-PASS: P15 datapath DUT trace wrote 162 commits before ebreak
-- tb_directed_lockstep.v:131: Verilog $finish
-- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 3us; walltime 0.108 s; speed 25.781 us/s
-- Verilator: cpu 0.108 s on 1 threads; allocated 32 MB

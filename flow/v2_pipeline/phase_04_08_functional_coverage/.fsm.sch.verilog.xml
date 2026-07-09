@@ -1,8 +1,0 @@
-<Command name="schRTLInfo"  delimiter="."  >
-<RTLBlock >
-<RTLInfo   name="state_0"  type="2"  fileName="../../../IP/cpu_m1/rtl/div.v"  >
-    <Seg beginLine="64"  endLine="126"  />
-  </RTLInfo>
- <Instance name="tb_wrapper_func_cov.dut.u_core.u_div"  />
-</RTLBlock>
- </Command>

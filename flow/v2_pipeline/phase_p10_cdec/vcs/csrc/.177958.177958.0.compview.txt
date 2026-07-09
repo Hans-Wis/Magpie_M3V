@@ -1,9 +1,0 @@
-{"vcs1":{"timestamp_begin":1781011923.650153967, "rt":0.31, "ut":0.13, "st":0.05}}
-{"vcselab":{"timestamp_begin":1781011924.015412462, "rt":0.10, "ut":0.07, "st":0.01}}
-{"link":{"timestamp_begin":1781011924.161656319, "rt":0.24, "ut":0.07, "st":0.03}}
-{"SNPS_VCS_INTERNAL_ROOT_START_TIME": 1781011923.420472795}
-{"VCS_COMP_START_TIME": 1781011923.420472795}
-{"VCS_COMP_END_TIME": 1781011924.448463754}
-{"VCS_USER_OPTIONS": "-full64 -sverilog -timescale=1ns/1ps -cm line+cond+branch+tgl -cm_dir simv.vdb +incdir+../../../../design/cpu_m1/rtl ../../../../design/cpu_m1/rtl/cdec.v ../../../../design/cpu_m1/dv/tb/tb_cdec_unit.v -top tb_cdec_unit -o simv"}
-{"vcs1": {"peak_mem": 407420}}
-{"vcselab": {"peak_mem": 245076}}

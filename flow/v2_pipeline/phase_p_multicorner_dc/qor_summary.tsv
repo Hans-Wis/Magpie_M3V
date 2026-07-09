@@ -1,2 +1,0 @@
-corner	fmax_mhz	wns_ns	tns_ns	area_um2	power_mw	status	target_library_path
-SLOW	699.30	0.00	0.00	30515.435795	13.6487	complete	/home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_p_multicorner_dc/compiled_db/tcbn28hpcplusbwp40p140ssg0p81v0c.db
