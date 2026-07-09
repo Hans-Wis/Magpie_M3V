@@ -46,6 +46,7 @@ module tb_soc_m3v_periph;
     spi_nor_model #(
         .IMG_BYTES(65536)
     ) flash (
+        .clk(clk),
         .sclk(qspi_sclk),
         .cs_n(qspi_cs_n),
         .io_i(qspi_io_o), .io_o(qspi_io_i), .io_oe_i(qspi_io_oe)

@@ -17,6 +17,15 @@ module qspi_axil_front (
     input  wire        clk,
     input  wire        resetn,
     input  wire        mode_quad_i,
+    input  wire        prog_start_i,
+    input  wire [ 1:0] prog_op_i,
+    input  wire [31:0] prog_addr_i,
+    input  wire [ 8:0] prog_len_i,
+    output wire        prog_busy_o,
+    output wire        prog_done_o,
+    output wire [ 7:0] prog_rdsr_o,
+    output wire [ 8:0] wbuf_addr_o,
+    input  wire [ 7:0] wbuf_data_i,
 
     input  wire        i_arvalid,
     output wire        i_arready,
@@ -72,9 +81,19 @@ module qspi_axil_front (
     reg [31:0] single_warm_base;
     reg [31:0] quad_cold_base;
     reg [31:0] quad_warm_base;
+    reg        prog_pending_q;
+    reg        prog_cshi_q;
+    reg        prog_start_q;
+    reg [ 1:0] prog_op_q;
+    reg [31:0] prog_addr_q;
+    reg [ 8:0] prog_len_q;
 
     wire       write_active;
     wire       mode_switch_idle;
+    wire       prog_start_accept;
+    wire       prog_block;
+    wire       prog_owner;
+    wire       prog_reset_xip;
     wire       read_select_i;
     wire       read_select_d;
     wire       xip_arvalid;
@@ -110,15 +129,29 @@ module qspi_axil_front (
     wire [31:0] quad_cold_raw;
     wire [31:0] quad_warm_raw;
 
+    wire       prog_busy_raw;
+    wire       prog_done_raw;
+    wire [ 7:0] prog_status_raw;
+    wire       prog_sclk;
+    wire       prog_cs_n;
+    wire       prog_si;
+
     assign write_active = d_aw_seen | d_w_seen | d_bvalid;
     assign mode_switch_idle = resetn && !read_busy && !write_active &&
+                              !prog_block &&
                               (mode_quad_i != mode_quad_q);
+    assign prog_start_accept = prog_start_i && !prog_busy_o;
+    assign prog_block = prog_pending_q | prog_cshi_q | prog_start_q |
+                        prog_busy_raw;
+    assign prog_owner = prog_start_q | prog_busy_raw;
+    assign prog_reset_xip = prog_pending_q && !read_busy && !write_active &&
+                            !prog_cshi_q && !prog_busy_raw && !reset_xip_q;
 
     assign selected_arready = mode_quad_q ? quad_arready : single_arready;
     assign read_select_i = !read_busy && !write_active && !mode_switch_idle &&
-                           !reset_xip_q && i_arvalid;
+                           !prog_block && !reset_xip_q && i_arvalid;
     assign read_select_d = !read_busy && !write_active && !mode_switch_idle &&
-                           !reset_xip_q && !i_arvalid && d_arvalid;
+                           !prog_block && !reset_xip_q && !i_arvalid && d_arvalid;
     assign xip_arvalid = read_select_i | read_select_d;
     assign xip_araddr = read_select_i ? {8'h00, i_araddr[23:0]} :
                                       {8'h00, d_araddr[23:0]};
@@ -146,9 +179,11 @@ module qspi_axil_front (
 
     assign d_awready = !read_busy && !d_bvalid && !d_aw_seen &&
                        !mode_switch_idle && !reset_xip_q &&
+                       !prog_block &&
                        (d_w_seen || !(i_arvalid || d_arvalid));
     assign d_wready = !read_busy && !d_bvalid && !d_w_seen &&
                       !mode_switch_idle && !reset_xip_q &&
+                      !prog_block &&
                       (d_aw_seen || !(i_arvalid || d_arvalid));
     assign d_aw_take = d_awvalid & d_awready;
     assign d_w_take = d_wvalid & d_wready;
@@ -159,14 +194,23 @@ module qspi_axil_front (
     assign warm_reads = single_warm_base + single_warm_raw;
     assign quad_cold_reads = quad_cold_base + quad_cold_raw;
     assign quad_warm_reads = quad_warm_base + quad_warm_raw;
+    assign prog_busy_o = prog_block;
+    assign prog_done_o = prog_done_raw;
+    assign prog_rdsr_o = prog_status_raw;
 
     wire engines_resetn = resetn & !reset_xip_q;
     wire force_cshi = mode_switch_idle | reset_xip_q;
-    assign o_sclk = force_cshi ? 1'b0 : (mode_quad_q ? quad_sclk : single_sclk);
-    assign o_cs_n = force_cshi ? 1'b1 : (mode_quad_q ? quad_cs_n : single_cs_n);
-    assign io_o = mode_quad_q ? quad_io_o : {2'b00, 1'b0, single_si};
+    assign o_sclk = force_cshi ? 1'b0 :
+                    (prog_owner ? prog_sclk :
+                     (mode_quad_q ? quad_sclk : single_sclk));
+    assign o_cs_n = force_cshi ? 1'b1 :
+                    (prog_owner ? prog_cs_n :
+                     (mode_quad_q ? quad_cs_n : single_cs_n));
+    assign io_o = prog_owner ? {3'b000, prog_si} :
+                  (mode_quad_q ? quad_io_o : {2'b00, 1'b0, single_si});
     assign io_oe = force_cshi ? 4'b0000 :
-                   (mode_quad_q ? (quad_io_oe ? 4'b1111 : 4'b0000) : 4'b0001);
+                   (prog_owner ? 4'b0001 :
+                   (mode_quad_q ? (quad_io_oe ? 4'b1111 : 4'b0000) : 4'b0001));
 
     qspi_xip #(
         .ADDR_BYTES(3)
@@ -209,6 +253,26 @@ module qspi_axil_front (
         .warm_reads(quad_warm_raw)
     );
 
+    qspi_prog #(
+        .ADDR_BYTES(3)
+    ) u_prog (
+        .clk(clk),
+        .rst_n(resetn),
+        .start(prog_start_q),
+        .op(prog_op_q),
+        .addr(prog_addr_q),
+        .n_data(prog_len_q),
+        .busy(prog_busy_raw),
+        .done(prog_done_raw),
+        .status(prog_status_raw),
+        .wr_addr(wbuf_addr_o),
+        .wr_data(wbuf_data_i),
+        .sclk(prog_sclk),
+        .cs_n(prog_cs_n),
+        .si(prog_si),
+        .so(io_i[1])
+    );
+
     always @(posedge clk) begin
         if (!resetn) begin
             read_busy <= 1'b0;
@@ -222,8 +286,22 @@ module qspi_axil_front (
             single_warm_base <= 32'h0;
             quad_cold_base <= 32'h0;
             quad_warm_base <= 32'h0;
+            prog_pending_q <= 1'b0;
+            prog_cshi_q <= 1'b0;
+            prog_start_q <= 1'b0;
+            prog_op_q <= 2'b00;
+            prog_addr_q <= 32'h0;
+            prog_len_q <= 9'd1;
         end else begin
             reset_xip_q <= 1'b0;
+            prog_start_q <= 1'b0;
+
+            if (prog_start_accept) begin
+                prog_pending_q <= 1'b1;
+                prog_op_q <= prog_op_i;
+                prog_addr_q <= prog_addr_i;
+                prog_len_q <= prog_len_i;
+            end
 
             if (mode_switch_idle) begin
                 single_cold_base <= single_cold_base + single_cold_raw;
@@ -232,6 +310,17 @@ module qspi_axil_front (
                 quad_warm_base <= quad_warm_base + quad_warm_raw;
                 mode_quad_q <= mode_quad_i;
                 reset_xip_q <= 1'b1;
+            end else if (prog_reset_xip) begin
+                single_cold_base <= single_cold_base + single_cold_raw;
+                single_warm_base <= single_warm_base + single_warm_raw;
+                quad_cold_base <= quad_cold_base + quad_cold_raw;
+                quad_warm_base <= quad_warm_base + quad_warm_raw;
+                reset_xip_q <= 1'b1;
+                prog_cshi_q <= 1'b1;
+            end else if (prog_cshi_q) begin
+                prog_cshi_q <= 1'b0;
+                prog_pending_q <= 1'b0;
+                prog_start_q <= 1'b1;
             end else begin
                 if (xip_fire) begin
                     read_busy <= 1'b1;

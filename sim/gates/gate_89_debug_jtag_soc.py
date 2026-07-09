@@ -43,7 +43,7 @@ SOC_RTL = [ROOT / f"design/soc/{m}.v" for m in (
     "soc_m3v_top", "gpio")]
 SOC_RTL += [ROOT / f"design/soc/qspi/{m}" for m in (
     "qspi_master_p0.sv", "qspi_xip.sv", "qspi_master_p2.sv", "qspi_xip_quad.sv",
-    "qspi_axil_front.v")]
+    "qspi_prog.sv", "qspi_axil_front.v", "qspi_csr.v")]
 TB = [ROOT / "design/npu/dv/tb/spi_nor_model.v",
       ROOT / "design/npu/dv/tb/tb_soc_m3v_p1.v"]
 FWDIR = ROOT / "design/npu/sw/host_p1"

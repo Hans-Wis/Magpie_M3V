@@ -50,7 +50,8 @@ module tb_soc_m3v_p1;
     );
 
     spi_nor_model u_flash (
-        .sclk(qspi_sclk), .cs_n(qspi_cs_n), .io_i(qspi_io_o), .io_o(qspi_io_i), .io_oe_i(qspi_io_oe));
+        .clk(clk), .sclk(qspi_sclk), .cs_n(qspi_cs_n),
+        .io_i(qspi_io_o), .io_o(qspi_io_i), .io_oe_i(qspi_io_oe));
 
     localparam integer F_GPIO_RDY  = 32'h0000FE20 >> 2;
     localparam integer F_TB_DRIVEN = 32'h0000FE24 >> 2;

@@ -51,6 +51,7 @@ module tb_soc_m3v_xip;
 
     // 1MB image window: host_producer text+rodata (~30KB) fits with margin.
     spi_nor_model #(.IMG_BYTES(1048576)) u_flash (
+        .clk(clk),
         .sclk(qspi_sclk),
         .cs_n(qspi_cs_n),
         .io_i(qspi_io_o), .io_o(qspi_io_i), .io_oe_i(qspi_io_oe)

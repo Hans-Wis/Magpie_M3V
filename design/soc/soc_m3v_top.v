@@ -300,12 +300,31 @@ module soc_m3v_top #(
     wire [31:0] x_s_araddr, x_s_rdata;
     wire [ 2:0] x_s_arprot;
     wire [ 1:0] x_s_rresp;
+
+    wire        q_s_awvalid, q_s_awready, q_s_wvalid, q_s_wready, q_s_bvalid, q_s_bready;
+    wire [31:0] q_s_awaddr, q_s_wdata;
+    wire [ 2:0] q_s_awprot;
+    wire [ 3:0] q_s_wstrb;
+    wire [ 1:0] q_s_bresp;
+    wire        q_s_arvalid, q_s_arready, q_s_rvalid, q_s_rready;
+    wire [31:0] q_s_araddr, q_s_rdata;
+    wire [ 2:0] q_s_arprot;
+    wire [ 1:0] q_s_rresp;
+
     wire [31:0] qspi_cold_reads;
     wire [31:0] qspi_warm_reads;
     wire [31:0] qspi_quad_cold_reads;
     wire [31:0] qspi_quad_warm_reads;
-    // mode_quad tied single-lane until the D2 QSPI CSR block lands (ADR-0071 §2)
-    wire        qspi_mode_quad = 1'b0;
+    wire        qspi_mode_quad;
+    wire        qspi_prog_start;
+    wire [ 1:0] qspi_prog_op;
+    wire [31:0] qspi_prog_addr;
+    wire [ 8:0] qspi_prog_len;
+    wire        qspi_prog_busy;
+    wire        qspi_prog_done;
+    wire [ 7:0] qspi_prog_rdsr;
+    wire [ 8:0] qspi_wbuf_addr;
+    wire [ 7:0] qspi_wbuf_data;
 
     wire        plic_en;
     wire [31:0] plic_addr;
@@ -328,6 +347,11 @@ module soc_m3v_top #(
     wire [31:0] gpio_wdata;
     wire [ 3:0] gpio_wstrb;
     wire [31:0] gpio_rdata;
+    wire        qspi_csr_en;
+    wire [31:0] qspi_csr_addr;
+    wire [31:0] qspi_csr_wdata;
+    wire [ 3:0] qspi_csr_wstrb;
+    wire [31:0] qspi_csr_rdata;
 
     soc_axil_decode u_d_decode (
         .clk(clk),
@@ -367,6 +391,11 @@ module soc_m3v_top #(
         .x_bvalid(x_s_bvalid), .x_bready(x_s_bready), .x_bresp(x_s_bresp),
         .x_arvalid(x_s_arvalid), .x_arready(x_s_arready), .x_araddr(x_s_araddr), .x_arprot(x_s_arprot),
         .x_rvalid(x_s_rvalid), .x_rready(x_s_rready), .x_rdata(x_s_rdata), .x_rresp(x_s_rresp),
+        .q_awvalid(q_s_awvalid), .q_awready(q_s_awready), .q_awaddr(q_s_awaddr), .q_awprot(q_s_awprot),
+        .q_wvalid(q_s_wvalid), .q_wready(q_s_wready), .q_wdata(q_s_wdata), .q_wstrb(q_s_wstrb),
+        .q_bvalid(q_s_bvalid), .q_bready(q_s_bready), .q_bresp(q_s_bresp),
+        .q_arvalid(q_s_arvalid), .q_arready(q_s_arready), .q_araddr(q_s_araddr), .q_arprot(q_s_arprot),
+        .q_rvalid(q_s_rvalid), .q_rready(q_s_rready), .q_rdata(q_s_rdata), .q_rresp(q_s_rresp),
         .m_awvalid(hm_awvalid), .m_awready(hm_awready), .m_awaddr(hm_awaddr), .m_awprot(hm_awprot),
         .m_wvalid(hm_wvalid), .m_wready(hm_wready), .m_wdata(hm_wdata), .m_wstrb(hm_wstrb),
         .m_bvalid(hm_bvalid), .m_bready(hm_bready), .m_bresp(hm_bresp),
@@ -488,9 +517,54 @@ module soc_m3v_top #(
         .gpio_in(gpio_in)
     );
 
+    periph_axil_shim u_qspi_csr_axil (
+        .clk(clk),
+        .resetn(resetn),
+        .s_awvalid(q_s_awvalid), .s_awready(q_s_awready), .s_awaddr(q_s_awaddr), .s_awprot(q_s_awprot),
+        .s_wvalid(q_s_wvalid), .s_wready(q_s_wready), .s_wdata(q_s_wdata), .s_wstrb(q_s_wstrb),
+        .s_bvalid(q_s_bvalid), .s_bready(q_s_bready), .s_bresp(q_s_bresp),
+        .s_arvalid(q_s_arvalid), .s_arready(q_s_arready), .s_araddr(q_s_araddr), .s_arprot(q_s_arprot),
+        .s_rvalid(q_s_rvalid), .s_rready(q_s_rready), .s_rdata(q_s_rdata), .s_rresp(q_s_rresp),
+        .periph_en(qspi_csr_en),
+        .periph_addr(qspi_csr_addr),
+        .periph_wdata(qspi_csr_wdata),
+        .periph_wstrb(qspi_csr_wstrb),
+        .periph_rdata(qspi_csr_rdata)
+    );
+
+    qspi_csr u_qspi_csr (
+        .clk(clk),
+        .rst(~resetn),
+        .en(qspi_csr_en),
+        .addr(qspi_csr_addr),
+        .wdata(qspi_csr_wdata),
+        .wstrb(qspi_csr_wstrb),
+        .rdata(qspi_csr_rdata),
+        .mode_quad_o(qspi_mode_quad),
+        .start_o(qspi_prog_start),
+        .op_o(qspi_prog_op),
+        .prog_addr_o(qspi_prog_addr),
+        .prog_len_o(qspi_prog_len),
+        .busy_i(qspi_prog_busy),
+        .done_i(qspi_prog_done),
+        .rdsr_i(qspi_prog_rdsr),
+        .wr_addr_i(qspi_wbuf_addr),
+        .wr_data_o(qspi_wbuf_data)
+    );
+
     qspi_axil_front u_qspi_xip (
         .clk(clk),
         .resetn(resetn),
+        .mode_quad_i(qspi_mode_quad),
+        .prog_start_i(qspi_prog_start),
+        .prog_op_i(qspi_prog_op),
+        .prog_addr_i(qspi_prog_addr),
+        .prog_len_i(qspi_prog_len),
+        .prog_busy_o(qspi_prog_busy),
+        .prog_done_o(qspi_prog_done),
+        .prog_rdsr_o(qspi_prog_rdsr),
+        .wbuf_addr_o(qspi_wbuf_addr),
+        .wbuf_data_i(qspi_wbuf_data),
         .i_arvalid(x_i_arvalid),
         .i_arready(x_i_arready),
         .i_araddr(x_i_araddr),
@@ -518,7 +592,6 @@ module soc_m3v_top #(
         .d_rready(x_s_rready),
         .d_rdata(x_s_rdata),
         .d_rresp(x_s_rresp),
-        .mode_quad_i(qspi_mode_quad),
         .o_sclk(qspi_sclk),
         .o_cs_n(qspi_cs_n),
         .io_o(qspi_io_o),

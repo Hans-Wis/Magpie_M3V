@@ -6,6 +6,7 @@
 // 0x1000_???? -> UART AXI4-Lite shim
 // 0x0200_???? -> CLINT AXI4-Lite shim
 // 0x40??_???? -> QSPI XIP AXI4-Lite front-end
+// 0x410?_???? -> QSPI CSR AXI4-Lite shim
 // 0x8000_???? -> shared SRAM host leg
 // 0x1100_???? -> GPIO AXI4-Lite shim
 // otherwise    -> DECERR/SLVERR response with no hang
@@ -156,6 +157,26 @@ module soc_axil_decode (
     input  wire [31:0] x_rdata,
     input  wire [ 1:0] x_rresp,
 
+    output wire        q_awvalid,
+    input  wire        q_awready,
+    output wire [31:0] q_awaddr,
+    output wire [ 2:0] q_awprot,
+    output wire        q_wvalid,
+    input  wire        q_wready,
+    output wire [31:0] q_wdata,
+    output wire [ 3:0] q_wstrb,
+    input  wire        q_bvalid,
+    output wire        q_bready,
+    input  wire [ 1:0] q_bresp,
+    output wire        q_arvalid,
+    input  wire        q_arready,
+    output wire [31:0] q_araddr,
+    output wire [ 2:0] q_arprot,
+    input  wire        q_rvalid,
+    output wire        q_rready,
+    input  wire [31:0] q_rdata,
+    input  wire [ 1:0] q_rresp,
+
     output wire        m_awvalid,
     input  wire        m_awready,
     output wire [31:0] m_awaddr,
@@ -176,22 +197,24 @@ module soc_axil_decode (
     input  wire [31:0] m_rdata,
     input  wire [ 1:0] m_rresp
 );
-    localparam [2:0] ROUTE_NPU   = 3'd0;
-    localparam [2:0] ROUTE_MEM   = 3'd1;
-    localparam [2:0] ROUTE_PLIC  = 3'd2;
-    localparam [2:0] ROUTE_UART  = 3'd3;
-    localparam [2:0] ROUTE_CLINT = 3'd4;
-    localparam [2:0] ROUTE_XIP   = 3'd5;
-    localparam [2:0] ROUTE_GPIO  = 3'd6;
-    localparam [2:0] ROUTE_ERR   = 3'd7;
+    localparam [3:0] ROUTE_NPU      = 4'd0;
+    localparam [3:0] ROUTE_MEM      = 4'd1;
+    localparam [3:0] ROUTE_PLIC     = 4'd2;
+    localparam [3:0] ROUTE_UART     = 4'd3;
+    localparam [3:0] ROUTE_CLINT    = 4'd4;
+    localparam [3:0] ROUTE_XIP      = 4'd5;
+    localparam [3:0] ROUTE_GPIO     = 4'd6;
+    localparam [3:0] ROUTE_QSPI_CSR = 4'd8;
+    localparam [3:0] ROUTE_ERR      = 4'd15;
 
-    function [2:0] dec;
+    function [3:0] dec;
         input [31:0] a;
         begin
             if (a[31:20] == 12'h300)       dec = ROUTE_NPU;
             else if (a[31:24] == 8'h0c)    dec = ROUTE_PLIC;
             else if (a[31:16] == 16'h1000) dec = ROUTE_UART;
             else if (a[31:16] == 16'h0200) dec = ROUTE_CLINT;
+            else if (a[31:20] == 12'h410)  dec = ROUTE_QSPI_CSR;
             else if (a[31:24] == 8'h40)    dec = ROUTE_XIP;
             else if (a[31:16] == 16'h8000) dec = ROUTE_MEM;
             else if (a[31:16] == 16'h1100) dec = ROUTE_GPIO;
@@ -200,10 +223,10 @@ module soc_axil_decode (
     endfunction
 
     reg        w_busy, r_busy;
-    reg [2:0]  w_route_q, r_route_q;
+    reg [3:0]  w_route_q, r_route_q;
     reg        err_bvalid, err_rvalid;
-    wire [2:0] w_route = w_busy ? w_route_q : dec(s_awaddr);
-    wire [2:0] r_route = r_busy ? r_route_q : dec(s_araddr);
+    wire [3:0] w_route = w_busy ? w_route_q : dec(s_awaddr);
+    wire [3:0] r_route = r_busy ? r_route_q : dec(s_araddr);
     wire       w_known = w_busy | s_awvalid;
 
     assign n_awvalid = s_awvalid && (w_route == ROUTE_NPU);
@@ -212,6 +235,7 @@ module soc_axil_decode (
     assign c_awvalid = s_awvalid && (w_route == ROUTE_CLINT);
     assign g_awvalid = s_awvalid && (w_route == ROUTE_GPIO);
     assign x_awvalid = s_awvalid && (w_route == ROUTE_XIP);
+    assign q_awvalid = s_awvalid && (w_route == ROUTE_QSPI_CSR);
     assign m_awvalid = s_awvalid && (w_route == ROUTE_MEM);
     assign n_awaddr = s_awaddr;
     assign p_awaddr = s_awaddr;
@@ -219,6 +243,7 @@ module soc_axil_decode (
     assign c_awaddr = s_awaddr;
     assign g_awaddr = s_awaddr;
     assign x_awaddr = s_awaddr;
+    assign q_awaddr = s_awaddr;
     assign m_awaddr = s_awaddr;
     assign n_awprot = s_awprot;
     assign p_awprot = s_awprot;
@@ -226,6 +251,7 @@ module soc_axil_decode (
     assign c_awprot = s_awprot;
     assign g_awprot = s_awprot;
     assign x_awprot = s_awprot;
+    assign q_awprot = s_awprot;
     assign m_awprot = s_awprot;
 
     assign n_wvalid = s_wvalid && w_known && (w_route == ROUTE_NPU);
@@ -234,6 +260,7 @@ module soc_axil_decode (
     assign c_wvalid = s_wvalid && w_known && (w_route == ROUTE_CLINT);
     assign g_wvalid = s_wvalid && w_known && (w_route == ROUTE_GPIO);
     assign x_wvalid = s_wvalid && w_known && (w_route == ROUTE_XIP);
+    assign q_wvalid = s_wvalid && w_known && (w_route == ROUTE_QSPI_CSR);
     assign m_wvalid = s_wvalid && w_known && (w_route == ROUTE_MEM);
     assign n_wdata = s_wdata;
     assign p_wdata = s_wdata;
@@ -241,6 +268,7 @@ module soc_axil_decode (
     assign c_wdata = s_wdata;
     assign g_wdata = s_wdata;
     assign x_wdata = s_wdata;
+    assign q_wdata = s_wdata;
     assign m_wdata = s_wdata;
     assign n_wstrb = s_wstrb;
     assign p_wstrb = s_wstrb;
@@ -248,6 +276,7 @@ module soc_axil_decode (
     assign c_wstrb = s_wstrb;
     assign g_wstrb = s_wstrb;
     assign x_wstrb = s_wstrb;
+    assign q_wstrb = s_wstrb;
     assign m_wstrb = s_wstrb;
 
     assign n_bready = s_bready && (w_route == ROUTE_NPU);
@@ -256,6 +285,7 @@ module soc_axil_decode (
     assign c_bready = s_bready && (w_route == ROUTE_CLINT);
     assign g_bready = s_bready && (w_route == ROUTE_GPIO);
     assign x_bready = s_bready && (w_route == ROUTE_XIP);
+    assign q_bready = s_bready && (w_route == ROUTE_QSPI_CSR);
     assign m_bready = s_bready && (w_route == ROUTE_MEM);
 
     assign s_awready = (w_route == ROUTE_NPU) ? n_awready :
@@ -264,6 +294,7 @@ module soc_axil_decode (
                        (w_route == ROUTE_CLINT) ? c_awready :
                        (w_route == ROUTE_GPIO) ? g_awready :
                        (w_route == ROUTE_XIP) ? x_awready :
+                       (w_route == ROUTE_QSPI_CSR) ? q_awready :
                        (w_route == ROUTE_MEM) ? m_awready :
                        (!w_busy && !err_bvalid);
     assign s_wready  = !w_known ? 1'b0 :
@@ -273,6 +304,7 @@ module soc_axil_decode (
                        (w_route == ROUTE_CLINT) ? c_wready :
                        (w_route == ROUTE_GPIO) ? g_wready :
                        (w_route == ROUTE_XIP) ? x_wready :
+                       (w_route == ROUTE_QSPI_CSR) ? q_wready :
                        (w_route == ROUTE_MEM) ? m_wready :
                        (!err_bvalid);
     assign s_bvalid  = (w_route == ROUTE_NPU) ? n_bvalid :
@@ -281,6 +313,7 @@ module soc_axil_decode (
                        (w_route == ROUTE_CLINT) ? c_bvalid :
                        (w_route == ROUTE_GPIO) ? g_bvalid :
                        (w_route == ROUTE_XIP) ? x_bvalid :
+                       (w_route == ROUTE_QSPI_CSR) ? q_bvalid :
                        (w_route == ROUTE_MEM) ? m_bvalid :
                        err_bvalid;
     assign s_bresp   = (w_route == ROUTE_NPU) ? n_bresp :
@@ -289,6 +322,7 @@ module soc_axil_decode (
                        (w_route == ROUTE_CLINT) ? c_bresp :
                        (w_route == ROUTE_GPIO) ? g_bresp :
                        (w_route == ROUTE_XIP) ? x_bresp :
+                       (w_route == ROUTE_QSPI_CSR) ? q_bresp :
                        (w_route == ROUTE_MEM) ? m_bresp :
                        2'b10;
 
@@ -298,6 +332,7 @@ module soc_axil_decode (
     assign c_arvalid = s_arvalid && (r_route == ROUTE_CLINT);
     assign g_arvalid = s_arvalid && (r_route == ROUTE_GPIO);
     assign x_arvalid = s_arvalid && (r_route == ROUTE_XIP);
+    assign q_arvalid = s_arvalid && (r_route == ROUTE_QSPI_CSR);
     assign m_arvalid = s_arvalid && (r_route == ROUTE_MEM);
     assign n_araddr = s_araddr;
     assign p_araddr = s_araddr;
@@ -305,6 +340,7 @@ module soc_axil_decode (
     assign c_araddr = s_araddr;
     assign g_araddr = s_araddr;
     assign x_araddr = s_araddr;
+    assign q_araddr = s_araddr;
     assign m_araddr = s_araddr;
     assign n_arprot = s_arprot;
     assign p_arprot = s_arprot;
@@ -312,6 +348,7 @@ module soc_axil_decode (
     assign c_arprot = s_arprot;
     assign g_arprot = s_arprot;
     assign x_arprot = s_arprot;
+    assign q_arprot = s_arprot;
     assign m_arprot = s_arprot;
     assign n_rready = s_rready && (r_route == ROUTE_NPU);
     assign p_rready = s_rready && (r_route == ROUTE_PLIC);
@@ -319,6 +356,7 @@ module soc_axil_decode (
     assign c_rready = s_rready && (r_route == ROUTE_CLINT);
     assign g_rready = s_rready && (r_route == ROUTE_GPIO);
     assign x_rready = s_rready && (r_route == ROUTE_XIP);
+    assign q_rready = s_rready && (r_route == ROUTE_QSPI_CSR);
     assign m_rready = s_rready && (r_route == ROUTE_MEM);
 
     assign s_arready = (r_route == ROUTE_NPU) ? n_arready :
@@ -327,6 +365,7 @@ module soc_axil_decode (
                        (r_route == ROUTE_CLINT) ? c_arready :
                        (r_route == ROUTE_GPIO) ? g_arready :
                        (r_route == ROUTE_XIP) ? x_arready :
+                       (r_route == ROUTE_QSPI_CSR) ? q_arready :
                        (r_route == ROUTE_MEM) ? m_arready :
                        (!r_busy && !err_rvalid);
     assign s_rvalid  = (r_route == ROUTE_NPU) ? n_rvalid :
@@ -335,6 +374,7 @@ module soc_axil_decode (
                        (r_route == ROUTE_CLINT) ? c_rvalid :
                        (r_route == ROUTE_GPIO) ? g_rvalid :
                        (r_route == ROUTE_XIP) ? x_rvalid :
+                       (r_route == ROUTE_QSPI_CSR) ? q_rvalid :
                        (r_route == ROUTE_MEM) ? m_rvalid :
                        err_rvalid;
     assign s_rdata   = (r_route == ROUTE_NPU) ? n_rdata :
@@ -343,6 +383,7 @@ module soc_axil_decode (
                        (r_route == ROUTE_CLINT) ? c_rdata :
                        (r_route == ROUTE_GPIO) ? g_rdata :
                        (r_route == ROUTE_XIP) ? x_rdata :
+                       (r_route == ROUTE_QSPI_CSR) ? q_rdata :
                        (r_route == ROUTE_MEM) ? m_rdata :
                        32'hDECE_0001;
     assign s_rresp   = (r_route == ROUTE_NPU) ? n_rresp :
@@ -351,6 +392,7 @@ module soc_axil_decode (
                        (r_route == ROUTE_CLINT) ? c_rresp :
                        (r_route == ROUTE_GPIO) ? g_rresp :
                        (r_route == ROUTE_XIP) ? x_rresp :
+                       (r_route == ROUTE_QSPI_CSR) ? q_rresp :
                        (r_route == ROUTE_MEM) ? m_rresp :
                        2'b10;
 

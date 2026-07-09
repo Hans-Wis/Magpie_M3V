@@ -49,6 +49,10 @@ module tb_qspi_xip_readback;
     wire [31:0] warm_reads;
     wire [31:0] quad_cold_reads;
     wire [31:0] quad_warm_reads;
+    wire        prog_busy;
+    wire        prog_done;
+    wire [ 7:0] prog_rdsr;
+    wire [ 8:0] wbuf_addr;
 
     reg [7:0] golden [0:IMG_BYTES-1];
     reg [1023:0] flash_hex;
@@ -58,6 +62,15 @@ module tb_qspi_xip_readback;
         .clk(clk),
         .resetn(resetn),
         .mode_quad_i(mode_quad),
+        .prog_start_i(1'b0),
+        .prog_op_i(2'b00),
+        .prog_addr_i(32'h0),
+        .prog_len_i(9'd1),
+        .prog_busy_o(prog_busy),
+        .prog_done_o(prog_done),
+        .prog_rdsr_o(prog_rdsr),
+        .wbuf_addr_o(wbuf_addr),
+        .wbuf_data_i(8'hff),
         .i_arvalid(i_arvalid),
         .i_arready(i_arready),
         .i_araddr(i_araddr),
@@ -99,6 +112,7 @@ module tb_qspi_xip_readback;
     spi_nor_model #(
         .IMG_BYTES(IMG_BYTES)
     ) flash (
+        .clk(clk),
         .sclk(qspi_sclk),
         .cs_n(qspi_cs_n),
         .io_i(qspi_io_o),
