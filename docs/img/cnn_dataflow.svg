@@ -1,55 +1,55 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" role="img" aria-label="CNN 前段在 RV-NPU 的資料流:卷積走 Matrix,bias/ReLU/pooling 走 Vector,Scalar 控制迴圈,DTCM 交接"><style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}.s-node{fill:#FFFFFF;stroke:rgba(92,80,58,.26)}.s-comp{fill:rgba(180,116,26,.10);stroke:#B4741A}.s-ctrl{fill:rgba(14,124,140,.08);stroke:#0E7C8C}.s-mem{fill:rgba(73,86,184,.09);stroke:#4956B8}.s-t{font-weight:600;fill:#1F2933}.s-faint{fill:#79848F}.s-la{fill:#8F5A10}.s-lc{fill:#0A5B67}.s-li{fill:#4956B8}.trace{fill:none;stroke:rgba(92,80,58,.26);stroke-width:1.6}.trace-a{fill:none;stroke:#B4741A;stroke-width:1.9}.trace-i{fill:none;stroke:#4956B8;stroke-width:1.9}.flow{stroke-dasharray:7 9}</style>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1000" height="400" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" role="img" aria-label="CNN 前段在 RV-NPU 的資料流:卷積走 Matrix,bias/ReLU/pooling 走 Vector,Scalar 控制迴圈,DTCM 交接">
         <defs><marker id="a6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z"/></marker></defs>
 
         <!-- scalar control band -->
-        <rect class="s-ctrl" x="40" y="42" width="920" height="46" rx="10"/>
-        <text class="s-t" x="60" y="70" font-size="18.125" fill="#0A5B67">Scalar · 控制</text>
-        <text class="s-lc" x="220" y="70" font-size="16.25">for each 輸出像素 (y,x) → 算位址 · 發 command · fence 同步</text>
+        <rect style="fill:rgba(14,124,140,.08);stroke:#0E7C8C" x="40" y="42" width="920" height="46" rx="10"/>
+        <text style="font-weight:600;fill:#1F2933" x="60" y="70" font-size="18.125" fill="#0A5B67">Scalar · 控制</text>
+        <text style="fill:#0A5B67" x="220" y="70" font-size="16.25">for each 輸出像素 (y,x) → 算位址 · 發 command · fence 同步</text>
 
         <!-- stages -->
-        <rect class="s-node" x="40" y="150" width="152" height="92" rx="10"/>
-        <text class="s-t" x="116" y="188" font-size="17.5" text-anchor="middle">輸入影像</text>
-        <text class="s-faint" x="116" y="210" font-size="15" text-anchor="middle">H×W×C</text>
-        <text class="s-faint" x="116" y="226" font-size="15" text-anchor="middle">int8</text>
+        <rect style="fill:#FFFFFF;stroke:rgba(92,80,58,.26)" x="40" y="150" width="152" height="92" rx="10"/>
+        <text style="font-weight:600;fill:#1F2933" x="116" y="188" font-size="17.5" text-anchor="middle">輸入影像</text>
+        <text style="fill:#79848F" x="116" y="210" font-size="15" text-anchor="middle">H×W×C</text>
+        <text style="fill:#79848F" x="116" y="226" font-size="15" text-anchor="middle">int8</text>
 
-        <rect class="s-comp" x="232" y="150" width="152" height="92" rx="10" stroke-width="2"/>
-        <text class="s-t" x="308" y="184" font-size="17.5" text-anchor="middle" fill="#8F5A10">Conv 3×3</text>
-        <text class="s-faint" x="308" y="204" font-size="15" text-anchor="middle">Σ c,kh,kw → i32</text>
-        <text class="s-la" x="308" y="224" font-size="15.625" text-anchor="middle">[ Matrix ]</text>
+        <rect style="fill:rgba(180,116,26,.10);stroke:#B4741A" x="232" y="150" width="152" height="92" rx="10" stroke-width="2"/>
+        <text style="font-weight:600;fill:#1F2933" x="308" y="184" font-size="17.5" text-anchor="middle" fill="#8F5A10">Conv 3×3</text>
+        <text style="fill:#79848F" x="308" y="204" font-size="15" text-anchor="middle">Σ c,kh,kw → i32</text>
+        <text style="fill:#8F5A10" x="308" y="224" font-size="15.625" text-anchor="middle">[ Matrix ]</text>
 
-        <rect class="s-mem" x="424" y="150" width="152" height="92" rx="10"/>
-        <text class="s-t" x="500" y="184" font-size="17.5" text-anchor="middle" fill="#4956B8">+bias · rescale</text>
-        <text class="s-faint" x="500" y="204" font-size="15" text-anchor="middle">ReLU  i32→i8</text>
-        <text class="s-li" x="500" y="224" font-size="15.625" text-anchor="middle">[ Vector ]</text>
+        <rect style="fill:rgba(73,86,184,.09);stroke:#4956B8" x="424" y="150" width="152" height="92" rx="10"/>
+        <text style="font-weight:600;fill:#1F2933" x="500" y="184" font-size="17.5" text-anchor="middle" fill="#4956B8">+bias · rescale</text>
+        <text style="fill:#79848F" x="500" y="204" font-size="15" text-anchor="middle">ReLU  i32→i8</text>
+        <text style="fill:#4956B8" x="500" y="224" font-size="15.625" text-anchor="middle">[ Vector ]</text>
 
-        <rect class="s-mem" x="616" y="150" width="152" height="92" rx="10"/>
-        <text class="s-t" x="692" y="184" font-size="17.5" text-anchor="middle" fill="#4956B8">MaxPool 2×2</text>
-        <text class="s-faint" x="692" y="204" font-size="15" text-anchor="middle">max → i8</text>
-        <text class="s-li" x="692" y="224" font-size="15.625" text-anchor="middle">[ Vector ]</text>
+        <rect style="fill:rgba(73,86,184,.09);stroke:#4956B8" x="616" y="150" width="152" height="92" rx="10"/>
+        <text style="font-weight:600;fill:#1F2933" x="692" y="184" font-size="17.5" text-anchor="middle" fill="#4956B8">MaxPool 2×2</text>
+        <text style="fill:#79848F" x="692" y="204" font-size="15" text-anchor="middle">max → i8</text>
+        <text style="fill:#4956B8" x="692" y="224" font-size="15.625" text-anchor="middle">[ Vector ]</text>
 
-        <rect class="s-node" x="808" y="150" width="152" height="92" rx="10"/>
-        <text class="s-t" x="884" y="188" font-size="17.5" text-anchor="middle">特徵圖</text>
-        <text class="s-faint" x="884" y="210" font-size="15" text-anchor="middle">H'×W'×C'</text>
-        <text class="s-faint" x="884" y="226" font-size="15" text-anchor="middle">int8</text>
+        <rect style="fill:#FFFFFF;stroke:rgba(92,80,58,.26)" x="808" y="150" width="152" height="92" rx="10"/>
+        <text style="font-weight:600;fill:#1F2933" x="884" y="188" font-size="17.5" text-anchor="middle">特徵圖</text>
+        <text style="fill:#79848F" x="884" y="210" font-size="15" text-anchor="middle">H'×W'×C'</text>
+        <text style="fill:#79848F" x="884" y="226" font-size="15" text-anchor="middle">int8</text>
 
         <!-- flow arrows -->
-        <path class="trace-a flow" d="M192 196 H230" marker-end="url(#a6)"/>
-        <path class="trace-i flow" d="M384 196 H422" marker-end="url(#a6)"/>
-        <path class="trace-i flow" d="M576 196 H614" marker-end="url(#a6)"/>
-        <path class="trace-i flow" d="M768 196 H806" marker-end="url(#a6)"/>
+        <path style="fill:none;stroke:#B4741A;stroke-width:1.9;stroke-dasharray:7 9" d="M192 196 H230" marker-end="url(#a6)"/>
+        <path style="fill:none;stroke:#4956B8;stroke-width:1.9;stroke-dasharray:7 9" d="M384 196 H422" marker-end="url(#a6)"/>
+        <path style="fill:none;stroke:#4956B8;stroke-width:1.9;stroke-dasharray:7 9" d="M576 196 H614" marker-end="url(#a6)"/>
+        <path style="fill:none;stroke:#4956B8;stroke-width:1.9;stroke-dasharray:7 9" d="M768 196 H806" marker-end="url(#a6)"/>
 
         <!-- scalar drives stages (faint ticks) -->
-        <g class="trace" stroke-dasharray="3 4">
+        <g style="fill:none;stroke:rgba(92,80,58,.26);stroke-width:1.6" stroke-dasharray="3 4">
           <path d="M308 88 V148"/><path d="M500 88 V148"/><path d="M692 88 V148"/>
         </g>
 
         <!-- contraction callout -->
 
         <!-- DTCM handoff strip -->
-        <rect class="s-mem" x="232" y="312" width="536" height="40" rx="9"/>
-        <text class="s-li" x="500" y="337" font-size="15.625" text-anchor="middle">DTCM tile:Matrix 寫 i32 → Vector 讀 → rescale / pool</text>
-        <path class="trace-a" d="M308 244 V310" marker-end="url(#a6)"/>
-        <path class="trace-i" d="M500 312 V246" marker-end="url(#a6)"/>
-        <text class="s-la" x="500" y="380" font-size="15.625" text-anchor="middle">conv 有 contraction 軸 → Matrix;bias/ReLU/pool 逐元素 → Vector</text>
+        <rect style="fill:rgba(73,86,184,.09);stroke:#4956B8" x="232" y="312" width="536" height="40" rx="9"/>
+        <text style="fill:#4956B8" x="500" y="337" font-size="15.625" text-anchor="middle">DTCM tile:Matrix 寫 i32 → Vector 讀 → rescale / pool</text>
+        <path style="fill:none;stroke:#B4741A;stroke-width:1.9" d="M308 244 V310" marker-end="url(#a6)"/>
+        <path style="fill:none;stroke:#4956B8;stroke-width:1.9" d="M500 312 V246" marker-end="url(#a6)"/>
+        <text style="fill:#8F5A10" x="500" y="380" font-size="15.625" text-anchor="middle">conv 有 contraction 軸 → Matrix;bias/ReLU/pool 逐元素 → Vector</text>
       </svg>
