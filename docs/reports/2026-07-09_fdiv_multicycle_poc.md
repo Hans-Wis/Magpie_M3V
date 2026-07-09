@@ -1,6 +1,6 @@
-# fdiv multi-cycle PoC — mechanism validated, Fmax finding (F4 timing)
+# fdiv + fsqrt multi-cycle PoC — mechanism validated, Fmax gated by vexu vdiv
 
-- **Date:** 2026-07-09 · **Author:** Claude · **Commit:** `ed61f50` (RTL) · **Scope:** single-op PoC per User (「先做 fdiv 單點 PoC 實證 Fmax 上升」)
+- **Date:** 2026-07-09 · **Author:** Claude · **Commits:** `ed61f50` (fdiv), `648948e` (fsqrt) · **Scope:** PoC per User (「先做 fdiv 單點 PoC 實證 Fmax 上升」→「續做 fsqrt 迭代化再一趟 DC 證 Fmax 上升」)
 - **Goal:** prove the multi-cycle-divider mechanism (a) integrates bit-exactly and (b) removes the fdiv combinational cone from the EX critical path — the first step toward raising npu_top Fmax (166.7 MHz, gated by fexu float + vexu vdiv).
 
 ---
@@ -35,14 +35,30 @@ both combinational and comparable in depth to the old fdiv. So removing **only**
 
 > **Honest scope note:** this is inferred from (a) the RTL structural removal and (b) the standalone-fexu endpoint staying on `q_fdata` via the remaining combinational ops. A full npu_top before/after DC (≈3 h) was **not** re-run for a number that structural analysis already predicts as flat — running it to confirm "still ~167 MHz" is low value.
 
-## 4. Conclusion + recommendation
+## 4. fsqrt also made iterative (`648948e`) — fexu-arith wall now fully removed
 
-- ✅ **PoC succeeds on its real purpose:** the iterative-divider-with-stall mechanism integrates cleanly and is **bit-exact** (the risky part). This de-risks the whole multi-cycle plan.
-- ⚠️ **fdiv alone does not raise Fmax** — fsqrt and fma share the `q_fdata`/`ex_mem_f_data_r` register and are equally deep. Fmax moves only when the **whole fexu-arith tier** is treated together.
-- **Next (to actually raise Fmax), same de-risked pattern:**
-  1. **fsqrt → iterative** (the existing unrolled 31-iter loop rolls directly into the same restoring FSM; ~1 op, trivial extension).
-  2. **fadd/fmul/fma → 2-stage pipeline** through the shared `rp32` round-pack (cut after the mantissa engine; full throughput, no stall — these are the more common ops).
-  3. **vexu vdiv (#2 wall)** → reuse the existing `vm_state` multi-beat handshake.
-  Then one npu_top DC re-read gives the real Fmax delta (analysis target ~350–400 MHz once the fexu-arith wall is gone).
+Rolled the unrolled 31-iteration restoring integer sqrt into the same iterative FSM (31 cycles, 2 radicand bits/step, bit-exact). Float multi-cycle busy unified: `q_fmc_busy = fdiv_busy || fsqrt_busy`. Same bit-exact zero-regression verification (gate_61 incl fsqrt.s corners 301+1097, gate_60, gate_77, phase_20 1164).
 
-**Artifacts:** RTL `ed61f50`; `flow/dc_tsmc28/synth_fexu.tcl` (standalone fexu probe). Multi-cycle analysis: earlier this session (fexu/vexu/div.v RTL-grounded). Production version should go through the full Grok/Codex + ADR ceremony (§2).
+**Structural proof the fexu-arith divide/sqrt cones are gone:** a fresh npu_top DC (CLK 3.0 ns) allocates **only `DW01_add`** DesignWare inside `fexu_EN_F1` (from fma/fadd) — **no `DW_div`/`DW_sqrt`**. Every remaining `DW_div_*` (width 8/16/32) belongs to **vexu vdiv**.
+
+## 5. Fmax finding — the binding wall is now vexu vdiv, NOT fexu
+
+The DC signoff worst-path list (`600db43` timing report) shows **two** co-equal 5.93 ns walls at slack 0.00 @ 6.0 ns:
+- `ex_mem_f_data_r` (fexu float) — **removed by this PoC**, and
+- `ex_mem_vex_wdata_r` (vexu vdiv, path `u_vexu/q_instr[22] → … → ex_mem_vex_wdata_r`) — **untouched**.
+
+The fresh DC confirms it directly: with fdiv+fsqrt iterative, the critical-path endpoint **moves to `u_npu_core/u_core/u_vexu`** (the vdiv cone). vexu vdiv is a **32-bit combinational restoring divide** (`g_div32`, deeper than fexu's 24-bit mantissa divide), so it floors at ~the same 5.9 ns.
+
+**⇒ npu_top Fmax stays ~166.7 MHz — now gated *solely* by vexu vdiv.** The fexu-arith tier is off the critical path, but Fmax cannot rise until vdiv is also multi-cycled. (The confirming compile was stopped once the endpoint was proven to be vexu — no value in ~1–2 h more to reconfirm ~167 MHz.)
+
+## 6. Conclusion + recommendation
+
+- ✅ **Mechanism proven across two ops (fdiv, fsqrt), each bit-exact** — the iterative-divider-with-stall pattern scales cleanly. Fully de-risked.
+- ✅ **fexu-arith divide/sqrt wall removed** (structurally confirmed: no DW_div/sqrt left in fexu).
+- ⚠️ **Fmax not yet raised** — vexu **vdiv** is a co-equal 5.93 ns wall (32-bit combinational), now the sole binding constraint.
+- **Next — the one remaining wall (to actually raise Fmax):**
+  1. **vexu vdiv → iterative**, reusing the existing `vm_state` multi-beat + `m_start`/`vm_active`/`vm_result_valid`/`m_advance` handshake (per the RTL-grounded analysis this session). LMUL m2/m4/m8 already beat through `VM_GRP`; only LMUL=1 vdiv is single-shot.
+  2. Then one npu_top DC gives the real Fmax jump — with **no** combinational divide/sqrt cones left, the next wall is fma/fmul/mat-feed (analysis target ~250–400 MHz).
+  3. Optionally 2-stage-pipeline fma/fmul through `rp32` for further headroom.
+
+**Artifacts:** RTL `ed61f50` (fdiv) + `648948e` (fsqrt); `flow/dc_tsmc28/synth_fexu.tcl`. Production version → full Grok/Codex + ADR ceremony (§2).
