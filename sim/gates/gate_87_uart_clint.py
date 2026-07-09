@@ -34,14 +34,14 @@ CPU_RTL = [CPU_M1_DIR / f"{m}.v" for m in (
     "rfu", "alu", "bmu", "idu", "ifu", "lsu", "csr", "trigger", "pmp", "mul",
     "div", "forward", "hazard", "bp", "ras", "cdec", "vexu", "fexu", "core",
     "cpu_m1_top", "axil_bridge")]
-SOC_PERIPH_RTL = [ROOT / f"design/cpu_m1/soc/{m}.v" for m in ("plic", "uart", "clint")]
+SOC_PERIPH_RTL = [ROOT / f"design/cpu_m1/soc/{m}.v" for m in ("plic", "uart", "clint", "dm", "dtm")]
 NPU_RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in (
     "npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr",
     "mat_engine", "npu_ml_ctrl", "axi_full_sram", "axil_to_full",
     "axi_full_arbiter_2x1")]
 SOC_RTL = [ROOT / f"design/soc/{m}.v" for m in (
     "axil_imem", "plic_axil_shim", "periph_axil_shim", "soc_axil_decode",
-    "soc_m3v_top")]
+    "soc_m3v_top", "gpio")]
 SOC_RTL += [ROOT / "design/soc/qspi/qspi_master_p0.sv",
             ROOT / "design/soc/qspi/qspi_xip.sv",
             ROOT / "design/soc/qspi/qspi_axil_front.v"]

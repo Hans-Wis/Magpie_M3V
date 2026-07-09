@@ -36,6 +36,8 @@ HOST_RTL = [
     ROOT / "design/cpu_m1/soc/plic.v",
     ROOT / "design/cpu_m1/soc/uart.v",
     ROOT / "design/cpu_m1/soc/clint.v",
+    ROOT / "design/cpu_m1/soc/dm.v",
+    ROOT / "design/cpu_m1/soc/dtm.v",
 ]
 NPU_RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in (
     "npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr",
@@ -44,7 +46,7 @@ NPU_RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in (
 )]
 SOC_RTL = [ROOT / f"design/soc/{m}.v" for m in (
     "axil_imem", "plic_axil_shim", "periph_axil_shim", "soc_axil_decode",
-    "soc_m3v_top",
+    "soc_m3v_top", "gpio",
 )]
 SOC_RTL += [ROOT / f"design/soc/qspi/{m}" for m in (
     "qspi_master_p0.sv", "qspi_xip.sv", "qspi_axil_front.v",

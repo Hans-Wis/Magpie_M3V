@@ -8,7 +8,8 @@
 // M3b-3 two-bus formalization (ADR-0068 §2.5):
 //   CONTROL AXI (32-bit, always): host M_AXI_D -> soc_axil_decode ->
 //       {CLINT 0x0200, PLIC 0x0c00, UART 0x1000, NPU CSR/TCM 0x3000,
-//        XIP 0x4000_0000 16MB RO, SRAM host-bridge 0x8000}. DECERR off-map.
+//        GPIO 0x1100, XIP 0x4000_0000 16MB RO, SRAM host-bridge 0x8000}.
+//        DECERR off-map.
 //   DATA AXI (DMA_DATA_W = 64*MAT_LANES): npu_dma master + host bridge (axil_to_full,
 //       narrow-beat-on-wide-bus) -> axi_full_arbiter_2x1 -> axi_full_sram @0x8000.
 //   BRIDGE: axil_to_full crosses control->data for host weight/CQ writes.
@@ -43,7 +44,15 @@ module soc_m3v_top #(
     output wire qspi_sclk,
     output wire qspi_cs_n,
     output wire qspi_si,
-    input  wire qspi_so
+    input  wire qspi_so,
+    output wire [15:0] gpio_out,
+    output wire [15:0] gpio_oe,
+    input  wire [15:0] gpio_in,
+    input  wire jtag_tck,
+    input  wire jtag_tms,
+    input  wire jtag_tdi,
+    output wire jtag_tdo,
+    output wire dm_ndmreset
 );
     initial begin
         if (DMA_DATA_W != 32 && DMA_DATA_W != 64 && DMA_DATA_W != 128 && DMA_DATA_W != 256)
@@ -70,10 +79,18 @@ module soc_m3v_top #(
     wire        host_dbus_req, host_dbus_we, host_dbus_ready;
     wire [31:0] host_dbus_addr, host_dbus_wdata, host_dbus_rdata;
     wire [ 3:0] host_dbus_wstrb;
-    wire        dbg_dummy_halted;
-    wire        dbg_dummy_mode;
-    wire [31:0] dbg_dummy_acc_rdata;
-    wire        dbg_dummy_acc_err;
+    wire        dbg_halt_req;
+    wire        dbg_resume_req;
+    wire        dbg_hart_halted;
+    wire        dbg_mode;
+    wire        dbg_acc_en;
+    wire        dbg_acc_write;
+    wire [15:0] dbg_acc_regno;
+    wire [31:0] dbg_acc_wdata;
+    wire [31:0] dbg_acc_rdata;
+    wire        dbg_acc_err;
+    wire [63:0] dbg_dmi_reads;
+    wire [63:0] dbg_dmi_writes;
     wire        plic_meip;
     wire        clint_mtip;
     wire        clint_msip;
@@ -92,16 +109,16 @@ module soc_m3v_top #(
         .irq_external_pulse(1'b0),
         .mtip(clint_mtip), .msip(clint_msip),
         .meip(plic_meip),
-        .dm_halt_req(1'b0),
-        .dm_resume_req(1'b0),
-        .dm_hart_halted(dbg_dummy_halted),
-        .debug_mode(dbg_dummy_mode),
-        .dm_acc_en(1'b0),
-        .dm_acc_write(1'b0),
-        .dm_acc_regno(16'h0),
-        .dm_acc_wdata(32'h0),
-        .dm_acc_rdata(dbg_dummy_acc_rdata),
-        .dm_acc_err(dbg_dummy_acc_err),
+        .dm_halt_req(dbg_halt_req),
+        .dm_resume_req(dbg_resume_req),
+        .dm_hart_halted(dbg_hart_halted),
+        .debug_mode(dbg_mode),
+        .dm_acc_en(dbg_acc_en),
+        .dm_acc_write(dbg_acc_write),
+        .dm_acc_regno(dbg_acc_regno),
+        .dm_acc_wdata(dbg_acc_wdata),
+        .dm_acc_rdata(dbg_acc_rdata),
+        .dm_acc_err(dbg_acc_err),
         .dbg_pc(host_dbg_pc), .dbg_instr(host_dbg_instr), .dbg_state(host_dbg_state),
         /* verilator lint_off PINCONNECTEMPTY */
         .rvfi_valid(), .rvfi_pc(), .rvfi_trap(), .rvfi_trap_cause(), .rvfi_intr(),
@@ -111,6 +128,28 @@ module soc_m3v_top #(
         .rvfi_mem_re(), .rvfi_mem_we(), .rvfi_mem_addr(), .rvfi_mem_wdata(), .rvfi_mem_wstrb(),
         .rvfi_f_valid(), .rvfi_f_rd(), .rvfi_f_wdata()
         /* verilator lint_on PINCONNECTEMPTY */
+    );
+
+    dtm u_dtm (
+        .clk(clk),
+        .rst(~resetn),
+        .tck(jtag_tck),
+        .tms(jtag_tms),
+        .tdi(jtag_tdi),
+        .tdo(jtag_tdo),
+        .halt_req(dbg_halt_req),
+        .resume_req(dbg_resume_req),
+        .ndmreset(dm_ndmreset),
+        .hart_halted(dbg_hart_halted),
+        .hart_havereset(!resetn),
+        .acc_en(dbg_acc_en),
+        .acc_write(dbg_acc_write),
+        .acc_regno(dbg_acc_regno),
+        .acc_wdata(dbg_acc_wdata),
+        .acc_rdata(dbg_acc_rdata),
+        .acc_err(dbg_acc_err),
+        .dmi_reads(dbg_dmi_reads),
+        .dmi_writes(dbg_dmi_writes)
     );
 
     axil_bridge u_host_axil (
@@ -241,6 +280,16 @@ module soc_m3v_top #(
     wire [ 2:0] c_s_arprot;
     wire [ 1:0] c_s_rresp;
 
+    wire        g_s_awvalid, g_s_awready, g_s_wvalid, g_s_wready, g_s_bvalid, g_s_bready;
+    wire [31:0] g_s_awaddr, g_s_wdata;
+    wire [ 2:0] g_s_awprot;
+    wire [ 3:0] g_s_wstrb;
+    wire [ 1:0] g_s_bresp;
+    wire        g_s_arvalid, g_s_arready, g_s_rvalid, g_s_rready;
+    wire [31:0] g_s_araddr, g_s_rdata;
+    wire [ 2:0] g_s_arprot;
+    wire [ 1:0] g_s_rresp;
+
     wire        x_s_awvalid, x_s_awready, x_s_wvalid, x_s_wready, x_s_bvalid, x_s_bready;
     wire [31:0] x_s_awaddr, x_s_wdata;
     wire [ 2:0] x_s_awprot;
@@ -269,6 +318,11 @@ module soc_m3v_top #(
     wire [31:0] clint_wdata;
     wire [ 3:0] clint_wstrb;
     wire [31:0] clint_rdata;
+    wire        gpio_en;
+    wire [31:0] gpio_addr;
+    wire [31:0] gpio_wdata;
+    wire [ 3:0] gpio_wstrb;
+    wire [31:0] gpio_rdata;
 
     soc_axil_decode u_d_decode (
         .clk(clk),
@@ -298,6 +352,11 @@ module soc_m3v_top #(
         .c_bvalid(c_s_bvalid), .c_bready(c_s_bready), .c_bresp(c_s_bresp),
         .c_arvalid(c_s_arvalid), .c_arready(c_s_arready), .c_araddr(c_s_araddr), .c_arprot(c_s_arprot),
         .c_rvalid(c_s_rvalid), .c_rready(c_s_rready), .c_rdata(c_s_rdata), .c_rresp(c_s_rresp),
+        .g_awvalid(g_s_awvalid), .g_awready(g_s_awready), .g_awaddr(g_s_awaddr), .g_awprot(g_s_awprot),
+        .g_wvalid(g_s_wvalid), .g_wready(g_s_wready), .g_wdata(g_s_wdata), .g_wstrb(g_s_wstrb),
+        .g_bvalid(g_s_bvalid), .g_bready(g_s_bready), .g_bresp(g_s_bresp),
+        .g_arvalid(g_s_arvalid), .g_arready(g_s_arready), .g_araddr(g_s_araddr), .g_arprot(g_s_arprot),
+        .g_rvalid(g_s_rvalid), .g_rready(g_s_rready), .g_rdata(g_s_rdata), .g_rresp(g_s_rresp),
         .x_awvalid(x_s_awvalid), .x_awready(x_s_awready), .x_awaddr(x_s_awaddr), .x_awprot(x_s_awprot),
         .x_wvalid(x_s_wvalid), .x_wready(x_s_wready), .x_wdata(x_s_wdata), .x_wstrb(x_s_wstrb),
         .x_bvalid(x_s_bvalid), .x_bready(x_s_bready), .x_bresp(x_s_bresp),
@@ -392,6 +451,36 @@ module soc_m3v_top #(
         .rdata(clint_rdata),
         .mtip(clint_mtip),
         .msip(clint_msip)
+    );
+
+    periph_axil_shim u_gpio_axil (
+        .clk(clk),
+        .resetn(resetn),
+        .s_awvalid(g_s_awvalid), .s_awready(g_s_awready), .s_awaddr(g_s_awaddr), .s_awprot(g_s_awprot),
+        .s_wvalid(g_s_wvalid), .s_wready(g_s_wready), .s_wdata(g_s_wdata), .s_wstrb(g_s_wstrb),
+        .s_bvalid(g_s_bvalid), .s_bready(g_s_bready), .s_bresp(g_s_bresp),
+        .s_arvalid(g_s_arvalid), .s_arready(g_s_arready), .s_araddr(g_s_araddr), .s_arprot(g_s_arprot),
+        .s_rvalid(g_s_rvalid), .s_rready(g_s_rready), .s_rdata(g_s_rdata), .s_rresp(g_s_rresp),
+        .periph_en(gpio_en),
+        .periph_addr(gpio_addr),
+        .periph_wdata(gpio_wdata),
+        .periph_wstrb(gpio_wstrb),
+        .periph_rdata(gpio_rdata)
+    );
+
+    gpio #(
+        .N(16)
+    ) u_gpio (
+        .clk(clk),
+        .rst(~resetn),
+        .en(gpio_en),
+        .addr(gpio_addr),
+        .wdata(gpio_wdata),
+        .wstrb(gpio_wstrb),
+        .rdata(gpio_rdata),
+        .gpio_out(gpio_out),
+        .gpio_oe(gpio_oe),
+        .gpio_in(gpio_in)
     );
 
     qspi_axil_front u_qspi_xip (
@@ -569,8 +658,7 @@ module soc_m3v_top #(
         .bvalid(s_bvalid), .bready(s_bready), .bresp(s_bresp)
     );
 
-    wire unused_npu_status = |{npu_start, npu_config, dbg_dummy_halted, dbg_dummy_mode,
-                               dbg_dummy_acc_rdata, dbg_dummy_acc_err,
+    wire unused_npu_status = |{npu_start, npu_config, dbg_dmi_reads, dbg_dmi_writes,
                                qspi_cold_reads, qspi_warm_reads};
 endmodule
 `default_nettype wire
