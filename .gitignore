@@ -100,3 +100,7 @@ flow/v2_pipeline/phase_03_09_riscvdv_lockstep/zb/
 **/firmware_frand.S
 **/lockstep_report.md
 **/*.disasm
+# licensed TSMC28 memory-compiler derivatives — NEVER commit
+flow/dc_tsmc28/sram_macros/
+flow/dc_tsmc28/sram_db/
+command.log

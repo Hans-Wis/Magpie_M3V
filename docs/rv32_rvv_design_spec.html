@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RV32 + RVV 設計規格書 — Coral NPU 參考架構</title>
+<style>
+  :root{
+    --bg:            #F3ECDA;   /* 米黃底色 */
+    --bg-panel:      #FAF6EA;
+    --bg-panel-2:    #ECE2C6;
+    --grid-line:     rgba(120,90,50,0.07);
+    --ink:           #2E2A22;
+    --ink-dim:       #5B5342;
+    --ink-faint:     #8B8168;
+    --accent:        #1F8A7D;   /* 深藍綠 */
+    --accent-2:      #B9791E;   /* 琥珀色 */
+    --accent-soft:   rgba(31,138,125,0.14);
+    --line:          #DCD0AE;
+    --line-strong:   #C2AE7E;
+    --scalar:        #1F8A7D;
+    --vector:        #3A5BA8;
+    --matrix:        #B9791E;
+    --mem:           #8A4FA0;
+    --bus:           #3E8F49;
+    --mono: "IBM Plex Mono", "Menlo", "Consolas", monospace;
+    --sans: "IBM Plex Sans", "Noto Sans TC", -apple-system, sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/48px 48px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/48px 48px,
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.7;
+    font-size:15.5px;
+  }
+  a{color:var(--accent);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  code, .mono{font-family:var(--mono);}
+
+  /* ---------- Layout shell ---------- */
+  .shell{display:grid; grid-template-columns: 272px 1fr; min-height:100vh;}
+  nav.toc{
+    position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+    background:var(--bg-panel); border-right:1px solid var(--line);
+    padding:28px 20px 60px;
+  }
+  nav.toc .brand{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    color:var(--accent); text-transform:uppercase; margin-bottom:4px;
+  }
+  nav.toc h1{
+    font-size:17px; margin:2px 0 22px; line-height:1.4; color:var(--ink);
+    font-weight:600;
+  }
+  nav.toc .rev{font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-bottom:26px;}
+  nav.toc .grp-label{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:var(--ink-faint);
+    text-transform:uppercase; margin:20px 0 8px;
+  }
+  nav.toc ul{list-style:none; margin:0; padding:0;}
+  nav.toc li a{
+    display:block; padding:6px 10px; border-radius:4px; font-size:13.5px;
+    color:var(--ink-dim); border-left:2px solid transparent;
+  }
+  nav.toc li a:hover{ background:var(--accent-soft); color:var(--ink); text-decoration:none; border-left-color:var(--accent);}
+  nav.toc li a .num{color:var(--ink-faint); font-family:var(--mono); font-size:11px; margin-right:6px;}
+
+  main{padding:0; max-width:1040px;}
+  header.hero{
+    padding:64px 56px 44px; border-bottom:1px solid var(--line);
+    position:relative; overflow:hidden;
+  }
+  header.hero::after{
+    content:""; position:absolute; right:-80px; top:-80px; width:360px; height:360px;
+    background:radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:16px; display:flex; gap:10px; align-items:center;
+  }
+  .eyebrow::before{content:"◆"; font-size:9px;}
+  header.hero h1{font-size:38px; margin:0 0 14px; letter-spacing:-0.01em; max-width:820px; color:var(--ink);}
+  header.hero p.lede{color:var(--ink-dim); font-size:16px; max-width:680px; margin:0 0 24px;}
+  .badge-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .badge{
+    font-family:var(--mono); font-size:11.5px; padding:5px 10px; border:1px solid var(--line-strong);
+    border-radius:20px; color:var(--ink-dim); background:var(--bg-panel-2);
+  }
+
+  section{padding:52px 56px; border-bottom:1px solid var(--line);}
+  section:target{ animation:flash 1.2s ease; }
+  @keyframes flash{ from{background:var(--accent-soft);} to{background:transparent;} }
+
+  .sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:8px;}
+  .sec-num{font-family:var(--mono); color:var(--accent); font-size:14px;}
+  h2{font-size:24px; margin:0 0 6px; letter-spacing:-0.01em; color:var(--ink);}
+  h3{font-size:17px; margin:32px 0 10px; color:var(--ink); border-left:3px solid var(--accent); padding-left:10px;}
+  h4{font-size:14.5px; margin:22px 0 8px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.04em; font-family:var(--mono); font-weight:500;}
+  .sec-intro{color:var(--ink-dim); max-width:760px; margin-bottom:28px;}
+  p{max-width:760px;}
+  ul.spec-list, ol.spec-list{max-width:760px; padding-left:20px;}
+  ul.spec-list li, ol.spec-list li{margin-bottom:6px;}
+
+  .callout{
+    border:1px solid var(--line-strong); border-left:3px solid var(--accent);
+    background:var(--bg-panel-2); border-radius:6px; padding:16px 18px; max-width:760px;
+    margin:18px 0; font-size:14px; color:var(--ink-dim);
+  }
+  .callout strong{color:var(--ink);}
+  .callout.claude{border-left-color:var(--accent-2);}
+  .callout.claude .tag{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:var(--accent-2);
+    text-transform:uppercase; display:block; margin-bottom:6px;
+  }
+
+  table{border-collapse:collapse; width:100%; max-width:900px; margin:14px 0 26px; font-size:13.8px;}
+  caption{text-align:left; font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-bottom:6px;}
+  th, td{border:1px solid var(--line); padding:9px 12px; text-align:left; vertical-align:top;}
+  th{background:var(--bg-panel-2); color:var(--ink); font-weight:600; font-size:12.5px; letter-spacing:.02em;}
+  td{color:var(--ink-dim);}
+  td.mono, th.mono{font-family:var(--mono); color:var(--ink);}
+  tr:nth-child(even) td{background:rgba(0,0,0,0.02);}
+
+  .diagram-wrap{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:10px;
+    padding:22px; margin:20px 0 30px; max-width:960px; overflow-x:auto;
+  }
+  .diagram-cap{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-top:10px;}
+  svg text{font-family:var(--mono);}
+
+  .legend{display:flex; flex-wrap:wrap; gap:16px; margin-top:14px; font-size:12px; color:var(--ink-dim); font-family:var(--mono);}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .legend i{width:11px; height:11px; border-radius:2px; display:inline-block;}
+
+  code.inline{
+    background:var(--bg-panel-2); border:1px solid var(--line); border-radius:4px;
+    padding:1px 6px; font-size:13px; color:var(--accent);
+  }
+  pre{
+    background:var(--bg-panel-2); border:1px solid var(--line); border-radius:8px;
+    padding:16px 18px; overflow-x:auto; max-width:900px; font-size:13px; color:var(--ink);
+  }
+  pre .c{color:var(--ink-faint);}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px; max-width:900px;}
+  .card{background:var(--bg-panel-2); border:1px solid var(--line); border-radius:8px; padding:16px 18px;}
+  .card h4{margin-top:0;}
+
+  footer{padding:40px 56px 70px; color:var(--ink-faint); font-size:12.5px;}
+  footer a{color:var(--ink-dim);}
+
+  @media (max-width: 900px){
+    .shell{grid-template-columns:1fr;}
+    nav.toc{position:relative; height:auto;}
+    header.hero, section, footer{padding-left:24px; padding-right:24px;}
+    .grid2{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<nav class="toc">
+  <div class="brand">DESIGN SPEC · REV 1.1</div>
+  <h1>RV32 + RVV<br>核心設計規格書</h1>
+  <div class="rev">for Claude Code 實作參考 · 2026-07</div>
+
+  <div class="grp-label">概述</div>
+  <ul>
+    <li><a href="#overview"><span class="num">01</span>設計目標與範疇</a></li>
+    <li><a href="#isa"><span class="num">02</span>ISA 規格</a></li>
+  </ul>
+
+  <div class="grp-label">架構</div>
+  <ul>
+    <li><a href="#toplevel"><span class="num">03</span>頂層架構圖</a></li>
+    <li><a href="#pipeline"><span class="num">04</span>管線微架構</a></li>
+    <li><a href="#scalar"><span class="num">05</span>純量核心</a></li>
+    <li><a href="#vector"><span class="num">06</span>向量執行引擎 (RVV)</a></li>
+    <li><a href="#matrix"><span class="num">07</span>矩陣執行引擎</a></li>
+  </ul>
+
+  <div class="grp-label">系統整合</div>
+  <ul>
+    <li><a href="#memory"><span class="num">08</span>記憶體子系統</a></li>
+    <li><a href="#bus"><span class="num">09</span>AXI4 匯流排介面</a></li>
+    <li><a href="#csr"><span class="num">10</span>CSR 規格</a></li>
+    <li><a href="#exceptions"><span class="num">11</span>例外與中斷</a></li>
+  </ul>
+
+  <div class="grp-label">實作與驗證</div>
+  <ul>
+    <li><a href="#layout"><span class="num">12</span>程式碼佈局規範</a></li>
+    <li><a href="#verification"><span class="num">13</span>驗證策略</a></li>
+    <li><a href="#milestones"><span class="num">14</span>里程碑</a></li>
+    <li><a href="#refs"><span class="num">15</span>參考資料</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<header class="hero">
+  <div class="eyebrow">RISC-V · rv32imf_zve32x_zicsr_zifencei_zbb</div>
+  <h1>低功耗 RV32 + RVV 向量核心設計規格</h1>
+  <p class="lede">
+    本文件參考 Google Coral NPU（開源、超低功耗神經處理單元，基於 32-bit RISC-V ISA）
+    之公開資料進行整理與延伸，作為 Claude Code 在實作 RV32 純量核心與 RVV 向量擴充時應遵循的
+    設計規格書。內容涵蓋 ISA 定義、微架構、記憶體 / 匯流排介面、CSR 規格與驗證策略。
+  </p>
+  <div class="badge-row">
+    <span class="badge">RV32IM + F + Zve32x</span>
+    <span class="badge">4-stage · in-order dispatch / OoO retire</span>
+    <span class="badge">4-way scalar / 2-way vector dispatch</span>
+    <span class="badge">128-bit SIMD datapath</span>
+    <span class="badge">AXI4 master/slave</span>
+    <span class="badge">ITCM 8KB / DTCM 32KB</span>
+  </div>
+</header>
+
+<!-- 01 -->
+<section id="overview">
+  <div class="sec-head"><span class="sec-num">01</span><h2>設計目標與範疇</h2></div>
+  <p class="sec-intro">
+    此核心目標為在穿戴式裝置（耳機、AR 眼鏡、智慧手錶）等超低功耗場景下，提供一顆
+    「可用標準工具鏈編譯、又具備 ML 推論所需資料路徑效率」的 C-programmable 加速器，
+    在通用可程式性與領域專用效率之間取得平衡（此為 Coral NPU 的核心設計哲學）。
+  </p>
+
+  <h3>設計目標</h3>
+  <ul class="spec-list">
+    <li><strong>能效優先</strong>：降低純量控制流的 overhead，並縮短資料在記憶體階層中的搬移距離。</li>
+    <li><strong>標準工具鏈相容</strong>：以 RISC-V 標準擴充（I/M/F/Zve32x/Zicsr/Zifencei/Zbb）為基礎，可用 GCC/LLVM 直接編譯 C/C++。</li>
+    <li><strong>向量化 ML 運算</strong>：透過 RVV（Zve32x）子集提供 8/16/32-bit 資料寬度的 SIMD 運算，滿足 int8/int16 量化推論需求。</li>
+    <li><strong>可整合性</strong>：以 AXI4 作為 SoC 週邊介面（同時具備 master 與 slave 角色），可被外部 host CPU 配置與除錯（GDB）。</li>
+    <li><strong>確定性延遲</strong>：ITCM / DTCM 採用 single-cycle SRAM 而非快取，避免快取失誤造成的不確定延遲。</li>
+  </ul>
+
+  <div class="callout claude">
+    <span class="tag">Claude Code 實作原則</span>
+    實作時請將「純量核心 (scalar)」「向量核心 (rvv)」「矩陣核心 (matrix，選配)」視為三個可獨立驗證的子系統，
+    透過明確定義的 command queue / scoreboard 介面耦合，而非緊密糾纏的單一大型模組。任何新增指令或資料通路，
+    都應先更新本規格書對應章節，再落地為程式碼與測試。
+  </div>
+</section>
+
+<!-- 02 -->
+<section id="isa">
+  <div class="sec-head"><span class="sec-num">02</span><h2>ISA 規格</h2></div>
+  <p class="sec-intro">
+    完整 RISC-V ISA 標籤：<code class="inline">rv32imf_zve32x_zicsr_zifencei_zbb</code>
+  </p>
+
+  <table>
+    <caption>擴充模組定義</caption>
+    <thead><tr><th class="mono">擴充</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">I</td><td>基礎 32-bit 整數指令集（Base Integer ISA）</td></tr>
+      <tr><td class="mono">M</td><td>整數乘法 / 除法標準擴充</td></tr>
+      <tr><td class="mono">F</td><td>單精度浮點運算標準擴充</td></tr>
+      <tr><td class="mono">Zve32x</td><td>RISC-V Vector（V）擴充之嵌入式處理器子集 — 32-bit 元素寬度、整數運算為主，不要求完整 V 擴充所有功能</td></tr>
+      <tr><td class="mono">Zicsr</td><td>控制與狀態暫存器（CSR）存取指令</td></tr>
+      <tr><td class="mono">Zifencei</td><td>指令快取一致性 fence 指令</td></tr>
+      <tr><td class="mono">Zbb</td><td>基本位元操作（bit-manipulation）標準擴充</td></tr>
+    </tbody>
+  </table>
+
+  <h3>暫存器檔案</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>純量暫存器</h4>
+      <p style="margin:0;">31 個 32-bit 通用暫存器 <code class="inline">x1–x31</code>，<code class="inline">x0</code> 硬接地為 0。位址空間 32-bit，適用於應用程式與作業系統核心。</p>
+    </div>
+    <div class="card">
+      <h4>向量暫存器</h4>
+      <p style="margin:0;">32 個 256-bit 向量暫存器 <code class="inline">v0–v31</code>，支援 8/16/32-bit 元素寬度切分（例如 int32 × 8 lane）。</p>
+    </div>
+  </div>
+
+  <p class="callout">
+    支援之資料型別：<strong>int8、int16</strong>（int32 累加）；浮點資料型別支援規劃於未來版本。
+    向量與矩陣的自訂運算功能，將隨未來 RISC-V 標準底定而逐步遷移對齊。
+  </p>
+</section>
+
+<!-- 03 -->
+<section id="toplevel">
+  <div class="sec-head"><span class="sec-num">03</span><h2>頂層架構圖</h2></div>
+  <p class="sec-intro">
+    核心由三個協同運作的處理器子元件構成：<strong style="color:var(--scalar)">純量核心</strong>、
+    <strong style="color:var(--vector)">向量（SIMD）核心</strong>、<strong style="color:var(--matrix)">矩陣核心</strong>，
+    透過共享的 Load/Store Unit 與 tightly-coupled 記憶體存取資料，並以 AXI4 對外連接 SoC。
+  </p>
+
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 1000 900" width="100%" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#8B8168"/>
+      </marker>
+      <marker id="arrowAccent" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#3E8F49"/>
+      </marker>
+    </defs>
+
+    <!-- outer SoC boundary -->
+    <rect x="16" y="16" width="968" height="860" rx="10" fill="none" stroke="#C2AE7E" stroke-width="1.5" stroke-dasharray="5 5"/>
+    <text x="34" y="42" fill="#8B8168" font-size="13" letter-spacing="1">SOC BOUNDARY</text>
+
+    <!-- Coral-style core container -->
+    <rect x="40" y="60" width="920" height="520" rx="10" fill="#FAF6EA" stroke="#C2AE7E" stroke-width="1.5"/>
+    <text x="58" y="88" fill="#2E2A22" font-size="17" font-weight="700">RV32 + RVV CORE</text>
+
+    <!-- Fetch/Decode/Dispatch -->
+    <rect x="58" y="108" width="884" height="66" rx="6" fill="#ECE2C6" stroke="#C2AE7E"/>
+    <text x="500" y="136" fill="#2E2A22" font-size="16" text-anchor="middle" font-weight="600">Fetch / Decode / Scoreboard / Dispatch</text>
+    <text x="500" y="157" fill="#5B5342" font-size="13" text-anchor="middle">4-way scalar dispatch · 2-way vector dispatch</text>
+
+    <!-- Scalar engine -->
+    <rect x="58" y="214" width="281" height="240" rx="8" fill="#E4F1EE" stroke="#1F8A7D" stroke-width="1.6"/>
+    <text x="198" y="240" fill="#1F8A7D" font-size="16" text-anchor="middle" font-weight="700">SCALAR CORE</text>
+    <rect x="76" y="252" width="115" height="40" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="133" y="277" fill="#2E2A22" font-size="14" text-anchor="middle">ALU</text>
+    <rect x="205" y="252" width="116" height="40" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="263" y="277" fill="#2E2A22" font-size="14" text-anchor="middle">BRU (branch)</text>
+    <rect x="76" y="300" width="115" height="40" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="133" y="325" fill="#2E2A22" font-size="14" text-anchor="middle">Mul / Div</text>
+    <rect x="205" y="300" width="116" height="40" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="263" y="325" fill="#2E2A22" font-size="14" text-anchor="middle">FPU (F)</text>
+    <rect x="76" y="348" width="245" height="40" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="198" y="366" fill="#2E2A22" font-size="13" text-anchor="middle">x0–x31 register file</text>
+    <text x="198" y="382" fill="#5B5342" font-size="13" text-anchor="middle">(32-bit ×31)</text>
+    <rect x="76" y="396" width="245" height="30" rx="4" fill="#FAF6EA" stroke="#9EC8C1"/>
+    <text x="198" y="416" fill="#2E2A22" font-size="13" text-anchor="middle">CSR file (Zicsr)</text>
+
+    <!-- Vector engine -->
+    <rect x="359" y="214" width="282" height="240" rx="8" fill="#E7ECF6" stroke="#3A5BA8" stroke-width="1.6"/>
+    <text x="500" y="240" fill="#3A5BA8" font-size="16" text-anchor="middle" font-weight="700">VECTOR ENGINE (RVV)</text>
+    <rect x="377" y="252" width="246" height="40" rx="4" fill="#FAF6EA" stroke="#AEBEE0"/>
+    <text x="500" y="277" fill="#2E2A22" font-size="14" text-anchor="middle">v0–v31, 256-bit × 32</text>
+    <rect x="377" y="300" width="246" height="46" rx="4" fill="#FAF6EA" stroke="#AEBEE0"/>
+    <text x="500" y="319" fill="#2E2A22" font-size="13" text-anchor="middle">SIMD ALU · 128-bit datapath</text>
+    <text x="500" y="337" fill="#5B5342" font-size="13" text-anchor="middle">(256-bit future)</text>
+    <rect x="377" y="354" width="246" height="46" rx="4" fill="#FAF6EA" stroke="#AEBEE0"/>
+    <text x="500" y="373" fill="#2E2A22" font-size="13" text-anchor="middle">8×8×32-bit accumulator</text>
+    <text x="500" y="390" fill="#5B5342" font-size="12" text-anchor="middle">acc&lt;8&gt;&lt;8&gt;</text>
+    <rect x="377" y="408" width="246" height="38" rx="4" fill="#FAF6EA" stroke="#AEBEE0"/>
+    <text x="500" y="424" fill="#2E2A22" font-size="12.5" text-anchor="middle">data widths:</text>
+    <text x="500" y="440" fill="#5B5342" font-size="12.5" text-anchor="middle">int8 / int16 / int32</text>
+
+    <!-- Matrix engine -->
+    <rect x="661" y="214" width="281" height="240" rx="8" fill="#F7EFDD" stroke="#B9791E" stroke-width="1.6"/>
+    <text x="801" y="240" fill="#B9791E" font-size="16" text-anchor="middle" font-weight="700">MATRIX ENGINE</text>
+    <rect x="679" y="252" width="246" height="40" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
+    <text x="801" y="277" fill="#2E2A22" font-size="14" text-anchor="middle">Outer-product MAC array</text>
+    <rect x="679" y="300" width="246" height="46" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
+    <text x="801" y="319" fill="#2E2A22" font-size="13" text-anchor="middle">4× 8-bit multiplies →</text>
+    <text x="801" y="337" fill="#5B5342" font-size="13" text-anchor="middle">32-bit acc</text>
+    <rect x="679" y="354" width="246" height="40" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
+    <text x="801" y="379" fill="#2E2A22" font-size="14" text-anchor="middle">256 MACs / cycle</text>
+    <rect x="679" y="402" width="246" height="34" rx="4" fill="#FAF6EA" stroke="#E0C892"/>
+    <text x="801" y="423" fill="#5B5342" font-size="12.5" text-anchor="middle">quantized int8 MAC engine</text>
+
+    <!-- connections: dispatch -> engines (length 40) -->
+    <line x1="198" y1="174" x2="198" y2="212" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="500" y1="174" x2="500" y2="212" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="801" y1="174" x2="801" y2="212" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+    <!-- shared LSU -->
+    <rect x="58" y="498" width="884" height="56" rx="6" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.6"/>
+    <text x="500" y="531" fill="#2C6B34" font-size="16" text-anchor="middle" font-weight="600">Shared Load / Store Unit (LSU) · IBUS / DBUS</text>
+
+    <!-- connections: engines -> LSU (length 44) -->
+    <line x1="198" y1="454" x2="198" y2="496" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="500" y1="454" x2="500" y2="496" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="801" y1="454" x2="801" y2="496" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+    <!-- memory / csr / ebus row -->
+    <rect x="41" y="634" width="210" height="72" rx="6" fill="#F1E8F5" stroke="#8A4FA0" stroke-width="1.6"/>
+    <text x="146" y="662" fill="#8A4FA0" font-size="14.5" text-anchor="middle" font-weight="700">ITCM · 8 KB</text>
+    <text x="146" y="684" fill="#5B5342" font-size="12.5" text-anchor="middle">single-cycle SRAM</text>
+
+    <rect x="277" y="634" width="210" height="72" rx="6" fill="#F1E8F5" stroke="#8A4FA0" stroke-width="1.6"/>
+    <text x="382" y="662" fill="#8A4FA0" font-size="14.5" text-anchor="middle" font-weight="700">DTCM · 32 KB</text>
+    <text x="382" y="684" fill="#5B5342" font-size="12.5" text-anchor="middle">single-cycle SRAM</text>
+
+    <rect x="513" y="634" width="210" height="72" rx="6" fill="#ECE2C6" stroke="#C2AE7E" stroke-width="1.6"/>
+    <text x="618" y="660" fill="#2E2A22" font-size="14.5" text-anchor="middle" font-weight="700">Custom CSRs</text>
+    <text x="618" y="680" fill="#5B5342" font-size="12" text-anchor="middle">RESET_CONTROL</text>
+    <text x="618" y="696" fill="#5B5342" font-size="12" text-anchor="middle">PC_START · STATUS</text>
+
+    <rect x="749" y="634" width="210" height="72" rx="6" fill="#ECE2C6" stroke="#C2AE7E" stroke-width="1.6"/>
+    <text x="854" y="662" fill="#2E2A22" font-size="14.5" text-anchor="middle" font-weight="700">EBUS (external mem)</text>
+    <text x="854" y="684" fill="#5B5342" font-size="12.5" text-anchor="middle">via LSU</text>
+
+    <!-- connections: LSU -> memory row (length 80) -->
+    <line x1="146" y1="554" x2="146" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="382" y1="554" x2="382" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="618" y1="554" x2="618" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+    <line x1="854" y1="554" x2="854" y2="632" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+    <!-- AXI4 bus bar -->
+    <rect x="40" y="760" width="920" height="74" rx="8" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.8"/>
+    <text x="60" y="790" fill="#2C6B34" font-size="16" font-weight="700">AXI4 BUS INTERFACE</text>
+    <text x="60" y="810" fill="#5B5342" font-size="13">master (config external mem) + slave (host configures/debugs core)</text>
+    <text x="60" y="826" fill="#5B5342" font-size="13">AW / W / B / AR / R channels</text>
+
+    <!-- connections: memory row -> AXI4 (length 54) -->
+    <line x1="146" y1="706" x2="146" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="382" y1="706" x2="382" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="618" y1="706" x2="618" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+    <line x1="854" y1="706" x2="854" y2="758" stroke="#3E8F49" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+
+    <!-- Host SoC label -->
+    <text x="500" y="860" fill="#5B5342" font-size="13" text-anchor="middle">↕ Host SoC（application processor、GDB debug、external memory）</text>
+  </svg>
+  </div>
+  <div class="legend">
+    <span><i style="background:#1F8A7D"></i>純量核心</span>
+    <span><i style="background:#3A5BA8"></i>向量核心 (RVV)</span>
+    <span><i style="background:#B9791E"></i>矩陣核心</span>
+    <span><i style="background:#8A4FA0"></i>TCM 記憶體</span>
+    <span><i style="background:#3E8F49"></i>AXI4 匯流排</span>
+  </div>
+  <p class="diagram-cap">圖 3.1 — 頂層區塊架構圖（依 Coral NPU 元件劃分重繪）</p>
+
+  <table>
+    <caption>子元件對照表</caption>
+    <thead><tr><th class="mono">子元件</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">Fetch/Decode</td><td>擷取並解碼程式指令，分派至純量 / 向量 / 矩陣命令佇列</td></tr>
+      <tr><td class="mono">Scoreboard</td><td>管理指令相依性，避免 RAW/WAR/WAW 衝突</td></tr>
+      <tr><td class="mono">ALU / BRU</td><td>算術邏輯運算單元 / 分支控制單元（迴圈、跳躍）</td></tr>
+      <tr><td class="mono">LSU</td><td>Load/Store Unit，於暫存器與記憶體間搬移資料，純量與向量核心共用</td></tr>
+      <tr><td class="mono">CSR</td><td>控制與狀態暫存器</td></tr>
+      <tr><td class="mono">ITCM / DTCM</td><td>指令 / 資料 tightly-coupled SRAM 記憶體</td></tr>
+      <tr><td class="mono">SIMD / MAC</td><td>單指令多資料運算單元 / 乘加累加執行引擎</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 04 -->
+<section id="pipeline">
+  <div class="sec-head"><span class="sec-num">04</span><h2>管線微架構</h2></div>
+  <p class="sec-intro">
+    四級管線，<strong>指令依序分派（in-order dispatch）、允許非依序完成（out-of-order retire）</strong>。
+    純量指令支援四路分派，向量指令支援兩路分派。
+  </p>
+
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 1060 340" width="100%" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrow2" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#8B8168"/>
+      </marker>
+    </defs>
+
+    <!-- FETCH -->
+    <rect x="30" y="79" width="210" height="110" rx="8" fill="#E4F1EE" stroke="#1F8A7D" stroke-width="1.6"/>
+    <text x="135" y="109" fill="#1F8A7D" font-size="16" text-anchor="middle" font-weight="700">FETCH</text>
+    <text x="135" y="133" fill="#5B5342" font-size="13" text-anchor="middle">ITCM 讀取</text>
+    <text x="135" y="153" fill="#5B5342" font-size="13" text-anchor="middle">分支預測 / PC 更新</text>
+
+    <line x1="240" y1="134" x2="288" y2="134" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow2)"/>
+
+    <!-- DECODE/DISPATCH -->
+    <rect x="288" y="79" width="232" height="110" rx="8" fill="#E7ECF6" stroke="#3A5BA8" stroke-width="1.6"/>
+    <text x="404" y="109" fill="#3A5BA8" font-size="16" text-anchor="middle" font-weight="700">DECODE / DISPATCH</text>
+    <text x="404" y="133" fill="#5B5342" font-size="13" text-anchor="middle">Scoreboard 相依性檢查</text>
+    <text x="404" y="153" fill="#5B5342" font-size="13" text-anchor="middle">4-way 純量 / 2-way 向量</text>
+
+    <line x1="520" y1="134" x2="568" y2="134" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow2)"/>
+
+    <!-- EXECUTE stack -->
+    <rect x="568" y="20" width="232" height="68" rx="8" fill="#E4F1EE" stroke="#1F8A7D" stroke-width="1.6"/>
+    <text x="684" y="48" fill="#1F8A7D" font-size="15" text-anchor="middle" font-weight="700">EXECUTE · 純量</text>
+    <text x="684" y="70" fill="#5B5342" font-size="12.5" text-anchor="middle">ALU / Mul-Div / BRU / FPU</text>
+
+    <rect x="568" y="100" width="232" height="68" rx="8" fill="#E7ECF6" stroke="#3A5BA8" stroke-width="1.6"/>
+    <text x="684" y="128" fill="#3A5BA8" font-size="15" text-anchor="middle" font-weight="700">EXECUTE · 向量</text>
+    <text x="684" y="150" fill="#5B5342" font-size="12.5" text-anchor="middle">SIMD ALU / MAC 陣列</text>
+
+    <rect x="568" y="180" width="232" height="68" rx="8" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.6"/>
+    <text x="684" y="208" fill="#2C6B34" font-size="15" text-anchor="middle" font-weight="700">EXECUTE · 訪存</text>
+    <text x="684" y="230" fill="#5B5342" font-size="12.5" text-anchor="middle">LSU → DTCM / EBUS</text>
+
+    <!-- converging arrows to RETIRE (length ~55-90, clearly visible) -->
+    <line x1="800" y1="54" x2="850" y2="112" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow2)"/>
+    <line x1="800" y1="134" x2="850" y2="139" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow2)"/>
+    <line x1="800" y1="214" x2="850" y2="168" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow2)"/>
+
+    <!-- RETIRE -->
+    <rect x="850" y="84" width="190" height="110" rx="8" fill="#F7EFDD" stroke="#B9791E" stroke-width="1.6"/>
+    <text x="945" y="118" fill="#B9791E" font-size="16" text-anchor="middle" font-weight="700">RETIRE</text>
+    <text x="945" y="142" fill="#5B5342" font-size="13" text-anchor="middle">非依序完成</text>
+    <text x="945" y="163" fill="#5B5342" font-size="13" text-anchor="middle">依序 commit</text>
+    <text x="945" y="181" fill="#5B5342" font-size="13" text-anchor="middle">例外檢查</text>
+
+    <text x="530" y="288" fill="#8B8168" font-size="13.75" text-anchor="middle">Hazard 偵測（RAW / WAR / WAW）</text>
+    <text x="530" y="308" fill="#8B8168" font-size="13.75" text-anchor="middle">Stall / Flush 機制皆位於 Decode / Dispatch 之 Scoreboard</text>
+  </svg>
+  </div>
+  <p class="diagram-cap">圖 4.1 — 四級管線示意圖（依序分派、非依序完成，多執行單元並行）</p>
+
+  <h3>Hazard 與流程控制</h3>
+  <ul class="spec-list">
+    <li>Hazard 偵測涵蓋 RAW（Read-After-Write）、WAR（Write-After-Read）、WAW（Write-After-Write）。</li>
+    <li>Pipeline stall / flush 機制需支援分支誤判、例外進入時的管線清空。</li>
+    <li>Instruction scoreboard 需同時追蹤純量與向量指令的完成狀態，因為 LSU 為共用資源。</li>
+  </ul>
+
+  <div class="callout claude">
+    <span class="tag">Claude Code 實作原則</span>
+    Scoreboard 與 dispatch 邏輯應設計為獨立、可單元測試的模組（見第 12 章佈局），並針對
+    RAW/WAR/WAW 三類情境各自撰寫方向性測試（directed test）與隨機測試（random test），
+    避免僅以整合測試覆蓋 hazard 邏輯。
+  </div>
+</section>
+
+<!-- 05 -->
+<section id="scalar">
+  <div class="sec-head"><span class="sec-num">05</span><h2>純量核心規格</h2></div>
+  <p class="sec-intro">RV32IM 前端，驅動 ML 與 SIMD 後端的 command queue。</p>
+
+  <table>
+    <caption>純量核心特性</caption>
+    <tbody>
+      <tr><td class="mono">暫存器</td><td>31 個 32-bit 通用暫存器 x1–x31，x0 恆為 0</td></tr>
+      <tr><td class="mono">算術指令</td><td>加、減、乘、除等（依 RV32IM 定義）</td></tr>
+      <tr><td class="mono">訪存指令</td><td>支援立即值、暫存器、索引等定址模式的 load/store</td></tr>
+      <tr><td class="mono">分支指令</td><td>BEQ, BNE, BLT, BGE, JAL, JALR 等</td></tr>
+      <tr><td class="mono">中斷處理</td><td>純量核心負責中斷進入 / 返回流程</td></tr>
+      <tr><td class="mono">CSR</td><td>依 rv32_Zicsr 規格，per-hart 4096 個暫存器位址空間</td></tr>
+    </tbody>
+  </table>
+
+  <h4>CSR 存取指令</h4>
+  <table>
+    <tbody>
+      <tr><td class="mono">CSRRW / CSRRS / CSRRC</td><td>原子讀取並寫入 / 設定位元 / 清除位元</td></tr>
+      <tr><td class="mono">CSRRWI / CSRRSI / CSRRCI</td><td>對應之立即值版本</td></tr>
+      <tr><td class="mono">CSRR / CSRW / CSRS / CSRC</td><td>組譯器 pseudo-instruction，簡化常見操作</td></tr>
+    </tbody>
+  </table>
+  <p>
+    CSR 位址編碼慣例：<code class="inline">csr[11:10]</code> 表示讀寫屬性（00/01/10 為可讀寫，11 為唯讀），
+    <code class="inline">csr[9:8]</code> 表示可存取之最低特權等級。
+  </p>
+</section>
+
+<!-- 06 -->
+<section id="vector">
+  <div class="sec-head"><span class="sec-num">06</span><h2>向量執行引擎（RVV）規格</h2></div>
+  <p class="sec-intro">
+    依循 RISC-V Vector 標準的 Zve32x 嵌入式子集，提供適合 ML 推論之 SIMD 資料路徑。
+  </p>
+
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 940 320" width="100%" xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="30" fill="#2E2A22" font-size="15" font-weight="700">v0 — 256-bit 向量暫存器切分範例</text>
+
+    <rect x="20" y="48" width="900" height="44" fill="#ECE2C6" stroke="#C2AE7E"/>
+    <text x="470" y="75" fill="#3A5BA8" font-size="13" text-anchor="middle">256 bits</text>
+
+    <!-- int32 x 8 -->
+    <text x="20" y="120" fill="#5B5342" font-size="13.75">SEW=32 (int32 × 8 lanes)</text>
+    <g fill="#E7ECF6" stroke="#3A5BA8">
+      <rect x="20" y="128" width="112" height="38"/>
+      <rect x="132" y="128" width="112" height="38"/>
+      <rect x="244" y="128" width="112" height="38"/>
+      <rect x="356" y="128" width="112" height="38"/>
+      <rect x="468" y="128" width="112" height="38"/>
+      <rect x="580" y="128" width="112" height="38"/>
+      <rect x="692" y="128" width="112" height="38"/>
+      <rect x="804" y="128" width="112" height="38"/>
+    </g>
+    <g fill="#2E2A22" font-size="12.5">
+      <text x="76" y="152" text-anchor="middle">e7</text>
+      <text x="188" y="152" text-anchor="middle">e6</text>
+      <text x="300" y="152" text-anchor="middle">e5</text>
+      <text x="412" y="152" text-anchor="middle">e4</text>
+      <text x="524" y="152" text-anchor="middle">e3</text>
+      <text x="636" y="152" text-anchor="middle">e2</text>
+      <text x="748" y="152" text-anchor="middle">e1</text>
+      <text x="860" y="152" text-anchor="middle">e0</text>
+    </g>
+
+    <!-- int16 x 16 -->
+    <text x="20" y="196" fill="#5B5342" font-size="13.75">SEW=16 (int16 × 16 lanes)</text>
+    <g fill="#F7EFDD" stroke="#B9791E">
+      <rect x="20"  y="204" width="56" height="30"/><rect x="76"  y="204" width="56" height="30"/>
+      <rect x="132" y="204" width="56" height="30"/><rect x="188" y="204" width="56" height="30"/>
+      <rect x="244" y="204" width="56" height="30"/><rect x="300" y="204" width="56" height="30"/>
+      <rect x="356" y="204" width="56" height="30"/><rect x="412" y="204" width="56" height="30"/>
+      <rect x="468" y="204" width="56" height="30"/><rect x="524" y="204" width="56" height="30"/>
+      <rect x="580" y="204" width="56" height="30"/><rect x="636" y="204" width="56" height="30"/>
+      <rect x="692" y="204" width="56" height="30"/><rect x="748" y="204" width="56" height="30"/>
+      <rect x="804" y="204" width="56" height="30"/><rect x="860" y="204" width="56" height="30"/>
+    </g>
+
+    <!-- int8 x 32 -->
+    <text x="20" y="266" fill="#5B5342" font-size="13.75">SEW=8 (int8 × 32 lanes)</text>
+    <rect x="20" y="274" width="896" height="26" fill="#E4F1EE" stroke="#1F8A7D"/>
+    <text x="468" y="292" fill="#5B5342" font-size="12" text-anchor="middle">32 個 byte lane（分隔線省略）</text>
+
+    <text x="20" y="316" fill="#8B8168" font-size="13">SEW = Selected Element Width；實際 lane 數受 vl / vtype 設定影響</text>
+  </svg>
+  </div>
+  <p class="diagram-cap">圖 6.1 — 向量暫存器依 SEW 切分示意圖</p>
+
+  <table>
+    <caption>向量執行引擎特性</caption>
+    <tbody>
+      <tr><td class="mono">向量暫存器</td><td>v0–v31，共 32 個，每個 256-bit</td></tr>
+      <tr><td class="mono">資料寬度</td><td>8 / 16 / 32-bit（SEW 可設定）</td></tr>
+      <tr><td class="mono">運算資料路徑</td><td>128-bit SIMD pipeline（256-bit 為未來規劃）</td></tr>
+      <tr><td class="mono">累加器</td><td>8×8×32-bit accumulator，記為 <code class="inline">acc&lt;8&gt;&lt;8&gt;</code></td></tr>
+      <tr><td class="mono">分派頻寬</td><td>2-way vector dispatch</td></tr>
+      <tr><td class="mono">資料型別</td><td>int8、int16（int32 累加），浮點規劃中</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout claude">
+    <span class="tag">Claude Code 實作原則</span>
+    向量核心與純量核心之間僅透過 command queue 介面耦合（純量前端解碼向量指令後推入佇列，
+    向量引擎非同步消耗）。實作時避免讓向量執行單元直接讀取純量 decode 狀態，以保持兩者可獨立驗證、
+    未來可替換為不同微架構（例如 128-bit → 256-bit 升級）而不影響純量核心。
+  </div>
+</section>
+
+<!-- 07 -->
+<section id="matrix">
+  <div class="sec-head"><span class="sec-num">07</span><h2>矩陣執行引擎（選配）</h2></div>
+  <p class="sec-intro">
+    量化外積乘加（outer-product MAC）引擎，用於加速矩陣乘法密集之 ML 運算（如卷積、全連接層）。
+  </p>
+  <table>
+    <tbody>
+      <tr><td class="mono">運算模式</td><td>Quantized outer-product multiply-accumulate</td></tr>
+      <tr><td class="mono">乘法單元</td><td>4 × 8-bit 乘法，歸約至 32-bit 累加器</td></tr>
+      <tr><td class="mono">吞吐量</td><td>256 MACs / cycle</td></tr>
+      <tr><td class="mono">資料型別</td><td>int8（量化）</td></tr>
+    </tbody>
+  </table>
+  <p class="callout">
+    矩陣引擎為架構上的選配子系統：若目標應用（如純姿態估測、輕量分類）不需要矩陣乘法加速，
+    可先以純量 + 向量核心完成 MVP，再視效能需求決定是否導入矩陣引擎。
+  </p>
+</section>
+
+<!-- 08 -->
+<section id="memory">
+  <div class="sec-head"><span class="sec-num">08</span><h2>記憶體子系統</h2></div>
+  <p class="sec-intro">
+    採 tightly-coupled memory（TCM）而非快取，確保單週期存取延遲與可預測時序，
+    適合即時性要求高的推論工作負載。
+  </p>
+
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 900 260" width="100%" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrow3" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#8B8168"/>
+      </marker>
+    </defs>
+
+    <rect x="20" y="20" width="380" height="80" rx="8" fill="#F1E8F5" stroke="#8A4FA0" stroke-width="1.6"/>
+    <text x="210" y="52" fill="#8A4FA0" font-size="16" text-anchor="middle" font-weight="700">ITCM — 8 KB</text>
+    <text x="210" y="75" fill="#5B5342" font-size="13" text-anchor="middle">指令記憶體 · single-cycle SRAM · via IBUS</text>
+
+    <rect x="420" y="20" width="380" height="80" rx="8" fill="#F1E8F5" stroke="#8A4FA0" stroke-width="1.6"/>
+    <text x="610" y="52" fill="#8A4FA0" font-size="16" text-anchor="middle" font-weight="700">DTCM — 32 KB</text>
+    <text x="610" y="75" fill="#5B5342" font-size="13" text-anchor="middle">資料記憶體 · single-cycle SRAM · via DBUS</text>
+
+    <rect x="220" y="170" width="460" height="72" rx="8" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.6"/>
+    <text x="450" y="200" fill="#2C6B34" font-size="15.5" text-anchor="middle" font-weight="700">EBUS → AXI4 外部記憶體</text>
+    <text x="450" y="222" fill="#5B5342" font-size="12.5" text-anchor="middle">超出 TCM 範圍之存取</text>
+
+    <line x1="210" y1="100" x2="330" y2="168" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow3)"/>
+    <line x1="610" y1="100" x2="500" y2="168" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow3)"/>
+  </svg>
+  </div>
+  <p class="diagram-cap">圖 8.1 — 記憶體階層與存取路徑</p>
+
+  <ul class="spec-list">
+    <li>ITCM 與 DTCM 皆為單週期延遲 SRAM，效率優於快取記憶體（無 miss penalty）。</li>
+    <li>LSU 透過 IBUS / DBUS / EBUS 三組匯流排存取 ITCM、DTCM 與外部記憶體。</li>
+    <li>支援 byte / half-word / word 三種資料存取粒度，以及多種 burst 模式與長度。</li>
+    <li>需正確處理 WRESP（write response）與 RDATA（read data）之 back-pressure。</li>
+  </ul>
+</section>
+
+<!-- 09 -->
+<section id="bus">
+  <div class="sec-head"><span class="sec-num">09</span><h2>AXI4 匯流排介面</h2></div>
+  <p class="sec-intro">
+    核心以 AXI4（AMBA 標準）作為對外週邊介面，同時扮演 <strong>master</strong>（存取外部記憶體）與
+    <strong>slave</strong>（供 host 處理器配置 / 除錯核心）角色。
+  </p>
+  <table>
+    <caption>AXI4 通道</caption>
+    <tbody>
+      <tr><td class="mono">AW</td><td>Write address channel</td></tr>
+      <tr><td class="mono">W</td><td>Write data channel</td></tr>
+      <tr><td class="mono">B</td><td>Write response channel</td></tr>
+      <tr><td class="mono">AR</td><td>Read address channel</td></tr>
+      <tr><td class="mono">R</td><td>Read data channel</td></tr>
+    </tbody>
+  </table>
+  <ul class="spec-list">
+    <li>需支援位址合法性與對齊（address validity / alignment）檢查。</li>
+    <li>需支援 ready/valid 交握協定與 INCR / FIXED burst 交易模式。</li>
+    <li>需具備錯誤訊號回報（error signaling）機制。</li>
+    <li>作為 slave 時，需支援 host 透過 AXI4 讀寫本核心之自訂 CSR（見第 10 章）。</li>
+  </ul>
+</section>
+
+<!-- 10 -->
+<section id="csr">
+  <div class="sec-head"><span class="sec-num">10</span><h2>CSR 規格</h2></div>
+  <p class="sec-intro">
+    除標準 RISC-V Zicsr CSR 外，核心額外定義三個自訂 CSR，供外部 host 處理器透過 AXI4 slave 介面存取，
+    用於核心重置、啟動位址設定與狀態查詢。
+  </p>
+
+  <table>
+    <caption>自訂 CSR：RESET_CONTROL（offset 0x0）</caption>
+    <thead><tr><th class="mono">Bits</th><th>名稱</th><th>說明</th><th>存取</th><th>重置值</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">0</td><td class="mono">RESET</td><td>1 = 核心處於 reset 狀態；0 = 非 reset</td><td class="mono">R/W</td><td class="mono">1</td></tr>
+      <tr><td class="mono">1</td><td class="mono">CLOCK_GATE</td><td>1 = 時脈閘控中；0 = 時脈運行中</td><td class="mono">R/W</td><td class="mono">1</td></tr>
+      <tr><td class="mono">31:2</td><td class="mono">RESERVED</td><td>保留，寫入忽略，讀取為 0</td><td class="mono">R</td><td class="mono">0</td></tr>
+    </tbody>
+  </table>
+  <p class="callout">
+    啟動順序：上電後核心處於 reset 且時脈閘控。啟動流程須先釋放 <code class="inline">CLOCK_GATE</code>，
+    再解除 <code class="inline">RESET</code>。
+  </p>
+
+  <table>
+    <caption>自訂 CSR：PC_START（offset 0x4）</caption>
+    <thead><tr><th class="mono">Bits</th><th>名稱</th><th>說明</th><th>存取</th><th>重置值</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">31:0</td><td class="mono">START_ADDRESS</td><td>核心開始執行的位址。須於解除 reset 前設定。</td><td class="mono">R/W</td><td class="mono">0</td></tr>
+    </tbody>
+  </table>
+
+  <table>
+    <caption>自訂 CSR：STATUS（offset 0x8，唯讀）</caption>
+    <thead><tr><th class="mono">Bits</th><th>名稱</th><th>說明</th><th>存取</th><th>重置值</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">0</td><td class="mono">HALTED</td><td>1 = 核心已停止（例如執行 mpause 後）</td><td class="mono">R</td><td class="mono">0</td></tr>
+      <tr><td class="mono">1</td><td class="mono">FAULT</td><td>1 = 核心發生錯誤</td><td class="mono">R</td><td class="mono">0</td></tr>
+      <tr><td class="mono">31:2</td><td class="mono">RESERVED</td><td>保留，讀取為 0</td><td class="mono">R</td><td class="mono">0</td></tr>
+    </tbody>
+  </table>
+
+  <h3>標準 RISC-V CSR（Zicsr）</h3>
+  <ul class="spec-list">
+    <li>每個 hart 擁有獨立位址空間，最多 4096 個暫存器。</li>
+    <li>CSR 位址高 4 位元 <code class="inline">csr[11:8]</code> 依慣例編碼讀寫權限與最低可存取特權等級。</li>
+    <li>特權架構相關 CSR 供作業系統 / hypervisor 管理系統、處理中斷、控制硬體功能；非特權指令則可存取效能計數器、計時器、浮點狀態暫存器等子集。</li>
+  </ul>
+</section>
+
+<!-- 11 -->
+<section id="exceptions">
+  <div class="sec-head"><span class="sec-num">11</span><h2>例外與中斷處理</h2></div>
+  <ul class="spec-list">
+    <li>需實作例外偵測與處理流程：進入 / 返回序列、cause 記錄、優先權排序。</li>
+    <li>純量核心負責中斷之接收與分派；向量 / 矩陣引擎之運算錯誤需回報至純量核心的例外邏輯。</li>
+    <li>建議 cause 編碼遵循 RISC-V Privileged 規範，並保留自訂錯誤碼區段供向量 / 矩陣引擎專用例外使用。</li>
+  </ul>
+</section>
+
+<!-- 12 -->
+<section id="layout">
+  <div class="sec-head"><span class="sec-num">12</span><h2>程式碼佈局規範</h2></div>
+  <p class="sec-intro">
+    全案 RTL <strong>一律使用 (System)Verilog 撰寫，不使用 Chisel / Scala</strong>。
+    Claude Code 進行實作時，請依下列目錄結構組織程式碼：
+  </p>
+  <pre>rtl/
+├── scalar/          <span class="c">// RV32 純量核心：fetch/decode/dispatch、ALU/Mul/Div、暫存器檔、CSR</span>
+├── vector/          <span class="c">// RVV 向量核心：向量暫存器檔、SIMD ALU、command queue 介面</span>
+├── matrix/          <span class="c">// 矩陣引擎（選配）：outer-product MAC array</span>
+└── soc/             <span class="c">// 頂層整合：三引擎耦合、LSU、TCM 記憶體、AXI4 介面</span>
+
+dv/                  <span class="c">// Design Verification：功能性 testbench（cocotb + Verilog DUT）</span>
+├── scalar/          <span class="c">// 純量核心測試（含 RAW/WAR/WAW hazard 測試）</span>
+├── vector/          <span class="c">// 向量核心測試（依 SEW 8/16/32 分類）</span>
+└── bus/             <span class="c">// AXI4 master/slave 整合測試</span>
+
+lint/
+├── verilator/       <span class="c">// Verilator lint 規則與 waiver 清單</span>
+└── spyglass/        <span class="c">// Synopsys SpyGlass lint / CDC 規則與 waiver 清單</span>
+
+tests/
+└── gate/            <span class="c">// Python 撰寫之 gate-level 測試（post-synthesis netlist）</span>
+
+sw/
+└── benchmark/       <span class="c">// LLM / ML 測試工作負載（見下方 Benchmark 套件）</span>
+
+sim/
+├── verilator/       <span class="c">// 開源模擬，開發階段快速迭代</span>
+└── vcs/             <span class="c">// Synopsys VCS 模擬，正式回歸測試</span>
+
+synth/
+└── dc/              <span class="c">// Synopsys Design Compiler 合成腳本與 timing constraints</span></pre>
+
+  <h3>命名與模組邊界原則</h3>
+  <ul class="spec-list">
+    <li>純量 / 向量 / 矩陣三引擎各自為獨立 Verilog 模組（分別置於 <code class="inline">rtl/scalar</code>、<code class="inline">rtl/vector</code>、<code class="inline">rtl/matrix</code>），僅透過 command queue 或 scoreboard 明確介面通訊，禁止跨模組直接存取內部訊號。</li>
+    <li><code class="inline">rtl/soc</code> 僅負責頂層接線與仲裁，不得放入任何運算邏輯，以維持三引擎的獨立驗證性。</li>
+    <li>自訂 CSR（RESET_CONTROL / PC_START / STATUS）獨立於標準 Zicsr CSR file，並在頂層文件中明確標示其為「非 RISC-V 標準暫存器」。</li>
+    <li>任何新增的自訂指令 / CSR，需同步更新本規格書第 02、10 章與對應測試計畫。</li>
+    <li><code class="inline">lint/</code> 內的 waiver 清單需附上理由註解，不得無說明地全域關閉規則。</li>
+  </ul>
+
+  <h3>Benchmark 套件（sw/benchmark/）</h3>
+  <p style="max-width:760px;">
+    用於驗證核心 ML 推論效能與正確性的代表性工作負載，涵蓋傳統 CNN 與現代小型語言模型（SLM），
+    測試程式以 C/C++ 撰寫並以標準 RISC-V 工具鏈交叉編譯後於 <code class="inline">sim/</code> 或實體晶片上執行。
+  </p>
+  <table>
+    <caption>核心 Benchmark 清單</caption>
+    <thead><tr><th class="mono">Benchmark</th><th>類型</th><th>驗證重點</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">MobileNet</td><td>CNN 影像分類</td><td>int8 量化卷積、深度可分離卷積（depthwise separable conv）之向量 / 矩陣引擎吞吐量</td></tr>
+      <tr><td class="mono">MLPerf Tiny</td><td>標準化微控制器 ML 基準套件</td><td>跨工作負載（關鍵字偵測、影像分類、異常偵測等）之延遲與能效標準化評比</td></tr>
+      <tr><td class="mono">Gemma 3 270M</td><td>小型語言模型（SLM）</td><td>int8/int16 量化矩陣乘法密集運算、KV cache 存取模式對 DTCM 頻寬的壓力測試</td></tr>
+      <tr><td class="mono">SmolLM2 135M</td><td>小型語言模型（SLM）</td><td>輕量 transformer 推論於純量 + 向量核心之整體端到端延遲與記憶體占用</td></tr>
+    </tbody>
+  </table>
+  <div class="callout claude">
+    <span class="tag">Claude Code 實作原則</span>
+    四項 benchmark 應各自可獨立編譯、獨立執行、獨立回報通過與否（pass/fail + 效能數據），
+    並整合進 <code class="inline">tests/gate</code> 或 CI 回歸流程；SLM（Gemma 3 270M、SmolLM2 135M）測資請先以量化後的
+    int8/int16 權重驗證功能正確性，效能量測（tokens/sec、cycles/token）另立獨立報表，不與功能性 pass/fail 混雜。
+  </div>
+</section>
+
+<!-- 13 -->
+<section id="verification">
+  <div class="sec-head"><span class="sec-num">13</span><h2>驗證策略</h2></div>
+  <div class="grid2">
+    <div class="card">
+      <h4>純量核心驗證</h4>
+      <p style="margin:0;">RV32IM 指令逐一方向性測試、CSR 讀寫測試、分支 / 跳躍正確性、hazard（RAW/WAR/WAW）方向性 + 隨機測試。</p>
+    </div>
+    <div class="card">
+      <h4>向量核心驗證</h4>
+      <p style="margin:0;">依 SEW（8/16/32）分別驗證資料切分正確性、累加器溢位處理、command queue 與純量前端之交握時序。</p>
+    </div>
+    <div class="card">
+      <h4>匯流排 / 整合驗證</h4>
+      <p style="margin:0;">AXI4 master/slave 各通道之 handshake、burst、error signaling；host 透過 slave 介面存取自訂 CSR 之流程。</p>
+    </div>
+    <div class="card">
+      <h4>系統層級驗證</h4>
+      <p style="margin:0;">以 GDB 連線驗證除錯流程；以代表性 ML kernel（如 int8 卷積、姿態估測子運算）驗證端到端功能與效能。</p>
+    </div>
+  </div>
+  <p class="callout claude">
+    <span class="tag">Claude Code 實作原則</span>
+    每完成一個模組（scalar / rvv / bus / csr），先撰寫對應 cocotb 測試並確認通過，再進入下一模組；
+    避免在缺乏單元測試覆蓋的情況下進行大範圍整合。所有測試需可於 CI 中重現執行。
+  </p>
+</section>
+
+<!-- 14 -->
+<section id="milestones">
+  <div class="sec-head"><span class="sec-num">14</span><h2>建議實作里程碑</h2></div>
+  <ol class="spec-list">
+    <li><strong>M1 — RV32IM 純量核心</strong>：fetch/decode/dispatch、ALU/BRU/Mul-Div、暫存器檔、基本 CSR，通過 RV32IM 指令集測試。</li>
+    <li><strong>M2 — 記憶體與匯流排</strong>：ITCM/DTCM 整合、LSU、AXI4 master/slave，通過匯流排整合測試與自訂 CSR 存取測試。</li>
+    <li><strong>M3 — F 擴充與 Zicsr/Zifencei/Zbb</strong>：補齊浮點運算與其餘標準擴充。</li>
+    <li><strong>M4 — RVV（Zve32x）向量核心</strong>：向量暫存器檔、SIMD ALU、command queue 介接純量前端。</li>
+    <li><strong>M5 — 矩陣引擎（選配）</strong>：依應用需求決定是否導入，並驗證與向量核心的資料共用路徑。</li>
+    <li><strong>M6 — 系統驗證</strong>：GDB 除錯流程、代表性 ML 模型端到端驗證、功耗與時序 sign-off。</li>
+    <li><strong>M7 — Benchmark 驗收</strong>：依序跑通 MobileNet → MLPerf Tiny → Gemma 3 270M → SmolLM2 135M，記錄各項功能性 pass/fail 與效能數據（cycles、tokens/sec）作為最終驗收基準。</li>
+  </ol>
+</section>
+
+<!-- 15 -->
+<section id="refs" style="border-bottom:none;">
+  <div class="sec-head"><span class="sec-num">15</span><h2>參考資料</h2></div>
+  <ul class="spec-list">
+    <li>Google Coral NPU — Datasheet：<a href="https://developers.google.com/coral/guides/hardware/datasheet" target="_blank" rel="noopener">developers.google.com/coral/guides/hardware/datasheet</a></li>
+    <li>Google Coral NPU — Architecture basics：<a href="https://developers.google.com/coral/guides/hardware/architecture" target="_blank" rel="noopener">developers.google.com/coral/guides/hardware/architecture</a></li>
+    <li>Coral NPU 開源程式碼：<a href="https://github.com/google-coral/coralnpu" target="_blank" rel="noopener">github.com/google-coral/coralnpu</a></li>
+    <li>MPACT-CoralNPU 行為模擬器：<a href="https://github.com/google-coral/coralnpu-mpact" target="_blank" rel="noopener">github.com/google-coral/coralnpu-mpact</a></li>
+    <li>RISC-V Vector 規範 v1.0（PDF）：<a href="https://github.com/riscvarchive/riscv-v-spec/releases/download/v1.0/riscv-v-spec-1.0.pdf" target="_blank" rel="noopener">riscv-v-spec-1.0.pdf</a></li>
+    <li>RISC-V 標準規範總覽：<a href="https://riscv.org/specifications/ratified/" target="_blank" rel="noopener">riscv.org/specifications/ratified</a></li>
+    <li>AMBA AXI4 規範：<a href="https://developer.arm.com/documentation/ihi0022/latest/" target="_blank" rel="noopener">developer.arm.com/documentation/ihi0022</a></li>
+  </ul>
+</section>
+
+<footer>
+  本文件整理自 Google Coral NPU 公開技術文件，作為內部 RV32+RVV 核心設計之規格參考，並非 Google 官方發布文件。
+  實際實作請以 Coral NPU 原始 GitHub 專案與 RISC-V 官方規範為準。
+</footer>
+
+</main>
+</div>
+</body>
+</html>

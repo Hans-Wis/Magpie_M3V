@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RV-NPU 運作原理 · Scalar / Vector / Matrix 分工</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F3E9; --bg2:#F1EBDD;
+    --panel:#FFFEFA; --panel2:#FAF6EC; --panel3:#F1EBDC;
+    --line:rgba(92,80,58,.13); --line2:rgba(92,80,58,.26);
+    --ink:#1F2933; --dim:#4F5D6B; --faint:#79848F;
+    --cyan:#0E7C8C; --cyan-d:#0A5B67;
+    --amber:#B4741A; --amber-d:#8F5A10;
+    --indigo:#4956B8; --indigo-d:#37439A;
+    --good:#2E7D53;
+    --disp:'Chakra Petch',sans-serif;
+    --body:'IBM Plex Sans','Noto Sans TC',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+    --maxw:1080px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--body);font-size:16.5px;line-height:1.7;-webkit-font-smoothing:antialiased;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:44px 44px;background-position:center top;
+  }
+  ::selection{background:var(--cyan);color:#fff}
+  a{color:var(--cyan-d);text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+  header.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line2);background:linear-gradient(180deg,#FBF8F0,var(--bg))}
+  .hero-inner{max-width:var(--maxw);margin:0 auto;padding:76px 28px 56px;position:relative;z-index:2}
+  .eyebrow{font-family:var(--mono);font-size:21px;letter-spacing:.1em;color:var(--cyan-d);margin:0 0 22px;line-height:1.5}
+  .eyebrow span{color:var(--faint)}
+  h1{font-family:var(--disp);font-weight:700;font-size:clamp(32px,5vw,54px);line-height:1.06;margin:0 0 20px;letter-spacing:-.01em;color:#17222C}
+  h1 .s{color:var(--cyan-d)} h1 .v{color:var(--indigo)} h1 .m{color:var(--amber-d)}
+  .thesis{font-size:clamp(16.5px,2vw,19px);color:var(--dim);max-width:660px;margin:0 0 34px}
+  .thesis b{color:var(--ink);font-weight:600}
+  .rule-card{display:flex;align-items:center;gap:16px;border:1px solid var(--line2);border-radius:12px;padding:16px 20px;background:rgba(255,254,250,.8)}
+  .rule-card .q{font-family:var(--disp);font-weight:700;font-size:clamp(16px,2.2vw,21px);color:var(--ink);line-height:1.3}
+  .rule-card .q em{font-style:normal;color:var(--amber-d)}
+  .corner{position:absolute;width:14px;height:14px;border:1.5px solid var(--cyan);opacity:.5}
+  .corner.tl{top:16px;left:16px;border-right:0;border-bottom:0}.corner.tr{top:16px;right:16px;border-left:0;border-bottom:0}
+  .corner.bl{bottom:16px;left:16px;border-right:0;border-top:0}.corner.br{bottom:16px;right:16px;border-left:0;border-top:0}
+
+  .layout{max-width:var(--maxw);margin:0 auto;padding:0 28px;display:grid;grid-template-columns:190px 1fr;gap:46px;align-items:start}
+  nav.rail{position:sticky;top:0;padding:52px 0;align-self:start}
+  nav.rail ol{list-style:none;margin:0;padding:0;border-left:1px solid var(--line2)}
+  nav.rail li a{display:block;padding:7px 0 7px 16px;margin-left:-1px;border-left:2px solid transparent;color:var(--faint);font-family:var(--mono);font-size:14px;transition:.2s}
+  nav.rail li a .num{color:var(--cyan);margin-right:8px}
+  nav.rail li a:hover,nav.rail li a.active{color:var(--ink);border-left-color:var(--cyan)}
+  main{padding:52px 0 96px;min-width:0}
+
+  section.sec{margin:0 0 68px;scroll-margin-top:32px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin:0 0 22px;padding-bottom:14px;border-bottom:1px solid var(--line2)}
+  .sec-num{font-family:var(--mono);font-size:15px;color:var(--cyan-d);letter-spacing:.1em}
+  h2{font-family:var(--disp);font-weight:600;font-size:clamp(22px,3vw,27px);margin:0;letter-spacing:-.005em}
+  h3{font-family:var(--disp);font-weight:600;font-size:18px;color:var(--ink);margin:30px 0 10px}
+  p{margin:0 0 15px;color:#33404C}
+  p.lead{font-size:18px;color:var(--dim)}
+  strong{color:var(--ink);font-weight:600}
+  code{font-family:var(--mono);font-size:.9em;background:var(--panel2);border:1px solid var(--line2);padding:1px 6px;border-radius:5px;color:var(--cyan-d)}
+  .amber-t{color:var(--amber-d)} .cyan-t{color:var(--cyan-d)} .indigo-t{color:var(--indigo)}
+  .eqn{font-family:var(--mono);font-size:16px;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:14px 18px;margin:16px 0;color:var(--ink);overflow-x:auto}
+  .eqn .hl{color:var(--amber-d);font-weight:600}
+
+  .note{border:1px solid var(--line2);border-left:3px solid var(--amber);background:linear-gradient(90deg,rgba(180,116,26,.07),transparent 60%);border-radius:8px;padding:16px 18px;margin:22px 0;font-size:15.5px;color:var(--dim)}
+  .note b{color:var(--amber-d)}
+  .note.cyan{border-left-color:var(--cyan);background:linear-gradient(90deg,rgba(14,124,140,.07),transparent 60%)}
+  .note.cyan b{color:var(--cyan-d)}
+
+  figure{margin:26px 0;border:1px solid var(--line2);border-radius:12px;background:linear-gradient(180deg,var(--panel),var(--panel2));overflow:hidden}
+  .fig-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .fig-top .tag{color:var(--cyan-d)}
+  figure svg{display:block;width:100%;height:auto}
+  figcaption{padding:12px 16px;border-top:1px solid var(--line);font-size:14.5px;color:var(--dim)}
+  .legend{display:flex;flex-wrap:wrap;gap:12px 22px;padding:12px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:14px;color:var(--dim)}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+
+  .tbl{width:100%;border-collapse:collapse;margin:20px 0;font-size:15px}
+  .tbl th,.tbl td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  .tbl th{font-family:var(--mono);font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:500;border-bottom-color:var(--line2)}
+  .tbl td{color:#33404C}
+  .tbl td:first-child{font-family:var(--mono);font-size:14.5px;color:var(--cyan-d);white-space:nowrap}
+
+  pre.code{font-family:var(--mono);font-size:13.5px;line-height:1.6;background:#FBF7EC;border:1px solid var(--line2);border-radius:8px;padding:14px 16px;overflow-x:auto;color:#2A3540;margin:0 0 14px;white-space:pre}
+  pre.code .cm{color:var(--faint)} pre.code .hl{color:var(--amber-d);font-weight:600} pre.code .kw{color:var(--cyan-d)}
+
+  footer{border-top:1px solid var(--line2);padding:30px 0 60px;color:var(--faint);font-size:14px;font-family:var(--mono)}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  .ng{display:inline-grid;gap:3px;background:var(--line2);padding:3px;border-radius:6px;vertical-align:middle;margin:4px 8px}
+  .ng div{width:42px;height:34px;display:flex;align-items:center;justify-content:center;background:#fff;font-family:var(--mono);font-size:15px;color:var(--ink);border-radius:3px}
+  .ng.k div{background:rgba(180,116,26,.12);color:var(--amber-d)}
+  .ng.p div{background:rgba(14,124,140,.10);color:var(--cyan-d)}
+  .calc{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:16px 0;font-family:var(--mono);font-size:15px;color:var(--dim)}
+  .calc .op{color:var(--amber-d);font-weight:600;font-size:19px}
+  .calc .res{background:var(--panel2);border:1px solid var(--line2);border-radius:6px;padding:3px 10px;color:var(--ink);font-weight:600}
+  .badge{display:inline-block;font-family:var(--mono);font-size:12.5px;padding:2px 9px;border-radius:20px;vertical-align:middle;margin-left:4px}
+  .badge.m{background:rgba(180,116,26,.15);color:var(--amber-d)}
+  .badge.v{background:rgba(73,86,184,.15);color:var(--indigo)}
+  .badge.s{background:rgba(14,124,140,.15);color:var(--cyan-d)}
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  .s-node{fill:#FFFFFF;stroke:var(--line2)} .s-node-2{fill:var(--panel3);stroke:var(--line2)}
+  .s-ctrl{fill:rgba(14,124,140,.08);stroke:var(--cyan)} .s-comp{fill:rgba(180,116,26,.10);stroke:var(--amber)} .s-mem{fill:rgba(73,86,184,.09);stroke:var(--indigo)}
+  .s-t{font-family:var(--disp);font-weight:600;fill:var(--ink)} .s-l{font-family:var(--mono);fill:var(--dim)}
+  .s-lc{font-family:var(--mono);fill:var(--cyan-d)} .s-la{font-family:var(--mono);fill:var(--amber-d)} .s-li{font-family:var(--mono);fill:var(--indigo)} .s-faint{font-family:var(--mono);fill:var(--faint)}
+  .trace{fill:none;stroke:var(--line2);stroke-width:1.6} .trace-c{fill:none;stroke:var(--cyan);stroke-width:1.9}
+  .trace-a{fill:none;stroke:var(--amber);stroke-width:1.9} .trace-i{fill:none;stroke:var(--indigo);stroke-width:1.9}
+  .flow{stroke-dasharray:7 9;animation:march 1.1s linear infinite} @keyframes march{to{stroke-dashoffset:-32}}
+  .zone{stroke:none} marker path{fill:context-stroke}
+
+  @media (max-width:860px){ body{background-size:36px 36px} .layout{grid-template-columns:1fr;gap:0} nav.rail{display:none} main{padding:36px 0 72px} }
+  @media (prefers-reduced-motion:reduce){ .flow{animation:none} .reveal{transition:none;opacity:1;transform:none} html{scroll-behavior:auto} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+  <div class="hero-inner">
+    <p class="eyebrow">RV-NPU 三運算引擎 <span>純量（Scalar） / 向量（Vector） / 矩陣（Matrix）</span></p>
+    <h1><span class="s">Scalar</span> 控制 · <span class="v">Vector</span> 逐元素 · <span class="m">Matrix</span> 累加</h1>
+    <p class="thesis">RV-NPU 用三個引擎分擔一次推論。分工看似複雜,其實由<b>一條判準</b>決定:看這個運算有沒有「沿著一個軸把東西加掉」。這份文件從那條判準的<b>數學原理</b>講起,一路推到三引擎如何協作、以及為什麼驗證必然是兩條軌。</p>
+    <div class="rule-card">
+      <div class="q">判準:<em>有沒有沿一個 contraction 軸累加?</em><br>有 → Matrix · 沒有(但碰資料)→ Vector · 只碰位址 → Scalar</div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="rail" aria-label="目錄">
+    <ol>
+      <li><a href="#s0"><span class="num">00</span>三引擎分工總覽</a></li>
+      <li><a href="#s1"><span class="num">01</span>判準原理:contraction 軸</a></li>
+      <li><a href="#s2"><span class="num">02</span>身分差異:指令 vs command</a></li>
+      <li><a href="#s3"><span class="num">03</span>一個 op 如何裂成三股</a></li>
+      <li><a href="#s4"><span class="num">04</span>協作與同步</a></li>
+      <li><a href="#s5"><span class="num">05</span>為什麼是兩條驗證軌</a></li>
+      <li><a href="#s6"><span class="num">06</span>實例:CNN 影像走一遍</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <!-- 00 -->
+  <section class="sec reveal" id="s0">
+    <div class="sec-head"><span class="sec-num">00</span><h2>三引擎分工總覽</h2></div>
+    <p class="lead">三個引擎不是「三顆一樣的核」,而是三種針對不同運算結構的機器。開發者<strong>不手動分配</strong>——是編譯器 backend 在 lowering 時,依運算的結構自動判給對應引擎。</p>
+    <table class="tbl">
+      <thead><tr><th>引擎</th><th>負責</th><th>典型運算</th><th>指令來源</th></tr></thead>
+      <tbody>
+        <tr><td class="cyan-t">Scalar</td><td>控制:位址、迴圈、分支、發 command、同步</td><td>loop / addr-gen / branch</td><td>標準 RV32IM</td></tr>
+        <tr><td class="indigo-t">Vector</td><td>逐元素:活化、bias、requantize、pooling</td><td>relu / add / rescale / pool</td><td>標準 RVV(Zve32x)</td></tr>
+        <tr><td class="amber-t">Matrix</td><td>沿軸累加:矩陣乘、卷積主體</td><td>matmul / conv / QKᵀ</td><td>自訂 command(非 ISA)</td></tr>
+      </tbody>
+    </table>
+
+    <figure>
+      <div class="fig-top"><span>圖 00 · 分派判準(decision）</span><span class="tag">op → 引擎</span></div>
+      <svg viewBox="0 0 1000 420" role="img" aria-label="分派判準決策樹:先看有無 contraction 軸,再看是否改到資料值">
+        <defs><marker id="a0" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z"/></marker></defs>
+        <rect class="s-node" x="390" y="26" width="220" height="46" rx="9"/>
+        <text class="s-t" x="500" y="49" font-size="18.75" text-anchor="middle">TFLite / 圖上一個 op</text>
+        <text class="s-faint" x="500" y="64" font-size="15" text-anchor="middle">e.g. Dense · Conv · ReLU</text>
+
+        <rect class="s-comp" x="360" y="112" width="280" height="56" rx="10"/>
+        <text class="s-t" x="500" y="136" font-size="18.125" text-anchor="middle" fill="var(--amber-d)">有 contraction 軸?</text>
+        <text class="s-faint" x="500" y="154" font-size="15.625" text-anchor="middle">indexing map 裡有 reduction 維?</text>
+
+        <rect class="s-comp" x="360" y="222" width="280" height="56" rx="10"/>
+        <text class="s-t" x="500" y="246" font-size="18.125" text-anchor="middle" fill="var(--cyan-d)">會改到資料值?</text>
+        <text class="s-faint" x="500" y="264" font-size="15.625" text-anchor="middle">還是只算位址 / 控制流?</text>
+
+        <!-- engines -->
+        <rect class="s-comp" x="712" y="112" width="260" height="70" rx="10"/>
+        <text class="s-t" x="842" y="138" font-size="18.75" text-anchor="middle" fill="var(--amber-d)">Matrix 引擎</text>
+        <text class="s-faint" x="842" y="157" font-size="15.625" text-anchor="middle">matmul · conv · QKᵀ</text>
+        <text class="s-la" x="855" y="173" font-size="15" text-anchor="middle">→ npu.mat.* command</text>
+
+        <rect class="s-mem" x="712" y="300" width="260" height="70" rx="10"/>
+        <text class="s-t" x="842" y="326" font-size="18.75" text-anchor="middle" fill="var(--indigo)">Vector 核</text>
+        <text class="s-faint" x="842" y="345" font-size="15.625" text-anchor="middle">relu · bias · rescale · pool</text>
+        <text class="s-li" x="855" y="361" font-size="15" text-anchor="middle">→ 標準 RVV</text>
+
+        <rect class="s-ctrl" x="25" y="300" width="260" height="70" rx="10"/>
+        <text class="s-t" x="155" y="326" font-size="18.75" text-anchor="middle" fill="var(--cyan-d)">Scalar 核</text>
+        <text class="s-faint" x="155" y="345" font-size="15.625" text-anchor="middle">loop · addr · branch · sync</text>
+        <text class="s-lc" x="145" y="361" font-size="15" text-anchor="middle">→ RV32IM</text>
+
+        <!-- edges -->
+        <path class="trace" d="M500 72 V110" marker-end="url(#a0)"/>
+        <path class="trace-a" d="M640 140 H710" marker-end="url(#a0)"/>
+        <text class="s-la" x="688" y="130" font-size="15.625" text-anchor="middle">是</text>
+        <path class="trace" d="M500 168 V220" marker-end="url(#a0)"/>
+        <text class="s-faint" x="516" y="198" font-size="15.625">否</text>
+        <path class="trace-c" d="M500 278 V335 H710" marker-end="url(#a0)"/>
+        <text class="s-lc" x="600" y="326" font-size="15.625" text-anchor="middle">是(碰資料)</text>
+        <path class="trace-c" d="M360 250 H155 V298" marker-end="url(#a0)"/>
+        <text class="s-faint" x="250" y="240" font-size="15.625" text-anchor="middle">否</text>
+      </svg>
+      <div class="legend">
+        <span><i style="background:var(--amber)"></i>Matrix(沿軸累加)</span>
+        <span><i style="background:var(--indigo)"></i>Vector(逐元素)</span>
+        <span><i style="background:var(--cyan)"></i>Scalar(控制)</span>
+      </div>
+      <figcaption>判準是機械的,不靠猜:MLIR 的 linalg 會把每個維度標成 parallel(保留)或 reduction(被加掉),有 reduction 維就 lower 到 Matrix。</figcaption>
+    </figure>
+  </section>
+
+  <!-- 01 -->
+  <section class="sec reveal" id="s1">
+    <div class="sec-head"><span class="sec-num">01</span><h2>判準原理:contraction 軸</h2></div>
+    <p class="lead">「contraction(收縮)」是線性代數概念:兩個張量相乘時,<strong>有一個維度被『加掉』而在輸出裡消失</strong>。那個消失的維度,就是 contraction 軸。它是否存在,直接決定硬體需不需要一個「反覆累加的累加器陣列」。</p>
+
+    <p>以矩陣乘為例:</p>
+    <div class="eqn">C[i,j] = <span class="hl">Σ<sub>k</sub></span> A[i,k] · B[k,j]&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--faint)"># k 在輸入裡有,在輸出 C 裡消失了</span></div>
+    <p><code>A</code> 是 <code>[i,k]</code>、<code>B</code> 是 <code>[k,j]</code>、<code>C</code> 是 <code>[i,j]</code>。<strong>k 被 <code>Σ</code> 吃掉了</strong>——這就是 contraction 軸。「沿 contraction 軸累加」= 對 k 從頭掃到尾,把每個 <code>A[i,k]·B[k,j]</code> 一項項<strong>加進同一個累加器</strong>,直到 k 掃完才得到一個 <code>C[i,j]</code>。這正是 MAC(乘-累加)的本質:乘完立刻累加,累加器不清空。</p>
+
+    <p>對比 element-wise(如 ReLU):輸入形狀 = 輸出形狀,<strong>沒有任何維度消失</strong>,每個輸出只看對應位置的輸入,不需要累加器。</p>
+
+    <figure>
+      <div class="fig-top"><span>圖 01 · Contraction vs Element-wise</span><span class="tag">為什麼需要 accumulator</span></div>
+      <svg viewBox="0 0 1000 470" role="img" aria-label="左:矩陣乘沿 k 軸累加進同一累加器;右:element-wise 逐元素獨立無累加">
+        <defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z"/></marker></defs>
+
+        <!-- divider -->
+        <line x1="500" y1="40" x2="500" y2="440" stroke="var(--line2)" stroke-dasharray="4 6"/>
+
+        <!-- LEFT : contraction -->
+        <text class="s-t" x="40" y="60" font-size="20" fill="var(--amber-d)">Contraction · 矩陣乘 → Matrix</text>
+        <text class="s-faint" x="40" y="80" font-size="15.625">沿 k 軸掃描,累加進同一個累加器</text>
+
+        <text class="s-la" x="60" y="118" font-size="15.625">A[i,k]</text>
+        <g>
+          <rect class="s-node" x="120" y="102" width="40" height="30" rx="5"/><text class="s-l" x="140" y="122" font-size="15" text-anchor="middle">a₀</text>
+          <rect class="s-node" x="168" y="102" width="40" height="30" rx="5"/><text class="s-l" x="188" y="122" font-size="15" text-anchor="middle">a₁</text>
+          <rect class="s-node" x="216" y="102" width="40" height="30" rx="5"/><text class="s-l" x="236" y="122" font-size="15" text-anchor="middle">a₂</text>
+          <rect class="s-node" x="264" y="102" width="40" height="30" rx="5"/><text class="s-l" x="284" y="122" font-size="15" text-anchor="middle">a₃</text>
+        </g>
+        <text class="s-la" x="60" y="166" font-size="15.625">B[k,j]</text>
+        <g>
+          <rect class="s-node" x="120" y="150" width="40" height="30" rx="5"/><text class="s-l" x="140" y="170" font-size="15" text-anchor="middle">b₀</text>
+          <rect class="s-node" x="168" y="150" width="40" height="30" rx="5"/><text class="s-l" x="188" y="170" font-size="15" text-anchor="middle">b₁</text>
+          <rect class="s-node" x="216" y="150" width="40" height="30" rx="5"/><text class="s-l" x="236" y="170" font-size="15" text-anchor="middle">b₂</text>
+          <rect class="s-node" x="264" y="150" width="40" height="30" rx="5"/><text class="s-l" x="284" y="170" font-size="15" text-anchor="middle">b₃</text>
+        </g>
+        <!-- k axis arrow -->
+        <path class="trace-a" d="M120 92 H310" marker-end="url(#a1)"/>
+        <text class="s-la" x="330" y="96" font-size="15.625">k = 0→3</text>
+
+        <!-- multipliers -->
+        <g>
+          <circle class="s-comp" cx="140" cy="232" r="15"/><text class="s-la" x="140" y="237" font-size="16.25" text-anchor="middle">×</text>
+          <circle class="s-comp" cx="188" cy="232" r="15"/><text class="s-la" x="188" y="237" font-size="16.25" text-anchor="middle">×</text>
+          <circle class="s-comp" cx="236" cy="232" r="15"/><text class="s-la" x="236" y="237" font-size="16.25" text-anchor="middle">×</text>
+          <circle class="s-comp" cx="284" cy="232" r="15"/><text class="s-la" x="284" y="237" font-size="16.25" text-anchor="middle">×</text>
+        </g>
+        <path class="trace" d="M140 132 V150"/><path class="trace" d="M188 132 V150"/><path class="trace" d="M236 132 V150"/><path class="trace" d="M284 132 V150"/>
+        <path class="trace" d="M140 180 V216" marker-end="url(#a1)"/><path class="trace" d="M188 180 V216" marker-end="url(#a1)"/>
+        <path class="trace" d="M236 180 V216" marker-end="url(#a1)"/><path class="trace" d="M284 180 V216" marker-end="url(#a1)"/>
+
+        <!-- accumulator -->
+        <rect class="s-comp" x="120" y="300" width="230" height="58" rx="10" stroke-width="2"/>
+        <text class="s-t" x="235" y="324" font-size="18.75" text-anchor="middle" fill="var(--amber-d)">ACC (int32)</text>
+        <text class="s-la" x="235" y="344" font-size="16.25" text-anchor="middle">acc += aₖ · bₖ</text>
+        <g class="trace-a">
+          <path d="M140 247 V300" marker-end="url(#a1)"/><path d="M188 247 V300" marker-end="url(#a1)"/>
+          <path d="M236 247 V300" marker-end="url(#a1)"/><path d="M284 247 V300" marker-end="url(#a1)"/>
+        </g>
+        <!-- persist loop -->
+        <path class="trace-a" d="M352 313 C 398 305, 398 349, 352 341" marker-end="url(#a1)"/>
+        <text class="s-la" x="404" y="323" font-size="14.375">k 逐步累加</text>
+        <text class="s-la" x="404" y="340" font-size="14.375">至同一 ACC</text>
+
+        <!-- output C -->
+        <rect class="s-comp" x="185" y="398" width="100" height="34" rx="7" stroke-width="2"/>
+        <text class="s-t" x="235" y="420" font-size="17.5" text-anchor="middle" fill="var(--amber-d)">C[i,j]</text>
+        <path class="trace-a" d="M235 358 V396" marker-end="url(#a1)"/>
+        <text class="s-faint" x="300" y="420" font-size="14.375">k 已消失</text>
+
+        <!-- RIGHT : element-wise -->
+        <text class="s-t" x="540" y="60" font-size="20" fill="var(--indigo)">Element-wise · ReLU → Vector</text>
+        <text class="s-faint" x="540" y="80" font-size="15.625">逐元素獨立,無累加器,無軸消失</text>
+
+        <text class="s-li" x="560" y="132" font-size="15.625">X[i]</text>
+        <g>
+          <rect class="s-node" x="620" y="116" width="40" height="30" rx="5"/><text class="s-l" x="640" y="136" font-size="15" text-anchor="middle">x₀</text>
+          <rect class="s-node" x="668" y="116" width="40" height="30" rx="5"/><text class="s-l" x="688" y="136" font-size="15" text-anchor="middle">x₁</text>
+          <rect class="s-node" x="716" y="116" width="40" height="30" rx="5"/><text class="s-l" x="736" y="136" font-size="15" text-anchor="middle">x₂</text>
+          <rect class="s-node" x="764" y="116" width="40" height="30" rx="5"/><text class="s-l" x="784" y="136" font-size="15" text-anchor="middle">x₃</text>
+        </g>
+        <g>
+          <rect class="s-mem" x="614" y="220" width="52" height="34" rx="6"/><text class="s-li" x="640" y="242" font-size="13.75" text-anchor="middle">max·0</text>
+          <rect class="s-mem" x="662" y="220" width="52" height="34" rx="6"/><text class="s-li" x="688" y="242" font-size="13.75" text-anchor="middle">max·0</text>
+          <rect class="s-mem" x="710" y="220" width="52" height="34" rx="6"/><text class="s-li" x="736" y="242" font-size="13.75" text-anchor="middle">max·0</text>
+          <rect class="s-mem" x="758" y="220" width="52" height="34" rx="6"/><text class="s-li" x="784" y="242" font-size="13.75" text-anchor="middle">max·0</text>
+        </g>
+        <text class="s-li" x="560" y="348" font-size="15.625">Y[i]</text>
+        <g>
+          <rect class="s-node" x="620" y="332" width="40" height="30" rx="5"/><text class="s-l" x="640" y="352" font-size="15" text-anchor="middle">y₀</text>
+          <rect class="s-node" x="668" y="332" width="40" height="30" rx="5"/><text class="s-l" x="688" y="352" font-size="15" text-anchor="middle">y₁</text>
+          <rect class="s-node" x="716" y="332" width="40" height="30" rx="5"/><text class="s-l" x="736" y="352" font-size="15" text-anchor="middle">y₂</text>
+          <rect class="s-node" x="764" y="332" width="40" height="30" rx="5"/><text class="s-l" x="784" y="352" font-size="15" text-anchor="middle">y₃</text>
+        </g>
+        <g class="trace-i">
+          <path d="M640 146 V218" marker-end="url(#a1)"/><path d="M688 146 V218" marker-end="url(#a1)"/>
+          <path d="M736 146 V218" marker-end="url(#a1)"/><path d="M784 146 V218" marker-end="url(#a1)"/>
+          <path d="M640 254 V330" marker-end="url(#a1)"/><path d="M688 254 V330" marker-end="url(#a1)"/>
+          <path d="M736 254 V330" marker-end="url(#a1)"/><path d="M784 254 V330" marker-end="url(#a1)"/>
+        </g>
+        <text class="s-faint" x="712" y="404" font-size="15.625" text-anchor="middle">4 條獨立通道 · 形狀不變</text>
+      </svg>
+      <div class="legend">
+        <span><i style="background:var(--amber)"></i>累加路徑(收斂到 1 個累加器)</span>
+        <span><i style="background:var(--indigo)"></i>獨立通道(1:1,不收斂)</span>
+      </div>
+      <figcaption>左圖 4 條路收斂進「同一個」累加器、輸出剩 1 值(k 消失);右圖 4 條路各自獨立、輸出仍 4 值。這個「收不收斂」就是需不需要矩陣引擎的本質。</figcaption>
+    </figure>
+
+    <h3>為什麼這對硬體是天壤之別</h3>
+    <p><strong>Contraction(matmul)——累加器是主角。</strong>算一個 <code>C[i,j]</code> 要掃完整條 k,期間累加器持續累加、不能清空;而且同一個 <code>A[i,k]</code> 被不同 j 重用、<code>B[k,j]</code> 被不同 i 重用——<strong>大量資料重用</strong>。矩陣引擎(outer-product / systolic)就是為「讓資料在陣列裡流動、最大化重用、把累加留在原地」而生。int8×int8 的積會變大,所以累加器要 int32——這正是量化契約 <code>i8→i32</code> 的由來。</p>
+    <p><strong>Element-wise(ReLU)——沒有累加,沒有重用。</strong>每個元素讀一次、算一次、寫一次,彼此獨立。RVV 的 <code>vmax</code>/<code>vadd</code> 一次處理一整排就完美對上;用矩陣引擎反而讓累加器閒置、浪費。</p>
+
+    <div class="note"><b>卷積也是 contraction,只是軸更多</b>:<code>Out[n,y,x,f] = Σ_c Σ_kh Σ_kw In[…]·W[…]</code>——輸入通道 c 與 kernel 窗 kh,kw 三個軸一起被加掉。所以卷積本質與 matmul 同類,編譯器常用 im2col 或直接 lower 成 matmul,走矩陣引擎。</div>
+    <div class="note cyan"><b>reduction 是中間態</b>:pooling 的 sum/max、softmax 的 Σ 也有「軸消失(有累加)」,但<strong>沒有『乘』的資料重用結構</strong>,不值得動用 MAC 陣列 → 走 Vector 核的 reduction 指令。判準的完整版是:有累加 <em>且</em> 有乘法重用 → Matrix;只有累加 → Vector reduction;都沒有 → Vector element-wise。</div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec reveal" id="s2">
+    <div class="sec-head"><span class="sec-num">02</span><h2>身分差異:指令 vs command</h2></div>
+    <p class="lead">三引擎最容易被誤解的一點:<strong>Vector 走「指令」、Matrix 走「command」——這是兩種不同身分的東西</strong>。搞混會讓人以為要去改 scalar 核的指令解碼器(IDU),其實不用。</p>
+    <table class="tbl">
+      <thead><tr><th></th><th>Vector(指令)</th><th>Matrix(command)</th></tr></thead>
+      <tbody>
+        <tr><td>本體</td><td>真正的 RISC-V 指令(<code>vmax</code>…)</td><td>寫進記憶體的 128-bit descriptor</td></tr>
+        <tr><td>編碼放哪</td><td>指令流,標準 Zve32x opcode</td><td>command buffer(記憶體資料)</td></tr>
+        <tr><td>誰解碼</td><td>scalar 核的 IDU(標準 decoder)</td><td>矩陣引擎自己的 command decoder</td></tr>
+        <tr><td>怎麼發</td><td>執行一條指令</td><td>用標準 <code>sw</code> 寫一筆資料</td></tr>
+        <tr><td>動到 ISA?</td><td>否(用標準指令)</td><td>否(不佔 opcode)</td></tr>
+      </tbody>
+    </table>
+    <p>所以 scalar 核「發射」一個矩陣操作,實際上就是幾條<strong>標準 store 指令</strong>把 descriptor 寫進 command queue——沒有任何非標準指令。矩陣引擎在自己的邊界內,用自己的 decoder 讀那份 descriptor 動作。<strong>自訂的是「command 編碼」,不是「指令集」。</strong></p>
+    <div class="note cyan"><b>兩個 decoder,別混為一談</b>:scalar 核的 <strong>IDU</strong> 只認得 RV32IM + RVV,它看到寫 descriptor 的 <code>sw</code> 只解成一個普通 store;矩陣引擎的 <strong>command decoder</strong> 才解 descriptor、產生 MAC 控制訊號。兩者唯一的接觸點是記憶體裡那份格式,不共用解碼邏輯。也因此矩陣引擎對 RV32 compiler 完全透明——標準組譯器/連結器/Spike 都不知道它存在。</div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec reveal" id="s3">
+    <div class="sec-head"><span class="sec-num">03</span><h2>一個 op 如何裂成三股</h2></div>
+    <p class="lead">把判準套到具體:一個 fused <code>Dense + ReLU</code>,被編譯器自動拆成三引擎的三股,最後交織在<strong>同一個 .elf</strong> 裡。</p>
+
+    <figure>
+      <div class="fig-top"><span>圖 03 · 一個 fused op → 三引擎</span><span class="tag">Dense + ReLU</span></div>
+      <svg viewBox="0 0 1000 460" role="img" aria-label="Dense+ReLU 裂成 Scalar 迴圈、Matrix command、Vector RVV 三股,經 DTCM 交接與 fence 同步">
+        <defs><marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z"/></marker></defs>
+        <rect class="s-node" x="390" y="24" width="220" height="46" rx="9"/>
+        <text class="s-t" x="500" y="47" font-size="18.75" text-anchor="middle">fused op:Dense + ReLU</text>
+        <text class="s-faint" x="500" y="62" font-size="15" text-anchor="middle">編譯器 lowering 自動拆分</text>
+
+        <!-- three lanes -->
+        <rect class="s-ctrl" x="40" y="110" width="270" height="150" rx="10"/>
+        <text class="s-t" x="60" y="136" font-size="18.125" fill="var(--cyan-d)">Scalar · RV32IM</text>
+        <text class="s-lc" x="60" y="160" font-size="15.625">for j,k: 算 a_addr/b_addr</text>
+        <text class="s-lc" x="60" y="182" font-size="15.625">*cmdq = MAT_OP   ← sw</text>
+        <text class="s-lc" x="60" y="204" font-size="15.625">mat_wait()   ← 同步</text>
+        <text class="s-faint" x="60" y="230" font-size="15">控制流,不碰資料值</text>
+
+        <rect class="s-comp" x="365" y="110" width="270" height="150" rx="10"/>
+        <text class="s-t" x="385" y="136" font-size="18.125" fill="var(--amber-d)">Matrix · command</text>
+        <text class="s-la" x="385" y="160" font-size="15.625">MAT.OP  (rpt=4 累加)</text>
+        <text class="s-la" x="385" y="182" font-size="15.625">MAT.RESCALE (i32→i8)</text>
+        <text class="s-faint" x="385" y="208" font-size="15">沿 k 軸累加進 ACC</text>
+        <text class="s-faint" x="385" y="228" font-size="15">結果落在 DTCM tile</text>
+
+        <rect class="s-mem" x="690" y="110" width="270" height="150" rx="10"/>
+        <text class="s-t" x="710" y="136" font-size="18.125" fill="var(--indigo)">Vector · 標準 RVV</text>
+        <text class="s-li" x="710" y="160" font-size="15.625">vle8.v  v1,(acc_out)</text>
+        <text class="s-li" x="710" y="182" font-size="15.625">vmax.vx v1,v1,0 ← ReLU</text>
+        <text class="s-li" x="710" y="204" font-size="15.625">vse8.v  v1,(dst)</text>
+        <text class="s-faint" x="710" y="230" font-size="15">逐元素,無累加器</text>
+
+        <!-- split arrows -->
+        <path class="trace" d="M430 70 V90 H175 V108" marker-end="url(#a3)"/>
+        <path class="trace-a" d="M500 70 V108" marker-end="url(#a3)"/>
+        <path class="trace" d="M570 70 V90 H825 V108" marker-end="url(#a3)"/>
+
+        <!-- fence between scalar and matrix -->
+        <path class="trace-c" d="M310 200 H363" marker-start="url(#a3)" marker-end="url(#a3)"/>
+        <text class="s-lc" x="337" y="192" font-size="13.75" text-anchor="middle">fence</text>
+
+        <!-- DTCM handoff strip -->
+        <rect class="s-mem" x="365" y="320" width="595" height="60" rx="10"/>
+        <text class="s-t" x="385" y="346" font-size="17.5" fill="var(--indigo)">DTCM · tile buffer(int32 → int8)</text>
+        <text class="s-faint" x="385" y="365" font-size="15">Matrix 寫入 · Vector 讀出——交接點是「記憶體位址」,不是暫存器</text>
+        <path class="trace-a" d="M500 260 V318" marker-end="url(#a3)"/>
+        <text class="s-la" x="516" y="292" font-size="13.75">write</text>
+        <path class="trace-i" d="M825 318 V260" marker-end="url(#a3)"/>
+        <text class="s-li" x="842" y="292" font-size="13.75">read</text>
+
+        <!-- merge note -->
+        <rect class="s-node" x="40" y="410" width="920" height="34" rx="8"/>
+        <text class="s-l" x="500" y="432" font-size="16.25" text-anchor="middle">三股最後交織在同一個 .elf:scalar 核從頭執行,向量指令進指令流,矩陣 command 靠 sw 寫入 buffer</text>
+      </svg>
+      <div class="legend">
+        <span><i style="background:var(--cyan)"></i>Scalar 控制 / fence</span>
+        <span><i style="background:var(--amber)"></i>Matrix command</span>
+        <span><i style="background:var(--indigo)"></i>Vector RVV / 記憶體交接</span>
+      </div>
+      <figcaption>三者身分不同:向量是「執行指令」、矩陣是「寫 command」、scalar 是「控制」。銜接靠 DTCM 記憶體交接 + fence 同步,順序由編譯器 lowering 時排好。</figcaption>
+    </figure>
+
+    <pre class="code"><span class="cm">// scalar 核執行的主體(RV32IM),三種東西交織</span>
+for (int j=0; j&lt;N; j+=8)              <span class="cm">// Scalar:tile 迴圈 / 位址</span>
+  for (int k=0; k&lt;K; k+=8)
+    *cmdq = <span class="hl">MAT_OP</span>(acc0, &amp;A[k], &amp;B[k][j], 4);   <span class="cm">// Matrix:標準 sw 寫 command</span>
+  *cmdq = <span class="hl">MAT_RESCALE</span>(mult, shift, clamp);
+  <span class="kw">mat_wait</span>(acc0);                            <span class="cm">// Scalar:fence 同步</span>
+  asm("vle8.v v1,(%0); <span class="hl">vmax.vx</span> v1,v1,zero; vse8.v v1,(%1)"
+      ::"r"(acc_out),"r"(dst));               <span class="cm">// Vector:標準 RVV,ReLU</span></pre>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec reveal" id="s4">
+    <div class="sec-head"><span class="sec-num">04</span><h2>協作與同步</h2></div>
+    <p>拆給三引擎後,資料要接得起來,靠兩種機制:</p>
+    <h3>1 · Scalar ↔ Matrix:fence 等待</h3>
+    <p>scalar 發完 <code>MAT.OP</code> 後不能馬上讀結果——矩陣引擎與前端是 FIFO 解耦、非同步的。scalar 用 <code>MAT.FENCE</code> + 輪詢 status,或完成中斷,確認 tile 算完才往下走。這就是程式裡的 <code>mat_wait()</code>。</p>
+    <h3>2 · Matrix → Vector:記憶體交接</h3>
+    <p>矩陣的 int32 結果落在 accumulator / DTCM tile buffer,向量核再用 RVV 從<strong>那個記憶體位址</strong>讀出來做 rescale + ReLU。<strong>交接點是記憶體,不是暫存器</strong>——這也是為什麼三引擎能各自獨立、只靠共享記憶體協作。</p>
+    <h3>3 · 順序正確性:編譯器保證</h3>
+    <p>IREE 在 lowering 時就把相依性排好:rescale 一定排在對應 matmul 的 fence 之後、vector ReLU 一定排在 rescale 之後。產出的指令 / command 順序天然正確,執行期不需要動態排程。</p>
+    <div class="note cyan"><b>為什麼這樣分工能省能耗</b>:非同步解耦讓三引擎可各自 gating——矩陣陣列忙時,scalar 前端幾乎閒置(它只是發 command);向量核只在 rescale/activation 階段醒。加上矩陣走 command(免逐指令 fetch/decode),把能耗預算集中到真正做 MAC 的地方。這正是 Coral「反轉傳統處理器」在能效上的回報。</div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec reveal" id="s5">
+    <div class="sec-head"><span class="sec-num">05</span><h2>為什麼是兩條驗證軌</h2></div>
+    <p class="lead">§02 的「身分差異」有一個直接後果:<strong>驗證必然分兩條軌,這不是選擇,是結構的必然。</strong></p>
+    <table class="tbl">
+      <thead><tr><th>子系統</th><th>身分</th><th>有 ISA golden model?</th><th>驗證方法</th></tr></thead>
+      <tbody>
+        <tr><td class="cyan-t">Scalar</td><td>標準指令</td><td>有(Spike)</td><td>RVFI lockstep + riscv-dv</td></tr>
+        <tr><td class="indigo-t">Vector</td><td>標準 RVV 指令</td><td>有(Spike vector)</td><td>RVVI/RVFI lockstep · 狀態爆炸 coverage</td></tr>
+        <tr><td class="amber-t">Matrix</td><td>command(非 ISA)</td><td><strong>無</strong></td><td>bit-accurate 數值 ref + tensor 級容差比對</td></tr>
+      </tbody>
+    </table>
+    <p>Scalar 與 Vector 走<strong>標準指令</strong>,所以 Spike 認得它們、能逐指令 lockstep。Matrix 走 <strong>command、根本不在 ISA 裡</strong>,Spike 本來就看不到它——所以它<strong>必須</strong>走獨立的數值 golden model 軌,用 tensor 級容差比對,其中 <code>MAT.RESCALE</code> 的定點 requantize 是唯一必須 bit-exact 的部分。</p>
+    <div class="note"><b>一句話收束全篇</b>:一條判準(有無 contraction 軸)決定了引擎分工;引擎分工決定了指令 vs command 的身分差異;身分差異決定了兩條驗證軌。整個 RV-NPU 的結構,都是從「這個運算有沒有沿一個軸把東西加掉」這一個問題長出來的。</p></div>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec reveal" id="s6">
+    <div class="sec-head"><span class="sec-num">06</span><h2>實例:一個 CNN 影像運算怎麼跑</h2></div>
+    <p class="lead">把前面的原理套到一個具體的 CNN 影像前段:<strong>影像 → 卷積 → +bias → ReLU → 池化</strong>。每一階段落在哪個引擎,由 §01 的判準決定——有沒有沿一個軸累加。下面用一組小尺寸的實際數字走一遍。</p>
+
+    <figure>
+      <div class="fig-top"><span>圖 06 · CNN 前段資料流</span><span class="tag">conv → bias/relu → pool</span></div>
+      <svg viewBox="0 0 1000 400" role="img" aria-label="CNN 前段在 RV-NPU 的資料流:卷積走 Matrix,bias/ReLU/pooling 走 Vector,Scalar 控制迴圈,DTCM 交接">
+        <defs><marker id="a6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 L9 5 L1 9 Z"/></marker></defs>
+
+        <!-- scalar control band -->
+        <rect class="s-ctrl" x="40" y="42" width="920" height="46" rx="10"/>
+        <text class="s-t" x="60" y="70" font-size="18.125" fill="var(--cyan-d)">Scalar · 控制</text>
+        <text class="s-lc" x="220" y="70" font-size="16.25">for each 輸出像素 (y,x) → 算位址 · 發 command · fence 同步</text>
+
+        <!-- stages -->
+        <rect class="s-node" x="40" y="150" width="152" height="92" rx="10"/>
+        <text class="s-t" x="116" y="188" font-size="17.5" text-anchor="middle">輸入影像</text>
+        <text class="s-faint" x="116" y="210" font-size="15" text-anchor="middle">H×W×C</text>
+        <text class="s-faint" x="116" y="226" font-size="15" text-anchor="middle">int8</text>
+
+        <rect class="s-comp" x="232" y="150" width="152" height="92" rx="10" stroke-width="2"/>
+        <text class="s-t" x="308" y="184" font-size="17.5" text-anchor="middle" fill="var(--amber-d)">Conv 3×3</text>
+        <text class="s-faint" x="308" y="204" font-size="15" text-anchor="middle">Σ c,kh,kw → i32</text>
+        <text class="s-la" x="308" y="224" font-size="15.625" text-anchor="middle">[ Matrix ]</text>
+
+        <rect class="s-mem" x="424" y="150" width="152" height="92" rx="10"/>
+        <text class="s-t" x="500" y="184" font-size="17.5" text-anchor="middle" fill="var(--indigo)">+bias · rescale</text>
+        <text class="s-faint" x="500" y="204" font-size="15" text-anchor="middle">ReLU  i32→i8</text>
+        <text class="s-li" x="500" y="224" font-size="15.625" text-anchor="middle">[ Vector ]</text>
+
+        <rect class="s-mem" x="616" y="150" width="152" height="92" rx="10"/>
+        <text class="s-t" x="692" y="184" font-size="17.5" text-anchor="middle" fill="var(--indigo)">MaxPool 2×2</text>
+        <text class="s-faint" x="692" y="204" font-size="15" text-anchor="middle">max → i8</text>
+        <text class="s-li" x="692" y="224" font-size="15.625" text-anchor="middle">[ Vector ]</text>
+
+        <rect class="s-node" x="808" y="150" width="152" height="92" rx="10"/>
+        <text class="s-t" x="884" y="188" font-size="17.5" text-anchor="middle">特徵圖</text>
+        <text class="s-faint" x="884" y="210" font-size="15" text-anchor="middle">H'×W'×C'</text>
+        <text class="s-faint" x="884" y="226" font-size="15" text-anchor="middle">int8</text>
+
+        <!-- flow arrows -->
+        <path class="trace-a flow" d="M192 196 H230" marker-end="url(#a6)"/>
+        <path class="trace-i flow" d="M384 196 H422" marker-end="url(#a6)"/>
+        <path class="trace-i flow" d="M576 196 H614" marker-end="url(#a6)"/>
+        <path class="trace-i flow" d="M768 196 H806" marker-end="url(#a6)"/>
+
+        <!-- scalar drives stages (faint ticks) -->
+        <g class="trace" stroke-dasharray="3 4">
+          <path d="M308 88 V148"/><path d="M500 88 V148"/><path d="M692 88 V148"/>
+        </g>
+
+        <!-- contraction callout -->
+
+        <!-- DTCM handoff strip -->
+        <rect class="s-mem" x="232" y="312" width="536" height="40" rx="9"/>
+        <text class="s-li" x="500" y="337" font-size="15.625" text-anchor="middle">DTCM tile:Matrix 寫 i32 → Vector 讀 → rescale / pool</text>
+        <path class="trace-a" d="M308 244 V310" marker-end="url(#a6)"/>
+        <path class="trace-i" d="M500 312 V246" marker-end="url(#a6)"/>
+        <text class="s-la" x="500" y="380" font-size="15.625" text-anchor="middle">conv 有 contraction 軸 → Matrix;bias/ReLU/pool 逐元素 → Vector</text>
+      </svg>
+      <div class="legend">
+        <span><i style="background:var(--amber)"></i>Conv(contraction → Matrix)</span>
+        <span><i style="background:var(--indigo)"></i>bias / ReLU / pool(逐元素 → Vector)</span>
+        <span><i style="background:var(--cyan)"></i>迴圈 · 同步(Scalar)</span>
+      </div>
+      <figcaption>唯一走 Matrix 的是卷積——因為它沿通道與 kernel 窗累加(有 contraction 軸)。bias、ReLU、pooling 都是逐元素/reduction,走 Vector。Scalar 只管迴圈與同步。</figcaption>
+    </figure>
+
+    <h3>用實際數字走一遍(算一個輸出像素)</h3>
+    <p><b>① 卷積 <span class="badge m">Matrix</span></b> — 取影像的一塊 3×3 區塊,與 3×3 kernel(這裡用一個垂直邊緣偵測器)逐位相乘,再<strong>沿整個窗累加</strong>成一個 int32:</p>
+    <div class="calc">
+      <span class="ng p"><div>5</div><div>3</div><div>1</div><div>6</div><div>4</div><div>0</div><div>2</div><div>1</div><div>0</div></span>
+      <span class="op">⊙</span>
+      <span class="ng k"><div>1</div><div>0</div><div>-1</div><div>1</div><div>0</div><div>-1</div><div>1</div><div>0</div><div>-1</div></span>
+      <span class="op">→ Σ =</span>
+      <span class="res">12</span>
+      <span>(int32 accumulator)</span>
+    </div>
+    <p style="font-size:14.5px;color:var(--faint)">Σ = (5−1) + (6−0) + (2−0) = 4 + 6 + 2 = 12。這個「Σ 沿 kernel 窗」就是 contraction,所以走 MAC 陣列。</p>
+
+    <p><b>② +bias、rescale、ReLU <span class="badge v">Vector</span></b> — 逐元素的定點後處理,把 int32 拉回 int8:</p>
+    <div class="calc">
+      <span class="res">12</span><span class="op">+</span>bias 4 <span class="op">=</span><span class="res">16</span>
+      <span class="op">→ rescale(×½)</span><span class="res">8</span>
+      <span class="op">→ ReLU</span> max(8,0) <span class="op">=</span><span class="res">8</span>
+    </div>
+    <p style="font-size:14.5px;color:var(--faint)">若換一塊區塊算出 Σ = −10:−10 + 4 = −6 → rescale −3 → <b>ReLU max(−3,0) = 0</b>。ReLU 的作用就是把負的活化切成 0——這是純逐元素運算,無累加,走 Vector。</p>
+
+    <p><b>③ MaxPool 2×2 <span class="badge v">Vector</span></b> — 對 2×2 的特徵圖窗取最大值(降取樣):</p>
+    <div class="calc">
+      <span class="ng p"><div>8</div><div>0</div><div>5</div><div>3</div></span>
+      <span class="op">→ max =</span>
+      <span class="res">8</span>
+    </div>
+    <p style="font-size:14.5px;color:var(--faint)">pooling 有「軸消失(4→1)」但沒有乘法重用,屬 reduction → 走 Vector 的 reduction,不動用 MAC 陣列。</p>
+
+    <h3>階段 → 引擎對照</h3>
+    <table class="tbl">
+      <thead><tr><th>階段</th><th>運算</th><th>有 contraction 軸?</th><th>引擎</th></tr></thead>
+      <tbody>
+        <tr><td>Conv 3×3</td><td>Σ over c·kh·kw 的乘加</td><td>有(且有乘法重用)</td><td class="amber-t">Matrix · command</td></tr>
+        <tr><td>+bias</td><td>逐元素加</td><td>無</td><td class="indigo-t">Vector · RVV</td></tr>
+        <tr><td>rescale</td><td>逐元素定點乘移位</td><td>無</td><td class="indigo-t">Vector · RVV</td></tr>
+        <tr><td>ReLU</td><td>逐元素 max(x,0)</td><td>無</td><td class="indigo-t">Vector · RVV</td></tr>
+        <tr><td>MaxPool</td><td>窗內 reduction(max)</td><td>有(但無乘法重用)</td><td class="indigo-t">Vector · reduction</td></tr>
+        <tr><td>迴圈 / 位址 / 同步</td><td>控制流</td><td>不碰資料</td><td class="cyan-t">Scalar · RV32IM</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>整條 CNN 的節奏</b>:Scalar 迴圈掃過每個輸出位置 → 發 <code>MAT.OP</code> 讓 Matrix 把卷積 Σ 累加進 ACC(這是算力集中處)→ 結果落 DTCM → Vector 用標準 RVV 做 bias/rescale/ReLU/pool → 寫回特徵圖 → 進下一層。整層推論就是這個節奏在 tile 上重複。真正吃算力的只有卷積那一步,其餘都是輕量的逐元素收尾。</div>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>RV-NPU · 三運算引擎</span>
+    <span>Scalar 控制 · Vector 逐元素 · Matrix 累加 · ref: Google Coral NPU</span>
+  </div>
+</footer>
+
+<script>
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const links=[...document.querySelectorAll('nav.rail a')];
+  const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+  const so=new IntersectionObserver((es)=>{es.forEach(e=>{const a=map.get(e.target.id);if(a&&e.isIntersecting){links.forEach(l=>l.classList.remove('active'));a.classList.add('active')}})},{rootMargin:'-30% 0px -60% 0px'});
+  document.querySelectorAll('section.sec').forEach(s=>so.observe(s));
+</script>
+</body>
+</html>
