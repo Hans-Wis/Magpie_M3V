@@ -109,6 +109,11 @@ module tb_soc_m3v_xip;
         $finish;
     end
 
+    always @(posedge clk) begin
+        if (uart_tx_strobe)
+            $display("UART_TX %02x (%c)", uart_tx_byte, uart_tx_byte);
+    end
+
     initial begin
         // 20x the imem-boot 30ms wall: XIP-boot is NOT a perf gate (ADR-0069).
         #600000000;
