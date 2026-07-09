@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 900 260" width="100%" xmlns="http://www.w3.org/2000/svg"><style>text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}</style>
+    <defs>
+      <marker id="arrow3" markerWidth="10" markerHeight="10" refX="8" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 Z" fill="#8B8168"/>
+      </marker>
+    </defs>
+
+    <rect x="20" y="20" width="380" height="80" rx="8" fill="#F1E8F5" stroke="#8A4FA0" stroke-width="1.6"/>
+    <text x="210" y="52" fill="#8A4FA0" font-size="16" text-anchor="middle" font-weight="700">ITCM — 8 KB</text>
+    <text x="210" y="75" fill="#5B5342" font-size="13" text-anchor="middle">指令記憶體 · single-cycle SRAM · via IBUS</text>
+
+    <rect x="420" y="20" width="380" height="80" rx="8" fill="#F1E8F5" stroke="#8A4FA0" stroke-width="1.6"/>
+    <text x="610" y="52" fill="#8A4FA0" font-size="16" text-anchor="middle" font-weight="700">DTCM — 32 KB</text>
+    <text x="610" y="75" fill="#5B5342" font-size="13" text-anchor="middle">資料記憶體 · single-cycle SRAM · via DBUS</text>
+
+    <rect x="220" y="170" width="460" height="72" rx="8" fill="#E7F3E9" stroke="#3E8F49" stroke-width="1.6"/>
+    <text x="450" y="200" fill="#2C6B34" font-size="15.5" text-anchor="middle" font-weight="700">EBUS → AXI4 外部記憶體</text>
+    <text x="450" y="222" fill="#5B5342" font-size="12.5" text-anchor="middle">超出 TCM 範圍之存取</text>
+
+    <line x1="210" y1="100" x2="330" y2="168" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow3)"/>
+    <line x1="610" y1="100" x2="500" y2="168" stroke="#8B8168" stroke-width="1.6" marker-end="url(#arrow3)"/>
+  </svg>

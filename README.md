@@ -10,11 +10,13 @@ bit-exact results, verified against the Spike ISS by per-commit lockstep.
 
 ## Architecture
 
-<p align="center">
-  <img src="docs/img/top_arch.svg" alt="Magpie_M3V top-level block architecture — RV32+RVV core with scalar / vector / matrix engines inside the NPU domain" width="760">
-</p>
+![Magpie_M3V top-level block architecture — RV32+RVV core with scalar / vector / matrix engines, shared LSU, ITCM/DTCM, custom CSRs and the AXI4 bus, inside the SoC boundary](docs/img/top_arch.svg)
 
-<p align="center"><em>Top-level block architecture (drawn by Coral-NPU component partition). Full spec: <a href="docs/rv32_rvv_design_spec.html">rv32_rvv_design_spec.html</a> — also has pipeline, RVV register-slicing, and memory-hierarchy diagrams.</em></p>
+*Top-level block architecture (partitioned by Coral-NPU component). Below: the 4-stage pipeline and the memory hierarchy.*
+
+![Four-stage pipeline — in-order dispatch, out-of-order completion, parallel execution units (ALU / Mul-Div / FPU / vector / matrix)](docs/img/pipeline.svg)
+
+![Memory hierarchy — ITCM 8KB / DTCM 32KB single-cycle SRAM, shared LSU (IBUS/DBUS), EBUS to external memory via AXI4](docs/img/memory.svg)
 
 ### How the three engines divide the work
 
