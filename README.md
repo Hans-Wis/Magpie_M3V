@@ -1,4 +1,4 @@
-# Edge-AI Processor - RISC-V CPU with Vector-Engin & Matrix-Engine 
+# Edge-AI Processor - RISC-V CPU with RVV Vector-Engine & Matrix-Engine 
 
 **Magpie_M3V** is a synthesizable two-core RISC-V SoC: a host CPU (`cpu_m1`) driving, over AXI, a
 self-built **NPU domain** whose goal is to *functionally replace* the Google Coral NPU —
