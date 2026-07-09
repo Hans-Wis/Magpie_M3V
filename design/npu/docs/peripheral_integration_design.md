@@ -1,6 +1,6 @@
 # soc_m3v_top 周邊整合 — 架構設計確認(§2)
 
-Status: **P0+P1 DONE(2026-07-09)— P0:A @1215d1d/B @5dd79c8/C @ca40c83(gate_85-88);P1:@e468e53(ADR-0070,gate_89/90);P2(quad、prog)待裁示**
+Status: **P0+P1+P2 全部完成(2026-07-10)— P0 gate_85-88 / P1 @e468e53 gate_89-90 / P2 @0d9324b+@d244e3f(ADR-0071)gate_91-93。周邊整合 phase 收束;後續項:ndmreset 閉環、GPIO IRQ(PLIC ID4)、prog IRQ(ID3)、FPGA 腳位表跟進 4-lane pin**
 Date: 2026-07-09
 Sources: M6 周邊盤點 / M3V 缺口盤點 / M1V1 Coral 整合契約盤點(本檔 §6 evidence)
 
