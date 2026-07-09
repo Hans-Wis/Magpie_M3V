@@ -320,8 +320,7 @@ module vexu #(
     // from vsaddu/vsadd/vssubu/vssub OPIV*, same f6). RISC-V special cases (Spike-
     // probed): unsigned /0 -> all-1s, %0 -> dividend; signed /0 -> -1, %0 -> dividend;
     // signed overflow MIN/-1 -> quotient MIN, rem 0; signed div truncates toward zero.
-    // Combinational per-element divide (functional lockstep; real HW would sequence it
-    // -- documented timing deviation, same class as fexu F4). Joins beats_op.
+    // Iterative per-lane restoring divider below; joins beats_op.
     wire op_vdivu = (f6 == 6'b100000) && (is_opmvv || is_opmvx);
     wire op_vdiv  = (f6 == 6'b100001) && (is_opmvv || is_opmvx);
     wire op_vremu = (f6 == 6'b100010) && (is_opmvv || is_opmvx);
@@ -376,7 +375,7 @@ module vexu #(
 
     // ---------------- 3C unit-stride vector load/store decode ----------------
     assign q_is_mem = q_valid && is_vmem;
-    assign q_is_grp = q_valid && (is_grp || op_vmvr) && !q_illegal; // hold/beats (incl. cmp, vmvr copy loop)
+    assign q_is_grp = q_valid && (is_grp || op_vmvr || (op_vdivr && (q_vstart < q_vl))) && !q_illegal; // hold/beats
     // WB group WRITE excludes mask-dest ops (compares + vmadc/vmsbc: single-reg dest)
     assign q_grp_w  = q_valid && is_grp && !mask_dest && !q_illegal;
     assign q_grp_parts = grp_parts;
@@ -557,6 +556,15 @@ module vexu #(
     wire [127:0] part_res;
     wire [15:0] cmp_seg;
     wire [127:0] mask_nl;
+    reg         div_busy;
+    reg         div_ready;
+    reg  [5:0] div_it;
+    reg  [1:0] div_sew_q;
+    reg  [127:0] div_dvd_q;
+    reg  [127:0] div_dsr_q;
+    reg  [127:0] div_quo_q;
+    reg  [127:0] div_rem_q;
+    wire        div_done;
 
     always @(posedge clk) begin
         if (w_en) begin
@@ -816,20 +824,165 @@ module vexu #(
     wire [127:0] res_mul = (vsew == 3'b000) ? res_mul8 :
                            (vsew == 3'b001) ? res_mul16 : res_mul32;
 
-    // ---- E1: integer divide/remainder (combinational per element). Special cases
-    // per RISC-V: /0 -> all-1s (u) / -1 (s), %0 -> dividend; signed MIN/-1 -> MIN, 0. ----
+    // ---- E1: integer divide/remainder. One restoring divider per lane runs in
+    // parallel for SEW cycles; special cases remain combinational at the result mux. ----
+    wire        div_signed_op = op_vdiv || op_vrem;
+    wire [127:0] div_dvd_mag8, div_dsr_mag8, div_dvd_mag16, div_dsr_mag16;
+    wire [127:0] div_dvd_mag32, div_dsr_mag32;
+    wire [127:0] div_dvd_mag = (vsew == 3'b000) ? div_dvd_mag8 :
+                               (vsew == 3'b001) ? div_dvd_mag16 : div_dvd_mag32;
+    wire [127:0] div_dsr_mag = (vsew == 3'b000) ? div_dsr_mag8 :
+                               (vsew == 3'b001) ? div_dsr_mag16 : div_dsr_mag32;
+    generate
+        for (gi = 0; gi < 16; gi = gi + 1) begin : g_divmag8
+            wire [7:0] a = vs2_data[gi*8 +: 8];
+            wire [7:0] b = is_opmvv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
+            assign div_dvd_mag8[gi*8 +: 8] = (div_signed_op && a[7]) ? (8'h00 - a) : a;
+            assign div_dsr_mag8[gi*8 +: 8] = (div_signed_op && b[7]) ? (8'h00 - b) : b;
+        end
+        for (gi = 0; gi < 8; gi = gi + 1) begin : g_divmag16
+            wire [15:0] a = vs2_data[gi*16 +: 16];
+            wire [15:0] b = is_opmvv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
+            assign div_dvd_mag16[gi*16 +: 16] = (div_signed_op && a[15]) ? (16'h0000 - a) : a;
+            assign div_dsr_mag16[gi*16 +: 16] = (div_signed_op && b[15]) ? (16'h0000 - b) : b;
+        end
+        for (gi = 0; gi < 4; gi = gi + 1) begin : g_divmag32
+            wire [31:0] a = vs2_data[gi*32 +: 32];
+            wire [31:0] b = is_opmvv ? vs1_data[gi*32 +: 32] : scalar_b;
+            assign div_dvd_mag32[gi*32 +: 32] = (div_signed_op && a[31]) ? (32'h0000_0000 - a) : a;
+            assign div_dsr_mag32[gi*32 +: 32] = (div_signed_op && b[31]) ? (32'h0000_0000 - b) : b;
+        end
+    endgenerate
+
+    wire [5:0] div_sew_cycles = (vsew == 3'b000) ? 6'd8 :
+                                (vsew == 3'b001) ? 6'd16 : 6'd32;
+    wire [5:0] div_sew_cycles_q = (div_sew_q == 2'd0) ? 6'd8 :
+                                  (div_sew_q == 2'd1) ? 6'd16 : 6'd32;
+    wire       div_capture = op_vdivr && (vm_state == VM_GRP) && div_done && !m_stall;
+    wire       div_start = op_vdivr && !q_illegal && !vm_none && !div_busy && !div_ready &&
+                           !vm_done_r &&
+                           (((vm_state == VM_IDLE) && m_start && !m_stall) ||
+                            (vm_state == VM_GRP));
+    wire       div_last_step = div_busy && (div_it == (div_sew_cycles_q - 6'd1));
+    assign div_done = !op_vdivr || div_ready || div_last_step;
+
+    wire [127:0] div_dvd_in = div_start ? div_dvd_mag : div_dvd_q;
+    wire [127:0] div_dsr_in = div_start ? div_dsr_mag : div_dsr_q;
+    wire [127:0] div_quo_in = div_start ? 128'h0 : div_quo_q;
+    wire [127:0] div_rem_in = div_start ? 128'h0 : div_rem_q;
+    wire [1:0]   div_step_sew = div_start ? vsew[1:0] : div_sew_q;
+    reg  [127:0] div_dvd_n;
+    reg  [127:0] div_quo_n;
+    reg  [127:0] div_rem_n;
+    reg  [8:0]   div_shift8;
+    reg  [8:0]   div_sub8;
+    reg  [16:0]  div_shift16;
+    reg  [16:0]  div_sub16;
+    reg  [32:0]  div_shift32;
+    reg  [32:0]  div_sub32;
+    integer      div_i;
+    always @* begin
+        div_dvd_n = div_dvd_in;
+        div_quo_n = div_quo_in;
+        div_rem_n = div_rem_in;
+        div_shift8 = 9'h0;
+        div_sub8 = 9'h0;
+        div_shift16 = 17'h0;
+        div_sub16 = 17'h0;
+        div_shift32 = 33'h0;
+        div_sub32 = 33'h0;
+        case (div_step_sew)
+            2'd0: begin
+                for (div_i = 0; div_i < 16; div_i = div_i + 1) begin
+                    div_shift8 = {div_rem_in[div_i*8 +: 8], div_dvd_in[div_i*8 + 7]};
+                    div_sub8 = div_shift8 - {1'b0, div_dsr_in[div_i*8 +: 8]};
+                    div_dvd_n[div_i*8 +: 8] = div_dvd_in[div_i*8 +: 8] << 1;
+                    if (!div_sub8[8]) begin
+                        div_rem_n[div_i*8 +: 8] = div_sub8[7:0];
+                        div_quo_n[div_i*8 +: 8] = (div_quo_in[div_i*8 +: 8] << 1) | 8'h01;
+                    end else begin
+                        div_rem_n[div_i*8 +: 8] = div_shift8[7:0];
+                        div_quo_n[div_i*8 +: 8] = div_quo_in[div_i*8 +: 8] << 1;
+                    end
+                end
+            end
+            2'd1: begin
+                for (div_i = 0; div_i < 8; div_i = div_i + 1) begin
+                    div_shift16 = {div_rem_in[div_i*16 +: 16], div_dvd_in[div_i*16 + 15]};
+                    div_sub16 = div_shift16 - {1'b0, div_dsr_in[div_i*16 +: 16]};
+                    div_dvd_n[div_i*16 +: 16] = div_dvd_in[div_i*16 +: 16] << 1;
+                    if (!div_sub16[16]) begin
+                        div_rem_n[div_i*16 +: 16] = div_sub16[15:0];
+                        div_quo_n[div_i*16 +: 16] = (div_quo_in[div_i*16 +: 16] << 1) | 16'h0001;
+                    end else begin
+                        div_rem_n[div_i*16 +: 16] = div_shift16[15:0];
+                        div_quo_n[div_i*16 +: 16] = div_quo_in[div_i*16 +: 16] << 1;
+                    end
+                end
+            end
+            default: begin
+                for (div_i = 0; div_i < 4; div_i = div_i + 1) begin
+                    div_shift32 = {div_rem_in[div_i*32 +: 32], div_dvd_in[div_i*32 + 31]};
+                    div_sub32 = div_shift32 - {1'b0, div_dsr_in[div_i*32 +: 32]};
+                    div_dvd_n[div_i*32 +: 32] = div_dvd_in[div_i*32 +: 32] << 1;
+                    if (!div_sub32[32]) begin
+                        div_rem_n[div_i*32 +: 32] = div_sub32[31:0];
+                        div_quo_n[div_i*32 +: 32] = (div_quo_in[div_i*32 +: 32] << 1) | 32'h0000_0001;
+                    end else begin
+                        div_rem_n[div_i*32 +: 32] = div_shift32[31:0];
+                        div_quo_n[div_i*32 +: 32] = div_quo_in[div_i*32 +: 32] << 1;
+                    end
+                end
+            end
+        endcase
+    end
+
+    always @(posedge clk) begin
+        if (!resetn || m_flush) begin
+            div_busy  <= 1'b0;
+            div_ready <= 1'b0;
+            div_it    <= 6'd0;
+            div_sew_q <= 2'd0;
+        end else if (div_start) begin
+            div_dvd_q <= div_dvd_n;
+            div_dsr_q <= div_dsr_mag;
+            div_quo_q <= div_quo_n;
+            div_rem_q <= div_rem_n;
+            div_sew_q <= vsew[1:0];
+            div_it    <= 6'd1;
+            div_busy  <= (div_sew_cycles != 6'd1);
+            div_ready <= (div_sew_cycles == 6'd1) && !div_capture;
+        end else if (div_busy) begin
+            div_dvd_q <= div_dvd_n;
+            div_quo_q <= div_quo_n;
+            div_rem_q <= div_rem_n;
+            if (div_last_step) begin
+                div_busy  <= 1'b0;
+                div_ready <= !div_capture;
+            end else begin
+                div_it <= div_it + 6'd1;
+            end
+        end else begin
+            if (div_capture || (m_advance && vm_done_r))
+                div_ready <= 1'b0;
+        end
+    end
+
+    wire [127:0] div_quo_out = div_last_step ? div_quo_n : div_quo_q;
+    wire [127:0] div_rem_out = div_last_step ? div_rem_n : div_rem_q;
     wire [127:0] res_vdiv8, res_vdiv16, res_vdiv32;
     generate
         for (gi = 0; gi < 16; gi = gi + 1) begin : g_div8
             wire [7:0] a = vs2_data[gi*8 +: 8];
             wire [7:0] b = is_opmvv ? vs1_data[gi*8 +: 8] : scalar_b[7:0];
-            wire signed [7:0] as = a, bs = b;
             wire bz  = (b == 8'h00);
             wire sov = (a == 8'h80) && (b == 8'hFF);         // MIN / -1
-            wire [7:0] udiv = bz ? 8'hFF : a / b;
-            wire [7:0] urem = bz ? a     : a % b;
-            wire [7:0] sdiv = bz ? 8'hFF : sov ? 8'h80 : $unsigned(as / bs);
-            wire [7:0] srem = bz ? a     : sov ? 8'h00 : $unsigned(as % bs);
+            wire [7:0] qmag = div_quo_out[gi*8 +: 8];
+            wire [7:0] rmag = div_rem_out[gi*8 +: 8];
+            wire [7:0] udiv = bz ? 8'hFF : qmag;
+            wire [7:0] urem = bz ? a     : rmag;
+            wire [7:0] sdiv = bz ? 8'hFF : sov ? 8'h80 : (a[7] ^ b[7]) ? (8'h00 - qmag) : qmag;
+            wire [7:0] srem = bz ? a     : sov ? 8'h00 : a[7] ? (8'h00 - rmag) : rmag;
             wire [7:0] r = op_vdivu ? udiv : op_vdiv ? sdiv : op_vremu ? urem : srem;
             wire m = v0_view[gi];
             wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
@@ -838,13 +991,14 @@ module vexu #(
         for (gi = 0; gi < 8; gi = gi + 1) begin : g_div16
             wire [15:0] a = vs2_data[gi*16 +: 16];
             wire [15:0] b = is_opmvv ? vs1_data[gi*16 +: 16] : scalar_b[15:0];
-            wire signed [15:0] as = a, bs = b;
             wire bz  = (b == 16'h0);
             wire sov = (a == 16'h8000) && (b == 16'hFFFF);
-            wire [15:0] udiv = bz ? 16'hFFFF : a / b;
-            wire [15:0] urem = bz ? a        : a % b;
-            wire [15:0] sdiv = bz ? 16'hFFFF : sov ? 16'h8000 : $unsigned(as / bs);
-            wire [15:0] srem = bz ? a        : sov ? 16'h0000 : $unsigned(as % bs);
+            wire [15:0] qmag = div_quo_out[gi*16 +: 16];
+            wire [15:0] rmag = div_rem_out[gi*16 +: 16];
+            wire [15:0] udiv = bz ? 16'hFFFF : qmag;
+            wire [15:0] urem = bz ? a        : rmag;
+            wire [15:0] sdiv = bz ? 16'hFFFF : sov ? 16'h8000 : (a[15] ^ b[15]) ? (16'h0000 - qmag) : qmag;
+            wire [15:0] srem = bz ? a        : sov ? 16'h0000 : a[15] ? (16'h0000 - rmag) : rmag;
             wire [15:0] r = op_vdivu ? udiv : op_vdiv ? sdiv : op_vremu ? urem : srem;
             wire m = v0_view[gi];
             wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
@@ -853,13 +1007,14 @@ module vexu #(
         for (gi = 0; gi < 4; gi = gi + 1) begin : g_div32
             wire [31:0] a = vs2_data[gi*32 +: 32];
             wire [31:0] b = is_opmvv ? vs1_data[gi*32 +: 32] : scalar_b;
-            wire signed [31:0] as = a, bs = b;
             wire bz  = (b == 32'h0);
             wire sov = (a == 32'h80000000) && (b == 32'hFFFFFFFF);
-            wire [31:0] udiv = bz ? 32'hFFFFFFFF : a / b;
-            wire [31:0] urem = bz ? a            : a % b;
-            wire [31:0] sdiv = bz ? 32'hFFFFFFFF : sov ? 32'h80000000 : $unsigned(as / bs);
-            wire [31:0] srem = bz ? a            : sov ? 32'h00000000 : $unsigned(as % bs);
+            wire [31:0] qmag = div_quo_out[gi*32 +: 32];
+            wire [31:0] rmag = div_rem_out[gi*32 +: 32];
+            wire [31:0] udiv = bz ? 32'hFFFFFFFF : qmag;
+            wire [31:0] urem = bz ? a            : rmag;
+            wire [31:0] sdiv = bz ? 32'hFFFFFFFF : sov ? 32'h80000000 : (a[31] ^ b[31]) ? (32'h0000_0000 - qmag) : qmag;
+            wire [31:0] srem = bz ? a            : sov ? 32'h00000000 : a[31] ? (32'h0000_0000 - rmag) : rmag;
             wire [31:0] r = op_vdivu ? udiv : op_vdiv ? sdiv : op_vremu ? urem : srem;
             wire m = v0_view[gi];
             wire active = (gi >= vst_view) && (gi < vl_view) && (vm || m);
@@ -1197,7 +1352,7 @@ module vexu #(
     wire       vm_none   = (q_vstart >= q_vl);
     wire [4:0] vm_last   = vm_vl - 5'd1;
 
-    assign vm_active       = (vm_state != VM_IDLE);
+    assign vm_active       = (vm_state != VM_IDLE) || div_busy || div_ready;
     assign vm_result_valid = vm_done_r;
     assign vm_dvalid       = (vm_state == VM_ISSUE);
     assign vm_we           = is_vstore;
@@ -1244,7 +1399,7 @@ module vexu #(
                             vm_idx   <= 6'd0;           // vstart=0
                             vm_state <= VM_ISSUE;
                         end
-                    end else if (is_grp) begin
+                    end else if (is_grp || op_vdivr) begin
                         // S3: register-group beats — one part per cycle into
                         // staging; drained-start means nothing else vector is
                         // in flight until the WB group commit.
@@ -1265,17 +1420,19 @@ module vexu #(
                 end
 
                 VM_GRP: begin
-                    grp_stage[grp_p] <= part_res;
-                    grp_sat_q <= grp_sat_q | part_sat_or;
-                    if (mask_dest)
-                        grp_mask_acc <= (grp_mask_acc & ~(mask_nl << elem_base)) |
-                                        ({112'b0, cmp_seg} << elem_base);
-                    if ({1'b0, grp_p} + 4'd1 == grp_parts) begin
-                        grp_p     <= 3'd0;
-                        vm_state  <= VM_IDLE;
-                        vm_done_r <= 1'b1;
-                    end else
-                        grp_p <= grp_p + 3'd1;
+                    if (!op_vdivr || div_done) begin
+                        grp_stage[grp_p] <= part_res;
+                        grp_sat_q <= grp_sat_q | part_sat_or;
+                        if (mask_dest)
+                            grp_mask_acc <= (grp_mask_acc & ~(mask_nl << elem_base)) |
+                                            ({112'b0, cmp_seg} << elem_base);
+                        if ({1'b0, grp_p} + 4'd1 == grp_parts) begin
+                            grp_p     <= 3'd0;
+                            vm_state  <= VM_IDLE;
+                            vm_done_r <= 1'b1;
+                        end else
+                            grp_p <= grp_p + 3'd1;
+                    end
                 end
                 VM_VMVR: begin
                     // the vrf copy for register vmvr_p lands in the write block this
