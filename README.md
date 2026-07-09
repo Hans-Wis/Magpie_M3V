@@ -1,7 +1,7 @@
-# Magpie_M3V — a self-built RV32 NPU targeting functional parity with Google Coral
+# Edge-AI Processor - RISC-V CPU with Vector-Engin & Matrix-Engine 
 
 **Magpie_M3V** is a synthesizable two-core RISC-V SoC: a host CPU (`cpu_m1`) driving, over AXI, a
-self-built **NPU domain** whose goal is to *functionally replace* the Google Coral (Kelvin) NPU —
+self-built **NPU domain** whose goal is to *functionally replace* the Google Coral NPU —
 run the same open-source int8 TFLM inference path (RVV Zve32x + a 256-MAC matrix engine) with
 bit-exact results, verified against the Spike ISS by per-commit lockstep.
 
