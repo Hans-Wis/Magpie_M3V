@@ -25,5 +25,17 @@ host_producer.hex: host_producer.elf
 size: host_producer.elf
 	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)size $<
 
+# gate_86 XIP-boot image: same sources, VMA in the QSPI window; byte-wide hex
+# rebased to flash offset 0 for spi_nor_model $readmemh.
+xip: host_producer_xip.flashhex
+
+host_producer_xip.elf: crt0.S host_producer.c host_producer_xip.ld npu_fw_load.inc
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -Wl,-Bstatic,-T,host_producer_xip.ld,--strip-debug -o $@ crt0.S host_producer.c
+
+host_producer_xip.flashhex: host_producer_xip.elf
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)objcopy -O verilog --verilog-data-width=1 --change-addresses -0x40000000 $< $@
+	sed -i 's/\r$$//' $@
+
 clean:
-	rm -f host_producer.elf host_producer.hex host_producer.disasm npu_fw_load.inc
+	rm -f host_producer.elf host_producer.hex host_producer.disasm npu_fw_load.inc \
+	      host_producer_xip.elf host_producer_xip.flashhex

@@ -8,7 +8,7 @@
 // M3b-3 two-bus formalization (ADR-0068 §2.5):
 //   CONTROL AXI (32-bit, always): host M_AXI_D -> soc_axil_decode ->
 //       {CLINT 0x0200, PLIC 0x0c00, UART 0x1000, NPU CSR/TCM 0x3000,
-//        SRAM host-bridge 0x8000}. DECERR off-map.
+//        XIP 0x4000_0000 16MB RO, SRAM host-bridge 0x8000}. DECERR off-map.
 //   DATA AXI (DMA_DATA_W = 64*MAT_LANES): npu_dma master + host bridge (axil_to_full,
 //       narrow-beat-on-wide-bus) -> axi_full_arbiter_2x1 -> axi_full_sram @0x8000.
 //   BRIDGE: axil_to_full crosses control->data for host weight/CQ writes.
@@ -39,7 +39,11 @@ module soc_m3v_top #(
     output wire [ 2:0] host_dbg_state,
     output wire npu_irq,
     output wire uart_tx_strobe,
-    output wire [ 7:0] uart_tx_byte
+    output wire [ 7:0] uart_tx_byte,
+    output wire qspi_sclk,
+    output wire qspi_cs_n,
+    output wire qspi_si,
+    input  wire qspi_so
 );
     initial begin
         if (DMA_DATA_W != 32 && DMA_DATA_W != 64 && DMA_DATA_W != 128 && DMA_DATA_W != 256)
@@ -133,6 +137,43 @@ module soc_m3v_top #(
         .dbg_axi_err(host_axi_err)
     );
 
+    wire        im_arvalid, im_arready, im_rvalid, im_rready;
+    wire [31:0] im_araddr, im_rdata;
+    wire [ 2:0] im_arprot;
+    wire [ 1:0] im_rresp;
+    wire        x_i_arvalid, x_i_arready, x_i_rvalid, x_i_rready;
+    wire [31:0] x_i_araddr, x_i_rdata;
+    wire [ 1:0] x_i_rresp;
+    reg         i_route_busy;
+    reg         i_route_xip_q;
+    wire        i_route_xip = i_route_busy ? i_route_xip_q : (hi_araddr[31:24] == 8'h40);
+
+    assign im_arvalid = hi_arvalid && !i_route_xip;
+    assign x_i_arvalid = hi_arvalid && i_route_xip;
+    assign im_araddr = hi_araddr;
+    assign x_i_araddr = hi_araddr;
+    assign im_arprot = hi_arprot;
+    assign hi_arready = i_route_xip ? x_i_arready : im_arready;
+    assign im_rready = hi_rready && !i_route_xip;
+    assign x_i_rready = hi_rready && i_route_xip;
+    assign hi_rvalid = i_route_xip ? x_i_rvalid : im_rvalid;
+    assign hi_rdata = i_route_xip ? x_i_rdata : im_rdata;
+    assign hi_rresp = i_route_xip ? x_i_rresp : im_rresp;
+
+    always @(posedge clk) begin
+        if (!resetn) begin
+            i_route_busy <= 1'b0;
+            i_route_xip_q <= 1'b0;
+        end else begin
+            if (!i_route_busy && hi_arvalid && hi_arready) begin
+                i_route_busy <= 1'b1;
+                i_route_xip_q <= (hi_araddr[31:24] == 8'h40);
+            end
+            if (hi_rvalid && hi_rready)
+                i_route_busy <= 1'b0;
+        end
+    end
+
     axil_imem #(
         .WORDS(HOST_IMEM_WORDS),
         .AW(HOST_IMEM_AW),
@@ -140,14 +181,14 @@ module soc_m3v_top #(
     ) u_host_imem (
         .clk(clk),
         .resetn(resetn),
-        .arvalid(hi_arvalid),
-        .arready(hi_arready),
-        .araddr(hi_araddr),
-        .arprot(hi_arprot),
-        .rvalid(hi_rvalid),
-        .rready(hi_rready),
-        .rdata(hi_rdata),
-        .rresp(hi_rresp)
+        .arvalid(im_arvalid),
+        .arready(im_arready),
+        .araddr(im_araddr),
+        .arprot(im_arprot),
+        .rvalid(im_rvalid),
+        .rready(im_rready),
+        .rdata(im_rdata),
+        .rresp(im_rresp)
     );
 
     wire        n_s_awvalid, n_s_awready, n_s_wvalid, n_s_wready, n_s_bvalid, n_s_bready;
@@ -200,6 +241,18 @@ module soc_m3v_top #(
     wire [ 2:0] c_s_arprot;
     wire [ 1:0] c_s_rresp;
 
+    wire        x_s_awvalid, x_s_awready, x_s_wvalid, x_s_wready, x_s_bvalid, x_s_bready;
+    wire [31:0] x_s_awaddr, x_s_wdata;
+    wire [ 2:0] x_s_awprot;
+    wire [ 3:0] x_s_wstrb;
+    wire [ 1:0] x_s_bresp;
+    wire        x_s_arvalid, x_s_arready, x_s_rvalid, x_s_rready;
+    wire [31:0] x_s_araddr, x_s_rdata;
+    wire [ 2:0] x_s_arprot;
+    wire [ 1:0] x_s_rresp;
+    wire [31:0] qspi_cold_reads;
+    wire [31:0] qspi_warm_reads;
+
     wire        plic_en;
     wire [31:0] plic_addr;
     wire [31:0] plic_wdata;
@@ -245,6 +298,11 @@ module soc_m3v_top #(
         .c_bvalid(c_s_bvalid), .c_bready(c_s_bready), .c_bresp(c_s_bresp),
         .c_arvalid(c_s_arvalid), .c_arready(c_s_arready), .c_araddr(c_s_araddr), .c_arprot(c_s_arprot),
         .c_rvalid(c_s_rvalid), .c_rready(c_s_rready), .c_rdata(c_s_rdata), .c_rresp(c_s_rresp),
+        .x_awvalid(x_s_awvalid), .x_awready(x_s_awready), .x_awaddr(x_s_awaddr), .x_awprot(x_s_awprot),
+        .x_wvalid(x_s_wvalid), .x_wready(x_s_wready), .x_wdata(x_s_wdata), .x_wstrb(x_s_wstrb),
+        .x_bvalid(x_s_bvalid), .x_bready(x_s_bready), .x_bresp(x_s_bresp),
+        .x_arvalid(x_s_arvalid), .x_arready(x_s_arready), .x_araddr(x_s_araddr), .x_arprot(x_s_arprot),
+        .x_rvalid(x_s_rvalid), .x_rready(x_s_rready), .x_rdata(x_s_rdata), .x_rresp(x_s_rresp),
         .m_awvalid(hm_awvalid), .m_awready(hm_awready), .m_awaddr(hm_awaddr), .m_awprot(hm_awprot),
         .m_wvalid(hm_wvalid), .m_wready(hm_wready), .m_wdata(hm_wdata), .m_wstrb(hm_wstrb),
         .m_bvalid(hm_bvalid), .m_bready(hm_bready), .m_bresp(hm_bresp),
@@ -334,6 +392,44 @@ module soc_m3v_top #(
         .rdata(clint_rdata),
         .mtip(clint_mtip),
         .msip(clint_msip)
+    );
+
+    qspi_axil_front u_qspi_xip (
+        .clk(clk),
+        .resetn(resetn),
+        .i_arvalid(x_i_arvalid),
+        .i_arready(x_i_arready),
+        .i_araddr(x_i_araddr),
+        .i_arprot(hi_arprot),
+        .i_rvalid(x_i_rvalid),
+        .i_rready(x_i_rready),
+        .i_rdata(x_i_rdata),
+        .i_rresp(x_i_rresp),
+        .d_awvalid(x_s_awvalid),
+        .d_awready(x_s_awready),
+        .d_awaddr(x_s_awaddr),
+        .d_awprot(x_s_awprot),
+        .d_wvalid(x_s_wvalid),
+        .d_wready(x_s_wready),
+        .d_wdata(x_s_wdata),
+        .d_wstrb(x_s_wstrb),
+        .d_bvalid(x_s_bvalid),
+        .d_bready(x_s_bready),
+        .d_bresp(x_s_bresp),
+        .d_arvalid(x_s_arvalid),
+        .d_arready(x_s_arready),
+        .d_araddr(x_s_araddr),
+        .d_arprot(x_s_arprot),
+        .d_rvalid(x_s_rvalid),
+        .d_rready(x_s_rready),
+        .d_rdata(x_s_rdata),
+        .d_rresp(x_s_rresp),
+        .o_sclk(qspi_sclk),
+        .o_cs_n(qspi_cs_n),
+        .o_si(qspi_si),
+        .i_so(qspi_so),
+        .cold_reads(qspi_cold_reads),
+        .warm_reads(qspi_warm_reads)
     );
 
     wire        h_arvalid, h_arready, h_rvalid, h_rready, h_rlast;
@@ -474,6 +570,7 @@ module soc_m3v_top #(
     );
 
     wire unused_npu_status = |{npu_start, npu_config, dbg_dummy_halted, dbg_dummy_mode,
-                               dbg_dummy_acc_rdata, dbg_dummy_acc_err};
+                               dbg_dummy_acc_rdata, dbg_dummy_acc_err,
+                               qspi_cold_reads, qspi_warm_reads};
 endmodule
 `default_nettype wire

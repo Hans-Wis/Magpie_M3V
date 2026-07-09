@@ -25,6 +25,9 @@ HOST_RTL = [
 SOC_RTL = [ROOT / f"design/soc/{m}.v" for m in (
     "axil_imem", "plic_axil_shim", "periph_axil_shim", "soc_axil_decode", "soc_m3v_top",
 )]
+SOC_RTL += [ROOT / f"design/soc/qspi/{m}" for m in (
+    "qspi_master_p0.sv", "qspi_xip.sv", "qspi_axil_front.v",
+)]
 TB = [ROOT / "design/npu/dv/tb/tb_soc_m3v.v"]
 FWDIR = ROOT / "design/npu/sw/host_producer"
 

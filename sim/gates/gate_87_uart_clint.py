@@ -42,7 +42,11 @@ NPU_RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in (
 SOC_RTL = [ROOT / f"design/soc/{m}.v" for m in (
     "axil_imem", "plic_axil_shim", "periph_axil_shim", "soc_axil_decode",
     "soc_m3v_top")]
+SOC_RTL += [ROOT / "design/soc/qspi/qspi_master_p0.sv",
+            ROOT / "design/soc/qspi/qspi_xip.sv",
+            ROOT / "design/soc/qspi/qspi_axil_front.v"]
 TB = ROOT / "design/npu/dv/tb/tb_soc_m3v_periph.v"
+NOR_MODEL = ROOT / "design/npu/dv/tb/spi_nor_model.v"
 FWDIR = ROOT / "design/npu/sw/host_uart_clint"
 
 BANNER = ["UART_TX 4d", "UART_TX 33", "UART_TX 56", "UART_TX 0a", "UART_TX 21"]
@@ -61,7 +65,7 @@ def _build_and_run(tmp_path):
            f"-I{CPU_M1_DIR}", "-Mdir", str(obj),
            "-Wno-fatal", "-Wno-DECLFILENAME", "-Wno-TIMESCALEMOD",
            "-Wno-UNUSEDSIGNAL", "-Wno-SYNCASYNCNET"]
-    cmd += [str(f) for f in CPU_RTL + SOC_PERIPH_RTL + NPU_RTL + SOC_RTL + [TB]]
+    cmd += [str(f) for f in CPU_RTL + SOC_PERIPH_RTL + NPU_RTL + SOC_RTL + [NOR_MODEL, TB]]
     r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     assert r.returncode == 0, f"verilator build failed:\n{r.stdout[-3000:]}\n{r.stderr[-3000:]}"
 
