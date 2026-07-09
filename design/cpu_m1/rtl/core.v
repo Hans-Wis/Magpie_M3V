@@ -915,6 +915,7 @@ endgenerate
     wire [4:0]   fexu_q_fd;
     wire [31:0]  fexu_q_fdata, fexu_q_xdata, fexu_q_fsw_data;
     wire [4:0]   fexu_q_flags;
+    wire         fexu_q_fdiv_busy;          // F4 multi-cycle: fdiv iterating -> stall
     wire         wb_f_we;
     wire [31:0]  lsu_ld_result_wb;       // 計算在 MEM/WB stage
     reg          ex_mem_f_we_r, ex_wb_f_we_r;
@@ -938,6 +939,9 @@ endgenerate
         .q_fwe(fexu_q_fwe), .q_fd(fexu_q_fd), .q_fdata(fexu_q_fdata),
         .q_xwe(fexu_q_xwe), .q_xdata(fexu_q_xdata),
         .q_flags(fexu_q_flags),
+        .q_fdiv_busy(fexu_q_fdiv_busy),
+        .q_flush(pc_redirect || debug_halt_enter || debug_mode),
+        .q_advance(id_advance_to_ex_mem),
         .w_en(wb_f_we), .w_fd(ex_wb_f_fd_r),
         .w_data(ex_wb_f_flw_r ? lsu_ld_result_wb : ex_wb_f_data_r)
     );
@@ -1629,7 +1633,7 @@ endgenerate
         .wb_rd_idx    (ex_wb_rd_idx),
         .wb_is_load   (ex_wb_is_load),
         .md_busy      (md_busy),
-        .vex_stall    (vex_raw_stall || vex_mem_hold || f_raw_stall),
+        .vex_stall    (vex_raw_stall || vex_mem_hold || f_raw_stall || fexu_q_fdiv_busy),
         .stall        (stall),
         .operand_stall(hz_operand_stall)
     );

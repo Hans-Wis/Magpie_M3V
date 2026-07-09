@@ -41,6 +41,11 @@ module fexu #(
     output wire [31:0] q_xdata,
     output wire [4:0]  q_flags,     // fflags accrual {NV,DZ,OF,UF,NX}
 
+    // ---- F4 multi-cycle (fdiv iterative divider) ----
+    output wire        q_fdiv_busy, // fdiv is iterating: hold the pipe (like md_busy)
+    input  wire        q_flush,     // redirect/debug: kill in-flight fdiv (ERRATA-0002)
+    input  wire        q_advance,   // instr leaves EX this cycle (consume held result)
+
     // ---- WB commit ----
     input  wire        w_en,
     input  wire [4:0]  w_fd,
@@ -666,49 +671,113 @@ module fexu #(
     end
 
     // ---------------- fdiv (softfloat f32_div structure) ----------------
-    reg  [31:0] fdiv_res;
-    reg  [4:0]  fdiv_fl;
-    always @* begin : f_div
+    // F4 multi-cycle: NaN/inf/zero/DZ special cases resolve in one combinational
+    // cycle; the normal-case significand divide (num / sgB) is an iterative
+    // radix-2 restoring divider — bit-exact to floor(num/sgB) — that removes the
+    // huge combinational divide array from the EX critical path. Handshake mirrors
+    // div.v (start / done-held-until-advance / flush on redirect, ERRATA-0002).
+    wire fdiv_op_here   = op_fdiv && q_hit && !q_illegal;
+    wire fdiv_special   = a_nan || b_nan || a_inf || b_inf || b_zeroe || a_zeroe;
+    wire fdiv_needs_iter = fdiv_op_here && !fdiv_special;
+
+    // --- special-case result (combinational, 1 cycle) ---
+    reg  [31:0] fdiv_sp_res;
+    reg  [4:0]  fdiv_sp_fl;
+    always @* begin : f_div_special
         reg signZ;
-        reg signed [9:0] expZ;
-        reg [63:0] num;
-        reg [31:0] q;
-        reg [36:0] rp;
-        fdiv_res = 32'h0; fdiv_fl = 5'b0;
         signZ = sA ^ sB;
-        expZ = 10'sd0; num = 64'b0; q = 32'b0; rp = 37'b0;
+        fdiv_sp_res = 32'h0; fdiv_sp_fl = 5'b0;
         if (a_nan || b_nan) begin
-            fdiv_res = QNAN; fdiv_fl = (a_snan || b_snan) ? 5'b10000 : 5'b0;
+            fdiv_sp_res = QNAN; fdiv_sp_fl = (a_snan || b_snan) ? 5'b10000 : 5'b0;
         end else if (a_inf && b_inf) begin
-            fdiv_res = QNAN; fdiv_fl = 5'b10000;
+            fdiv_sp_res = QNAN; fdiv_sp_fl = 5'b10000;
         end else if (a_inf) begin
-            fdiv_res = {signZ, 8'hFF, 23'b0};
+            fdiv_sp_res = {signZ, 8'hFF, 23'b0};
         end else if (b_inf) begin
-            fdiv_res = {signZ, 31'b0};
+            fdiv_sp_res = {signZ, 31'b0};
         end else if (b_zeroe) begin
             if (a_zeroe) begin
-                fdiv_res = QNAN; fdiv_fl = 5'b10000;                  // 0/0
+                fdiv_sp_res = QNAN; fdiv_sp_fl = 5'b10000;            // 0/0
             end else begin
-                fdiv_res = {signZ, 8'hFF, 23'b0}; fdiv_fl = 5'b01000; // DZ
+                fdiv_sp_res = {signZ, 8'hFF, 23'b0}; fdiv_sp_fl = 5'b01000; // DZ
             end
         end else if (a_zeroe) begin
-            fdiv_res = {signZ, 31'b0};
-        end else begin
-            expZ = enA - enB + 10'sd126;
-            if (sgA < sgB) begin
-                expZ = expZ - 10'sd1;
-                num = {9'b0, sgA, 31'b0};                             // <<31
-            end else
-                num = {10'b0, sgA, 30'b0};                            // <<30
-            num = num / {40'b0, sgB};
-            q = num[31:0];
-            num = (sgA < sgB) ? {9'b0, sgA, 31'b0} : {10'b0, sgA, 30'b0};
-            if (q[5:0] == 6'b0)
-                q = q | {31'b0, (({40'b0, sgB} * {32'b0, q}) != num)};
-            rp = rp32(signZ, expZ, q[30:0]);
-            fdiv_fl = rp[36:32]; fdiv_res = rp[31:0];
+            fdiv_sp_res = {signZ, 31'b0};
         end
     end
+
+    // --- iterative radix-2 restoring divider (normal case) ---
+    localparam [1:0] FD_IDLE = 2'd0, FD_WORK = 2'd1, FD_DONE = 2'd2;
+    reg  [1:0]  fd_state;
+    reg  [5:0]  fd_iter;               // 0..55 (56 quotient steps)
+    reg  [55:0] fd_dvd;                // dividend, MSB-first consumed (sgA<<31 or <<30)
+    reg  [23:0] fd_dsor;              // divisor = sgB
+    reg  [24:0] fd_rem;               // partial remainder (< 2*sgB < 2^25)
+    reg  [31:0] fd_quo;               // quotient[31:0] accumulator
+    reg         fd_signZ;
+    reg  signed [9:0] fd_expZ;
+    reg         fdiv_result_valid;
+    reg  [31:0] fdiv_iter_res;
+    reg  [4:0]  fdiv_iter_fl;
+
+    assign q_fdiv_busy = (EN_F != 0) && q_valid && fdiv_needs_iter && !fdiv_result_valid;
+    wire fd_start = (EN_F != 0) && q_valid && fdiv_needs_iter &&
+                    (fd_state == FD_IDLE) && !fdiv_result_valid && !q_flush;
+
+    // one restoring step (combinational next-values)
+    wire [24:0] fd_rem_sh = {fd_rem[23:0], fd_dvd[55]};
+    wire        fd_ge     = (fd_rem_sh >= {1'b0, fd_dsor});
+    wire [24:0] fd_rem_nx = fd_ge ? (fd_rem_sh - {1'b0, fd_dsor}) : fd_rem_sh;
+    wire [31:0] fd_quo_nx = {fd_quo[30:0], fd_ge};
+
+    // sticky + round-pack of the finished quotient (combinational, used in FD_DONE)
+    reg  [31:0] fd_q_final;
+    reg  [36:0] fd_rp;
+    always @* begin : f_div_pack
+        fd_q_final = fd_quo;
+        if (fd_quo[5:0] == 6'b0)                    // low-6-zero: rem!=0 -> sticky
+            fd_q_final = fd_quo | {31'b0, (fd_rem != 25'b0)};
+        fd_rp = rp32(fd_signZ, fd_expZ, fd_q_final[30:0]);
+    end
+
+    always @(posedge clk) begin
+        if (!resetn) begin
+            fd_state <= FD_IDLE; fdiv_result_valid <= 1'b0;
+        end else if (q_flush) begin
+            fd_state <= FD_IDLE; fdiv_result_valid <= 1'b0;   // ERRATA-0002: kill wrong-path
+        end else begin
+            case (fd_state)
+                FD_IDLE: if (fd_start) begin
+                    fd_signZ <= sA ^ sB;
+                    fd_expZ  <= enA - enB + 10'sd126 - (sgA < sgB ? 10'sd1 : 10'sd0);
+                    fd_dvd   <= (sgA < sgB) ? {1'b0, sgA, 31'b0} : {2'b0, sgA, 30'b0};
+                    fd_dsor  <= sgB;
+                    fd_rem   <= 25'b0;
+                    fd_quo   <= 32'b0;
+                    fd_iter  <= 6'd0;
+                    fd_state <= FD_WORK;
+                end
+                FD_WORK: begin
+                    fd_rem  <= fd_rem_nx;
+                    fd_quo  <= fd_quo_nx;
+                    fd_dvd  <= {fd_dvd[54:0], 1'b0};
+                    fd_iter <= fd_iter + 6'd1;
+                    if (fd_iter == 6'd55) fd_state <= FD_DONE;
+                end
+                FD_DONE: begin
+                    fdiv_iter_res     <= fd_rp[31:0];
+                    fdiv_iter_fl      <= fd_rp[36:32];
+                    fdiv_result_valid <= 1'b1;
+                    fd_state          <= FD_IDLE;
+                end
+                default: fd_state <= FD_IDLE;
+            endcase
+            if (q_advance && fdiv_result_valid) fdiv_result_valid <= 1'b0;
+        end
+    end
+
+    wire [31:0] fdiv_res = fdiv_special ? fdiv_sp_res : fdiv_iter_res;
+    wire [4:0]  fdiv_fl  = fdiv_special ? fdiv_sp_fl  : fdiv_iter_fl;
 
     // ---------------- fsqrt (integer sqrt + square-check sticky) --------------
     reg  [31:0] fsq_res;
