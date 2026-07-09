@@ -19,9 +19,11 @@ NPU_RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in (
 HOST_RTL = [
     CPU_M1_DIR / "axil_bridge.v",
     ROOT / "design/cpu_m1/soc/plic.v",
+    ROOT / "design/cpu_m1/soc/uart.v",
+    ROOT / "design/cpu_m1/soc/clint.v",
 ]
 SOC_RTL = [ROOT / f"design/soc/{m}.v" for m in (
-    "axil_imem", "plic_axil_shim", "soc_axil_decode", "soc_m3v_top",
+    "axil_imem", "plic_axil_shim", "periph_axil_shim", "soc_axil_decode", "soc_m3v_top",
 )]
 TB = [ROOT / "design/npu/dv/tb/tb_soc_m3v_irq.v"]
 FWDIR = ROOT / "design/npu/sw/host_producer_irq"

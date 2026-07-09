@@ -39,12 +39,12 @@ or XIP flash behind imem wrapper」)。不影響 §3 記分板,不新增對 Cora
 | 窗 | Base | Size | 備註 |
 |---|---|---|---|
 | CLINT | `0x0200_0000` | 64KB | 沿 ADR-0020 慣例 |
-| UART | `0x1000_0000` | 256B | 沿 ADR-0020;PLIC src1 |
+| UART | `0x1000_0000` | 256B | 沿 ADR-0020;PLIC ID2(ID1=NPU,M2 既有) |
 | **QSPI XIP** | **`0x4000_0000`** | 16MB | **不能用 M6 的 `0x8000_0000`(M3V shared SRAM 已佔)**;`0x4000_0000` 現為 DECERR 空窗 |
 | QSPI CSR(P2) | `0x4100_0000` | 4KB | prog/erase/quad 模式切換用,P0 不建 |
 
 - `soc_axil_decode` ROUTE 2-bit 已滿(4 碼全用)→ **加寬 3-bit** + 新增 slave 埠組。
-- PLIC sources 7-bit 現只用 bit0(NPU):**bit1=UART THRE、bit2=QSPI(P2)**,餘保留。
+- PLIC sources 7-bit 現只用 bit0(NPU):**ID2=UART THRE、ID3=QSPI(P2);ID1=NPU(M2 既有)**,餘保留。
 - XIP 取指:host `M_AXI_I` 側新增 I-decode(imem `0x0` / XIP `0x4000_0000` 二選)。
   D-bus 同窗可讀(權重從 flash 載入 shared SRAM 的路徑)→ QSPI 控制器前置 **2:1
   arbiter(I 優先)**,單 outstanding(qspi_xip 本身單流)。
@@ -90,7 +90,7 @@ M6 的 QSPI **零功能 DV、無 flash model** — 驗證全部本線自建:
    host 從 flash 取指執行完整 q_proj 卸載,權威 = 既有 AXI scoreboard + 結果 bit-exact
    vs gate_46 golden + 兩 boot 路結果一致。**非 performance gate**;TB timeout 依 XIP
    慢一個數量級放寬(timeout ≠ 功能錯)。
-4. `gate_87_uart_clint`:UART tx scoreboard(byte 序列)+ THRE IRQ 經 PLIC bit1
+4. `gate_87_uart_clint`:UART tx scoreboard(byte 序列)+ THRE IRQ 經 PLIC ID2
    claim/complete;CLINT mtimecmp → mtip → host trap handler directed(復用 phase_03
    trap 基建)+ **msip 軟中斷 directed** + **CLINT 未編程時 mtip 恆 0**(防 tie-1
    殘留)。

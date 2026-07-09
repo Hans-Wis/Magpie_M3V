@@ -38,7 +38,7 @@ P0 三項先行(P1=debug dm/dtm 掛載+GPIO、P2=QSPI quad+program/erase,後續�
 | 窗 | Base | Size | 附註 |
 |---|---|---|---|
 | QSPI XIP | `0x4000_0000` | 16MB | read-only;寫 → SLVERR;映像外讀 = `0xFFFF_FFFF`(NOR 語意,越界防護=韌體 bounds,同 M3b-3 誠實界) |
-| UART | `0x1000_0000` | 256B | PLIC source **1** = THRE IRQ |
+| UART | `0x1000_0000` | 256B | PLIC source **2** = THRE IRQ(NPU 保持 ID 1=M2 既有契約;ADR 原寫 src1 係未查 npu 已佔,amended) |
 | CLINT | `0x0200_0000` | 64KB | msip/mtimecmp/mtime,RV32 雙字存取 |
 
 - `soc_axil_decode` ROUTE 2→**3-bit**,新增 UART/CLINT/XIP(D 側)三 slave 埠組。

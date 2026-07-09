@@ -7,7 +7,8 @@
 // -----------------------------------------------------------------------------
 // M3b-3 two-bus formalization (ADR-0068 §2.5):
 //   CONTROL AXI (32-bit, always): host M_AXI_D -> soc_axil_decode ->
-//       {NPU CSR/TCM 0x3000, PLIC 0x0c00, SRAM host-bridge 0x8000}. DECERR off-map.
+//       {CLINT 0x0200, PLIC 0x0c00, UART 0x1000, NPU CSR/TCM 0x3000,
+//        SRAM host-bridge 0x8000}. DECERR off-map.
 //   DATA AXI (DMA_DATA_W = 64*MAT_LANES): npu_dma master + host bridge (axil_to_full,
 //       narrow-beat-on-wide-bus) -> axi_full_arbiter_2x1 -> axi_full_sram @0x8000.
 //   BRIDGE: axil_to_full crosses control->data for host weight/CQ writes.
@@ -36,7 +37,9 @@ module soc_m3v_top #(
     output wire [31:0] host_dbg_pc,
     output wire [31:0] host_dbg_instr,
     output wire [ 2:0] host_dbg_state,
-    output wire npu_irq
+    output wire npu_irq,
+    output wire uart_tx_strobe,
+    output wire [ 7:0] uart_tx_byte
 );
     initial begin
         if (DMA_DATA_W != 32 && DMA_DATA_W != 64 && DMA_DATA_W != 128 && DMA_DATA_W != 256)
@@ -68,6 +71,8 @@ module soc_m3v_top #(
     wire [31:0] dbg_dummy_acc_rdata;
     wire        dbg_dummy_acc_err;
     wire        plic_meip;
+    wire        clint_mtip;
+    wire        clint_msip;
 
     cpu_m1_top #(
         .RESET_PC(HOST_RESET_PC),
@@ -81,7 +86,7 @@ module soc_m3v_top #(
         .dbus_wstrb(host_dbus_wstrb), .dbus_wdata(host_dbus_wdata),
         .dbus_ready(host_dbus_ready), .dbus_rdata(host_dbus_rdata),
         .irq_external_pulse(1'b0),
-        .mtip(1'b0), .msip(1'b0),
+        .mtip(clint_mtip), .msip(clint_msip),
         .meip(plic_meip),
         .dm_halt_req(1'b0),
         .dm_resume_req(1'b0),
@@ -175,11 +180,42 @@ module soc_m3v_top #(
     wire [ 2:0] p_s_arprot;
     wire [ 1:0] p_s_rresp;
 
+    wire        u_s_awvalid, u_s_awready, u_s_wvalid, u_s_wready, u_s_bvalid, u_s_bready;
+    wire [31:0] u_s_awaddr, u_s_wdata;
+    wire [ 2:0] u_s_awprot;
+    wire [ 3:0] u_s_wstrb;
+    wire [ 1:0] u_s_bresp;
+    wire        u_s_arvalid, u_s_arready, u_s_rvalid, u_s_rready;
+    wire [31:0] u_s_araddr, u_s_rdata;
+    wire [ 2:0] u_s_arprot;
+    wire [ 1:0] u_s_rresp;
+
+    wire        c_s_awvalid, c_s_awready, c_s_wvalid, c_s_wready, c_s_bvalid, c_s_bready;
+    wire [31:0] c_s_awaddr, c_s_wdata;
+    wire [ 2:0] c_s_awprot;
+    wire [ 3:0] c_s_wstrb;
+    wire [ 1:0] c_s_bresp;
+    wire        c_s_arvalid, c_s_arready, c_s_rvalid, c_s_rready;
+    wire [31:0] c_s_araddr, c_s_rdata;
+    wire [ 2:0] c_s_arprot;
+    wire [ 1:0] c_s_rresp;
+
     wire        plic_en;
     wire [31:0] plic_addr;
     wire [31:0] plic_wdata;
     wire [ 3:0] plic_wstrb;
     wire [31:0] plic_rdata;
+    wire        uart_en;
+    wire [31:0] uart_addr;
+    wire [31:0] uart_wdata;
+    wire [ 3:0] uart_wstrb;
+    wire [31:0] uart_rdata;
+    wire        uart_tx_irq_o;
+    wire        clint_en;
+    wire [31:0] clint_addr;
+    wire [31:0] clint_wdata;
+    wire [ 3:0] clint_wstrb;
+    wire [31:0] clint_rdata;
 
     soc_axil_decode u_d_decode (
         .clk(clk),
@@ -199,6 +235,16 @@ module soc_m3v_top #(
         .p_bvalid(p_s_bvalid), .p_bready(p_s_bready), .p_bresp(p_s_bresp),
         .p_arvalid(p_s_arvalid), .p_arready(p_s_arready), .p_araddr(p_s_araddr), .p_arprot(p_s_arprot),
         .p_rvalid(p_s_rvalid), .p_rready(p_s_rready), .p_rdata(p_s_rdata), .p_rresp(p_s_rresp),
+        .u_awvalid(u_s_awvalid), .u_awready(u_s_awready), .u_awaddr(u_s_awaddr), .u_awprot(u_s_awprot),
+        .u_wvalid(u_s_wvalid), .u_wready(u_s_wready), .u_wdata(u_s_wdata), .u_wstrb(u_s_wstrb),
+        .u_bvalid(u_s_bvalid), .u_bready(u_s_bready), .u_bresp(u_s_bresp),
+        .u_arvalid(u_s_arvalid), .u_arready(u_s_arready), .u_araddr(u_s_araddr), .u_arprot(u_s_arprot),
+        .u_rvalid(u_s_rvalid), .u_rready(u_s_rready), .u_rdata(u_s_rdata), .u_rresp(u_s_rresp),
+        .c_awvalid(c_s_awvalid), .c_awready(c_s_awready), .c_awaddr(c_s_awaddr), .c_awprot(c_s_awprot),
+        .c_wvalid(c_s_wvalid), .c_wready(c_s_wready), .c_wdata(c_s_wdata), .c_wstrb(c_s_wstrb),
+        .c_bvalid(c_s_bvalid), .c_bready(c_s_bready), .c_bresp(c_s_bresp),
+        .c_arvalid(c_s_arvalid), .c_arready(c_s_arready), .c_araddr(c_s_araddr), .c_arprot(c_s_arprot),
+        .c_rvalid(c_s_rvalid), .c_rready(c_s_rready), .c_rdata(c_s_rdata), .c_rresp(c_s_rresp),
         .m_awvalid(hm_awvalid), .m_awready(hm_awready), .m_awaddr(hm_awaddr), .m_awprot(hm_awprot),
         .m_wvalid(hm_wvalid), .m_wready(hm_wready), .m_wdata(hm_wdata), .m_wstrb(hm_wstrb),
         .m_bvalid(hm_bvalid), .m_bready(hm_bready), .m_bresp(hm_bresp),
@@ -224,13 +270,70 @@ module soc_m3v_top #(
     plic u_plic (
         .clk(clk),
         .rst(~resetn),
-        .sources({6'b0, npu_irq}),
+        // sources[i] = PLIC ID i+1: NPU keeps ID 1 (M2 contract, host_producer_irq
+        // claims id==1); UART THRE = ID 2 (ADR-0069 as amended).
+        .sources({5'b0, uart_tx_irq_o, npu_irq}),
         .en(plic_en),
         .addr(plic_addr),
         .wdata(plic_wdata),
         .wstrb(plic_wstrb),
         .rdata(plic_rdata),
         .meip_o(plic_meip)
+    );
+
+    periph_axil_shim u_uart_axil (
+        .clk(clk),
+        .resetn(resetn),
+        .s_awvalid(u_s_awvalid), .s_awready(u_s_awready), .s_awaddr(u_s_awaddr), .s_awprot(u_s_awprot),
+        .s_wvalid(u_s_wvalid), .s_wready(u_s_wready), .s_wdata(u_s_wdata), .s_wstrb(u_s_wstrb),
+        .s_bvalid(u_s_bvalid), .s_bready(u_s_bready), .s_bresp(u_s_bresp),
+        .s_arvalid(u_s_arvalid), .s_arready(u_s_arready), .s_araddr(u_s_araddr), .s_arprot(u_s_arprot),
+        .s_rvalid(u_s_rvalid), .s_rready(u_s_rready), .s_rdata(u_s_rdata), .s_rresp(u_s_rresp),
+        .periph_en(uart_en),
+        .periph_addr(uart_addr),
+        .periph_wdata(uart_wdata),
+        .periph_wstrb(uart_wstrb),
+        .periph_rdata(uart_rdata)
+    );
+
+    uart u_uart (
+        .clk(clk),
+        .rst(~resetn),
+        .en(uart_en),
+        .addr(uart_addr),
+        .wdata(uart_wdata),
+        .wstrb(uart_wstrb),
+        .rdata(uart_rdata),
+        .tx_strobe_o(uart_tx_strobe),
+        .tx_byte_o(uart_tx_byte),
+        .tx_irq_o(uart_tx_irq_o)
+    );
+
+    periph_axil_shim u_clint_axil (
+        .clk(clk),
+        .resetn(resetn),
+        .s_awvalid(c_s_awvalid), .s_awready(c_s_awready), .s_awaddr(c_s_awaddr), .s_awprot(c_s_awprot),
+        .s_wvalid(c_s_wvalid), .s_wready(c_s_wready), .s_wdata(c_s_wdata), .s_wstrb(c_s_wstrb),
+        .s_bvalid(c_s_bvalid), .s_bready(c_s_bready), .s_bresp(c_s_bresp),
+        .s_arvalid(c_s_arvalid), .s_arready(c_s_arready), .s_araddr(c_s_araddr), .s_arprot(c_s_arprot),
+        .s_rvalid(c_s_rvalid), .s_rready(c_s_rready), .s_rdata(c_s_rdata), .s_rresp(c_s_rresp),
+        .periph_en(clint_en),
+        .periph_addr(clint_addr),
+        .periph_wdata(clint_wdata),
+        .periph_wstrb(clint_wstrb),
+        .periph_rdata(clint_rdata)
+    );
+
+    clint u_clint (
+        .clk(clk),
+        .resetn(resetn),
+        .en(clint_en),
+        .addr(clint_addr),
+        .wstrb(clint_wstrb),
+        .wdata(clint_wdata),
+        .rdata(clint_rdata),
+        .mtip(clint_mtip),
+        .msip(clint_msip)
     );
 
     wire        h_arvalid, h_arready, h_rvalid, h_rready, h_rlast;
