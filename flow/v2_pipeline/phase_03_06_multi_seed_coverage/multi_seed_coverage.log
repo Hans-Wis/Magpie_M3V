@@ -1,3 +1,0 @@
-Total coverage (877/2151) 40.00%
-See lines with '%00' in /home/edauser/project/SOC/Magpie_M1A/flow/v2_pipeline/phase_03_06_multi_seed_coverage/coverage/annotated
-PASS: multi-seed lockstep matched 5 seeds / 405 commits; line coverage 59.65% (1283/2151)

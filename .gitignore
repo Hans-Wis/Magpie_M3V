@@ -104,3 +104,7 @@ flow/v2_pipeline/phase_03_09_riscvdv_lockstep/zb/
 flow/dc_tsmc28/sram_macros/
 flow/dc_tsmc28/sram_db/
 command.log
+
+# all tool/sim logs & dumps (regenerable)
+*.log
+*.dump

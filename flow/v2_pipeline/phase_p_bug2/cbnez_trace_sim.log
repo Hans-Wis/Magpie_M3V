@@ -1,5 +1,0 @@
-STOP: tohost pc=000029fe commits=552
-- tb_archtest_xbound_trace.v:153: Verilog $finish
-- S i m u l a t i o n   R e p o r t: Verilator 5.046 2026-02-28
-- Verilator: $finish at 13us; walltime 0.005 s; speed 2.720 ms/s
-- Verilator: cpu 0.005 s on 1 threads; allocated 19 MB

@@ -1,1 +1,0 @@
-PASS: CSR/IDU residual coverage merged; DUT line 1374/1432 (95.95%, +11); DUT toggle 12745/20252 (62.93%, +12); csr=122/137 (89.05%); idu=90/92 (97.83%)

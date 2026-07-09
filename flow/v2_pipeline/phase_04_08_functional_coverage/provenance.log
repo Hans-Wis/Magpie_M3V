@@ -1,7 +1,0 @@
-host=eda
-date_utc=2026-06-09T15:13:53Z
-vcs_version=vcs script version : X-2025.06
-urg_version=Note: Bumping stack limit from 12500 to unlimited Kbytes.
-key_commands=make clean all; ./simv -cm line+tgl+cond+fsm+branch+assert -cm_dir coverage/vdb/<test>.vdb [+irq_at_0x80] -l logs/<test>.sim.log
-merge_cmd=/soft/synopsys/vcs/X-2025.06-SP1/bin/urg -full64 -lca -flex_merge code_union -dir coverage/compile.vdb coverage/vdb/*.vdb -report urgReport
-tests=random_arith branch_bp_ras csr_ops irq_mret misalign m_ext ecall illegal load_use muldiv_busy fetch_stall riscv_isacov_gaps jal_imm_zero jal_imm_min
