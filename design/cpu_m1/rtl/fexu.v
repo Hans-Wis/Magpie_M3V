@@ -596,12 +596,13 @@ module fexu #(
             else
                 fma_res = fc ^ {fma_negc, 31'b0};
         end else begin
-            expProd = enA + enB - 10'sd126;
-            sigProd = ({40'b0, sgA} << 7) * ({40'b0, sgB} << 7);
-            if (sigProd < 64'h2000_0000_0000_0000) begin
-                expProd = expProd - 10'sd1;
-                sigProd = sigProd << 1;
-            end
+            // F3 2-stage: the mantissa multiply (sigProd) + its exponent are
+            // computed in stage 1 and registered (fma_sigProd_r/fma_expProd_r);
+            // this stage-2 pass does align/add/normalize/round from the register,
+            // breaking the mult->add->round combinational cone. Operand-derived
+            // signals stay valid because the op is held in EX for the extra cycle.
+            expProd = fma_expProd_r;
+            sigProd = fma_sigProd_r;
             if (c_zeroe) begin
                 expZ = expProd - 10'sd1;
                 sigZ = sigProd[62:31] | {31'b0, (sigProd[30:0] != 31'b0)};
@@ -876,8 +877,45 @@ module fexu #(
     wire [31:0] fsq_res = fsqrt_special ? fsq_sp_res : fsqrt_iter_res;
     wire [4:0]  fsq_fl  = fsqrt_special ? fsq_sp_fl  : fsqrt_iter_fl;
 
-    // combined float multi-cycle busy (fdiv or fsqrt) -> pipe stall
-    assign q_fmc_busy = fdiv_busy_i || fsqrt_busy_i;
+    // ---------------- FMA 2-stage (F3): register the mantissa multiply ----------
+    // The fused multiply-add was the tallest EX cone (mult -> align-add -> round).
+    // Stage 1 computes the 48-bit mantissa product + its exponent and registers
+    // them; stage 2 (the f_fma block above) does align/add/round from the register.
+    // Normal FMA takes 1 extra cycle (held via q_fmc_busy); specials stay 1-cycle.
+    // Operands stay valid across the hold, so only sigProd/expProd need registering.
+    wire fma_op_here    = op_fma && q_hit && !q_illegal;
+    wire fma_special    = a_nan || b_nan || c_nan || a_inf || b_inf || c_inf ||
+                          a_zeroe || b_zeroe;
+    wire fma_needs_iter = fma_op_here && !fma_special;
+
+    wire [63:0] fma_sigProd_c0 = ({40'b0, sgA} << 7) * ({40'b0, sgB} << 7);
+    wire        fma_norm_c     = (fma_sigProd_c0 < 64'h2000_0000_0000_0000);
+    wire [63:0] fma_sigProd_c  = fma_norm_c ? (fma_sigProd_c0 << 1) : fma_sigProd_c0;
+    wire signed [9:0] fma_expProd_c = enA + enB - 10'sd126 -
+                                      (fma_norm_c ? 10'sd1 : 10'sd0);
+
+    reg  [63:0] fma_sigProd_r;
+    reg  signed [9:0] fma_expProd_r;
+    reg         fma_result_valid;
+    wire fma_busy_i = (EN_F != 0) && q_valid && fma_needs_iter && !fma_result_valid;
+
+    always @(posedge clk) begin
+        if (!resetn) begin
+            fma_result_valid <= 1'b0;
+        end else if (q_flush) begin
+            fma_result_valid <= 1'b0;                       // ERRATA-0002
+        end else begin
+            if (fma_needs_iter && !fma_result_valid) begin  // stage 1: latch product
+                fma_sigProd_r    <= fma_sigProd_c;
+                fma_expProd_r    <= fma_expProd_c;
+                fma_result_valid <= 1'b1;
+            end
+            if (q_advance && fma_result_valid) fma_result_valid <= 1'b0;
+        end
+    end
+
+    // combined float multi-cycle busy (fdiv / fsqrt / fma) -> pipe stall
+    assign q_fmc_busy = fdiv_busy_i || fsqrt_busy_i || fma_busy_i;
 
     // ---------------- result muxes ----------------
     assign q_fwe = q_hit && !q_illegal &&
