@@ -96,3 +96,7 @@ flow/v2_pipeline/phase_03_09_riscvdv_lockstep/zb/
 **/spike.log
 **/sim.log
 **/lockstep.log
+**/firmware_rand.S
+**/firmware_frand.S
+**/lockstep_report.md
+**/*.disasm
