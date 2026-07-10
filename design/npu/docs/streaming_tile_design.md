@@ -1,7 +1,7 @@
 # Streaming-tile 契約 + double-buffer(設計確認草案,§2 —— 待 Grok review)
 
-Status: DRAFT(User 裁示 2026-07-10「#1+#3 並行」;本檔 = #1 架構確認,
-Grok review 後定 ADR-0073,才落 RTL)
+Status: **REVIEWED — Grok 通過架構方向(docs/reviews/2026-07-10_strip_streaming_grok.md);
+三前置已併入 §6,契約細節於 ADR-0073 凍結後落 RTL**
 Date: 2026-07-10 · 依據:`2026-07-10_ddr_wall_formal.md`(2.86 B/cyc@G2-cal、
 短 burst 首拍稅、單 outstanding 空窗)· 真尺寸基線 §C(320 tiles/proj 編排稅)
 
@@ -56,3 +56,19 @@ Date: 2026-07-10 · 依據:`2026-07-10_ddr_wall_formal.md`(2.86 B/cyc@G2-cal、
 (K=320×2)的 buffer/效率 trade;(c) 單 outstanding 背靠背 AR 是否足以貼
 G2 連續流(或需 2-AR);(d) descriptor 契約欄位完備性;(e) H=640 下 N 尾段
 (640=10×64 整除,無尾)與其他 proj 形狀(N=1024/2048/640)的一般化。
+
+## 6. Grok review 併入(進 ADR-0073 的凍結項)
+
+1. **DMA = 硬體 burst 鏈**:一條 strip 命令觸發 10×256-beat burst 自動續 AR
+   (禁止 per-burst 回 ml_ctrl 軟體下發 —— 否則單 outstanding 空窗再現)。
+2. **ACC clear 邊界 = strip**;僅 strip 內 K-chunk 連續累加;**rendezvous
+   (compute-done ∧ prefetch-done)= 唯一 bank 交換點**,RTL 斷言。
+3. **descriptor 完整欄位 + illegal 表 + residual 政策**:N_STRIPS=ceil(N/64)、
+   K/N 尾段 mask/pad 契約寫死(本模型全整除仍必須凍結);同一 strip 硬體迴圈
+   服務所有 proj(僅 descriptor 參數化,禁 per-proj RTL 特化)。
+4. 契約缺口收口:首 strip PREFILL 冷啟動、命令邊界 bank 狀態 reset、two-tier
+   mode bit/illegal 組合、W_BASE 4KB 對齊 + 緊排(免跨頁驗證)、prefetch bus
+   ERR → drain + ACC 作廢 + ERR_CAUSE 新碼、soft_reset 清 DMA 鏈/bank/ACC/
+   rendezvous。
+5. 效能斷言(B/cyc≥4.0)與功能 bit-exact **分列 assertion**(green-wash 守衛)。
+6. 本階段不做:2-AR、半-K strip 主路徑、權重回 DTCM(Grok 明確)。
