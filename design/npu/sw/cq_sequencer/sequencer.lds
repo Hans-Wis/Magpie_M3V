@@ -7,14 +7,14 @@ ENTRY(_start)
  * (S0 added MAT_ACT_LUT/MAT_EWISE_MUL + int64 srdhm/rdbpot) .bss crept past 0x700; place it
  * high in the DTCM (0x2000, above all CQ scratch regions) instead. The DTCM copy of .text
  * that blobs overwrite is harmless — execution is from ITCM. No runtime-address changes. */
-/* dtcm ORIGIN sits just above the CQ scratch regions (weight/blob top ~0xD40, descriptor
- * scratch 0xF00..0xF80) at 0x1100, and BELOW the 8K ITCM top — the same firmware.hex is
+/* dtcm ORIGIN parks DTCM-read data above the CQ scratch regions (weight/blob,
+ * strip staging, descriptor scratch) at 0x1C00, and BELOW the 8K ITCM top — the same firmware.hex is
  * $readmemh'd into both the 8K ITCM and the 32K DTCM, so .rodata/.bss LMAs must fit the
  * smaller ITCM. Data is only READ from the DTCM copy; the ITCM copy is loaded but unused. */
 MEMORY
 {
   itcm (rx) : ORIGIN = 0x00000000, LENGTH = 8K
-  dtcm (rw) : ORIGIN = 0x00001100, LENGTH = 27K
+  dtcm (rw) : ORIGIN = 0x00001C00, LENGTH = 25K
 }
 SECTIONS
 {

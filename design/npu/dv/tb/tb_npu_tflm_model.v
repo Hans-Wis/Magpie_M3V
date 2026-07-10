@@ -37,7 +37,7 @@ module tb_npu_tflm_model;
     wire        irq, npu_start;
     wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(8192), .TCM_AW(13)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13), .ML_V2_EN(1)) dut (
         .clk(clk), .resetn(resetn),
         .s_awvalid(s_awvalid), .s_awready(s_awready), .s_awaddr(s_awaddr), .s_awprot(3'b0),
         .s_wvalid(s_wvalid), .s_wready(s_wready), .s_wdata(s_wdata), .s_wstrb(s_wstrb),
