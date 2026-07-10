@@ -34,6 +34,13 @@ module tb_ml_v2_gemm;
     wire [31:0] npu_config;
     reg         use_ddr_model;
     integer     ddr_model_arg;
+    reg         strip_case;
+    integer     strip_case_arg;
+    reg [1023:0] fw_hex;
+    reg [1023:0] shared_hex;
+    reg [1023:0] meta_hex;
+    reg [1023:0] tcm_hex;
+    reg [1023:0] dump_path;
 
     wire        sram_arready, sram_rvalid, sram_rlast;
     wire [DMA_DATA_W-1:0] sram_rdata;
@@ -45,12 +52,6 @@ module tb_ml_v2_gemm;
     wire [ 1:0] ddr_rresp;
     wire        ddr_awready, ddr_wready, ddr_bvalid;
     wire [ 1:0] ddr_bresp;
-
-    initial begin
-        use_ddr_model = (DDR_MODEL != 0);
-        if ($value$plusargs("DDR_MODEL=%d", ddr_model_arg))
-            use_ddr_model = (ddr_model_arg != 0);
-    end
 
     npu_top #(.TCM_WORDS(8192), .TCM_AW(13), .MAT_LANES(MAT_LANES), .DMA_DATA_W(DMA_DATA_W), .ML_V2_EN(1)) dut (
         .clk(clk), .resetn(resetn),
@@ -101,32 +102,71 @@ module tb_ml_v2_gemm;
         .bvalid(ddr_bvalid), .bready(m_bready && use_ddr_model), .bresp(ddr_bresp)
     );
 
-    initial begin
-        $readmemh("design/npu/sw/ml_job_driver/ml_job_driver.hex", dut.tcm.mem);
-        $readmemh("design/npu/sw/ml_job_driver/ml_job_driver.hex", dut.itcm.mem);
-        $readmemh("sim/work/ml_v2_gemm/ml_v2_shared.hex", shared_sram.mem);
-        $readmemh("sim/work/ml_v2_gemm/ml_v2_shared.hex", shared_ddr.mem);
-    end
-
     localparam [31:0] A_CTRL = 32'h3000_0004, A_STATUS = 32'h3000_0008;
 
     integer errors = 0, checks = 0, i;
     reg [31:0] rd;
     integer fdump;
-    reg [31:0] meta [0:1];
+    reg [31:0] meta [0:7];
+    integer result_words;
     integer ml_v2_cycles = 0;
     integer ml_mat_busy = 0, ml_dma_busy = 0;   // component breakdown vs firmware profile
     reg cycle_on = 1'b0;
 
     initial begin
-        $readmemh("sim/work/ml_v2_gemm/ml_v2_meta.hex", meta);
+        use_ddr_model = (DDR_MODEL != 0);
+        if ($value$plusargs("DDR_MODEL=%d", ddr_model_arg))
+            use_ddr_model = (ddr_model_arg != 0);
+
+        strip_case = 1'b0;
+        if ($value$plusargs("STRIP_CASE=%d", strip_case_arg))
+            strip_case = (strip_case_arg != 0);
+        else if ($test$plusargs("STRIP_CASE"))
+            strip_case = 1'b1;
+
+        fw_hex = strip_case ? "design/npu/sw/ml_job_driver/ml_job_driver_strip.hex" :
+                              "design/npu/sw/ml_job_driver/ml_job_driver.hex";
+        shared_hex = strip_case ? "sim/work/ml_strip_gemm/ml_strip_shared.hex" :
+                                  "sim/work/ml_v2_gemm/ml_v2_shared.hex";
+        meta_hex = strip_case ? "sim/work/ml_strip_gemm/ml_strip_meta.hex" :
+                                "sim/work/ml_v2_gemm/ml_v2_meta.hex";
+        tcm_hex = "sim/work/ml_strip_gemm/ml_strip_tcm.hex";
+        dump_path = strip_case ? "sim/work/ml_strip_gemm/result.dump" :
+                                 "sim/work/ml_v2_gemm/result.dump";
+        if ($value$plusargs("FW_HEX=%s", fw_hex)) begin end
+
+        $readmemh(fw_hex, dut.tcm.mem);
+        $readmemh(fw_hex, dut.itcm.mem);
+        if (strip_case)
+            $readmemh(tcm_hex, dut.tcm.mem);
+        $readmemh(shared_hex, shared_sram.mem);
+        $readmemh(shared_hex, shared_ddr.mem);
+        $readmemh(meta_hex, meta);
     end
+
+    // ADR-0073 debug probe: +STRIP_PROBE=1 dumps the first words of both strip
+    // banks after the run (weight-landing vs compute-read attribution).
+    reg [31:0] strip_probe = 0;
+    initial begin
+        if (!$value$plusargs("STRIP_PROBE=%d", strip_probe)) strip_probe = 0;
+    end
+    task dump_strip_banks;
+        integer pi;
+        begin
+            for (pi = 0; pi < 16; pi = pi + 1)
+                $display("STRIP_PROBE bank0[%0d]=%08x bank1[%0d]=%08x",
+                         pi, dut.strip_buf.bank0_mem[pi], pi, dut.strip_buf.bank1_mem[pi]);
+            for (pi = 1024; pi < 1032; pi = pi + 1)
+                $display("STRIP_PROBE bank0[%0d]=%08x bank1[%0d]=%08x",
+                         pi, dut.strip_buf.bank0_mem[pi], pi, dut.strip_buf.bank1_mem[pi]);
+        end
+    endtask
 
     always @(posedge clk) begin
         if (cycle_on) begin
             ml_v2_cycles = ml_v2_cycles + 1;
             if (dut.mat_busy)         ml_mat_busy = ml_mat_busy + 1;
-            if (dut.dma_busy_engine)  ml_dma_busy = ml_dma_busy + 1;
+            if (dut.dma_busy_engine || dut.dma_strip_busy) ml_dma_busy = ml_dma_busy + 1;
         end
     end
 
@@ -196,8 +236,9 @@ module tb_ml_v2_gemm;
         wait_done();
         cycle_on = 1'b0;
 
-        fdump = $fopen("sim/work/ml_v2_gemm/result.dump", "w");
-        for (i = 0; i < meta[1]; i = i + 1) begin
+        result_words = strip_case ? meta[6] : meta[1];
+        fdump = $fopen(dump_path, "w");
+        for (i = 0; i < result_words; i = i + 1) begin
             if (use_ddr_model)
                 $fdisplay(fdump, "%08x", shared_ddr.mem[32'h600 + i]);
             else
@@ -211,6 +252,7 @@ module tb_ml_v2_gemm;
         if (use_ddr_model)
             shared_ddr.print_stats();
         $display("ML_V2_GEMM: %0d checks, %0d errors", checks, errors);
+        if (strip_probe) dump_strip_banks();
         if (errors == 0) $display("ML_V2_GEMM_PASS");
         else             $display("ML_V2_GEMM_FAIL");
         $finish;
@@ -224,5 +266,6 @@ module tb_ml_v2_gemm;
         $finish;
     end
 endmodule
+`include "design/npu/rtl/npu_strip_buf.v"
 `include "design/npu/dv/tb/axi_ddr_latency_model.v"
 `default_nettype wire

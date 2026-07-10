@@ -24,8 +24,19 @@
 //   0x9C ML_STRIP_BYTES RW [16:0], 1..40960 at kick
 //   0xA0 ML_N_STRIPS    RW [11:0], nonzero at kick
 //   0xA4 ML_K_CHUNKS    RW [7:0]=K_CHUNKS, [14:8]=K_TAIL (1..64)
-//   0xA8 ML_N_TAIL      RW [6:0], 1..64
+//   0xA8 ML_N_TAIL      RW [6:0], 1..64 and multiple of 8 in strip mode
 //   New ERR_CAUSE namespace addendum: ML_STRIP_DMA_ERR = 0x0000_0009.
+//
+// ADR-0073 D4 strip-local layout addendum (frozen): chunk-major then 8-col
+// sub-tile. offset(c,t)=c*4096+t*512, where each 512B block is 64 k-rows x
+// 8 cols, k-major [k][8], identical to the Phase-A engine B tile. Sub-tile t
+// covers strip columns t*8..t*8+7. Strip-mode per-channel params live at
+// STRIP_PARAM_PTR=0x1200 as consecutive 64B blocks (40B params + 24B pad) —
+// keeps each block 32B-aligned so mat_engine's frozen RESCALE_PC alignment
+// contract (rs_mult[4:0]==0) holds; indexed by global sub-tile
+// (strip*8+t); this avoids the 0x720..0x9bf collision with OP_A_ADDR=0x940.
+// STORE writes one Phase-A 8x8 output block per sub-tile at
+// DST_BASE+(strip*8+t)*64.
 //
 // INTEGRATION: npu_ml_ctrl owns its CSRs (decoded off the core-local window) and
 // emits ml_active + ml-driven mat_*/dma_*/wb_* which npu_top MUXes in front of the
@@ -122,6 +133,7 @@ module npu_ml_ctrl #(
     localparam [16:0] STORE_LEN  = 17'd16;          // 64 int8 = 16 words
     localparam [31:0] STRIP_A_STEP = 32'h0000_0200; // 64 K-values x 8 activation rows
     localparam [16:0] STRIP_BYTES_MAX = 17'd40960;
+    localparam [31:0] STRIP_PARAM_PTR = 32'h0000_1200; // D4 strip params, 64B * global sub-tile
     localparam [31:0] ML_STRIP_DMA_ERR = 32'd9;
 
     // ===== B1 activation-stationary (ADR-0067 Phase B) — selected by ML_JOB_CFG[1] =====
@@ -176,6 +188,7 @@ module npu_ml_ctrl #(
     reg [6:0]  strip_n_tail_q;
     reg [11:0] strip_i;
     reg [7:0]  strip_chunk_i;
+    reg [2:0]  strip_subtile_i;
     reg        strip_compute_bank_q;
     reg        strip_prefetch_pending;
     reg        strip_prefetch_done_l;
@@ -196,7 +209,8 @@ module npu_ml_ctrl #(
                       (csr_a == A_NSTRIP) || (csr_a == A_KCHUNK) ||
                       (csr_a == A_NTAIL);
     wire strip_k_tail_bad = (strip_k_tail_q == 7'd0) || (strip_k_tail_q > 7'd64);
-    wire strip_n_tail_bad = (strip_n_tail_q == 7'd0) || (strip_n_tail_q > 7'd64);
+    wire strip_n_tail_bad = (strip_n_tail_q == 7'd0) || (strip_n_tail_q > 7'd64) ||
+                            (strip_n_tail_q[2:0] != 3'd0);
     wire strip_kick_illegal = mode_strip &&
                               ((strip_w_base_q[11:0] != 12'b0) ||
                                (strip_n_strips_q == 12'd0) ||
@@ -209,16 +223,22 @@ module npu_ml_ctrl #(
     wire [31:0] strip_next_idx_w = {20'b0, strip_i} + 32'd1;
     wire [31:0] strip_prefetch_addr_w =
         strip_w_base_q + (strip_next_idx_w * {15'b0, strip_bytes_q});
-    wire [31:0] strip_store_dst_w = DST_BASE + (strip_idx_w * DST_STRIDE);
-    wire [6:0]  strip_n_tail_plus3_w = strip_n_tail_q + 7'd3;
-    wire [16:0] strip_tail_store_len_w = {12'b0, strip_n_tail_plus3_w[6:2]};
+    wire [31:0] strip_global_subtile_w =
+        (strip_idx_w << 3) + {29'b0, strip_subtile_i};
+    wire [31:0] strip_store_dst_w = DST_BASE + (strip_global_subtile_w * DST_STRIDE);
+    wire [31:0] strip_param_ptr_w = STRIP_PARAM_PTR + (strip_global_subtile_w * 32'd64);
     wire        strip_last_w = ((strip_i + 12'd1) >= strip_n_strips_q);
+    wire        strip_subtile_last_w =
+        strip_last_w ? (({1'b0, strip_subtile_i} + 4'd1) >= {1'b0, strip_n_tail_q[6:3]}) :
+                       (strip_subtile_i == 3'd7);
     wire        strip_chunk_last_w =
         ((strip_chunk_i + 8'd1) >= strip_k_chunks_q);
     wire [7:0]  strip_op_rpt_w =
         strip_chunk_last_w ? {1'b0, strip_k_tail_q} : 8'd64;
     wire [31:0] strip_a_addr_w =
         OP_A_ADDR + ({24'b0, strip_chunk_i} * STRIP_A_STEP);
+    wire [15:0] strip_weight_base_w =
+        {strip_chunk_i[3:0], 12'b0} + {4'b0, strip_subtile_i, 9'b0};
 
     // ===== FSM =====
     localparam [4:0]
@@ -231,7 +251,8 @@ module npu_ml_ctrl #(
         S_STRIP_OP=5'd20, S_STRIP_OP_W=5'd21,
         S_STRIP_RSC=5'd22, S_STRIP_RSC_W=5'd23,
         S_STRIP_STO_WAIT=5'd24, S_STRIP_STO=5'd25, S_STRIP_STO_W=5'd26,
-        S_STRIP_RV=5'd27, S_STRIP_ADV=5'd28, S_STRIP_DRAIN_ERR=5'd29;
+        S_STRIP_RV=5'd27, S_STRIP_ADV=5'd28, S_STRIP_DRAIN_ERR=5'd29,
+        S_STRIP_TILE=5'd30;
     reg [4:0] state;
 
     // per-tile varying addresses
@@ -255,7 +276,8 @@ module npu_ml_ctrl #(
             mode_strip <= 1'b0; strip_w_base_q <= 32'b0; strip_bytes_q <= 17'b0;
             strip_n_strips_q <= 12'b0; strip_k_chunks_q <= 8'b0;
             strip_k_tail_q <= 7'b0; strip_n_tail_q <= 7'b0;
-            strip_i <= 12'b0; strip_chunk_i <= 8'b0; strip_compute_bank_q <= 1'b0;
+            strip_i <= 12'b0; strip_chunk_i <= 8'b0; strip_subtile_i <= 3'b0;
+            strip_compute_bank_q <= 1'b0;
             strip_prefetch_pending <= 1'b0; strip_prefetch_done_l <= 1'b0;
             strip_busy_seen <= 1'b0; strip_dma_fault_l <= 1'b0;
             strip_weight_base_q <= 16'b0;
@@ -323,6 +345,7 @@ module npu_ml_ctrl #(
                               && !abort_i && !cfg_bypass) begin
                               job_done_l <= 1'b0; irq_en <= core_csr_wdata[1];
                               tile_i <= 16'b0; strip_i <= 12'b0; strip_chunk_i <= 8'b0;
+                              strip_subtile_i <= 3'b0;
                               strip_compute_bank_q <= 1'b0; strip_prefetch_pending <= 1'b0;
                               strip_prefetch_done_l <= 1'b0; strip_busy_seen <= 1'b0;
                               strip_dma_fault_l <= 1'b0; strip_weight_base_q <= 16'b0;
@@ -381,7 +404,7 @@ module npu_ml_ctrl #(
                         end
                     end
 
-                    // Start next-bank prefetch and ACC-clear at the strip boundary.
+                    // Start next-bank prefetch at the strip boundary.
                     S_STRIP_BEGIN: begin
                         if (!strip_last_w) begin
                             ml_strip_addr <= strip_prefetch_addr_w;
@@ -396,6 +419,11 @@ module npu_ml_ctrl #(
                             strip_prefetch_done_l <= 1'b1;
                             strip_busy_seen <= 1'b0;
                         end
+                        strip_subtile_i <= 3'd0;
+                        state <= S_STRIP_TILE;
+                    end
+
+                    S_STRIP_TILE: begin
                         ml_mat_cmd <= CMD_LOADACC; ml_mat_bank <= 4'd0; ml_mat_rpt <= 8'd1;
                         ml_mat_a_addr <= FOLD_PTR;
                         ml_mat_go <= 1'b1; busy_seen <= 1'b0;
@@ -412,7 +440,7 @@ module npu_ml_ctrl #(
                         ml_mat_cmd <= CMD_OP; ml_mat_bank <= 4'd0; ml_mat_rpt <= strip_op_rpt_w;
                         ml_mat_a_addr <= strip_a_addr_w;
                         ml_mat_b_addr <= 32'b0;
-                        strip_weight_base_q <= {strip_chunk_i[3:0], 12'b0};
+                        strip_weight_base_q <= strip_weight_base_w;
                         ml_mat_go <= 1'b1; busy_seen <= 1'b0; state <= S_STRIP_OP_W;
                     end
                     S_STRIP_OP_W: begin
@@ -426,7 +454,7 @@ module npu_ml_ctrl #(
 
                     S_STRIP_RSC: begin
                         ml_mat_cmd <= CMD_RESCALE_PC; ml_mat_bank <= 4'd0; ml_mat_rpt <= 8'd1;
-                        ml_mat_mult <= PARAM_PTR; ml_mat_rsp <= RSP_VAL; ml_mat_clamp <= CLAMP_VAL;
+                        ml_mat_mult <= strip_param_ptr_w; ml_mat_rsp <= RSP_VAL; ml_mat_clamp <= CLAMP_VAL;
                         ml_mat_out_base <= OUT_BASE;
                         ml_mat_go <= 1'b1; busy_seen <= 1'b0; state <= S_STRIP_RSC_W;
                     end
@@ -444,13 +472,19 @@ module npu_ml_ctrl #(
                     S_STRIP_STO: begin
                         ml_wb_src <= STORE_SRCW;
                         ml_wb_dst <= strip_store_dst_w;
-                        ml_wb_len <= strip_last_w ? strip_tail_store_len_w : STORE_LEN;
+                        ml_wb_len <= STORE_LEN;
                         ml_wb_go <= 1'b1; busy_seen <= 1'b0; state <= S_STRIP_STO_W;
                     end
                     S_STRIP_STO_W: begin
                         if (dma_err) begin job_err <= 1'b1; job_busy <= 1'b0; state <= S_IDLE; end
                         else if (wb_busy) busy_seen <= 1'b1;
-                        else if (busy_seen && wb_done) state <= S_STRIP_RV;
+                        else if (busy_seen && wb_done) begin
+                            if (strip_subtile_last_w) state <= S_STRIP_RV;
+                            else begin
+                                strip_subtile_i <= strip_subtile_i + 3'd1;
+                                state <= S_STRIP_TILE;
+                            end
+                        end
                     end
 
                     S_STRIP_RV: begin

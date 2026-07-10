@@ -79,6 +79,10 @@ module axi_ddr_latency_model #(
     reg [63:0] bytes_wr;
     reg [63:0] busy_cycles;
     integer col_cyc_runtime;
+    integer stall_seed_runtime;
+    reg        stall_enable;
+    reg [31:0] stall_lfsr;
+    reg [31:0] delay_calc;
     integer wj;
 
     initial begin
@@ -86,6 +90,17 @@ module axi_ddr_latency_model #(
         if ($value$plusargs("DDR_COL_CYC=%d", col_cyc_runtime)) begin
             if (col_cyc_runtime < 1)
                 $fatal(1, "axi_ddr_latency_model: DDR_COL_CYC must be >= 1");
+        end
+        stall_seed_runtime = 0;
+        stall_enable = 1'b0;
+        stall_lfsr = 32'h1;
+        if ($value$plusargs("STALL_INJECT=%d", stall_seed_runtime)) begin
+            if (stall_seed_runtime != 0) begin
+                stall_enable = 1'b1;
+                stall_lfsr = stall_seed_runtime[31:0];
+                if (stall_lfsr == 32'h0)
+                    stall_lfsr = 32'h1;
+            end
         end
         if (DMA_DATA_W != 32 && DMA_DATA_W != 64 && DMA_DATA_W != 128 && DMA_DATA_W != 256)
             $fatal(1, "axi_ddr_latency_model: DMA_DATA_W must be one of 32/64/128/256");
@@ -185,10 +200,24 @@ module axi_ddr_latency_model #(
         end
     endfunction
 
-    function [31:0] col_delay_minus_one;
+    function [31:0] col_delay_base;
         input unused;
         begin
-            col_delay_minus_one = (col_cyc_runtime > 1) ? (col_cyc_runtime - 32'd1) : 32'd0;
+            col_delay_base = col_cyc_runtime[31:0];
+        end
+    endfunction
+
+    function [31:0] stall_extra;
+        input unused;
+        begin
+            stall_extra = stall_enable ? {28'b0, stall_lfsr[3:0]} : 32'd0;
+        end
+    endfunction
+
+    function [31:0] stall_next;
+        input [31:0] cur;
+        begin
+            stall_next = {cur[30:0], cur[31] ^ cur[21] ^ cur[1] ^ cur[0]};
         end
     endfunction
 
@@ -268,14 +297,17 @@ module axi_ddr_latency_model #(
                     bvalid <= 1'b0;
                     if (arvalid && arready) begin
                         check_burst(araddr, arlen, arsize, arburst, "AR");
+                        delay_calc = first_delay(araddr) + stall_extra(1'b0);
+                        if (stall_enable)
+                            stall_lfsr <= stall_next(stall_lfsr);
                         rptr <= beat_base(araddr, arsize);
                         rstride <= beat_stride(arsize);
                         rbeats_left <= {1'b0, arlen} + 9'd1;
-                        rwait <= delay_minus_one(first_delay(araddr));
+                        rwait <= delay_minus_one(delay_calc);
                         rsize_l <= arsize;
                         prev_page_valid <= 1'b1;
                         prev_last_page <= page_base(burst_last_addr(araddr, arlen, arsize));
-                        if (delay_minus_one(first_delay(araddr)) == 32'd0) begin
+                        if (delay_minus_one(delay_calc) == 32'd0) begin
                             rdata <= wide_read(beat_base(araddr, arsize));
                             rlast <= (arlen == 8'd0);
                             rvalid <= 1'b1;
@@ -285,13 +317,16 @@ module axi_ddr_latency_model #(
                         end
                     end else if (awvalid && awready) begin
                         check_burst(awaddr, awlen, awsize, awburst, "AW");
+                        delay_calc = first_delay(awaddr) + stall_extra(1'b0);
+                        if (stall_enable)
+                            stall_lfsr <= stall_next(stall_lfsr);
                         wptr <= beat_base(awaddr, awsize);
                         wstride <= beat_stride(awsize);
                         wbeats_left <= {1'b0, awlen} + 9'd1;
-                        wwait <= delay_minus_one(first_delay(awaddr));
+                        wwait <= delay_minus_one(delay_calc);
                         prev_page_valid <= 1'b1;
                         prev_last_page <= page_base(burst_last_addr(awaddr, awlen, awsize));
-                        if (delay_minus_one(first_delay(awaddr)) == 32'd0) begin
+                        if (delay_minus_one(delay_calc) == 32'd0) begin
                             wready <= 1'b1;
                             state <= S_W_DATA;
                         end else begin
@@ -322,14 +357,17 @@ module axi_ddr_latency_model #(
                         end else begin
                             rptr <= rptr + rstride;
                             rbeats_left <= rbeats_left - 9'd1;
-                            if (col_delay_minus_one(1'b0) == 32'd0) begin
+                            delay_calc = col_delay_base(1'b0) + stall_extra(1'b0);
+                            if (stall_enable)
+                                stall_lfsr <= stall_next(stall_lfsr);
+                            if (delay_minus_one(delay_calc) == 32'd0) begin
                                 rdata <= wide_read(rptr + rstride);
                                 rlast <= (rbeats_left == 9'd2);
                                 rvalid <= 1'b1;
                             end else begin
                                 rvalid <= 1'b0;
                                 rlast <= 1'b0;
-                                rwait <= col_delay_minus_one(1'b0);
+                                rwait <= delay_minus_one(delay_calc);
                                 state <= S_R_WAIT;
                             end
                         end
@@ -364,11 +402,14 @@ module axi_ddr_latency_model #(
                             state <= S_W_RESP;
                         end else begin
                             wbeats_left <= wbeats_left - 9'd1;
-                            if (col_delay_minus_one(1'b0) == 32'd0) begin
+                            delay_calc = col_delay_base(1'b0) + stall_extra(1'b0);
+                            if (stall_enable)
+                                stall_lfsr <= stall_next(stall_lfsr);
+                            if (delay_minus_one(delay_calc) == 32'd0) begin
                                 wready <= 1'b1;
                             end else begin
                                 wready <= 1'b0;
-                                wwait <= col_delay_minus_one(1'b0);
+                                wwait <= delay_minus_one(delay_calc);
                                 state <= S_W_WAIT;
                             end
                         end

@@ -37,7 +37,7 @@ CPU_RTL = [CPU_M1_DIR / f"{m}.v" for m in (
 SOC_PERIPH_RTL = [ROOT / f"design/cpu_m1/soc/{m}.v" for m in ("plic", "uart", "clint", "dm", "dtm")]
 NPU_RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in (
     "npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr",
-    "mat_engine", "npu_ml_ctrl", "axi_full_sram", "axil_to_full",
+    "mat_engine", "npu_ml_ctrl", "npu_strip_buf", "axi_full_sram", "axil_to_full",
     "axi_full_arbiter_2x1")]
 SOC_RTL = [ROOT / f"design/soc/{m}.v" for m in (
     "axil_imem", "plic_axil_shim", "periph_axil_shim", "soc_axil_decode",

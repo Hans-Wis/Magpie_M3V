@@ -20,7 +20,7 @@ import pytest
 from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_RTL, verilator_sim
 
 ROOT = Path(__file__).resolve().parents[2]
-RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine", "npu_ml_ctrl")]
+RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in ("npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr", "mat_engine", "npu_ml_ctrl", "npu_strip_buf")]
 RTL += CPU_M1_RTL  # ADR-0034: npu_top now instantiates the cpu_m1 sequencer
 WMEM = ROOT / "design/npu/dv/tb/axi_full_wmem.v"
 

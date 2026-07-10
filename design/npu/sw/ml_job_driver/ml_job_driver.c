@@ -12,8 +12,35 @@
 #define CSR_ML_GO     0x88u
 #define CSR_ML_CFG    0x8Cu
 #define CSR_ML_STATUS 0x90u
+#define CSR_ML_MODE   0x94u
+#define CSR_ML_W_BASE 0x98u
+#define CSR_ML_SBYTES 0x9Cu
+#define CSR_ML_NSTRIP 0xA0u
+#define CSR_ML_KCHUNK 0xA4u
+#define CSR_ML_NTAIL  0xA8u
 
 #define ML_STATUS_DONE 0x2u
+
+#ifdef STRIP_EN
+#ifndef W_BASE
+#error "STRIP_EN requires -DW_BASE=<byte address>"
+#endif
+#ifndef STRIP_BYTES
+#error "STRIP_EN requires -DSTRIP_BYTES=<bytes>"
+#endif
+#ifndef N_STRIPS
+#error "STRIP_EN requires -DN_STRIPS=<count>"
+#endif
+#ifndef K_CHUNKS
+#error "STRIP_EN requires -DK_CHUNKS=<count>"
+#endif
+#ifndef K_TAIL
+#error "STRIP_EN requires -DK_TAIL=<1..64>"
+#endif
+#ifndef N_TAIL
+#error "STRIP_EN requires -DN_TAIL=<1..64>"
+#endif
+#endif
 
 static volatile uint32_t *const csr = (volatile uint32_t *)CQ_CORE_WINDOW_BASE;
 static volatile uint32_t *const mailbox = (volatile uint32_t *)CQ_MAILBOX_BASE;
@@ -40,7 +67,17 @@ static __attribute__((noinline)) void csr_write(uint32_t off, uint32_t value)
 int main(void)
 {
     csr_write(CSR_ML_CFG, (uint32_t)ML_CFG);
+#ifdef STRIP_EN
+    csr_write(CSR_ML_NTILES, 0u);
+    csr_write(CSR_ML_MODE, 1u);
+    csr_write(CSR_ML_W_BASE, (uint32_t)W_BASE);
+    csr_write(CSR_ML_SBYTES, (uint32_t)STRIP_BYTES);
+    csr_write(CSR_ML_NSTRIP, (uint32_t)N_STRIPS);
+    csr_write(CSR_ML_KCHUNK, ((uint32_t)K_TAIL << 8) | (uint32_t)K_CHUNKS);
+    csr_write(CSR_ML_NTAIL, (uint32_t)N_TAIL);
+#else
     csr_write(CSR_ML_NTILES, (uint32_t)N_TILES);
+#endif
     csr_write(CSR_ML_GO, 1u);
 
     while ((csr_read(CSR_ML_STATUS) & ML_STATUS_DONE) == 0u)

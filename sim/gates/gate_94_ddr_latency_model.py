@@ -29,7 +29,7 @@ from gate_20_axi_fabric import CPU_M1_ARGS, CPU_M1_RTL, CPU_M1_DIR  # noqa: E402
 
 NPU_RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in (
     "npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr",
-    "mat_engine", "npu_ml_ctrl", "axi_full_sram", "axil_to_full",
+    "mat_engine", "npu_ml_ctrl", "npu_strip_buf", "axi_full_sram", "axil_to_full",
     "axi_full_arbiter_2x1")]
 TB = [ROOT / "design/npu/dv/tb/axi_full_rwmem.v",
       ROOT / "design/npu/dv/tb/tb_ml_v2_gemm.v"]

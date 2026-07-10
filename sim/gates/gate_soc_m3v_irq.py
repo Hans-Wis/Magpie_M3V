@@ -13,7 +13,7 @@ from gate_46_cq_matrix_e2e import _golden_tile  # noqa: E402
 
 NPU_RTL = [ROOT / f"design/npu/rtl/{m}.v" for m in (
     "npu_top", "npu_axil_regs", "npu_dma", "npu_tcm", "axil_decerr",
-    "mat_engine", "npu_ml_ctrl", "axi_full_sram", "axil_to_full",
+    "mat_engine", "npu_ml_ctrl", "npu_strip_buf", "axi_full_sram", "axil_to_full",
     "axi_full_arbiter_2x1",
 )]
 HOST_RTL = [

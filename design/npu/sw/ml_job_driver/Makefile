@@ -10,6 +10,7 @@ LDS       = ../cq_sequencer/sequencer.lds
 LDFLAGS   = -Wl,-Bstatic,-T,$(LDS),--strip-debug
 N_TILES  ?= 8
 ML_CFG   ?= 0
+STRIP_CFLAGS = -DSTRIP_EN -DW_BASE=$(W_BASE) -DSTRIP_BYTES=$(STRIP_BYTES) -DN_STRIPS=$(N_STRIPS) -DK_CHUNKS=$(K_CHUNKS) -DK_TAIL=$(K_TAIL) -DN_TAIL=$(N_TAIL)
 
 .PHONY: all clean size
 
@@ -22,8 +23,15 @@ ml_job_driver.hex: ml_job_driver.elf
 	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)objcopy -O verilog --verilog-data-width=4 $< $@
 	sed -i 's/\r$$//' $@
 
+ml_job_driver_strip.elf: ml_job_driver.c ../include/command_descriptor.h $(LDS)
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)gcc $(CFLAGS) $(STRIP_CFLAGS) $(LDFLAGS) -o $@ ml_job_driver.c
+
+ml_job_driver_strip.hex: ml_job_driver_strip.elf
+	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)objcopy -O verilog --verilog-data-width=4 $< $@
+	sed -i 's/\r$$//' $@
+
 size: ml_job_driver.elf
 	$(TOOLCHAIN_ENV) $(TOOLCHAIN_PREFIX)size $<
 
 clean:
-	rm -f ml_job_driver.elf ml_job_driver.hex ml_job_driver.disasm
+	rm -f ml_job_driver.elf ml_job_driver.hex ml_job_driver.disasm ml_job_driver_strip.elf ml_job_driver_strip.hex ml_job_driver_strip.disasm
