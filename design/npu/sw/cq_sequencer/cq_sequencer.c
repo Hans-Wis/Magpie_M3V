@@ -38,6 +38,7 @@
 #define CSR_ML_KCHUNK   0xA4u
 #define CSR_ML_NTAIL    0xA8u
 #define CSR_ML_OUT_BASE 0xACu
+#define CSR_ML_RSPCLAMP 0xB0u
 #define MAT_ST_BUSY     1u
 #define MAT_ST_DONE     2u
 #define MAT_ST_ERR      4u
@@ -61,9 +62,17 @@
 #define TCM_BYTES       0x00008000u
 #define STRIP_PARAM_B   0x00001200u
 #define STRIP_PARAM_W   (STRIP_PARAM_B >> 2)
+#define STRIP_FOLD_B    0x00001600u
+#define STRIP_FOLD_W    (STRIP_FOLD_B >> 2)
 #define STRIP_OP_A_B    0x00000940u
 #define STRIP_OP_A_STEP 0x00000200u
 #define STRIP_ACT_BYTES 0x00000200u
+#define STRIP_COMPACT_BYTES 0x00000200u
+#define STRIP_COMPACT_WORDS (STRIP_COMPACT_BYTES >> 2)
+#define STRIP_HDR_BYTES 0x00000040u
+#define STRIP_HDR_WORDS (STRIP_HDR_BYTES >> 2)
+#define STRIP_HDR_MAGIC 0x32525453u   /* little-endian "STR2" */
+#define STRIP_HDR_VERSION 2u
 
 #define CQ_CTRL_ENABLE  1u
 #define CQ_EVENT_IRQ    1u
@@ -228,15 +237,21 @@ static void mat_strip_gemm(uint32_t w1, uint32_t w2, uint32_t w3)
     uint32_t weights_bytes;
     uint32_t param_blocks;
     uint32_t param_bytes;
+    uint32_t fold_bytes;
     uint32_t act_bytes;
     uint32_t total_bytes;
+    uint32_t weights_src;
     uint32_t param_src;
+    uint32_t fold_src;
     uint32_t act_src;
+    uint32_t rspclamp;
     uint32_t st;
     uint32_t i;
+    volatile uint32_t *const strip_hdr = (volatile uint32_t *)STRIP_FOLD_B;
 
     if ((w_base & 0xFFFu) != 0u ||
         strip_bytes == 0u || strip_bytes > STRIP_BYTES_MAX ||
+        (strip_bytes & 63u) != 0u ||
         n_strips == 0u || k_chunks == 0u ||
         k_tail == 0u || k_tail > 64u ||
         n_tail == 0u || n_tail > 64u || (n_tail & 7u) != 0u)
@@ -245,29 +260,47 @@ static void mat_strip_gemm(uint32_t w1, uint32_t w2, uint32_t w3)
     weights_bytes = n_strips * strip_bytes;
     param_blocks = n_strips << 3;  /* N derives as N_STRIPS*64; tail blocks are present. */
     param_bytes = param_blocks << 6;
+    fold_bytes = param_blocks << 5;
     act_bytes = k_chunks * STRIP_ACT_BYTES;
-    total_bytes = weights_bytes + param_bytes + act_bytes;
+    total_bytes = STRIP_HDR_BYTES + weights_bytes + param_bytes + fold_bytes + act_bytes;
 
-    if (weights_bytes > SHARED_BYTES ||
+    if (fold_bytes > (TCM_BYTES - STRIP_FOLD_B) ||
         total_bytes > SHARED_BYTES ||
         param_bytes > (TCM_BYTES - STRIP_PARAM_B) ||
-        act_bytes > (TCM_BYTES - STRIP_OP_A_B) ||
-        weights_bytes > (0xFFFFFFFFu - param_bytes) ||
-        (weights_bytes + param_bytes) > (0xFFFFFFFFu - act_bytes) ||
+        act_bytes > (STRIP_FOLD_B - STRIP_OP_A_B) ||
         w_base > (SHARED_BYTES - total_bytes))
         cq_halt(CQ_ERR_MAT_PARAM);
 
     if ((((n_strips - 1u) << 3) + (n_tail >> 3)) > ((SHARED_BYTES >> 6) - out_dst64))
         cq_halt(CQ_ERR_MAT_PARAM);
 
-    /* MAT_STRIP_GEMM owns the frozen shared job appendix:
-     * [weights:N_STRIPS*STRIP_BYTES] ++ [params:N_STRIPS*8*64B] ++
-     * [activation chunks:K_CHUNKS*512B]. Stage params and activation here so
+    /* MAT_STRIP_GEMM owns the frozen shared v2 job blob:
+     * [64B header] ++ [weights:N_STRIPS*STRIP_BYTES] ++
+     * [params:N_STRIPS*8*64B] ++ [folds:N_STRIPS*8*32B] ++
+     * [activation chunks:K_CHUNKS*512B]. Stage all non-weight payloads here so
      * generic MAT_LOAD_W remains a bounded weight-window load. */
-    param_src = w_base + weights_bytes;
-    act_src = param_src + param_bytes;
+    dma_read(w_base, STRIP_FOLD_W, STRIP_HDR_WORDS);
+    if (strip_hdr[0] != STRIP_HDR_MAGIC || strip_hdr[3] != STRIP_HDR_VERSION)
+        cq_halt(CQ_ERR_STRIP);
+    rspclamp = ((strip_hdr[1] & 0xFFFFu) << 16) | (strip_hdr[2] & 0xFFFFu);
+
+    weights_src = w_base + STRIP_HDR_BYTES;
+    param_src = weights_src + weights_bytes;
+    fold_src = param_src + param_bytes;
+    act_src = fold_src + fold_bytes;
+
+    /* ml_ctrl/npu_dma strip prefetch remains 4KB-aligned. Compact only the
+     * weight payload down over the consumed header before kick; v2 params,
+     * folds, and activations remain at their original offsets and are staged
+     * below before ml_ctrl observes the job. */
+    for (i = 0u; i < weights_bytes; i += STRIP_COMPACT_BYTES) {
+        dma_read(weights_src + i, STRIP_FOLD_W, STRIP_COMPACT_WORDS);
+        dma_writeback(STRIP_FOLD_W, w_base + i, STRIP_COMPACT_WORDS);
+    }
     for (i = 0u; i < param_blocks; i++)
         dma_read(param_src + (i << 6), STRIP_PARAM_W + (i << 4), 16u);
+    for (i = 0u; i < param_blocks; i++)
+        dma_read(fold_src + (i << 5), STRIP_FOLD_W + (i << 3), 8u);
     for (i = 0u; i < k_chunks; i++)
         dma_read(act_src + i * STRIP_ACT_BYTES,
                  (STRIP_OP_A_B + i * STRIP_OP_A_STEP) >> 2,
@@ -275,6 +308,7 @@ static void mat_strip_gemm(uint32_t w1, uint32_t w2, uint32_t w3)
 
     csr_write(CSR_ML_NTILES, 0u);
     csr_write(CSR_ML_MODE, 1u);
+    csr_write(CSR_ML_RSPCLAMP, rspclamp);
     csr_write(CSR_ML_W_BASE, w_base);
     csr_write(CSR_ML_SBYTES, strip_bytes);
     csr_write(CSR_ML_NSTRIP, n_strips);

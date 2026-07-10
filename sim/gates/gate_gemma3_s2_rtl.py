@@ -63,8 +63,9 @@ def test_s2_ssot():
     assert 0 <= g["q_rmeta"]["shift"] <= 62 and 0 <= g["k_rmeta"]["shift"] <= 62
 
 
+@pytest.mark.parametrize("transport", ["v2", "strip"])
 @pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
-def test_s2_qkv_qknorm_rope_bit_exact_on_rtl(tmp_path):
+def test_s2_qkv_qknorm_rope_bit_exact_on_rtl(tmp_path, transport):
     assert FIRMWARE.exists(), "firmware.hex missing — run make in design/npu/sw/cq_sequencer"
     cfg, W, g = _golden()
     seq, nh, nkv, hd = cfg["seq"], cfg["n_heads"], cfg["n_kv_heads"], cfg["head_dim"]
@@ -81,8 +82,9 @@ def test_s2_qkv_qknorm_rope_bit_exact_on_rtl(tmp_path):
 
     def gemm(w_fp, s_in, s_out, n, x_q):
         w_q, sw = gq.q_perchannel(w_fp.T)
-        ng, nt = rt.emit_layer_v2(CASE, gr.gemm_layer(w_q, sw, s_in, s_out, hid, n),
-                                  x_q, ring_entries=128)
+        emit = rt.emit_layer_strip if transport == "strip" else rt.emit_layer_v2
+        ng, nt = emit(CASE, gr.gemm_layer(w_q, sw, s_in, s_out, hid, n),
+                      x_q, ring_entries=128)
         _run(binary)
         return rt.unpack_result_v2(CASE / "result.dump", ng, nt, seq, n)
 

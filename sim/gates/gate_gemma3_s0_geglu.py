@@ -135,4 +135,14 @@ def test_s0_gate_up_strip_transport_same_golden(tmp_path):
     _run(binary)
     up = rt.unpack_result_v2(CASE / "result.dump", ng, nt, seq, inter)
     assert up == g["up_q"].tolist(), "up GEMM via STRIP transport != immutable golden"
-    print("S0_STRIP_TRANSPORT_PASS strips=2 rails=gate,up")
+
+    # down_proj: K=inter=128 => K_CHUNKS=2 — REAL dual-K-chunk in-strip ACC
+    # accumulation on a production rail (A.2 on rail). Input = the immutable
+    # prod_q golden (transport test isolates the GEMM).
+    wd, swd = t0["wd"]
+    ng, nt = rt.emit_layer_strip(CASE, gr.gemm_layer(wd, swd, sc["prod"], sc["out"], inter, hid),
+                                 g["prod_q"].tolist(), ring_entries=128)
+    _run(binary)
+    down = rt.unpack_result_v2(CASE / "result.dump", ng, nt, seq, hid)
+    assert down == g["out_q"].tolist(), "down GEMM via STRIP transport != immutable golden"
+    print("S0_STRIP_TRANSPORT_PASS strips=2 kchunks=2 rails=gate,up,down")

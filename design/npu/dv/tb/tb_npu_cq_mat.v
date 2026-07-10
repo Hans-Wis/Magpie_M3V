@@ -156,28 +156,27 @@ module tb_npu_cq_mat;
 
         if (STRIP_VARIANT != 0) begin
             // Strip variant of the same 8x8/4-outer-product GEMM:
-            // shared blob @ W_BASE is [weights] ++ [8 param blocks] ++ [activation].
-            // The sequencer must stage params to 0x1200 and activation to OP_A_ADDR.
-            axil_write(32'h3001_0700, 32'hFFFF_9F07);
-            axil_write(32'h3001_0704, 32'hFFFF_9F43);
-            axil_write(32'h3001_0708, 32'hFFFF_9F57);
-            axil_write(32'h3001_070C, 32'hFFFF_9F5D);
-            axil_write(32'h3001_0710, 32'hFFFF_9F49);
-            axil_write(32'h3001_0714, 32'hFFFF_9F57);
-            axil_write(32'h3001_0718, 32'hFFFF_9F36);
-            axil_write(32'h3001_071C, 32'hFFFF_9F5E);
-
-            for (i = 0; i < 1280; i = i + 1)
+            // shared blob @ W_BASE is v2 [64B header] ++ [weights] ++
+            // [8 param blocks] ++ [8 fold blocks] ++ [activation]. The
+            // sequencer must stage params/folds/activation before kicking ml_ctrl.
+            for (i = 0; i < 1536; i = i + 1)
                 shared.mem[32'h1000 + i] = 32'h0;
+
+            shared.mem[32'h1000] = 32'h3252_5453;  // magic "STR2"
+            shared.mem[32'h1001] = 32'h0000_8000;  // rsp: out_zp=-128, PC shift from blob
+            shared.mem[32'h1002] = 32'h0000_7F80;  // clamp [-128,127]
+            shared.mem[32'h1003] = 32'h0000_0002;  // blob v2
+
             for (i = 0; i < 8; i = i + 1)
-                shared.mem[32'h1000 + i] =
+                shared.mem[32'h1010 + i] =
                     {b_byte(i*4+3), b_byte(i*4+2), b_byte(i*4+1), b_byte(i*4)};
             for (i = 0; i < 8; i = i + 1)
-                shared.mem[32'h1400 + i] = 32'h54C4_699A;
-            shared.mem[32'h1408] = 32'h2626_2626;
-            shared.mem[32'h1409] = 32'h2626_2626;
+                shared.mem[32'h1410 + i] = 32'h54C4_699A;
+            shared.mem[32'h1418] = 32'h2626_2626;
+            shared.mem[32'h1419] = 32'h2626_2626;
+            // Fold blocks at 0x5240 are zero.
             for (i = 0; i < 8; i = i + 1)
-                shared.mem[32'h1480 + i] =
+                shared.mem[32'h14D0 + i] =
                     {a_byte(i*4+3), a_byte(i*4+2), a_byte(i*4+1), a_byte(i*4)};
 
             shared.mem[32'h100] = 32'h0000_500F;  // MAT_STRIP_GEMM + IRQ + LAST

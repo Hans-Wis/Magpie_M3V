@@ -34,8 +34,9 @@ TB = [ROOT / "design/npu/dv/tb/axi_full_rwmem.v", ROOT / "design/npu/dv/tb/tb_np
 CASE = ROOT / "sim/work/tflm_model"
 
 
-def run_rounds(binary, layer, rows, n_rows, n_out):
-    g, t = rt.emit_layer_v2(CASE, layer, rows)
+def run_rounds(binary, layer, rows, n_rows, n_out, transport="v2"):
+    emit = rt.emit_layer_strip if transport == "strip" else rt.emit_layer_v2
+    g, t = emit(CASE, layer, rows)
     out = subprocess.run([str(binary)], cwd=ROOT, capture_output=True,
                          text=True, timeout=300).stdout
     assert "NPU_TFLM_MODEL_PASS" in out and "0 errors" in out, out
@@ -43,7 +44,8 @@ def run_rounds(binary, layer, rows, n_rows, n_out):
 
 
 @pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
-def test_real_cnn_bit_exact_on_rtl(tmp_path):
+@pytest.mark.parametrize("transport", ["v2", "strip"])
+def test_real_cnn_bit_exact_on_rtl(tmp_path, transport):
     model, golden = rt.load_artifacts2()
     conv, fc = model["layers"]
     assert len(set(conv["weight_scales"])) > 1, "per-channel degenerated"
@@ -60,12 +62,12 @@ def test_real_cnn_bit_exact_on_rtl(tmp_path):
 
     rows = rt.im2col(conv, golden["input"][0])
     assert len(rows) == 16 and len(rows[0]) == 72
-    out1 = run_rounds(binary, conv, rows, 16, 8)
+    out1 = run_rounds(binary, conv, rows, 16, 8, transport=transport)
     exp1 = [golden["conv"][0][oy][ox] for oy in range(4) for ox in range(4)]
     assert out1 == exp1, "conv RTL output != interpreter intermediate"
 
     flat = [[v for p in out1 for v in p]]        # NHWC flatten, ACTUAL RTL data
-    out2 = run_rounds(binary, fc, flat, 1, 8)
+    out2 = run_rounds(binary, fc, flat, 1, 8, transport=transport)
     assert out2 == golden["final"], "final RTL output != interpreter"
 
 

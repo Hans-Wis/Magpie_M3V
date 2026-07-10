@@ -2,7 +2,7 @@
 """Generate the ADR-0073 strip-streaming smoke case.
 
 The D2 strip FSM streams only the B operand from DDR into npu_strip_buf. The
-fold vector, per-channel requant params, and activation rows are still consumed
+fold vectors, per-channel requant params, and activation rows are still consumed
 from the frozen Phase-A TCM addresses in npu_ml_ctrl, so this emits both the DDR
 image and a TCM preload sidecar for the Verilator TB.
 
@@ -11,7 +11,7 @@ sub-tile. offset(c,t)=c*4096+t*512, where each 512B block is 64 k-rows x
 8 cols, k-major [k][8], identical to the Phase-A engine B tile. Sub-tile t
 covers strip columns t*8..t*8+7. Strip-mode per-channel params live at
 STRIP_PARAM_PTR=0x1200 as consecutive 64B blocks (40B + 24B pad, 32B-aligned) indexed by global sub-tile
-(strip*8+t); this avoids the 0x720..0x9bf collision with OP_A_ADDR=0x940.
+(strip*8+t); strip fold blocks live at 0x1600+i*32 and are zero in this case.
 STORE writes one Phase-A 8x8 output block per sub-tile at
 DST+(strip*8+t)*64 bytes, so the full 8x128 result is 1024 contiguous bytes in
 row-tile-major Phase-A block layout.
@@ -42,7 +42,7 @@ SUBTILES_PER_STRIP = STRIP_COLS // SUBTILE_COLS
 W_BASE_DEFAULT = 0x4000
 STRIP_BYTES = K * STRIP_COLS
 
-FOLD_PTR = 0x700
+FOLD_PTR = 0x1600
 PARAM_PTR = 0x720
 STRIP_PARAM_PTR = 0x1200
 OP_A_ADDR = 0x940

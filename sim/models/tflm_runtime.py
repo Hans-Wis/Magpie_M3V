@@ -159,10 +159,14 @@ JOB_STRIDE_B = 0x800        # shared-mem spacing between job blobs
 STRIP_PREP_B = SHARED_BLOB_B
 STRIP_W_BASE_DEFAULT = 0x4000
 STRIP_PARAM_PTR = 0x1200
+STRIP_FOLD_PTR = 0x1600
 OP_A_ADDR = 0x940
 STRIP_A_STEP = 0x200
 STRIP_TCM_LOAD_BASE = TCM_BLOB_B
 SHARED_BYTES = 0x10000
+STRIP_HDR_BYTES = 64
+STRIP_HDR_MAGIC = b"STR2"
+STRIP_HDR_VERSION = 2
 
 
 def _align(x, a):
@@ -238,12 +242,8 @@ def lower_layer_v2(layer, rows):
     job = 0
     for g in range(n_groups):
         for tile in range(n_tiles):
-            fold = bytearray()
-            for c in range(8):
-                f = wrap32(layer["bias"][tile * 8 + c] +
-                           input_offset * sum(w[tile * 8 + c])) & 0xFFFFFFFF
-                fold += f.to_bytes(4, "little")
-            header = bytes(fold).ljust(PARAM_OFF, b"\0") +                 _param_block_tile(layer, tile)
+            header = _fold_block_tile(layer, tile).ljust(PARAM_OFF, b"\0") + \
+                _param_block_tile(layer, tile)
             k_off = 0
             for ci, ch in enumerate(chunks):
                 blob = bytearray(header.ljust(A_OFF, b"\0"))
@@ -282,6 +282,18 @@ def lower_layer_v2(layer, rows):
     return segments, ring, n_groups, n_tiles
 
 
+def _fold_block_tile(layer, tile):
+    input_offset = -int(layer["input_zp"])
+    w = layer["weights"]
+    bias = layer["bias"]
+    fold = bytearray()
+    for c in range(8):
+        idx = tile * 8 + c
+        f = wrap32(int(bias[idx]) + input_offset * sum(int(v) for v in w[idx])) & 0xFFFFFFFF
+        fold += f.to_bytes(4, "little")
+    return bytes(fold)
+
+
 def _param_block_tile(layer, tile):
     blk = bytearray()
     shifts = bytearray()
@@ -297,21 +309,31 @@ def _param_block_tile(layer, tile):
 
 
 def _validate_strip_layer(layer):
-    if layer.get("kind") != "fc":
-        raise ValueError("emit_layer_strip supports only kind='fc' (GeGLU projection scope)")
-    for key in ("k", "n", "weights", "weight_scales", "input_scale", "output_scale"):
+    # conv rides the same path as lower_layer_v2: rows are host-im2col'd by the
+    # caller, weights arrive flattened [cout][kh*kw*cin] — only k/n derivation
+    # differs (ADR-0042 convention).
+    if layer.get("kind") == "conv":
+        k = int(layer["kh"]) * int(layer["kw"]) * int(layer["cin"])
+        n = int(layer["cout"])
+    elif layer.get("kind") == "fc":
+        k, n = int(layer["k"]), int(layer["n"])
+    else:
+        raise ValueError("emit_layer_strip supports kind='fc' or 'conv'")
+    for key in ("weights", "bias", "weight_scales", "input_zp",
+                "input_scale", "output_zp", "output_scale", "relu"):
         if key not in layer:
             raise ValueError(f"emit_layer_strip missing required layer field {key!r}")
-    k, n = int(layer["k"]), int(layer["n"])
-    if k <= 0 or n <= 0 or n % 8 != 0:
-        raise ValueError("emit_layer_strip requires k>0, n>0, and n%8==0")
-    if int(layer.get("input_zp", 0)) != 0 or int(layer.get("output_zp", 0)) != 0:
-        raise ValueError("emit_layer_strip supports only symmetric zp=0 inputs/outputs")
-    if layer.get("relu", False):
-        raise ValueError("emit_layer_strip does not support fused ReLU")
-    bias = layer.get("bias", [0] * n)
-    if len(bias) != n or any(int(v) != 0 for v in bias):
-        raise ValueError("emit_layer_strip supports only no-bias/zero-bias GeGLU projections")
+    if k <= 0 or n <= 0 or n % 8 != 0 or k % 8 != 0:
+        raise ValueError("emit_layer_strip requires k>0, n>0, n%8==0, and k%8==0")
+    if not -128 <= int(layer["input_zp"]) <= 127:
+        raise ValueError("emit_layer_strip input_zp must be int8")
+    if not -128 <= int(layer["output_zp"]) <= 127:
+        raise ValueError("emit_layer_strip output_zp must be int8")
+    if int(layer.get("filter_zp", 0)) != 0:
+        raise ValueError("emit_layer_strip requires filter_zp==0")
+    bias = layer["bias"]
+    if len(bias) != n:
+        raise ValueError("emit_layer_strip bias length must equal n")
     weights = layer["weights"]
     if len(weights) != n or any(len(row) != k for row in weights):
         raise ValueError("emit_layer_strip weights must be shaped [n][k]")
@@ -325,21 +347,37 @@ def _validate_strip_layer(layer):
 def _strip_param_blocks(layer, n, n_param=None):
     if n_param is None:
         n_param = n
-    mults, shifts = [], []
-    for c in range(n_param):
-        if c < n:
-            m, s = quantize_multiplier(
-                float(layer["input_scale"]) * float(layer["weight_scales"][c]) /
-                float(layer["output_scale"]))
-            eng = 31 - s
-            if not (31 <= eng <= 62):
-                raise ValueError("strip requant shift outside engine range")
-            mults.append(m)
-            shifts.append(eng)
+    blocks = bytearray()
+    n_tiles = n // 8
+    for tile in range(n_param // 8):
+        if tile < n_tiles:
+            blocks += _param_block_tile(layer, tile).ljust(strip_blob.PARAM_BLOCK_STRIDE, b"\0")
         else:
-            mults.append(0)
-            shifts.append(0)
-    return strip_blob.make_param_blocks(mults, shifts, n_param)
+            blocks += bytes(strip_blob.PARAM_BLOCK_STRIDE)
+    return bytes(blocks)
+
+
+def _strip_fold_blocks(layer, n, n_param):
+    blocks = bytearray()
+    n_tiles = n // 8
+    for tile in range(n_param // 8):
+        if tile < n_tiles:
+            blocks += _fold_block_tile(layer, tile)
+        else:
+            blocks += bytes(32)
+    return bytes(blocks)
+
+
+def _strip_header(layer):
+    amin, amax = act_range(layer)
+    rsp = (int(layer["output_zp"]) & 0xFF) << 8
+    clamp = ((int(amax) & 0xFF) << 8) | (int(amin) & 0xFF)
+    hdr = bytearray(STRIP_HDR_BYTES)
+    hdr[0:4] = STRIP_HDR_MAGIC
+    hdr[4:8] = rsp.to_bytes(4, "little")
+    hdr[8:12] = clamp.to_bytes(4, "little")
+    hdr[12:16] = STRIP_HDR_VERSION.to_bytes(4, "little")
+    return bytes(hdr)
 
 
 def _strip_activation_chunks(group_rows, k, k_chunks):
@@ -355,14 +393,14 @@ def _strip_activation_chunks(group_rows, k, k_chunks):
     return chunks
 
 
-def _strip_job_blob(w_blob, param_blocks, group_rows, k, k_chunks):
+def _strip_job_blob(header, w_blob, param_blocks, fold_blocks, group_rows, k, k_chunks):
     act_chunks = b"".join(_strip_activation_chunks(group_rows, k, k_chunks))
-    return w_blob + param_blocks + act_chunks
+    return header + w_blob + param_blocks + fold_blocks + act_chunks
 
 
 def lower_layer_strip(layer, rows, out_shared=SHARED_DST_B, prep_shared=STRIP_PREP_B,
                       weight_base=None):
-    """Lower one zero-bias symmetric FC projection to ADR-0073 MAT_STRIP_GEMM.
+    """Lower one FC projection to ADR-0073 MAT_STRIP_GEMM blob v2.
 
     rows is [n_rows][K] int8, padded to 8-row groups like lower_layer_v2.
     Returns (segments [(shared_byte, bytes)], ring words, n_groups, n_tiles).
@@ -383,9 +421,12 @@ def lower_layer_strip(layer, rows, out_shared=SHARED_DST_B, prep_shared=STRIP_PR
 
     w_blob = strip_blob.make_strip_blob(layer["weights"])
     n_param = n_strips * strip_blob.STRIP_COLS
+    header = _strip_header(layer)
     param_blocks = _strip_param_blocks(layer, n, n_param)
+    fold_blocks = _strip_fold_blocks(layer, n, n_param)
     job_blobs = [
-        _strip_job_blob(w_blob, param_blocks, rows[g * 8:(g + 1) * 8], k, k_chunks)
+        _strip_job_blob(header, w_blob, param_blocks, fold_blocks,
+                        rows[g * 8:(g + 1) * 8], k, k_chunks)
         for g in range(n_groups)
     ]
     job_stride = _align(max(len(b) for b in job_blobs), 0x1000)
@@ -393,15 +434,10 @@ def lower_layer_strip(layer, rows, out_shared=SHARED_DST_B, prep_shared=STRIP_PR
         weight_base = STRIP_W_BASE_DEFAULT
     if (weight_base & 0xFFF) != 0:
         raise ValueError("strip weight_base must be 4KB aligned")
-    if prep_shared + 32 > weight_base:
-        raise ValueError("strip fold-zero segment overlaps weight_base")
     if out_shared % 64 != 0:
         raise ValueError("strip out_shared must be 64B aligned")
 
     segments, ring = [], []
-    segments.append((prep_shared, bytes(32)))
-    ring += cq_codec.encode("MAT_LOAD_W", src_addr=0x80000000 | prep_shared,
-                            rows=1, cols=8)
     for g, blob in enumerate(job_blobs):
         job_base = weight_base + g * job_stride
         if job_base > SHARED_BYTES - len(blob):
@@ -438,11 +474,10 @@ def emit_layer_v2(outdir: Path, layer, rows, ring_entries=32):
 
 def emit_layer_strip(outdir: Path, layer, in_shared, out_shared=SHARED_DST_B,
                      ring_entries=32, prep_shared=STRIP_PREP_B, weight_base=None):
-    """Emit a strip-mode GeGLU FC case.
+    """Emit a strip-mode FC case.
 
     ``in_shared`` is the same row tensor passed to emit_layer_v2's ``rows``
-    argument. The name is kept for the strip promotion call sites, where the
-    rows are staged through shared memory before the strip TCM prep load.
+    argument. The name is kept for the strip promotion call sites.
     """
     segments, ring, n_groups, n_tiles = lower_layer_strip(
         layer, in_shared, out_shared=out_shared, prep_shared=prep_shared,
