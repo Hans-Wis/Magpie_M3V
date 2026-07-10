@@ -1,0 +1,4 @@
+obj_dir/
+*.elf
+firmware.hex
+perf_run.log

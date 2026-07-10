@@ -4,6 +4,7 @@
 module tb_ml_v2_gemm;
     parameter integer MAT_LANES = 4;
     parameter integer DMA_DATA_W = 32;
+    parameter integer DDR_MODEL = 0;
     reg clk = 1'b0;
     reg resetn = 1'b0;
     always #5 clk = ~clk;
@@ -31,6 +32,25 @@ module tb_ml_v2_gemm;
     wire [DMA_DATA_W/8-1:0] m_wstrb;
     wire        irq, npu_start;
     wire [31:0] npu_config;
+    reg         use_ddr_model;
+    integer     ddr_model_arg;
+
+    wire        sram_arready, sram_rvalid, sram_rlast;
+    wire [DMA_DATA_W-1:0] sram_rdata;
+    wire [ 1:0] sram_rresp;
+    wire        sram_awready, sram_wready, sram_bvalid;
+    wire [ 1:0] sram_bresp;
+    wire        ddr_arready, ddr_rvalid, ddr_rlast;
+    wire [DMA_DATA_W-1:0] ddr_rdata;
+    wire [ 1:0] ddr_rresp;
+    wire        ddr_awready, ddr_wready, ddr_bvalid;
+    wire [ 1:0] ddr_bresp;
+
+    initial begin
+        use_ddr_model = (DDR_MODEL != 0);
+        if ($value$plusargs("DDR_MODEL=%d", ddr_model_arg))
+            use_ddr_model = (ddr_model_arg != 0);
+    end
 
     npu_top #(.TCM_WORDS(8192), .TCM_AW(13), .MAT_LANES(MAT_LANES), .DMA_DATA_W(DMA_DATA_W), .ML_V2_EN(1)) dut (
         .clk(clk), .resetn(resetn),
@@ -49,21 +69,43 @@ module tb_ml_v2_gemm;
         .irq(irq), .npu_start(npu_start), .npu_config(npu_config)
     );
 
-    axi_full_rwmem #(.WORDS(16384), .DMA_DATA_W(DMA_DATA_W)) shared (
+    assign m_arready = use_ddr_model ? ddr_arready : sram_arready;
+    assign m_rvalid  = use_ddr_model ? ddr_rvalid  : sram_rvalid;
+    assign m_rdata   = use_ddr_model ? ddr_rdata   : sram_rdata;
+    assign m_rlast   = use_ddr_model ? ddr_rlast   : sram_rlast;
+    assign m_rresp   = use_ddr_model ? ddr_rresp   : sram_rresp;
+    assign m_awready = use_ddr_model ? ddr_awready : sram_awready;
+    assign m_wready  = use_ddr_model ? ddr_wready  : sram_wready;
+    assign m_bvalid  = use_ddr_model ? ddr_bvalid  : sram_bvalid;
+    assign m_bresp   = use_ddr_model ? ddr_bresp   : sram_bresp;
+
+    axi_full_rwmem #(.WORDS(16384), .DMA_DATA_W(DMA_DATA_W)) shared_sram (
         .clk(clk), .resetn(resetn),
-        .arvalid(m_arvalid), .arready(m_arready), .araddr(m_araddr),
+        .arvalid(m_arvalid && !use_ddr_model), .arready(sram_arready), .araddr(m_araddr),
         .arlen(m_arlen), .arsize(m_arsize), .arburst(m_arburst),
-        .rvalid(m_rvalid), .rready(m_rready), .rdata(m_rdata), .rlast(m_rlast), .rresp(m_rresp),
-        .awvalid(m_awvalid), .awready(m_awready), .awaddr(m_awaddr),
+        .rvalid(sram_rvalid), .rready(m_rready && !use_ddr_model), .rdata(sram_rdata), .rlast(sram_rlast), .rresp(sram_rresp),
+        .awvalid(m_awvalid && !use_ddr_model), .awready(sram_awready), .awaddr(m_awaddr),
         .awlen(m_awlen), .awsize(m_awsize), .awburst(m_awburst),
-        .wvalid(m_wvalid), .wready(m_wready), .wdata(m_wdata), .wstrb(m_wstrb), .wlast(m_wlast),
-        .bvalid(m_bvalid), .bready(m_bready), .bresp(m_bresp)
+        .wvalid(m_wvalid && !use_ddr_model), .wready(sram_wready), .wdata(m_wdata), .wstrb(m_wstrb), .wlast(m_wlast),
+        .bvalid(sram_bvalid), .bready(m_bready && !use_ddr_model), .bresp(sram_bresp)
+    );
+
+    axi_ddr_latency_model #(.WORDS(16384), .DMA_DATA_W(DMA_DATA_W)) shared_ddr (
+        .clk(clk), .resetn(resetn),
+        .arvalid(m_arvalid && use_ddr_model), .arready(ddr_arready), .araddr(m_araddr),
+        .arlen(m_arlen), .arsize(m_arsize), .arburst(m_arburst),
+        .rvalid(ddr_rvalid), .rready(m_rready && use_ddr_model), .rdata(ddr_rdata), .rlast(ddr_rlast), .rresp(ddr_rresp),
+        .awvalid(m_awvalid && use_ddr_model), .awready(ddr_awready), .awaddr(m_awaddr),
+        .awlen(m_awlen), .awsize(m_awsize), .awburst(m_awburst),
+        .wvalid(m_wvalid && use_ddr_model), .wready(ddr_wready), .wdata(m_wdata), .wstrb(m_wstrb), .wlast(m_wlast),
+        .bvalid(ddr_bvalid), .bready(m_bready && use_ddr_model), .bresp(ddr_bresp)
     );
 
     initial begin
         $readmemh("design/npu/sw/ml_job_driver/ml_job_driver.hex", dut.tcm.mem);
         $readmemh("design/npu/sw/ml_job_driver/ml_job_driver.hex", dut.itcm.mem);
-        $readmemh("sim/work/ml_v2_gemm/ml_v2_shared.hex", shared.mem);
+        $readmemh("sim/work/ml_v2_gemm/ml_v2_shared.hex", shared_sram.mem);
+        $readmemh("sim/work/ml_v2_gemm/ml_v2_shared.hex", shared_ddr.mem);
     end
 
     localparam [31:0] A_CTRL = 32'h3000_0004, A_STATUS = 32'h3000_0008;
@@ -155,13 +197,19 @@ module tb_ml_v2_gemm;
         cycle_on = 1'b0;
 
         fdump = $fopen("sim/work/ml_v2_gemm/result.dump", "w");
-        for (i = 0; i < meta[1]; i = i + 1)
-            $fdisplay(fdump, "%08x", shared.mem[32'h600 + i]);
+        for (i = 0; i < meta[1]; i = i + 1) begin
+            if (use_ddr_model)
+                $fdisplay(fdump, "%08x", shared_ddr.mem[32'h600 + i]);
+            else
+                $fdisplay(fdump, "%08x", shared_sram.mem[32'h600 + i]);
+        end
         $fclose(fdump);
 
         $display("ML_V2_CYCLES=%0d", ml_v2_cycles);
         $display("ML_V2_BREAKDOWN mat_busy=%0d dma_busy=%0d other=%0d",
                  ml_mat_busy, ml_dma_busy, ml_v2_cycles - ml_mat_busy - ml_dma_busy);
+        if (use_ddr_model)
+            shared_ddr.print_stats();
         $display("ML_V2_GEMM: %0d checks, %0d errors", checks, errors);
         if (errors == 0) $display("ML_V2_GEMM_PASS");
         else             $display("ML_V2_GEMM_FAIL");
@@ -171,7 +219,10 @@ module tb_ml_v2_gemm;
     initial begin
         #12000000;
         $display("ML_V2_GEMM_FAIL: timeout");
+        if (use_ddr_model)
+            shared_ddr.print_stats();
         $finish;
     end
 endmodule
+`include "design/npu/dv/tb/axi_ddr_latency_model.v"
 `default_nettype wire
