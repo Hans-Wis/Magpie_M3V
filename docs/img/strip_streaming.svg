@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="860px" height="330px" viewBox="0 0 860 330">
+  <rect x="0" y="0" width="860" height="330" fill="#ffffff"/>
+  <text x="430" y="24" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="bold" fill="#1a1a1a">Strip streaming: weight DDR path (ADR-0073)</text>
+
+  <!-- DDR -->
+  <rect x="20" y="60" width="150" height="190" rx="8" fill="#eef3fb" stroke="#3a5fa0" stroke-width="2"/>
+  <text x="95" y="82" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="bold" fill="#1a3a6b">DDR (weights)</text>
+  <rect x="35" y="95" width="120" height="30" fill="#ffffff" stroke="#3a5fa0" stroke-width="1"/>
+  <text x="95" y="114" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#333333">strip s (40 KB)</text>
+  <rect x="35" y="130" width="120" height="30" fill="#ffffff" stroke="#3a5fa0" stroke-width="1"/>
+  <text x="95" y="149" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#333333">strip s+1</text>
+  <rect x="35" y="165" width="120" height="30" fill="#ffffff" stroke="#3a5fa0" stroke-width="1"/>
+  <text x="95" y="184" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#333333">strip s+2 ...</text>
+  <text x="95" y="225" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555555">full-K x 64-col strips,</text>
+  <text x="95" y="239" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555555">page-hit contiguous</text>
+
+  <!-- burst chain arrow -->
+  <line x1="170" y1="145" x2="285" y2="145" stroke="#c05020" stroke-width="3"/>
+  <polygon points="285,145 273,138 273,152" fill="#c05020"/>
+  <text x="228" y="120" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="bold" fill="#c05020">npu_dma STRIP mode</text>
+  <text x="228" y="134" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#c05020">HW burst chain: 10x 256-beat</text>
+  <text x="228" y="163" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#c05020">INCR, back-to-back AR</text>
+  <text x="228" y="177" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#c05020">(no firmware in the loop)</text>
+
+  <!-- ping-pong buffer -->
+  <rect x="290" y="60" width="200" height="190" rx="8" fill="#f3f9ef" stroke="#4a7a30" stroke-width="2"/>
+  <text x="390" y="82" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="bold" fill="#2b4a1a">npu_strip_buf</text>
+  <rect x="305" y="95" width="170" height="55" fill="#ffffff" stroke="#4a7a30" stroke-width="1.5"/>
+  <text x="390" y="118" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="bold" fill="#333333">bank A (40 KB)</text>
+  <text x="390" y="136" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#c05020">DMA fills strip s+1</text>
+  <rect x="305" y="160" width="170" height="55" fill="#ffffff" stroke="#4a7a30" stroke-width="1.5"/>
+  <text x="390" y="183" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" font-weight="bold" fill="#333333">bank B (40 KB)</text>
+  <text x="390" y="201" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#2b4a1a">engine reads strip s</text>
+  <text x="390" y="237" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555555">swap ONLY at rendezvous:</text>
+  <text x="390" y="250" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555555">compute-done AND prefetch-done</text>
+
+  <!-- read arrow -->
+  <line x1="490" y1="145" x2="600" y2="145" stroke="#4a7a30" stroke-width="3"/>
+  <polygon points="600,145 588,138 588,152" fill="#4a7a30"/>
+  <text x="545" y="132" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#2b4a1a">256-bit weight</text>
+  <text x="545" y="160" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#2b4a1a">read port (muxed)</text>
+
+  <!-- mat engine -->
+  <rect x="605" y="60" width="235" height="190" rx="8" fill="#fdf4ec" stroke="#a06020" stroke-width="2"/>
+  <text x="722" y="82" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="13" font-weight="bold" fill="#6b3a1a">mat_engine + npu_ml_ctrl</text>
+  <text x="722" y="106" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#333333">per strip (hardware loop):</text>
+  <text x="722" y="126" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#333333">8 sub-tiles x (LOADACC -&gt;</text>
+  <text x="722" y="144" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#333333">K-chunk OPs accumulate -&gt;</text>
+  <text x="722" y="162" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#333333">RESCALE_PC -&gt; STORE)</text>
+  <text x="722" y="192" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555555">K &gt; 64 native (in-strip ACC),</text>
+  <text x="722" y="206" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555555">activations stay in TCM,</text>
+  <text x="722" y="220" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#555555">one CQ op = whole GEMM</text>
+
+  <!-- results strip -->
+  <text x="430" y="290" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="bold" fill="#1a1a1a">Measured: 2.86 -&gt; 5.27 B/cyc at the DDR controller's G2 calibration point (1.8x);</text>
+  <text x="430" y="310" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#1a1a1a">bit-exact under random DDR stalls; per-GEMM orchestration: 320 firmware tiles -&gt; one hardware loop.</text>
+</svg>

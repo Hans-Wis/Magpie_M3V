@@ -93,6 +93,46 @@ Full walk-through (instruction-vs-command identity, fence/memory hand-off betwee
 | **ML e2e** | TFLM FC / MLP / CNN + MobileNet block + **Gemma-3 270M decoder layer**, all int8 bit-exact vs TFLM |
 | **SoC** | `soc_m3v_top` two-core (host --AXI--> NPU), PLIC/IRQ, DMA width scaling with LANES |
 
+## DDR path optimization — strip-streaming the weights
+
+LLM decode on this class of NPU is **memory-bound, not compute-bound**: every generated token must
+stream each layer's full weight matrix (~5.6 MB int8 for the Gemma-3 270M geometry) from DRAM, while
+the 256-MAC engine needs only ~22k cycles of actual math per layer. We measured the wall honestly —
+a parameterizable DDR-latency model (page hit/miss, per-beat column spacing, single-outstanding,
+4KB burst discipline; `gate_94`) replaced the 1-cycle SRAM stand-in — and found that naive 4 KB
+per-tile bursts reach only **2.86 B/cyc** at the companion DDR controller's calibration point
+(62% of the continuous-stream bound, 21% of pin): short bursts re-pay first-beat latency and the
+single-outstanding AR gap dominates.
+
+![Strip streaming DDR path](docs/img/strip_streaming.svg)
+
+The fix is architectural (ADR-0073, "strip streaming"):
+
+* **Strips, not tiles** — weights live in DRAM as full-K × 64-column strips (40 KB), laid out
+  contiguously so an entire strip is one page-hit sequence.
+* **Hardware burst chain** — `npu_dma`'s STRIP mode fetches a strip as 10 back-to-back 256-beat
+  INCR bursts with hardware-continued AR (no firmware between bursts).
+* **Ping-pong prefetch** — a 2×40 KB `npu_strip_buf` lets the DMA fill strip *s+1* while the engine
+  computes strip *s*; banks swap only at a rendezvous (compute-done ∧ prefetch-done), so timing can
+  never change results — proven bit-exact under randomly injected DDR stalls (`gate_97`).
+* **K > 64 native** — K-chunks accumulate in the engine's ACC within a strip, so real layer shapes
+  (K = 640/2048) no longer decompose into hundreds of firmware-orchestrated tiles: per-projection
+  orchestration collapses from ~320 tiles × 6 CQ ops to a single `MAT_STRIP_GEMM` descriptor driving
+  a hardware loop (`gate_98`).
+
+Measured on the q_proj rail at the controller's G2 calibration: **2.86 → 5.27 B/cyc (1.8×)**.
+Combined with the calibrated controller roadmap this moves the decode projection from ~8.7 tok/s
+(today's controller, naive bursts) through ~15.5 (G2) toward **~25–30 tok/s** with the full
+streaming stack — the remaining gap to 50+ tok/s is a byte-reduction/product decision (weight
+quantization below int8 or a wider DRAM part), not further RTL heroics
+([`docs/reports/2026-07-10_ddr_wall_formal.md`](docs/reports/2026-07-10_ddr_wall_formal.md)).
+
+Every production GEMM rail (Gemma q/k/v/o/gate/up/down and the TFLM conv/FC paths) runs on both
+transports in the gate suite and must reproduce the **same immutable golden bytes** — the strip path
+is a transport change, never a numerics change. Honest bounds: bandwidth numbers come from the
+calibrated latency model (the real controller is the sister `Magpie_DDR` IP, still in bring-up),
+and the on-chip shared SRAM remains the DRAM stand-in in simulation.
+
 ## Verification
 
 Open-source, one-command reproducible: **Verilator (DUT) + Spike (golden) + riscv64-unknown-elf-gcc
