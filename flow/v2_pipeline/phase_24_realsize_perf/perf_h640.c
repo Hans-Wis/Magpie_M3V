@@ -269,6 +269,46 @@ static void k_rope_scalar(u32 hd, int32_t mult, int32_t shift)
     }
 }
 
+/* RoPE RVV — verbatim mirror of the vectorized CQ_OP_MAT_ROPE handler. */
+static void k_rope_rvv(u32 hd, int32_t mult, int32_t shift)
+{
+    u32 half = hd >> 1;
+    int32_t S = shift - 31;
+    const signed char *ps = (const signed char *)buf_a;
+    signed char *pd2 = (signed char *)buf_d;
+    const int16_t *pc = (const int16_t *)rope_tab;
+    const int16_t *pn = (const int16_t *)(rope_tab + hd);
+    u32 seg, base, i;
+    size_t vl;
+    if (S < 0) S = 0;
+    __asm__ volatile ("csrw vxrm, zero" ::: "memory");
+    for (seg = 0u; seg < 2u; seg++) {
+        base = seg ? half : 0u;
+        const signed char *pr = seg ? ps : (ps + half);
+        u32 n = seg ? (hd - half) : half;
+        for (i = 0u; i < n; i += vl) {
+            vl = __riscv_vsetvl_e8mf4(n - i);
+            vint16mf2_t x16 = __riscv_vwcvt_x_x_v_i16mf2(
+                __riscv_vle8_v_i8mf4(ps + base + i, vl), vl);
+            vint16mf2_t r16 = __riscv_vwcvt_x_x_v_i16mf2(
+                __riscv_vle8_v_i8mf4(pr + i, vl), vl);
+            vint16mf2_t c16 = __riscv_vle16_v_i16mf2(pc + base + i, vl);
+            vint16mf2_t n16 = __riscv_vle16_v_i16mf2(pn + base + i, vl);
+            vint32m1_t acc = __riscv_vwmul_vv_i32m1(x16, c16, vl);
+            vint32m1_t rr = __riscv_vwmul_vv_i32m1(r16, n16, vl);
+            acc = seg ? __riscv_vadd_vv_i32m1(acc, rr, vl)
+                      : __riscv_vsub_vv_i32m1(acc, rr, vl);
+            acc = __riscv_vsmul_vx_i32m1(acc, mult, vl);
+            acc = __riscv_vssra_vx_i32m1(acc, (uint32_t)S, vl);
+            acc = __riscv_vmax_vx_i32m1(acc, -128, vl);
+            acc = __riscv_vmin_vx_i32m1(acc, 127, vl);
+            __riscv_vse8_v_i8mf4(pd2 + base + i,
+                __riscv_vncvt_x_x_w_i8mf4(
+                    __riscv_vncvt_x_x_w_i16mf2(acc, vl), vl), vl);
+        }
+    }
+}
+
 static void k_softmax_scalar(u32 n, u32 valid, u32 prob_scale)
 {
     volatile int8_t *s = buf_a;
@@ -336,6 +376,8 @@ int main(void)
     MEASURE("ewise_mul_rvv", 640, k_ewise_mul_rvv(640, 0x40000000, 40));
     MEASURE("ewise_add_rvv", 640, k_ewise_add_rvv(640, 20000, 17000, 15));
     MEASURE("rope_scalar", 160, k_rope_scalar(160, 0x40000000, 40));
+    MEASURE("rope_rvv", 160, k_rope_rvv(160, 0x40000000, 40));
+    MEASURE("rope_rvv", 256, k_rope_rvv(256, 0x40000000, 40));
     MEASURE("softmax_scalar", 4, k_softmax_scalar(4, 4, 255));
     MEASURE("softmax_scalar", 64, k_softmax_scalar(64, 64, 255));
     MEASURE("softmax_scalar", 256, k_softmax_scalar(256, 256, 255));

@@ -618,13 +618,49 @@ void main(void)
                 (w3 & 3u) != 0u || w3 > (TCM_SCRATCH_B - 8u))
                 cq_halt(CQ_ERR_MAT_PARAM);
             mult = pp[0]; shift = pp[1];
-            for (i = 0u; i < hd; i++) {
-                int32_t rot = (i < half) ? -(int32_t)s[i + half] : (int32_t)s[i - half];
-                int32_t acc = (int32_t)s[i] * cs[i] + rot * sn[i];
-                int32_t q = seq_rdbpot(seq_srdhm(acc, mult), shift - 31);
-                if (q < -128) q = -128;
-                if (q > 127)  q = 127;
-                d[i] = (int8_t)q;
+            /* RoPE RVV (nonlinear_rvv_e1b_rope_design §3): two unit-stride
+             * segments kill the rotate-half shuffle (segment 1 subtracts the
+             * +half partner, segment 2 adds the -half partner); the scalar
+             * srdhm+rdbpot pair becomes vsmul(rnu)+vssra(rnu) — golden =
+             * gemma_quant_s2.rope_int8, flip 0/256 on the probe corpus.
+             * |s|<=127, |cs|,|sn|<=32767 -> two i16xi16 products sum < 2^24,
+             * i32-safe. */
+            {
+                int32_t S = shift - 31;
+                const signed char *ps = (const signed char *)src;
+                signed char *pd2 = (signed char *)dst;
+                const int16_t *pc = (const int16_t *)w2;
+                const int16_t *pn = (const int16_t *)(w2 + 2u * hd);
+                uint32_t seg, base;
+                size_t vl;
+                if (S < 0)
+                    S = 0;
+                __asm__ volatile ("csrw vxrm, zero" ::: "memory");   /* rnu */
+                for (seg = 0u; seg < 2u; seg++) {
+                    base = seg ? half : 0u;
+                    const signed char *pr = seg ? ps : (ps + half);
+                    uint32_t n = seg ? (hd - half) : half;
+                    for (i = 0u; i < n; i += vl) {
+                        vl = __riscv_vsetvl_e8mf4(n - i);
+                        vint16mf2_t x16 = __riscv_vwcvt_x_x_v_i16mf2(
+                            __riscv_vle8_v_i8mf4(ps + base + i, vl), vl);
+                        vint16mf2_t r16 = __riscv_vwcvt_x_x_v_i16mf2(
+                            __riscv_vle8_v_i8mf4(pr + i, vl), vl);
+                        vint16mf2_t c16 = __riscv_vle16_v_i16mf2(pc + base + i, vl);
+                        vint16mf2_t n16 = __riscv_vle16_v_i16mf2(pn + base + i, vl);
+                        vint32m1_t acc = __riscv_vwmul_vv_i32m1(x16, c16, vl);
+                        vint32m1_t rr = __riscv_vwmul_vv_i32m1(r16, n16, vl);
+                        acc = seg ? __riscv_vadd_vv_i32m1(acc, rr, vl)
+                                  : __riscv_vsub_vv_i32m1(acc, rr, vl);
+                        acc = __riscv_vsmul_vx_i32m1(acc, mult, vl);
+                        acc = __riscv_vssra_vx_i32m1(acc, (uint32_t)S, vl);
+                        acc = __riscv_vmax_vx_i32m1(acc, -128, vl);
+                        acc = __riscv_vmin_vx_i32m1(acc, 127, vl);
+                        __riscv_vse8_v_i8mf4(pd2 + base + i,
+                            __riscv_vncvt_x_x_w_i8mf4(
+                                __riscv_vncvt_x_x_w_i16mf2(acc, vl), vl), vl);
+                    }
+                }
             }
             break;
         }

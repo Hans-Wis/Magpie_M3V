@@ -32,6 +32,8 @@ sys.path.insert(0, str(HERE.parents[1] / "golden"))
 import gemma_ref as ref  # noqa: E402
 import gemma_quant as gq  # noqa: E402  (gemm_pc, q_pertensor, q_perchannel, requant, qmul)
 import gemma_quant_s1 as s1  # noqa: E402  (rmsnorm_int8)
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "golden"))
+import rvv_bitmodel as rvv  # noqa: E402  (E1b/RoPE rounding redefinition)
 
 
 def rope_tables_q15(seq, hd, theta):
@@ -54,7 +56,9 @@ def rope_int8(x_q, s_x, cos_q, sin_q, s_out):
             for i in range(hd):
                 rot = -int(x_q[p, h, i + half]) if i < half else int(x_q[p, h, i - half])
                 acc = int(x_q[p, h, i]) * int(cos_q[p, i]) + rot * int(sin_q[p, i])
-                q = gq.rdbpot(gq.srdhm(acc, m), -s)
+                # RoPE RVV rounding redefinition (nonlinear_rvv_e1b_rope_design §3):
+                # srdhm+rdbpot -> vsmul(rnu)+vssra(rnu), Spike-validated primitives
+                q = rvv.vssra(rvv.vsmul(acc, m, 0), -s, 0)
                 out[p, h, i] = max(-128, min(127, q))
     return out, dict(mult_q31=m & 0xFFFFFFFF, shift=31 - s)
 
