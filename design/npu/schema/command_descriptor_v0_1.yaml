@@ -242,6 +242,23 @@
         "len"
       ],
       "notes": "ADR-0066 E1a: CQ-driven LOADVEC->RESCALE path for an arbitrary padded-64 int32 vector. W0.ACC selects the accumulator bank; W0.RPT=len (<=64) is the consumed element count, while RTL LOADVEC/RESCALE always processes 64 lanes. src is 32B-aligned 64x int32 in TCM; dst reserves 64 int8 bytes."
+    },
+    {
+      "name": "MAT_STRIP_GEMM",
+      "value": 15,
+      "w1": "W_BASE(shared/DDR byte address, 4KB aligned)",
+      "w2": "(N_STRIPS[11:0]<<17) | STRIP_BYTES[16:0]",
+      "w3": "(K_CHUNKS[7:0]<<24) | (K_TAIL[6:0]<<17) | (N_TAIL[6:0]<<10) | out_dst64[9:0]",
+      "fields": [
+        "w_base",
+        "strip_bytes",
+        "n_strips",
+        "k_chunks",
+        "k_tail",
+        "n_tail",
+        "out_dst64"
+      ],
+      "notes": "Strip-mode GEMM transport op (strip_rail_promotion_design.md §1): sequencer validates ADR-0073 illegal table plus W_BASE 4KB alignment and output shared bounds, then writes ml_ctrl CSRs 0x94..0xA8 plus ML_OUT_BASE 0xAC, GO, and polls ML_STATUS.DONE. TCM precondition: activation chunks are already at OP_A_ADDR+c*0x200 and strip RESCALE_PC params are at 0x1200 as 64B-stride blocks indexed by global sub-tile (strip*8+t). Output base is out_dst64*64, and sub-tile block address is base+(s*8+t)*64."
     }
   ],
   "err_causes": [
@@ -276,6 +293,11 @@
     {
       "name": "ABORTED",
       "value": 8
+    },
+    {
+      "name": "STRIP",
+      "value": 9,
+      "notes": "MAT_STRIP_GEMM ml_ctrl/strip-streaming error, including ML_STRIP_DMA_ERR."
     },
     {
       "name": "CORE_TRAP_FLAG",

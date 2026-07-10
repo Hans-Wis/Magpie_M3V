@@ -21,6 +21,7 @@ typedef enum {
     CQ_OP_MAT_ROPE = 0x0C,
     CQ_OP_MAT_SOFTMAX = 0x0D,
     CQ_OP_MAT_REQUANT_VEC = 0x0E,
+    CQ_OP_MAT_STRIP_GEMM = 0x0F,
 } cq_opcode_t;
 
 typedef enum {
@@ -32,6 +33,7 @@ typedef enum {
     CQ_ERR_DESC_ALIGN = 0x06,
     CQ_ERR_MAT_PARAM = 0x07,
     CQ_ERR_ABORTED = 0x08,
+    CQ_ERR_STRIP = 0x09,
     CQ_ERR_CORE_TRAP_FLAG = 0x80000000,
 } cq_err_cause_t;
 

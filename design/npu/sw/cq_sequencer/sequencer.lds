@@ -8,13 +8,13 @@ ENTRY(_start)
  * high in the DTCM (0x2000, above all CQ scratch regions) instead. The DTCM copy of .text
  * that blobs overwrite is harmless — execution is from ITCM. No runtime-address changes. */
 /* dtcm ORIGIN sits just above the CQ scratch regions (weight/blob top ~0xD40, descriptor
- * scratch 0xF00..0xF80) at 0x1000, and BELOW the 8K ITCM top — the same firmware.hex is
+ * scratch 0xF00..0xF80) at 0x1100, and BELOW the 8K ITCM top — the same firmware.hex is
  * $readmemh'd into both the 8K ITCM and the 32K DTCM, so .rodata/.bss LMAs must fit the
  * smaller ITCM. Data is only READ from the DTCM copy; the ITCM copy is loaded but unused. */
 MEMORY
 {
   itcm (rx) : ORIGIN = 0x00000000, LENGTH = 8K
-  dtcm (rw) : ORIGIN = 0x00001000, LENGTH = 28K
+  dtcm (rw) : ORIGIN = 0x00001100, LENGTH = 27K
 }
 SECTIONS
 {

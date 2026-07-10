@@ -16,6 +16,7 @@ localparam CQ_OP_MAT_EWISE_ADD_REQUANT = 6'h0B;
 localparam CQ_OP_MAT_ROPE = 6'h0C;
 localparam CQ_OP_MAT_SOFTMAX = 6'h0D;
 localparam CQ_OP_MAT_REQUANT_VEC = 6'h0E;
+localparam CQ_OP_MAT_STRIP_GEMM = 6'h0F;
 
 localparam [31:0] CQ_W0_OPCODE_MASK = 32'h0000003F;
 localparam integer CQ_W0_OPCODE_LSB = 0;
@@ -41,6 +42,7 @@ localparam [31:0] CQ_ERR_DMA_FAULT = 32'h00000005;
 localparam [31:0] CQ_ERR_DESC_ALIGN = 32'h00000006;
 localparam [31:0] CQ_ERR_MAT_PARAM = 32'h00000007;
 localparam [31:0] CQ_ERR_ABORTED = 32'h00000008;
+localparam [31:0] CQ_ERR_STRIP = 32'h00000009;
 localparam [31:0] CQ_ERR_CORE_TRAP_FLAG = 32'h80000000;
 
 localparam [31:0] CQ_CORE_WINDOW_BASE = 32'h00020000;

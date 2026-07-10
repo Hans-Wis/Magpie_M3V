@@ -28,9 +28,21 @@
 #define CSR_MAT_STATUS  0x7Cu
 #define MAT_OUT_B_DEFAULT 0x800u
 #define CSR_ERR_PC      0x80u
+#define CSR_ML_NTILES   0x84u
+#define CSR_ML_GO       0x88u
+#define CSR_ML_STATUS   0x90u
+#define CSR_ML_MODE     0x94u
+#define CSR_ML_W_BASE   0x98u
+#define CSR_ML_SBYTES   0x9Cu
+#define CSR_ML_NSTRIP   0xA0u
+#define CSR_ML_KCHUNK   0xA4u
+#define CSR_ML_NTAIL    0xA8u
+#define CSR_ML_OUT_BASE 0xACu
 #define MAT_ST_BUSY     1u
 #define MAT_ST_DONE     2u
 #define MAT_ST_ERR      4u
+#define ML_ST_DONE      2u
+#define ML_ST_ERR       4u
 #define MAT_CMD_CLR     0u
 #define MAT_CMD_LOADACC 3u
 #define MAT_CMD_RESCALE_PC 4u
@@ -43,6 +55,9 @@
 #define STATUS_DMA_ERR  (1u << 5)
 #define STATUS_WB_BUSY  (1u << 6)
 #define STATUS_WB_DONE  (1u << 7)
+
+#define SHARED_BYTES    0x00010000u
+#define STRIP_BYTES_MAX 40960u
 
 #define CQ_CTRL_ENABLE  1u
 #define CQ_EVENT_IRQ    1u
@@ -58,7 +73,7 @@ static volatile uint32_t *const csr = (volatile uint32_t *)CSR_BASE;
 static volatile uint32_t *const mailbox = (volatile uint32_t *)MAILBOX_BASE;
 static volatile cq_desc_t *const scratch = (volatile cq_desc_t *)TCM_SCRATCH_B;
 
-static volatile uint32_t cfg_m, cfg_n, cfg_k, cfg_tile_flags, acc_mask_latch;
+static uint32_t cfg_k;
 
 /* 64-bit variable shifts (S1 rsqrt/requant) call these libgcc DImode helpers, which
  * -nostdlib omits. Implement them freestanding via 32-bit halves only (little-endian
@@ -195,6 +210,48 @@ static void dma_writeback(uint32_t src_word, uint32_t dst, uint32_t len_words)
     wait_done(STATUS_WB_DONE);
 }
 
+static void mat_strip_gemm(uint32_t w1, uint32_t w2, uint32_t w3)
+{
+    uint32_t w_base = w1;
+    uint32_t strip_bytes = w2 & 0x1FFFFu;
+    uint32_t n_strips = (w2 >> 17) & 0xFFFu;
+    uint32_t k_chunks = (w3 >> 24) & 0xFFu;
+    uint32_t k_tail = (w3 >> 17) & 0x7Fu;
+    uint32_t n_tail = (w3 >> 10) & 0x7Fu;
+    uint32_t out_dst64 = w3 & 0x3FFu;
+    uint32_t st;
+
+    if ((w_base & 0xFFFu) != 0u ||
+        strip_bytes == 0u || strip_bytes > STRIP_BYTES_MAX ||
+        n_strips == 0u || k_chunks == 0u ||
+        k_tail == 0u || k_tail > 64u ||
+        n_tail == 0u || n_tail > 64u || (n_tail & 7u) != 0u)
+        cq_halt(CQ_ERR_MAT_PARAM);
+
+    if ((((n_strips - 1u) << 3) + (n_tail >> 3)) > ((SHARED_BYTES >> 6) - out_dst64))
+        cq_halt(CQ_ERR_MAT_PARAM);
+
+    csr_write(CSR_ML_NTILES, 0u);
+    csr_write(CSR_ML_MODE, 1u);
+    csr_write(CSR_ML_W_BASE, w_base);
+    csr_write(CSR_ML_SBYTES, strip_bytes);
+    csr_write(CSR_ML_NSTRIP, n_strips);
+    csr_write(CSR_ML_KCHUNK, (k_tail << 8) | k_chunks);
+    csr_write(CSR_ML_NTAIL, n_tail);
+    csr_write(CSR_ML_OUT_BASE, out_dst64 << 6);
+    csr_write(CSR_ML_GO, 1u);
+
+    do {
+        st = csr_read(CSR_ML_STATUS);
+        if (st & ML_ST_ERR) {
+            csr_write(CSR_ML_MODE, 0u);
+            cq_halt(CQ_ERR_STRIP);
+        }
+    } while ((st & ML_ST_DONE) == 0u);
+
+    csr_write(CSR_ML_MODE, 0u);
+}
+
 /* ADR-0062 S0: gemmlowp requant primitives for MAT_EWISE_MUL, bit-exact to
  * mat_golden.py / mat_engine.v (trunc toward zero for negative srdhm). */
 static int32_t seq_srdhm(int32_t a, int32_t b)
@@ -296,14 +353,14 @@ void main(void)
             cq_halt(CQ_ERR_RSVD_VIOLATION);
 
         switch (op) {
-        case CQ_OP_MAT_CFG:
-            cfg_m = (w1 >> 16) & 0xFFFFu;
-            cfg_n = w1 & 0xFFFFu;
+        case CQ_OP_MAT_CFG: {
+            uint32_t cfg_m = (w1 >> 16) & 0xFFFFu;
+            uint32_t cfg_n = w1 & 0xFFFFu;
             cfg_k = w2;
-            cfg_tile_flags = w3;
             if (cfg_m > 8u || cfg_n > 8u)
                 cq_halt(CQ_ERR_MAT_PARAM);
             break;
+        }
         case CQ_OP_MAT_LOAD_W: {
             uint32_t rows = (w3 >> 8) & 0xFFu;
             uint32_t cols = w3 & 0xFFu;
@@ -355,7 +412,6 @@ void main(void)
             break;
         }
         case CQ_OP_MAT_ACC_CLR:
-            acc_mask_latch = w1;
             if (w2 != 0u) {
                 /* ADR-0039: W2 = TCM byte addr of 8 int32 fold words
                  * (input_offset*sum_w + bias); broadcast into every row of
@@ -425,6 +481,9 @@ void main(void)
             csr_write(CSR_MAT_OUT, MAT_OUT_B_DEFAULT);
             break;
         }
+        case CQ_OP_MAT_STRIP_GEMM:
+            mat_strip_gemm(w1, w2, w3);
+            break;
         case CQ_OP_MAT_ACT_LUT: {
             /* ADR-0062 S0: dst[i] = lut[(int8)src[i] + 128]. W1=src, W2=dst TCM
              * byte addrs; W3=256-entry int8 LUT byte addr; W0.RPT = len (<=255). */

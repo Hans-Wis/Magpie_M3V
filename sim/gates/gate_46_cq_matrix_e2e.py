@@ -44,9 +44,12 @@ def _golden_tile() -> bytes:
     return outs[0]
 
 
-def _run_cq_matrix(tmp_path: Path, width: int):
+def _run_cq_matrix(tmp_path: Path, width: int, strip: int = 0):
+    extra = [*CPU_M1_ARGS, f"-GDMA_DATA_W={width}", "-GMAT_LANES=4"]
+    if strip:
+        extra.append("-GSTRIP_VARIANT=1")
     verilator_sim(tmp_path, "tb_npu_cq_mat", RTL + TB, "NPU_CQ_MAT_PASS",
-                  extra_args=[*CPU_M1_ARGS, f"-GDMA_DATA_W={width}", "-GMAT_LANES=4"])
+                  extra_args=extra)
     dump = (ROOT / "mat_result.dump").read_text().split()
     got = bytearray()
     for w in dump:
@@ -62,3 +65,12 @@ def _run_cq_matrix(tmp_path: Path, width: int):
 @pytest.mark.parametrize("width", [32, 256])
 def test_cq_matrix_offload_matches_golden(tmp_path, width):
     _run_cq_matrix(tmp_path, width)
+
+
+@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
+@pytest.mark.parametrize("width", [32, 256])
+def test_cq_matrix_strip_transport_same_golden(tmp_path, width):
+    """Strip rail promotion (ADR-0073 addendum): the SAME GEMM through
+    MAT_STRIP_GEMM must reproduce the SAME immutable golden bytes — transport
+    change only. Legacy per-tile test above stays as the generic-path guard."""
+    _run_cq_matrix(tmp_path, width, strip=1)

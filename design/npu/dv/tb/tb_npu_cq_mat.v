@@ -15,6 +15,7 @@
 module tb_npu_cq_mat;
     parameter integer MAT_LANES = 4;
     parameter integer DMA_DATA_W = 32;
+    parameter integer STRIP_VARIANT = 0;
     reg clk = 1'b0;
     reg resetn = 1'b0;
     always #5 clk = ~clk;
@@ -43,7 +44,8 @@ module tb_npu_cq_mat;
     wire        irq, npu_start;
     wire [31:0] npu_config;
 
-    npu_top #(.TCM_WORDS(8192), .TCM_AW(13), .MAT_LANES(MAT_LANES), .DMA_DATA_W(DMA_DATA_W)) dut (
+    npu_top #(.TCM_WORDS(8192), .TCM_AW(13), .MAT_LANES(MAT_LANES), .DMA_DATA_W(DMA_DATA_W),
+              .ML_V2_EN(STRIP_VARIANT)) dut (
         .clk(clk), .resetn(resetn),
         .s_awvalid(s_awvalid), .s_awready(s_awready), .s_awaddr(s_awaddr), .s_awprot(3'b0),
         .s_wvalid(s_wvalid), .s_wready(s_wready), .s_wdata(s_wdata), .s_wstrb(s_wstrb),
@@ -151,6 +153,65 @@ module tb_npu_cq_mat;
         repeat (4) @(posedge clk);
         resetn = 1'b1;
         @(posedge clk);
+
+        if (STRIP_VARIANT != 0) begin
+            // Strip variant of the same 8x8/4-outer-product GEMM:
+            // activation chunk @ OP_A_ADDR, strip weights @ 4KB-aligned shared W_BASE,
+            // per-channel params @ 0x1200, output @ distinct shared dst 0x2800.
+            for (i = 0; i < 16; i = i + 1)
+                axil_write(32'h3001_1200 + i*4, 32'h0);
+            for (i = 0; i < 8; i = i + 1)
+                axil_write(32'h3001_1200 + i*4, 32'h54C4_699A);
+            axil_write(32'h3001_1220, 32'h2626_2626);
+            axil_write(32'h3001_1224, 32'h2626_2626);
+
+            axil_write(32'h3001_0700, 32'hFFFF_9F07);
+            axil_write(32'h3001_0704, 32'hFFFF_9F43);
+            axil_write(32'h3001_0708, 32'hFFFF_9F57);
+            axil_write(32'h3001_070C, 32'hFFFF_9F5D);
+            axil_write(32'h3001_0710, 32'hFFFF_9F49);
+            axil_write(32'h3001_0714, 32'hFFFF_9F57);
+            axil_write(32'h3001_0718, 32'hFFFF_9F36);
+            axil_write(32'h3001_071C, 32'hFFFF_9F5E);
+
+            for (i = 0; i < 8; i = i + 1)
+                axil_write(32'h3001_0940 + i*4,
+                           {a_byte(i*4+3), a_byte(i*4+2), a_byte(i*4+1), a_byte(i*4)});
+
+            for (i = 0; i < 1024; i = i + 1)
+                shared.mem[32'h1000 + i] = 32'h0;
+            for (i = 0; i < 8; i = i + 1)
+                shared.mem[32'h1000 + i] =
+                    {b_byte(i*4+3), b_byte(i*4+2), b_byte(i*4+1), b_byte(i*4)};
+
+            shared.mem[32'h100] = 32'h0000_500F;  // MAT_STRIP_GEMM + IRQ + LAST
+            shared.mem[32'h101] = 32'h0000_4000;  // W_BASE, 4KB-aligned
+            shared.mem[32'h102] = 32'h0002_1000;  // N_STRIPS=1, STRIP_BYTES=4096
+            shared.mem[32'h103] = 32'h0108_20A0;  // K_CHUNKS=1,K_TAIL=4,N_TAIL=8,dst64=0xA0
+
+            axil_write(A_BASE, 32'h0000_0400);
+            axil_write(A_SIZE, 32'd8);
+            axil_write(A_CQCTRL, 32'h1);
+            axil_write(A_CTRL, 32'h9);
+            axil_write(A_TAIL, 32'd1);
+
+            wait_bit(A_STATUS, 1, "strip matrix batch DONE");
+            chk({31'b0, irq}, 32'h1, "IRQ on strip GEMM");
+            axil_read(A_CQST, rd);
+            chk({31'b0, rd[3]}, 32'h0, "no CQ err");
+            axil_read(A_STATUS, rd);
+            chk({31'b0, rd[5]}, 32'h0, "no dma_err trap");
+
+            fdump = $fopen("mat_result.dump", "w");
+            for (i = 0; i < 16; i = i + 1)
+                $fdisplay(fdump, "%08x", shared.mem[32'hA00 + i]);
+            $fclose(fdump);
+
+            $display("NPU_CQ_MAT_STRIP: %0d checks, %0d errors", checks, errors);
+            if (errors == 0) $display("NPU_CQ_MAT_PASS");
+            else             $display("NPU_CQ_MAT_FAIL");
+            $finish;
+        end
 
         // a @ TCM 0x700, b @ TCM 0x740 (32 bytes each), via the host AXI window (ADR-0052)
         for (i = 0; i < 8; i = i + 1)

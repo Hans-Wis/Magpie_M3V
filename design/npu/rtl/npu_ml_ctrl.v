@@ -25,6 +25,8 @@
 //   0xA0 ML_N_STRIPS    RW [11:0], nonzero at kick
 //   0xA4 ML_K_CHUNKS    RW [7:0]=K_CHUNKS, [14:8]=K_TAIL (1..64)
 //   0xA8 ML_N_TAIL      RW [6:0], 1..64 and multiple of 8 in strip mode
+//   0xAC ML_OUT_BASE    RW strip STORE destination base; sub-tile block at
+//                       base+(s*8+t)*64. Reset is frozen DST_BASE.
 //   New ERR_CAUSE namespace addendum: ML_STRIP_DMA_ERR = 0x0000_0009.
 //
 // ADR-0073 D4 strip-local layout addendum (frozen): chunk-major then 8-col
@@ -36,7 +38,7 @@
 // contract (rs_mult[4:0]==0) holds; indexed by global sub-tile
 // (strip*8+t); this avoids the 0x720..0x9bf collision with OP_A_ADDR=0x940.
 // STORE writes one Phase-A 8x8 output block per sub-tile at
-// DST_BASE+(strip*8+t)*64.
+// ML_OUT_BASE+(strip*8+t)*64.
 //
 // INTEGRATION: npu_ml_ctrl owns its CSRs (decoded off the core-local window) and
 // emits ml_active + ml-driven mat_*/dma_*/wb_* which npu_top MUXes in front of the
@@ -169,6 +171,7 @@ module npu_ml_ctrl #(
     localparam [5:0] A_NSTRIP = 6'h28;  // 0xA0 RW  number of strips
     localparam [5:0] A_KCHUNK = 6'h29;  // 0xA4 RW  [7:0]=chunks [14:8]=tail
     localparam [5:0] A_NTAIL  = 6'h2A;  // 0xA8 RW  final-strip output bytes
+    localparam [5:0] A_OUTBASE= 6'h2B;  // 0xAC RW  strip output base byte address
 
     // ===== job registers =====
     reg [15:0] job_ntiles;
@@ -181,6 +184,7 @@ module npu_ml_ctrl #(
     reg        busy_seen;   // ISSUE->WAIT: sticky-done guard (must see busy high first)
     reg        mode_strip;
     reg [31:0] strip_w_base_q;
+    reg [31:0] strip_out_base_q;
     reg [16:0] strip_bytes_q;
     reg [11:0] strip_n_strips_q;
     reg [7:0]  strip_k_chunks_q;
@@ -207,7 +211,7 @@ module npu_ml_ctrl #(
     wire ml_csr_sel = (csr_a == A_STATUS) || (csr_a == A_MODE) ||
                       (csr_a == A_WBASE)  || (csr_a == A_SBYTES) ||
                       (csr_a == A_NSTRIP) || (csr_a == A_KCHUNK) ||
-                      (csr_a == A_NTAIL);
+                      (csr_a == A_NTAIL)  || (csr_a == A_OUTBASE);
     wire strip_k_tail_bad = (strip_k_tail_q == 7'd0) || (strip_k_tail_q > 7'd64);
     wire strip_n_tail_bad = (strip_n_tail_q == 7'd0) || (strip_n_tail_q > 7'd64) ||
                             (strip_n_tail_q[2:0] != 3'd0);
@@ -225,7 +229,7 @@ module npu_ml_ctrl #(
         strip_w_base_q + (strip_next_idx_w * {15'b0, strip_bytes_q});
     wire [31:0] strip_global_subtile_w =
         (strip_idx_w << 3) + {29'b0, strip_subtile_i};
-    wire [31:0] strip_store_dst_w = DST_BASE + (strip_global_subtile_w * DST_STRIDE);
+    wire [31:0] strip_store_dst_w = strip_out_base_q + (strip_global_subtile_w * DST_STRIDE);
     wire [31:0] strip_param_ptr_w = STRIP_PARAM_PTR + (strip_global_subtile_w * 32'd64);
     wire        strip_last_w = ((strip_i + 12'd1) >= strip_n_strips_q);
     wire        strip_subtile_last_w =
@@ -273,7 +277,8 @@ module npu_ml_ctrl #(
             state <= S_IDLE; job_busy <= 1'b0; job_done_l <= 1'b0; job_err <= 1'b0;
             tile_i <= 16'b0; job_ntiles <= 16'b0; cfg_bypass <= 1'b0; irq_en <= 1'b0;
             stationary <= 1'b0; tight <= 1'b0;
-            mode_strip <= 1'b0; strip_w_base_q <= 32'b0; strip_bytes_q <= 17'b0;
+            mode_strip <= 1'b0; strip_w_base_q <= 32'b0; strip_out_base_q <= DST_BASE;
+            strip_bytes_q <= 17'b0;
             strip_n_strips_q <= 12'b0; strip_k_chunks_q <= 8'b0;
             strip_k_tail_q <= 7'b0; strip_n_tail_q <= 7'b0;
             strip_i <= 12'b0; strip_chunk_i <= 8'b0; strip_subtile_i <= 3'b0;
@@ -320,6 +325,7 @@ module npu_ml_ctrl #(
                     A_NSTRIP: ml_csr_rdata <= {20'b0, strip_n_strips_q};
                     A_KCHUNK: ml_csr_rdata <= {17'b0, strip_k_tail_q, strip_k_chunks_q};
                     A_NTAIL:  ml_csr_rdata <= {25'b0, strip_n_tail_q};
+                    A_OUTBASE: ml_csr_rdata <= strip_out_base_q;
                     default:  ml_csr_rdata <= 32'b0;
                 endcase
             end
@@ -340,6 +346,7 @@ module npu_ml_ctrl #(
                                   strip_k_tail_q <= core_csr_wdata[14:8];
                               end
                     A_NTAIL:  strip_n_tail_q <= core_csr_wdata[6:0];
+                    A_OUTBASE: strip_out_base_q <= core_csr_wdata;
                     // start only when NOT bypassed (else mux drops ml_*_go -> hang, Codex P1)
                     A_GO: if ((ML_V2_EN != 0) && !job_busy && core_csr_wdata[0]
                               && !abort_i && !cfg_bypass) begin
