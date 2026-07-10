@@ -1,6 +1,9 @@
 # 0072 — W4A8:格式 SSOT + Phase-1 架構(DMA dequant,引擎凍結)
 
-- Status: **proposed(架構確認先行;RTL 動工 gated on 真權重 L2 評估 + Grok 契約 review)**
+- Status: **deferred(User 裁示 2026-07-10「先全部以 int8 優化硬體 int4 之後再處理」)**
+- 恢復點:真權重 L2 已定案(`2026-07-10_w4a8_l2_realweights.md`)——**sym RTN 不可用,
+  asym(uint4+zp)g=32 ≈ int8 品質**;恢復時本 ADR SSOT 需先修訂為 asym+zp、g=32
+  default,再走 Grok 契約 review → RTL。
 - Date: 2026-07-10
 - Deciders: User(裁示 Phase-0→①②並行)、Grok(路線評估)、Claude(PL)
 - 依據:`docs/reviews/2026-07-10_w4a8_grok.md`(建議路徑)· `docs/reports/2026-07-10_w4a8_phase0.md`
