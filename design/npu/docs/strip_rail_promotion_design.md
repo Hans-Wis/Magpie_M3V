@@ -57,3 +57,16 @@ Status: ACCEPTED-to-implement(User 裁示 2026-07-10「strip 模式推廣到 gem
 本 addendum 後該變體的 shared blob builder 改成追加 params+activation,只透過
 `MAT_STRIP_GEMM` handler staging,避免遮蔽 generic `MAT_LOAD_W` 對 `0x1200` 的合法
 bound guard。
+
+## 6. 全 FC 擴充(2026-07-10 addendum,User 裁示「其餘 GEMM 步換 strip」)
+
+tflm FC 需 fold/bias + input_zp(入 fold)+ zp_out/clamp(ReLU)。**blob v2 凍結**:
+`W_BASE` 起 = `[header 64B] ++ [weights] ++ [param blocks ceil(N/8)*64B] ++
+[fold blocks ceil(N/8)*32B(8×int32/sub-tile)] ++ [act chunks K_CHUNKS*512B]`。
+header = {magic 'STR2', rsp(如 RESCALE 之 (out_zp<<8)|shift 慣例中之 zp 部分)、
+clamp、版本、保留};handler 讀 header → 寫新 CSR **ML_RSPCLAMP(0xB0)**;
+ml_ctrl strip FSM:LOADACC fold ptr = **STRIP_FOLD_PTR(0x1600)+ 全域 sub-tile
+×32**(鏡射 param ptr 索引;GeGLU 情形 emitter 寫零 fold,行為不變);RESCALE_PC
+的 rs_zp/clamp 自 ML_RSPCLAMP。emit_layer_strip 支援全 fc dict(fold 計算與
+emit_layer_v2 同式);GeGLU 限定解除。gate 面:s2 q/k/v/o、s0 down(**K=128 =
+真雙 K-chunk 上 rail**)、tflm gate_48/49/50 雙運輸測項(golden 不可變)。
