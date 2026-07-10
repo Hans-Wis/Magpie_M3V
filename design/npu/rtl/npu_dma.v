@@ -34,6 +34,15 @@ module npu_dma #(
     output reg         done,               // sticky until next go
     output reg         err,                // sticky: read RRESP or write BRESP returned SLVERR/DECERR
 
+    // ---- strip-buffer read-chain command (ADR-0073) ----
+    input  wire        strip_start,         // 1-cycle pulse: prefetch one weight strip
+    input  wire [31:0] strip_addr,          // 4KB-aligned DDR byte address
+    input  wire [16:0] strip_bytes,         // bytes to fetch, 1..40960
+    input  wire        strip_bank,          // destination strip-buffer bank
+    output reg         strip_busy,
+    output reg         strip_done,          // 1-cycle pulse after final beat is written
+    output reg         strip_err,           // sticky until next strip_start/abort/reset
+
     // ---- AXI4-full read master ----
     output reg         m_arvalid,
     input  wire        m_arready,
@@ -71,13 +80,29 @@ module npu_dma #(
     // ---- local buffer read port (AXI write mode) ----
     output wire        buf_re,
     output reg  [BUF_AW-1:0] buf_raddr,
-    input  wire [DMA_DATA_W-1:0] buf_rdata
+    input  wire [DMA_DATA_W-1:0] buf_rdata,
+
+    // ---- strip-buffer write port (AXI read-chain strip mode) ----
+    output wire        strip_we,
+    output wire        strip_wbank,
+    output reg  [15:0] strip_waddr,
+    output wire [DMA_DATA_W-1:0] strip_wdata
 );
     localparam integer WPB       = DMA_DATA_W / 32;
     localparam integer AXI_BYTES = DMA_DATA_W / 8;
     localparam integer AXI_SIZE  = $clog2(AXI_BYTES);
     localparam integer WPB_LG2   = $clog2(WPB);
     localparam integer ERR_ALIGN = 1;
+    localparam [31:0] AXI_BYTES_W = DMA_DATA_W / 8;
+    localparam [16:0] AXI_BYTES_17 = (DMA_DATA_W == 256) ? 17'd32 :
+                                     (DMA_DATA_W == 128) ? 17'd16 :
+                                     (DMA_DATA_W == 64)  ? 17'd8  : 17'd4;
+    localparam [15:0] AXI_BYTES_16 = (DMA_DATA_W == 256) ? 16'd32 :
+                                     (DMA_DATA_W == 128) ? 16'd16 :
+                                     (DMA_DATA_W == 64)  ? 16'd8  : 16'd4;
+    localparam [31:0] STRIP_MAX_BURST_BYTES_W =
+        ((DMA_DATA_W / 8) >= 16) ? 32'd4096 : ((DMA_DATA_W / 8) * 256);
+    localparam [16:0] STRIP_BYTES_MAX_17 = 17'd40960;
     localparam [3:0] WPB_4 = (DMA_DATA_W == 256) ? 4'd8 :
                              (DMA_DATA_W == 128) ? 4'd4 :
                              (DMA_DATA_W == 64)  ? 4'd2 : 4'd1;
@@ -92,8 +117,9 @@ module npu_dma #(
     //  declarations so Presto/DC compiles without forward references — pure
     //  reorder, no logic change; Verilator 2-pass tolerated the original order.)
 
-    localparam [2:0] S_IDLE=3'd0, S_AR=3'd1, S_R=3'd2, S_AW=3'd3, S_W=3'd4, S_B=3'd5, S_DONE=3'd6;
-    reg [2:0]  state;
+    localparam [3:0] S_IDLE=4'd0, S_AR=4'd1, S_R=4'd2, S_AW=4'd3, S_W=4'd4, S_B=4'd5, S_DONE=4'd6;
+    localparam [3:0] S_STRIP_AR=4'd7, S_STRIP_R=4'd8, S_STRIP_DONE=4'd9;
+    reg [3:0]  state;
     reg [31:0] cur_addr;                   // byte address of next burst
     reg [16:0] remaining;                  // 32-bit words left to move
     reg [8:0]  beats_in_burst;             // 1..256 for the active burst
@@ -101,6 +127,12 @@ module npu_dma #(
     reg        done_ok;                    // suppress writeback done on BRESP error
     reg        mode_write;                 // latched transfer direction
     reg        narrow_l;                   // latched transfer width policy
+    reg [31:0] strip_cur_addr;             // byte address of next strip burst
+    reg [16:0] strip_remaining_bytes;      // bytes left in strip command
+    reg [31:0] strip_bytes_in_burst;       // bytes in the active strip burst
+    reg        strip_bank_l;               // latched strip destination bank
+    reg        strip_error_seen;           // drain current burst after first RRESP error
+    reg        strip_done_ok;              // S_STRIP_DONE should pulse strip_done
 
     function [31:0] lane_word;
         input [DMA_DATA_W-1:0] data;
@@ -150,9 +182,12 @@ module npu_dma #(
     // state/S_*, narrow_l, narrow_buf_wdata — are declared first; DC/Presto).
     assign m_arsize  = narrow_l ? 3'd2 : AXI_SIZE[2:0];
     assign m_arburst = 2'b01;              // INCR
-    assign m_rready  = (state == S_R);
+    assign m_rready  = (state == S_R) || (state == S_STRIP_R);
     assign buf_we    = (state == S_R) && m_rvalid;
     assign buf_wdata = narrow_l ? narrow_buf_wdata : m_rdata;
+    assign strip_we    = (state == S_STRIP_R) && m_rvalid && !strip_error_seen && !m_rresp[1];
+    assign strip_wbank = strip_bank_l;
+    assign strip_wdata = m_rdata;
 
     assign m_awsize  = narrow_l ? 3'd2 : AXI_SIZE[2:0];
     assign m_awburst = 2'b01;              // INCR
@@ -184,17 +219,36 @@ module npu_dma #(
                                   ((src_addr % AXI_BYTES) != 0 ||
                                    ({{(32-BUF_AW){1'b0}}, dst_word} % WPB) != 0 ||
                                    ({15'b0, len_beats} % WPB) != 0);
+    wire [31:0] strip_remaining_w = {15'b0, strip_remaining_bytes};
+    wire [31:0] strip_this_burst_bytes_w =
+        (strip_remaining_w > STRIP_MAX_BURST_BYTES_W) ?
+        STRIP_MAX_BURST_BYTES_W : strip_remaining_w;
+    wire [16:0] strip_this_burst_17 =
+        strip_this_burst_bytes_w[16:0] / AXI_BYTES_17;
+    wire [8:0]  strip_this_burst = strip_this_burst_17[8:0];
+    wire [8:0]  strip_burst_m1 = strip_this_burst - 9'd1;
+    wire        strip_kick_align_err = (strip_addr[11:0] != 12'b0);
+    wire        strip_kick_size_err =
+        (strip_bytes == 17'd0) ||
+        (strip_bytes > STRIP_BYTES_MAX_17) ||
+        (({15'b0, strip_bytes} % AXI_BYTES_W) != 32'd0);
 
     always @(posedge clk) begin
         if (!resetn) begin
             state <= S_IDLE; busy <= 1'b0; done <= 1'b0; err <= 1'b0;
             m_arvalid <= 1'b0; m_awvalid <= 1'b0; m_wvalid <= 1'b0;
             narrow_l <= 1'b0;
+            strip_busy <= 1'b0; strip_done <= 1'b0; strip_err <= 1'b0;
+            strip_waddr <= 16'd0; strip_bank_l <= 1'b0; strip_error_seen <= 1'b0;
+            strip_done_ok <= 1'b0;
         end else begin
+            strip_done <= 1'b0;
             case (state)
                 S_IDLE: if (abort_i) begin
                             done <= 1'b0; err <= 1'b0;   // clear stickies for soft reset
                             narrow_l <= 1'b0;
+                            strip_busy <= 1'b0; strip_done <= 1'b0; strip_err <= 1'b0;
+                            strip_error_seen <= 1'b0; strip_done_ok <= 1'b0;
                         end else if (go) begin
                             cur_addr  <= {src_addr[31:2], 2'b00};
                             remaining <= len_beats;
@@ -213,6 +267,23 @@ module npu_dma #(
                             end
                             else
                                 state <= write_mode ? S_AW : S_AR;
+                        end else if (strip_start) begin
+                            strip_busy <= 1'b0;
+                            strip_done <= 1'b0;
+                            strip_err <= 1'b0;
+                            strip_error_seen <= 1'b0;
+                            strip_done_ok <= 1'b0;
+                            strip_bank_l <= strip_bank;
+                            strip_waddr <= 16'd0;
+                            if (strip_kick_align_err || strip_kick_size_err) begin
+                                strip_err <= 1'b1;
+                                state <= S_IDLE;
+                            end else begin
+                                strip_busy <= 1'b1;
+                                strip_cur_addr <= strip_addr;
+                                strip_remaining_bytes <= strip_bytes;
+                                state <= S_STRIP_AR;
+                            end
                         end
                 S_AR: if (abort_i && !m_arvalid) begin
                             done_ok <= 1'b0; state <= S_DONE;   // burst not yet presented
@@ -285,6 +356,48 @@ module npu_dma #(
                 S_DONE: begin
                             busy <= 1'b0; done <= done_ok && !abort_i;
                             narrow_l <= 1'b0;
+                            state <= S_IDLE;
+                        end
+                S_STRIP_AR: if (abort_i && !m_arvalid) begin
+                            strip_done_ok <= 1'b0;
+                            state <= S_STRIP_DONE;
+                        end else begin
+                            m_araddr <= strip_cur_addr;
+                            m_arlen  <= strip_burst_m1[7:0];
+                            beats_in_burst <= strip_this_burst;
+                            strip_bytes_in_burst <= strip_this_burst_bytes_w;
+                            m_arvalid <= 1'b1;
+                            if (m_arvalid && m_arready) begin
+                                m_arvalid <= 1'b0;
+                                state <= S_STRIP_R;
+                            end
+                        end
+                S_STRIP_R: if (m_rvalid) begin
+                            if (m_rresp[1]) begin
+                                strip_err <= 1'b1;
+                                strip_error_seen <= 1'b1;
+                            end
+                            if (!strip_error_seen && !m_rresp[1])
+                                strip_waddr <= strip_waddr + AXI_BYTES_16;
+                            if (m_rlast) begin
+                                strip_remaining_bytes <= strip_remaining_bytes - strip_bytes_in_burst[16:0];
+                                strip_cur_addr <= strip_cur_addr + strip_bytes_in_burst;
+                                if (abort_i || strip_error_seen || m_rresp[1]) begin
+                                    strip_done_ok <= 1'b0;
+                                    state <= S_STRIP_DONE;
+                                end else if ((strip_remaining_bytes - strip_bytes_in_burst[16:0]) == 17'd0) begin
+                                    strip_done_ok <= 1'b1;
+                                    state <= S_STRIP_DONE;
+                                end else begin
+                                    state <= S_STRIP_AR;
+                                end
+                            end
+                        end
+                S_STRIP_DONE: begin
+                            strip_busy <= 1'b0;
+                            strip_done <= strip_done_ok && !abort_i;
+                            strip_done_ok <= 1'b0;
+                            strip_error_seen <= 1'b0;
                             state <= S_IDLE;
                         end
                 default: state <= S_IDLE;
