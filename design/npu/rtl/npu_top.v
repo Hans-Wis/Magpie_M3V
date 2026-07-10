@@ -12,6 +12,11 @@
 // (0x0001_0000) sets STATUS.npu_done + IRQ. Single-outstanding throughout.
 // ADR-0035 extends dbus decode: addr[17] -> core-local CSR mirror, else
 // addr[16] -> DONE mailbox, else TCM.
+// ADR-0073 adds the ML strip-streaming datapath: npu_dma STRIP read chains fill
+// a 2x40KB npu_strip_buf, and mat_engine's B operand is muxed to that buffer
+// only when ML_V2_EN=1 and ML_MODE.STRIP_EN=1. The legacy TCM B path is the
+// reset/default path. ML strip CSRs live in npu_ml_ctrl at core-local 0x94..0xA8;
+// strip prefetch bus errors report ERR_CAUSE=ML_STRIP_DMA_ERR(9).
 // =============================================================================
 `default_nettype none
 
@@ -160,6 +165,11 @@ module npu_top #(
     wire [31:0] dma_src, dma_dst, wb_src, wb_dst;
     wire [16:0] dma_len, wb_len;
     wire dma_go, wb_go, dma_busy, dma_done, wb_busy, wb_done, dma_err;
+    wire dma_strip_busy, dma_strip_done, dma_strip_err;
+    wire dma_strip_we, dma_strip_wbank;
+    wire [15:0] dma_strip_waddr;
+    wire [DMA_DATA_W-1:0] dma_strip_wdata;
+    wire [1:0] strip_bank_valid;
     wire [31:0] mat_a_addr_csr, mat_b_addr_csr, mat_mult_csr, mat_rsp_csr, mat_clamp_csr, mat_out_base_csr;
     wire        mat_go_csr;
     wire [2:0]  mat_cmd_csr;
@@ -169,6 +179,23 @@ module npu_top #(
     wire [16:0] dma_len_csr, wb_len_csr;
     wire        dma_go_csr, wb_go_csr;
     wire [31:0] core_csr_rdata_axil;
+    wire [31:0] ml_csr_rdata;
+    wire        ml_csr_hit, ml_active, ml_irq;
+    wire        ml_strip_start, ml_strip_bank, ml_strip_clear;
+    wire [31:0] ml_strip_addr;
+    wire [16:0] ml_strip_bytes;
+    wire        ml_strip_active, ml_strip_compute_bank;
+    wire [15:0] ml_strip_weight_base;
+    wire        ml_err_cause_we;
+    wire [31:0] ml_err_cause;
+    wire        core_csr_en_axil;
+    wire        core_csr_we_axil;
+    wire [7:0]  core_csr_addr_axil;
+    wire [31:0] core_csr_wdata_axil;
+    assign core_csr_en_axil = ml_err_cause_we ? 1'b1 : core_csr_en;
+    assign core_csr_we_axil = ml_err_cause_we ? 1'b1 : core_csr_we;
+    assign core_csr_addr_axil = ml_err_cause_we ? 8'h58 : core_csr_addr;
+    assign core_csr_wdata_axil = ml_err_cause_we ? ml_err_cause : dbus_wdata;
     // ================= NPU scalar core =================
     wire        core_resetn = resetn & npu_start;
     wire        ibus_req, ibus_ready;
@@ -307,8 +334,12 @@ module npu_top #(
     wire [7:0]  mat_rpt;
     wire              eng_we, eng_a_re, eng_b_re;
     wire [TCM_AW-1:0] eng_a_addr, eng_b_addr, eng_waddr;
-    wire [255:0]      eng_a_rdata, eng_b_rdata;
+    wire [255:0]      eng_a_rdata, eng_b_rdata, eng_b_rdata_tcm, strip_eng_b_rdata;
     wire [31:0]       eng_wdata;
+    wire [13:0]       strip_eng_b_addr;
+
+    assign strip_eng_b_addr = {1'b0, eng_b_addr} + ml_strip_weight_base[15:2];
+    assign eng_b_rdata = ml_strip_active ? strip_eng_b_rdata : eng_b_rdata_tcm;
 
     mat_engine #(.TCM_AW(TCM_AW), .LANES(MAT_LANES)) u_mat (
         .clk(clk), .resetn(domain_rstn),
@@ -323,7 +354,7 @@ module npu_top #(
     );
 
     // ================= hard-reset FSM (ADR-0047) =================
-    wire hard_quiet = !dma_busy && !wb_busy && !mat_busy;
+    wire hard_quiet = !dma_busy && !wb_busy && !dma_strip_busy && !mat_busy;
     assign hard_freeze = (hard_pending && hard_quiet) || (hard_rst_cnt != 2'd0);
     always @(posedge clk) begin
         if (!resetn) begin
@@ -348,8 +379,8 @@ module npu_top #(
         .s_axi_arvalid(c_arvalid),.s_axi_arready(c_arready),.s_axi_araddr(s_araddr),.s_axi_arprot(s_arprot),
         .s_axi_rvalid(c_rvalid),.s_axi_rready(c_rready),.s_axi_rdata(c_rdata),.s_axi_rresp(c_rresp),
         .npu_start(npu_start),.npu_config(npu_config),.npu_busy(npu_start & ~done_latch),.npu_done(done_latch),
-        .core_csr_en(core_csr_en),.core_csr_we(core_csr_we),.core_csr_addr(core_csr_addr),
-        .core_csr_wdata(dbus_wdata),.core_csr_rdata(core_csr_rdata_axil),
+        .core_csr_en(core_csr_en_axil),.core_csr_we(core_csr_we_axil),.core_csr_addr(core_csr_addr_axil),
+        .core_csr_wdata(core_csr_wdata_axil),.core_csr_rdata(core_csr_rdata_axil),
         .mat_a_addr(mat_a_addr_csr),.mat_b_addr(mat_b_addr_csr),.mat_mult(mat_mult_csr),
         .mat_rsp(mat_rsp_csr),.mat_clamp(mat_clamp_csr),.mat_out_base(mat_out_base_csr),
         .mat_go(mat_go_csr),.mat_cmd(mat_cmd_csr),.mat_bank(mat_bank_csr),.mat_rpt(mat_rpt_csr),
@@ -398,8 +429,6 @@ module npu_top #(
     wire [31:0] ml_dma_src, ml_dma_dst, ml_wb_src, ml_wb_dst;
     wire [16:0] ml_dma_len, ml_wb_len;
     wire        ml_dma_go, ml_wb_go;
-    wire [31:0] ml_csr_rdata;
-    wire        ml_csr_hit, ml_active, ml_irq;
 
     npu_ml_ctrl #(.ML_V2_EN(ML_V2_EN)) u_ml (
         .clk(clk), .resetn(domain_rstn), .abort_i(npu_abort),
@@ -409,11 +438,18 @@ module npu_top #(
         .mat_busy(mat_busy), .mat_done(mat_done), .mat_err(mat_err),
         .dma_busy(dma_busy), .dma_done(dma_done), .dma_err(dma_err),
         .wb_busy(wb_busy), .wb_done(wb_done),
+        .strip_busy(dma_strip_busy), .strip_done(dma_strip_done), .strip_err(dma_strip_err),
         .ml_mat_a_addr(ml_mat_a_addr), .ml_mat_b_addr(ml_mat_b_addr), .ml_mat_mult(ml_mat_mult),
         .ml_mat_rsp(ml_mat_rsp), .ml_mat_clamp(ml_mat_clamp), .ml_mat_out_base(ml_mat_out_base),
         .ml_mat_go(ml_mat_go), .ml_mat_cmd(ml_mat_cmd), .ml_mat_bank(ml_mat_bank), .ml_mat_rpt(ml_mat_rpt),
         .ml_dma_src(ml_dma_src), .ml_dma_dst(ml_dma_dst), .ml_dma_len(ml_dma_len), .ml_dma_go(ml_dma_go),
         .ml_wb_src(ml_wb_src), .ml_wb_dst(ml_wb_dst), .ml_wb_len(ml_wb_len), .ml_wb_go(ml_wb_go),
+        .ml_strip_start(ml_strip_start), .ml_strip_addr(ml_strip_addr),
+        .ml_strip_bytes(ml_strip_bytes), .ml_strip_bank(ml_strip_bank),
+        .ml_strip_clear(ml_strip_clear), .ml_strip_active(ml_strip_active),
+        .ml_strip_compute_bank(ml_strip_compute_bank),
+        .ml_strip_weight_base(ml_strip_weight_base),
+        .ml_err_cause_we(ml_err_cause_we), .ml_err_cause(ml_err_cause),
         .ml_active(ml_active), .ml_irq(ml_irq)
     );
 
@@ -455,6 +491,9 @@ module npu_top #(
         .go(dma_start), .abort_i(npu_abort), .write_mode(dma_start_write), .narrow_i(dma_narrow),
         .src_addr(dma_desc_addr), .dst_word(dma_desc_word), .len_beats(dma_desc_len),
         .busy(dma_busy_engine), .done(dma_done_engine),
+        .strip_start(ml_strip_start), .strip_addr(ml_strip_addr),
+        .strip_bytes(ml_strip_bytes), .strip_bank(ml_strip_bank),
+        .strip_busy(dma_strip_busy), .strip_done(dma_strip_done), .strip_err(dma_strip_err),
         .m_arvalid(m_arvalid),.m_arready(m_arready),.m_araddr(m_araddr),.m_arlen(m_arlen),
         .m_arsize(m_arsize),.m_arburst(m_arburst),
         .m_rvalid(m_rvalid),.m_rready(m_rready),.m_rdata(m_rdata),.m_rlast(m_rlast),.m_rresp(m_rresp),
@@ -464,7 +503,21 @@ module npu_top #(
         .m_bvalid(m_bvalid),.m_bready(m_bready),.m_bresp(m_bresp),
         .buf_we(dma_we),.buf_addr(dma_buf_addr),.buf_wdata(dma_wdata),
         .buf_re(dma_re),.buf_raddr(dma_buf_raddr),.buf_rdata(dma_rdata),
+        .strip_we(dma_strip_we),.strip_wbank(dma_strip_wbank),
+        .strip_waddr(dma_strip_waddr),.strip_wdata(dma_strip_wdata),
         .err(dma_err)
+    );
+
+    npu_strip_buf #(.DMA_DATA_W(DMA_DATA_W)) strip_buf (
+        .clk(clk), .resetn(domain_rstn), .clear(ml_strip_clear),
+        .dma_we(dma_strip_we), .dma_bank(dma_strip_wbank),
+        .dma_waddr(dma_strip_waddr), .dma_wdata(dma_strip_wdata),
+        .fill_done(dma_strip_done),
+        .eng_b_re(eng_b_re & ml_strip_active),
+        .eng_b_bank(ml_strip_compute_bank),
+        .eng_b_addr(strip_eng_b_addr),
+        .eng_b_rdata(strip_eng_b_rdata),
+        .bank_valid(strip_bank_valid)
     );
 
     // ================= TCM =================
@@ -482,7 +535,7 @@ module npu_top #(
         .core_d_addr(core_d_addr),.core_d_rdata(core_d_rdata),
         .core_d_we(core_d_we),.core_d_wdata(dbus_wdata),.core_d_wstrb(dbus_wstrb),.core_d_wgrant(core_d_wgrant),
         .eng_a_re(eng_a_re),.eng_a_addr(eng_a_addr),.eng_a_rdata(eng_a_rdata),
-        .eng_b_re(eng_b_re),.eng_b_addr(eng_b_addr),.eng_b_rdata(eng_b_rdata),
+        .eng_b_re(eng_b_re),.eng_b_addr(eng_b_addr),.eng_b_rdata(eng_b_rdata_tcm),
         .eng_we(eng_we),.eng_waddr(eng_waddr),.eng_wdata(eng_wdata)
     );
 
