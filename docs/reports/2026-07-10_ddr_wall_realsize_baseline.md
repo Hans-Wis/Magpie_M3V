@@ -1,5 +1,10 @@
 # DDR 牆 Step-1 基線 — latency model 實測 + 真尺寸 compute 微基準
 
+> **注意**:本檔 §A/§D 的頻寬絕對值(4.8GB/s、431k 牆、59 tok/s)已被正式報告
+> `2026-07-10_ddr_wall_formal.md` 以 ×16 校準實測**修正**(G2 實效 ≈1.3GB/s、
+> 落點 ≈25–30 tok/s;50+ tok/s 需減字節或加寬 DRAM)。§B 微基準與 §C v2 強制項
+> 結論不變。
+
 Date: 2026-07-10 · 設計確認:`design/npu/docs/ddr_wall_step1_design.md` ·
 gates:`gate_94_ddr_latency_model` / `gate_95_realsize_compute`(可重跑)·
 Grok 前置分析:`docs/reviews/2026-07-10_perf_ddr_budget_grok.md`
