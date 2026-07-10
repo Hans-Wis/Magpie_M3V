@@ -450,21 +450,37 @@ void main(void)
             uint32_t src_b = w2 & 0xFFFFu;
             uint32_t dst = (w3 >> 16) & 0xFFFFu;
             uint32_t shift = w3 & 0xFFu;
-            volatile int8_t *a = (volatile int8_t *)src_a;
-            volatile int8_t *b = (volatile int8_t *)src_b;
-            volatile int8_t *d = (volatile int8_t *)dst;
+            const signed char *pa = (const signed char *)src_a;
+            const signed char *pb = (const signed char *)src_b;
+            signed char *pd = (signed char *)dst;
             uint32_t i;
+            int32_t S = (int32_t)shift - 31;
+            size_t vl;
             if (len == 0u)
                 break;
             if (src_a > (TCM_SCRATCH_B - len) || src_b > (TCM_SCRATCH_B - len) ||
                 dst > (TCM_SCRATCH_B - len))
                 cq_halt(CQ_ERR_MAT_PARAM);
-            for (i = 0u; i < len; i++) {
-                int32_t prod = (int32_t)a[i] * (int32_t)b[i];
-                int32_t q = seq_rdbpot(seq_srdhm(prod, (int32_t)w1), (int32_t)shift - 31);
-                if (q < -128) q = -128;
-                if (q > 127)  q = 127;
-                d[i] = (int8_t)q;
+            /* E1b (nonlinear_rvv_e1b_rope_design §2): scalar srdhm+rdbpot pair ->
+             * Zve32x vsmul(rnu)+vssra(rnu) chain (Gemma-private rounding
+             * redefinition; golden = gemma_quant.requant_rvv, flip 9/512 on the
+             * gate corpus recorded). i8*i8 fits i16 exactly; qmul guarantees
+             * shift-31 in [0,31]. */
+            if (S < 0)
+                S = 0;
+            __asm__ volatile ("csrw vxrm, zero" ::: "memory");   /* rnu */
+            for (i = 0u; i < len; i += vl) {
+                vl = __riscv_vsetvl_e8mf4(len - i);
+                vint16mf2_t p16 = __riscv_vwmul_vv_i16mf2(
+                    __riscv_vle8_v_i8mf4(pa + i, vl),
+                    __riscv_vle8_v_i8mf4(pb + i, vl), vl);
+                vint32m1_t q = __riscv_vwcvt_x_x_v_i32m1(p16, vl);
+                q = __riscv_vsmul_vx_i32m1(q, (int32_t)w1, vl);
+                q = __riscv_vssra_vx_i32m1(q, (uint32_t)S, vl);
+                q = __riscv_vmax_vx_i32m1(q, -128, vl);
+                q = __riscv_vmin_vx_i32m1(q, 127, vl);
+                __riscv_vse8_v_i8mf4(pd + i,
+                    __riscv_vncvt_x_x_w_i8mf4(__riscv_vncvt_x_x_w_i16mf2(q, vl), vl), vl);
             }
             break;
         }

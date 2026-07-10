@@ -56,6 +56,20 @@ def requant(acc, scale_in, scale_out, zp_out=0, amin=-128, amax=127):
     return max(amin, min(amax, q))
 
 
+def requant_rvv(acc, scale_in, scale_out, zp_out=0, amin=-128, amax=127):
+    """E1b rounding redefinition (Gemma-private, RMSNorm precedent): the scalar
+    srdhm+rdbpot pair becomes the Zve32x vsmul(rnu)+vssra(rnu) chain the RVV'd
+    sequencer handler executes. Primitives are the Spike-validated ones in
+    golden/rvv_bitmodel.py — same (M,S) = (q31, -shift), no re-derivation."""
+    import sys as _sys
+    from pathlib import Path as _P
+    _sys.path.insert(0, str(_P(__file__).resolve().parents[1] / "golden"))
+    import rvv_bitmodel as _rvv
+    m, s = qmul(scale_in / scale_out)
+    q = _rvv.vssra(_rvv.vsmul(int(acc), m, 0), -s, 0) + zp_out
+    return max(amin, min(amax, q))
+
+
 # ---- symmetric int8 quantizers ----
 def q_pertensor(x):
     s = float(np.max(np.abs(x))) / 127.0 or 1.0

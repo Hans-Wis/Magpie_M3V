@@ -149,6 +149,33 @@ static void k_ewise_mul_scalar(u32 len, int32_t mult, int32_t shift)
     }
 }
 
+/* E1b RVV version — verbatim mirror of the vectorized CQ_OP_MAT_EWISE_MUL
+ * handler (cq_sequencer.c, post-E1b). */
+static void k_ewise_mul_rvv(u32 len, int32_t mult, int32_t shift)
+{
+    const signed char *pa = (const signed char *)buf_a;
+    const signed char *pb = (const signed char *)buf_b;
+    signed char *pd = (signed char *)buf_d;
+    int32_t S = shift - 31;
+    u32 i;
+    size_t vl;
+    if (S < 0) S = 0;
+    __asm__ volatile ("csrw vxrm, zero" ::: "memory");
+    for (i = 0u; i < len; i += vl) {
+        vl = __riscv_vsetvl_e8mf4(len - i);
+        vint16mf2_t p16 = __riscv_vwmul_vv_i16mf2(
+            __riscv_vle8_v_i8mf4(pa + i, vl),
+            __riscv_vle8_v_i8mf4(pb + i, vl), vl);
+        vint32m1_t q = __riscv_vwcvt_x_x_v_i32m1(p16, vl);
+        q = __riscv_vsmul_vx_i32m1(q, mult, vl);
+        q = __riscv_vssra_vx_i32m1(q, (uint32_t)S, vl);
+        q = __riscv_vmax_vx_i32m1(q, -128, vl);
+        q = __riscv_vmin_vx_i32m1(q, 127, vl);
+        __riscv_vse8_v_i8mf4(pd + i,
+            __riscv_vncvt_x_x_w_i8mf4(__riscv_vncvt_x_x_w_i16mf2(q, vl), vl), vl);
+    }
+}
+
 static void k_rmsnorm_rvv(u32 H)
 {
     const signed char *psrc = (const signed char *)buf_a;
@@ -305,6 +332,8 @@ int main(void)
     MEASURE("rmsnorm_rvv", 160, k_rmsnorm_rvv(160));      /* QK-norm per head */
     MEASURE("ewise_mul_scalar", 2048, k_ewise_mul_scalar(2048, 0x40000000, 40));
     MEASURE("ewise_mul_scalar", 640, k_ewise_mul_scalar(640, 0x40000000, 40));
+    MEASURE("ewise_mul_rvv", 2048, k_ewise_mul_rvv(2048, 0x40000000, 40));
+    MEASURE("ewise_mul_rvv", 640, k_ewise_mul_rvv(640, 0x40000000, 40));
     MEASURE("ewise_add_rvv", 640, k_ewise_add_rvv(640, 20000, 17000, 15));
     MEASURE("rope_scalar", 160, k_rope_scalar(160, 0x40000000, 40));
     MEASURE("softmax_scalar", 4, k_softmax_scalar(4, 4, 255));

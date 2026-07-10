@@ -121,7 +121,9 @@ def layer_int8(x_f, W, cfg):
     prod_fp = gate_fp * (hff_fp @ W["up_proj"])
     s_prod = _s(prod_fp)
     m_qmul, m_shift = gq.qmul(s_gelu * s_up / s_prod)
-    prod_q = np.array([[gq.requant(int(gelu_q[i, j]) * int(up_lin[i, j]), s_gelu * s_up, s_prod)
+    # E1b: production ewise path is the RVV vsmul/vssra chain (rounding
+    # redefinition, flip count reported by tools/gates vs the scalar pair)
+    prod_q = np.array([[gq.requant_rvv(int(gelu_q[i, j]) * int(up_lin[i, j]), s_gelu * s_up, s_prod)
                         for j in range(inter)] for i in range(seq)], np.int64)
     m_lin, s_m = _proj(prod_q, s_prod, W["down_proj"], prod_fp)
     mn_q, s_mn, nrm_pff = _rmsnorm(m_lin, s_m, W["norm_postffn"], eps, mn_fp)
