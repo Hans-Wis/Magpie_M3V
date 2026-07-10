@@ -100,3 +100,39 @@ def test_s0_geglu_bit_exact_on_rtl(tmp_path):
     _run(binary)
     out = rt.unpack_result_v2(CASE / "result.dump", ng, nt, seq, hid)
     assert out == g["out_q"].tolist(), "down GEMM RTL != golden (full S0 GeGLU)"
+
+
+@pytest.mark.skipif(not shutil.which("verilator"), reason="no verilator — not-run")
+def test_s0_gate_up_strip_transport_same_golden(tmp_path):
+    """Strip rail promotion step 2 (ADR-0073 addendum): gate/up projections via
+    MAT_STRIP_GEMM — toy N=128 => a REAL dual-strip job (PREFILL -> compute ||
+    prefetch -> rendezvous bank swap) on a production rail. Goldens immutable:
+    outputs must equal the same gate_q/up_q lists the legacy transport hits."""
+    t0 = gr.s0_tensors()
+    cfg, g = t0["cfg"], t0["g"]
+    seq, hid, inter = cfg["seq"], cfg["hidden"], cfg["intermediate"]
+    sc = g["scales"]
+    x_q = g["x_q"].tolist()
+
+    mdir = tmp_path / "obj"
+    b = subprocess.run(["verilator", "--binary", "--timing", "-Wno-fatal",
+                        "--top-module", "tb_npu_tflm_model", "-Mdir", str(mdir),
+                        *CPU_M1_ARGS, *[str(p) for p in RTL + TB]],
+                       capture_output=True, text=True)
+    binary = mdir / "Vtb_npu_tflm_model"
+    assert binary.exists(), f"build failed:\n{b.stdout}\n{b.stderr}"
+
+    wg, swg = t0["wg"]
+    ng, nt = rt.emit_layer_strip(CASE, gr.gemm_layer(wg, swg, g["sx"], sc["gate"], hid, inter),
+                                 x_q, ring_entries=128)
+    _run(binary)
+    gate = rt.unpack_result_v2(CASE / "result.dump", ng, nt, seq, inter)
+    assert gate == g["gate_q"].tolist(), "gate GEMM via STRIP transport != immutable golden"
+
+    wu, swu = t0["wu"]
+    ng, nt = rt.emit_layer_strip(CASE, gr.gemm_layer(wu, swu, g["sx"], sc["up"], hid, inter),
+                                 x_q, ring_entries=128)
+    _run(binary)
+    up = rt.unpack_result_v2(CASE / "result.dump", ng, nt, seq, inter)
+    assert up == g["up_q"].tolist(), "up GEMM via STRIP transport != immutable golden"
+    print("S0_STRIP_TRANSPORT_PASS strips=2 rails=gate,up")

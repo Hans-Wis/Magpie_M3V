@@ -127,8 +127,12 @@ def geglu_int8(x_f, W, cfg):
     up_q = gemm_pc(x_q, wu_q, sx, swu, s_up)
     lut = gelu_lut(s_gate, s_gelu)
     gelu_q = np.array([[lut[int(v) + 128] for v in row] for row in gate_q], np.int64)
-    prod_q = np.array([[requant(int(gelu_q[s, j]) * int(up_q[s, j]),
-                                s_gelu * s_up, s_prod) for j in range(inter)]
+    # E1b: the shipped MAT_EWISE_MUL is the RVV vsmul/vssra chain — s0's golden
+    # ewise site must move with the layer golden (same redefinition, missed in
+    # the E1b commit; caught by gate_gemma3_s0_geglu once it re-entered the
+    # regression battery).
+    prod_q = np.array([[requant_rvv(int(gelu_q[s, j]) * int(up_q[s, j]),
+                                    s_gelu * s_up, s_prod) for j in range(inter)]
                        for s in range(x_q.shape[0])], np.int64)
     out_q = gemm_pc(prod_q, wd_q, s_prod, swd, s_out)
     return dict(x_q=x_q, sx=sx, gate_q=gate_q, up_q=up_q, gelu_q=gelu_q,

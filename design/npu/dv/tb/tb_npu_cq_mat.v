@@ -156,15 +156,8 @@ module tb_npu_cq_mat;
 
         if (STRIP_VARIANT != 0) begin
             // Strip variant of the same 8x8/4-outer-product GEMM:
-            // activation chunk @ OP_A_ADDR, strip weights @ 4KB-aligned shared W_BASE,
-            // per-channel params @ 0x1200, output @ distinct shared dst 0x2800.
-            for (i = 0; i < 16; i = i + 1)
-                axil_write(32'h3001_1200 + i*4, 32'h0);
-            for (i = 0; i < 8; i = i + 1)
-                axil_write(32'h3001_1200 + i*4, 32'h54C4_699A);
-            axil_write(32'h3001_1220, 32'h2626_2626);
-            axil_write(32'h3001_1224, 32'h2626_2626);
-
+            // shared blob @ W_BASE is [weights] ++ [8 param blocks] ++ [activation].
+            // The sequencer must stage params to 0x1200 and activation to OP_A_ADDR.
             axil_write(32'h3001_0700, 32'hFFFF_9F07);
             axil_write(32'h3001_0704, 32'hFFFF_9F43);
             axil_write(32'h3001_0708, 32'hFFFF_9F57);
@@ -174,15 +167,18 @@ module tb_npu_cq_mat;
             axil_write(32'h3001_0718, 32'hFFFF_9F36);
             axil_write(32'h3001_071C, 32'hFFFF_9F5E);
 
-            for (i = 0; i < 8; i = i + 1)
-                axil_write(32'h3001_0940 + i*4,
-                           {a_byte(i*4+3), a_byte(i*4+2), a_byte(i*4+1), a_byte(i*4)});
-
-            for (i = 0; i < 1024; i = i + 1)
+            for (i = 0; i < 1280; i = i + 1)
                 shared.mem[32'h1000 + i] = 32'h0;
             for (i = 0; i < 8; i = i + 1)
                 shared.mem[32'h1000 + i] =
                     {b_byte(i*4+3), b_byte(i*4+2), b_byte(i*4+1), b_byte(i*4)};
+            for (i = 0; i < 8; i = i + 1)
+                shared.mem[32'h1400 + i] = 32'h54C4_699A;
+            shared.mem[32'h1408] = 32'h2626_2626;
+            shared.mem[32'h1409] = 32'h2626_2626;
+            for (i = 0; i < 8; i = i + 1)
+                shared.mem[32'h1480 + i] =
+                    {a_byte(i*4+3), a_byte(i*4+2), a_byte(i*4+1), a_byte(i*4)};
 
             shared.mem[32'h100] = 32'h0000_500F;  // MAT_STRIP_GEMM + IRQ + LAST
             shared.mem[32'h101] = 32'h0000_4000;  // W_BASE, 4KB-aligned

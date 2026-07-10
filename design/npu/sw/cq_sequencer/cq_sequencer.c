@@ -58,6 +58,12 @@
 
 #define SHARED_BYTES    0x00010000u
 #define STRIP_BYTES_MAX 40960u
+#define TCM_BYTES       0x00008000u
+#define STRIP_PARAM_B   0x00001200u
+#define STRIP_PARAM_W   (STRIP_PARAM_B >> 2)
+#define STRIP_OP_A_B    0x00000940u
+#define STRIP_OP_A_STEP 0x00000200u
+#define STRIP_ACT_BYTES 0x00000200u
 
 #define CQ_CTRL_ENABLE  1u
 #define CQ_EVENT_IRQ    1u
@@ -219,7 +225,15 @@ static void mat_strip_gemm(uint32_t w1, uint32_t w2, uint32_t w3)
     uint32_t k_tail = (w3 >> 17) & 0x7Fu;
     uint32_t n_tail = (w3 >> 10) & 0x7Fu;
     uint32_t out_dst64 = w3 & 0x3FFu;
+    uint32_t weights_bytes;
+    uint32_t param_blocks;
+    uint32_t param_bytes;
+    uint32_t act_bytes;
+    uint32_t total_bytes;
+    uint32_t param_src;
+    uint32_t act_src;
     uint32_t st;
+    uint32_t i;
 
     if ((w_base & 0xFFFu) != 0u ||
         strip_bytes == 0u || strip_bytes > STRIP_BYTES_MAX ||
@@ -228,8 +242,36 @@ static void mat_strip_gemm(uint32_t w1, uint32_t w2, uint32_t w3)
         n_tail == 0u || n_tail > 64u || (n_tail & 7u) != 0u)
         cq_halt(CQ_ERR_MAT_PARAM);
 
+    weights_bytes = n_strips * strip_bytes;
+    param_blocks = n_strips << 3;  /* N derives as N_STRIPS*64; tail blocks are present. */
+    param_bytes = param_blocks << 6;
+    act_bytes = k_chunks * STRIP_ACT_BYTES;
+    total_bytes = weights_bytes + param_bytes + act_bytes;
+
+    if (weights_bytes > SHARED_BYTES ||
+        total_bytes > SHARED_BYTES ||
+        param_bytes > (TCM_BYTES - STRIP_PARAM_B) ||
+        act_bytes > (TCM_BYTES - STRIP_OP_A_B) ||
+        weights_bytes > (0xFFFFFFFFu - param_bytes) ||
+        (weights_bytes + param_bytes) > (0xFFFFFFFFu - act_bytes) ||
+        w_base > (SHARED_BYTES - total_bytes))
+        cq_halt(CQ_ERR_MAT_PARAM);
+
     if ((((n_strips - 1u) << 3) + (n_tail >> 3)) > ((SHARED_BYTES >> 6) - out_dst64))
         cq_halt(CQ_ERR_MAT_PARAM);
+
+    /* MAT_STRIP_GEMM owns the frozen shared job appendix:
+     * [weights:N_STRIPS*STRIP_BYTES] ++ [params:N_STRIPS*8*64B] ++
+     * [activation chunks:K_CHUNKS*512B]. Stage params and activation here so
+     * generic MAT_LOAD_W remains a bounded weight-window load. */
+    param_src = w_base + weights_bytes;
+    act_src = param_src + param_bytes;
+    for (i = 0u; i < param_blocks; i++)
+        dma_read(param_src + (i << 6), STRIP_PARAM_W + (i << 4), 16u);
+    for (i = 0u; i < k_chunks; i++)
+        dma_read(act_src + i * STRIP_ACT_BYTES,
+                 (STRIP_OP_A_B + i * STRIP_OP_A_STEP) >> 2,
+                 STRIP_ACT_BYTES >> 2);
 
     csr_write(CSR_ML_NTILES, 0u);
     csr_write(CSR_ML_MODE, 1u);

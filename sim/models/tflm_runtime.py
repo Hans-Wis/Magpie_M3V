@@ -24,9 +24,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "design/npu/sw"))
+sys.path.insert(0, str(ROOT / "design/npu/sw/tools"))
 sys.path.insert(0, str(ROOT / "design/npu/golden"))
 
 import cq_codec  # noqa: E402  (SSOT — generated)
+import strip_blob  # noqa: E402  (ADR-0073 strip layout helper)
 from tflm_fc import wrap32  # noqa: E402
 
 TCM_BLOB_B = 0x700
@@ -153,6 +155,18 @@ def load_artifacts():
 # ---------------------------------------------------------------------------
 PARAM_OFF = 0x20            # per-tile param block inside the job blob header
 JOB_STRIDE_B = 0x800        # shared-mem spacing between job blobs
+
+STRIP_PREP_B = SHARED_BLOB_B
+STRIP_W_BASE_DEFAULT = 0x4000
+STRIP_PARAM_PTR = 0x1200
+OP_A_ADDR = 0x940
+STRIP_A_STEP = 0x200
+STRIP_TCM_LOAD_BASE = TCM_BLOB_B
+SHARED_BYTES = 0x10000
+
+
+def _align(x, a):
+    return (x + a - 1) & ~(a - 1)
 
 
 def _chunks(k):
@@ -282,8 +296,157 @@ def _param_block_tile(layer, tile):
     return bytes(blk) + bytes(shifts)
 
 
+def _validate_strip_layer(layer):
+    if layer.get("kind") != "fc":
+        raise ValueError("emit_layer_strip supports only kind='fc' (GeGLU projection scope)")
+    for key in ("k", "n", "weights", "weight_scales", "input_scale", "output_scale"):
+        if key not in layer:
+            raise ValueError(f"emit_layer_strip missing required layer field {key!r}")
+    k, n = int(layer["k"]), int(layer["n"])
+    if k <= 0 or n <= 0 or n % 8 != 0:
+        raise ValueError("emit_layer_strip requires k>0, n>0, and n%8==0")
+    if int(layer.get("input_zp", 0)) != 0 or int(layer.get("output_zp", 0)) != 0:
+        raise ValueError("emit_layer_strip supports only symmetric zp=0 inputs/outputs")
+    if layer.get("relu", False):
+        raise ValueError("emit_layer_strip does not support fused ReLU")
+    bias = layer.get("bias", [0] * n)
+    if len(bias) != n or any(int(v) != 0 for v in bias):
+        raise ValueError("emit_layer_strip supports only no-bias/zero-bias GeGLU projections")
+    weights = layer["weights"]
+    if len(weights) != n or any(len(row) != k for row in weights):
+        raise ValueError("emit_layer_strip weights must be shaped [n][k]")
+    if len(layer["weight_scales"]) != n:
+        raise ValueError("emit_layer_strip requires per-channel weight_scales length n")
+    if "weight_scale" in layer:
+        raise ValueError("emit_layer_strip requires per-channel weight_scales, not weight_scale")
+    return k, n
+
+
+def _strip_param_blocks(layer, n, n_param=None):
+    if n_param is None:
+        n_param = n
+    mults, shifts = [], []
+    for c in range(n_param):
+        if c < n:
+            m, s = quantize_multiplier(
+                float(layer["input_scale"]) * float(layer["weight_scales"][c]) /
+                float(layer["output_scale"]))
+            eng = 31 - s
+            if not (31 <= eng <= 62):
+                raise ValueError("strip requant shift outside engine range")
+            mults.append(m)
+            shifts.append(eng)
+        else:
+            mults.append(0)
+            shifts.append(0)
+    return strip_blob.make_param_blocks(mults, shifts, n_param)
+
+
+def _strip_activation_chunks(group_rows, k, k_chunks):
+    chunks = []
+    for c in range(k_chunks):
+        b = bytearray(strip_blob.K_CHUNK * 8)
+        for kk in range(strip_blob.K_CHUNK):
+            src_k = c * strip_blob.K_CHUNK + kk
+            for r in range(8):
+                if src_k < k:
+                    b[kk * 8 + r] = int(group_rows[r][src_k]) & 0xFF
+        chunks.append(bytes(b))
+    return chunks
+
+
+def _strip_job_blob(w_blob, param_blocks, group_rows, k, k_chunks):
+    act_chunks = b"".join(_strip_activation_chunks(group_rows, k, k_chunks))
+    return w_blob + param_blocks + act_chunks
+
+
+def lower_layer_strip(layer, rows, out_shared=SHARED_DST_B, prep_shared=STRIP_PREP_B,
+                      weight_base=None):
+    """Lower one zero-bias symmetric FC projection to ADR-0073 MAT_STRIP_GEMM.
+
+    rows is [n_rows][K] int8, padded to 8-row groups like lower_layer_v2.
+    Returns (segments [(shared_byte, bytes)], ring words, n_groups, n_tiles).
+    """
+    k, n = _validate_strip_layer(layer)
+    n_tiles = n // 8
+    n_groups = (len(rows) + 7) // 8
+    rows = [list(r) for r in rows] + [[0] * k for _ in range(n_groups * 8 - len(rows))]
+    for r in rows:
+        if len(r) != k:
+            raise ValueError("emit_layer_strip rows must be shaped [n_rows][k]")
+
+    k_chunks = (k + strip_blob.K_CHUNK - 1) // strip_blob.K_CHUNK
+    k_tail = k - (k_chunks - 1) * strip_blob.K_CHUNK
+    n_strips = (n + strip_blob.STRIP_COLS - 1) // strip_blob.STRIP_COLS
+    n_tail = n - (n_strips - 1) * strip_blob.STRIP_COLS
+    strip_bytes = k_chunks * strip_blob.CHUNK_BYTES
+
+    w_blob = strip_blob.make_strip_blob(layer["weights"])
+    n_param = n_strips * strip_blob.STRIP_COLS
+    param_blocks = _strip_param_blocks(layer, n, n_param)
+    job_blobs = [
+        _strip_job_blob(w_blob, param_blocks, rows[g * 8:(g + 1) * 8], k, k_chunks)
+        for g in range(n_groups)
+    ]
+    job_stride = _align(max(len(b) for b in job_blobs), 0x1000)
+    if weight_base is None:
+        weight_base = STRIP_W_BASE_DEFAULT
+    if (weight_base & 0xFFF) != 0:
+        raise ValueError("strip weight_base must be 4KB aligned")
+    if prep_shared + 32 > weight_base:
+        raise ValueError("strip fold-zero segment overlaps weight_base")
+    if out_shared % 64 != 0:
+        raise ValueError("strip out_shared must be 64B aligned")
+
+    segments, ring = [], []
+    segments.append((prep_shared, bytes(32)))
+    ring += cq_codec.encode("MAT_LOAD_W", src_addr=0x80000000 | prep_shared,
+                            rows=1, cols=8)
+    for g, blob in enumerate(job_blobs):
+        job_base = weight_base + g * job_stride
+        if job_base > SHARED_BYTES - len(blob):
+            raise ValueError("strip shared job blob exceeds shared memory")
+        segments.append((job_base, blob))
+        ring += cq_codec.encode("MAT_STRIP_GEMM",
+                                w_base=job_base,
+                                strip_bytes=strip_bytes,
+                                n_strips=n_strips,
+                                k_chunks=k_chunks,
+                                k_tail=k_tail,
+                                n_tail=n_tail,
+                                out_dst64=(out_shared + g * n_tiles * 64) // 64,
+                                irq=1 if g == n_groups - 1 else 0,
+                                last=1 if g == n_groups - 1 else 0)
+    return segments, ring, n_groups, n_tiles
+
+
 def emit_layer_v2(outdir: Path, layer, rows, ring_entries=32):
     segments, ring, n_groups, n_tiles = lower_layer_v2(layer, rows)
+    assert len(ring) // 4 < ring_entries, "ring capacity"
+    outdir.mkdir(parents=True, exist_ok=True)
+    lines = ["@00000100"] + ["%08x" % x for x in ring]
+    for src, blob in segments:
+        lines.append("@%08x" % (src >> 2))
+        for i in range(0, len(blob), 4):
+            lines.append("%08x" % int.from_bytes(blob[i:i + 4], "little"))
+    (outdir / "tflm_shared.hex").write_text("\n".join(lines) + "\n")
+    (outdir / "tflm_meta.hex").write_text(
+        "%08x\n%08x\n%08x\n" % (len(ring) // 4, n_groups * n_tiles * 16,
+                                   ring_entries))
+    return n_groups, n_tiles
+
+
+def emit_layer_strip(outdir: Path, layer, in_shared, out_shared=SHARED_DST_B,
+                     ring_entries=32, prep_shared=STRIP_PREP_B, weight_base=None):
+    """Emit a strip-mode GeGLU FC case.
+
+    ``in_shared`` is the same row tensor passed to emit_layer_v2's ``rows``
+    argument. The name is kept for the strip promotion call sites, where the
+    rows are staged through shared memory before the strip TCM prep load.
+    """
+    segments, ring, n_groups, n_tiles = lower_layer_strip(
+        layer, in_shared, out_shared=out_shared, prep_shared=prep_shared,
+        weight_base=weight_base)
     assert len(ring) // 4 < ring_entries, "ring capacity"
     outdir.mkdir(parents=True, exist_ok=True)
     lines = ["@00000100"] + ["%08x" % x for x in ring]

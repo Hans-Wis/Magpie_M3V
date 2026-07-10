@@ -258,7 +258,7 @@
         "n_tail",
         "out_dst64"
       ],
-      "notes": "Strip-mode GEMM transport op (strip_rail_promotion_design.md §1): sequencer validates ADR-0073 illegal table plus W_BASE 4KB alignment and output shared bounds, then writes ml_ctrl CSRs 0x94..0xA8 plus ML_OUT_BASE 0xAC, GO, and polls ML_STATUS.DONE. TCM precondition: activation chunks are already at OP_A_ADDR+c*0x200 and strip RESCALE_PC params are at 0x1200 as 64B-stride blocks indexed by global sub-tile (strip*8+t). Output base is out_dst64*64, and sub-tile block address is base+(s*8+t)*64."
+      "notes": "Strip-mode GEMM transport op (strip_rail_promotion_design.md §1): frozen shared job blob at W_BASE is [weights: N_STRIPS*STRIP_BYTES] ++ [param blocks: ceil((N_STRIPS*64)/8)*64B] ++ [activation chunks: K_CHUNKS*512B, packed per chunk as [k][8]]. N_TAIL only trims final-strip compute; params derive from N_STRIPS*64 and tail param blocks are present/zero-padded by the emitter. The sequencer validates W_BASE 4KB alignment plus wrap-safe shared/output/TCM staging bounds, internally stages params to 0x1200+i*64 and activation to OP_A_ADDR+c*0x200, then writes ml_ctrl CSRs 0x94..0xA8 plus ML_OUT_BASE 0xAC, GO, and polls ML_STATUS.DONE. Output base is out_dst64*64, and sub-tile block address is base+(s*8+t)*64."
     }
   ],
   "err_causes": [

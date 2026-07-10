@@ -15,9 +15,15 @@ Status: ACCEPTED-to-implement(User 裁示 2026-07-10「strip 模式推廣到 gem
 - 語意:sequencer 驗參(沿 ADR-0073 illegal 表 + 4KB 對齊 + out 界內)→ 寫
   ml_ctrl CSR(0x94..0xA8 + 新 **ML_OUT_BASE 0xAC**)→ GO → poll ML_STATUS.DONE;
   ml 錯(含 ML_STRIP_DMA_ERR=9)→ `cq_halt(CQ_ERR_MAT_PARAM 家族新碼 STRIP_ERR)`。
-- **TCM 前置契約(凍結,沿 ADR-0073/D4)**:activation per-chunk 塊 @`OP_A_ADDR
-  +c×0x200`;strip 參數 @`0x1200` 64B-stride per 全域 sub-tile —— 由 firmware
-  prep(既有 memcpy 模式)在發 op 前備妥;op notes 寫明。
+- **shared strip job blob 契約(凍結,2026-07-10 addendum)**:`W_BASE` 起連續:
+  `[weights: N_STRIPS*STRIP_BYTES] ++ [param blocks: ceil((N_STRIPS*64)/8)*64B]
+  ++ [activation chunks: K_CHUNKS*512B]`。activation chunk 維持每 chunk `[k][8]`
+  packing(8 rows × 64 k,尾段由 emitter 補零)。`N_TAIL` 只裁最後 strip 的 compute;
+  params 的 N 由 `N_STRIPS*64` 推得,tail param blocks 仍存在且由 emitter zero-pad。
+- **sequencer staging 契約**:`MAT_STRIP_GEMM` handler 自行用 wrap-safe bounds 驗
+  shared blob/TCM 目的範圍,再把 params copy 到 `0x1200+i*64`,activation chunks copy 到
+  `OP_A_ADDR+c×0x200`,之後才寫 ml_ctrl CSR 並 GO。generic `MAT_LOAD_W` 的 dst bound
+  guard 不放寬,也不再用它搬 strip params/activation。
 
 ## 2. RTL delta(唯一一處,ml_ctrl)
 
@@ -43,3 +49,11 @@ Status: ACCEPTED-to-implement(User 裁示 2026-07-10「strip 模式推廣到 gem
 4. 零回歸批:gate_36/37/38(CQ 行為)、gate_97/98(合成 strip)、e2e 常備批。
 5. 誠實界:本輪 shared-SRAM 為 DDR 替身(真 DDR 掛接 = Magpie_DDR 線);未遷
    移的 GEMM 步仍走通用路(two-tier 誠實延續)。
+
+## 5. Audit addendum(2026-07-10)
+
+`tb_npu_cq_mat` 的早期 `STRIP_VARIANT` 直接用 TB/AXI pokes 把 strip params 放到
+`0x1200`,activation 放到 `OP_A_ADDR`,因此沒有覆蓋 production sequencer staging path。
+本 addendum 後該變體的 shared blob builder 改成追加 params+activation,只透過
+`MAT_STRIP_GEMM` handler staging,避免遮蔽 generic `MAT_LOAD_W` 對 `0x1200` 的合法
+bound guard。
